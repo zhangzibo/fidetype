@@ -108,6 +108,14 @@ ADAPTER_INFO = {
     "extra": "emg2qwerty",
     "licence": "Code Apache-2.0. Data CC BY-NC-SA 4.0: research only, streams carry data.research_only = true.",
     "tests": ["tests/test_adapter_emg2qwerty.py", "tests/test_conformance.py"], "docs": "wiki/entities/emg2qwerty.md",
+    "support": "replay-only", "transport": ["dataset"],
+    "real_data_evidence": ["experiments/2026-11-16-p11-01-emg-decoder/results.md",
+        "experiments/2026-11-16-p6-02-scorer/results.md"],
+    "test_covers": "CI: synthetic HDF5 sessions made by the test. Real: the emg2qwerty sessions in "
+                   "P11-01 (decoder training, 2,445 streams) and P6-02 (benchmark baselines), local "
+                   "runs.",
+    "limits": "Data CC BY-NC-SA 4.0: research use only. Recorded sessions only; the wristband that "
+              "recorded them is not a supported device.",
 }
 
 ADAPTER_NAME = "fidetype.adapters.emg2qwerty"

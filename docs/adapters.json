@@ -1,10 +1,25 @@
 {
-  "schema": "fidetype.adapter-registry/0.1",
+  "schema": "fidetype.adapter-registry/0.2",
   "generated_by": "python -m fidetype.adapters.registry",
   "status_meaning": {
     "tested": "CI tests run it, and it ran on the real thing it reads: real public dataset files, or the real protocol library (pylsl, websockets, BrainFlow) in a loopback.",
     "experimental": "Code and CI tests on synthetic data exist. It has not run on real recordings or a real device.",
     "planned": "No code yet. Not supported."
+  },
+  "support_meaning": {
+    "real-device": "It ran on a real device (column \"Real device\"). The evidence is in the repository.",
+    "replay-only": "It ran on real recorded data (public dataset files, real recording files or real decoder output). It never ran on a live device.",
+    "synthetic-only": "Its tests use synthetic data only (files made by the test, a fake or synthetic board, a loopback of the real protocol library with synthetic streams).",
+    "untested": "No test runs it. Planned rows only (no code)."
+  },
+  "transports": {
+    "file": "reads recording or decoder-output files",
+    "dataset": "reads the files of a public dataset",
+    "lsl": "Lab Streaming Layer (live, network)",
+    "brainflow": "BrainFlow board API (live, in the same process)",
+    "websocket": "WebSocket (live, network)",
+    "in-process": "a Python call in the same process",
+    "generated": "makes its own synthetic signal"
   },
   "kinds": {
     "dataset-replay": "reads a public dataset and emits NTS streams",
@@ -28,7 +43,16 @@
         "tests/test_conformance.py"
       ],
       "docs": "wiki/entities/brain-to-text-25.md",
+      "support": "replay-only",
       "hardware_tested": [],
+      "real_data_evidence": [
+        "tests/test_adapter_b2t25.py"
+      ],
+      "transport": [
+        "dataset"
+      ],
+      "test_covers": "CI: synthetic phoneme logits. Real: the T15 copy-task file of the public dataset, in a local test (skipped in CI without the file).",
+      "limits": "Replays recorded decoder output of one participant (T15). No live intracortical source. The published decoder weights have no hash (conformance check PV-WEIGHTS fails).",
       "extra": null,
       "roadmap": null,
       "module": "fidetype.adapters.b2t25"
@@ -46,7 +70,15 @@
         "tests/test_adapter_conformance.py"
       ],
       "docs": "wiki/entities/brainflow.md",
+      "support": "synthetic-only",
       "hardware_tested": [],
+      "real_data_evidence": [],
+      "transport": [
+        "brainflow",
+        "lsl"
+      ],
+      "test_covers": "CI: the BrainFlow Synthetic board (sine waves and noise, no text) and a fake board; the bridge into a real pylsl loopback.",
+      "limits": "No real board is tested (P4-06, externally blocked: needs hardware). Fixed timing only: a board gives no key-onset markers. No reconnect in fidetype live.",
       "extra": "brainflow",
       "roadmap": null,
       "module": "fidetype.adapters.brainflow_bridge"
@@ -64,7 +96,17 @@
         "tests/test_adapter_conformance.py"
       ],
       "docs": "wiki/concepts/ctc-logits-adapter.md",
+      "support": "replay-only",
       "hardware_tested": [],
+      "real_data_evidence": [
+        "experiments/2026-11-16-p11-01-emg-decoder/results.md"
+      ],
+      "transport": [
+        "file",
+        "in-process"
+      ],
+      "test_covers": "CI: synthetic logits, probabilities and padded batches. Real: the output of our emg2qwerty decoder (P11-01: 2,445 streams, all trust-ready, local run); the pretrained decoders call it on each decode.",
+      "limits": "The input must be CTC scores (T, V) with a known vocabulary. It cannot check that the scores come from the decoder that the header names.",
       "extra": null,
       "roadmap": null,
       "module": "fidetype.adapters.ctc_logits"
@@ -81,7 +123,16 @@
         "tests/test_adapter_files_real.py"
       ],
       "docs": "docs/adapters.md#edf",
+      "support": "replay-only",
       "hardware_tested": [],
+      "real_data_evidence": [
+        "tests/test_adapter_files_real.py"
+      ],
+      "transport": [
+        "file"
+      ],
+      "test_covers": "CI: synthetic EDF, EDF+ and BDF files made by the test. Real: PhysioNet EEGMMIDB EDF+ and the MNE test EDF+ / BDF files, in a local test (values equal MNE within one digital step; skipped in CI without the files).",
+      "limits": "Continuous files only: EDF+D (discontinuous) raises an error. A file, not a live device.",
       "extra": null,
       "roadmap": null,
       "file_patterns": [
@@ -102,7 +153,17 @@
         "tests/test_conformance.py"
       ],
       "docs": "wiki/entities/emg2qwerty.md",
+      "support": "replay-only",
       "hardware_tested": [],
+      "real_data_evidence": [
+        "experiments/2026-11-16-p11-01-emg-decoder/results.md",
+        "experiments/2026-11-16-p6-02-scorer/results.md"
+      ],
+      "transport": [
+        "dataset"
+      ],
+      "test_covers": "CI: synthetic HDF5 sessions made by the test. Real: the emg2qwerty sessions in P11-01 (decoder training, 2,445 streams) and P6-02 (benchmark baselines), local runs.",
+      "limits": "Data CC BY-NC-SA 4.0: research use only. Recorded sessions only; the wristband that recorded them is not a supported device.",
       "extra": "emg2qwerty",
       "roadmap": null,
       "module": "fidetype.adapters.emg2qwerty"
@@ -119,7 +180,16 @@
         "tests/test_conformance.py"
       ],
       "docs": "wiki/entities/kt-semg-dataset.md",
+      "support": "replay-only",
       "hardware_tested": [],
+      "real_data_evidence": [
+        "tools/ci/kt_lsl_replay.py"
+      ],
+      "transport": [
+        "dataset"
+      ],
+      "test_covers": "CI: synthetic key logs and signal files. The CI job tools/ci/kt_lsl_replay.py downloads the real KT-sEMG run3 (SHA-256 pinned) and trains the reference decoder on it.",
+      "limits": "One public dataset. In the CI job the LDA reference decoder is in-sample (a plumbing check, no accuracy claim).",
       "extra": null,
       "roadmap": null,
       "module": "fidetype.adapters.kt_semg"
@@ -136,7 +206,17 @@
         "tools/ci/kt_lsl_replay.py"
       ],
       "docs": "docs/live-decode.md",
+      "support": "replay-only",
       "hardware_tested": [],
+      "real_data_evidence": [
+        "tools/ci/kt_lsl_replay.py"
+      ],
+      "transport": [
+        "dataset",
+        "lsl"
+      ],
+      "test_covers": "CI: the real KT-sEMG run3 (77 s, 32 channels, 2000 Hz) replayed over a real LSL loopback into fidetype live; the NTS output is checked.",
+      "limits": "A replay of a recording, not a live device. The guard never commits on 77 s (in-sample plumbing model).",
       "extra": "lsl",
       "roadmap": null,
       "module": "fidetype.live.replay"
@@ -154,7 +234,14 @@
         "tests/test_lsl_open_timeout.py"
       ],
       "docs": "wiki/concepts/lsl-input.md",
+      "support": "synthetic-only",
       "hardware_tested": [],
+      "real_data_evidence": [],
+      "transport": [
+        "lsl"
+      ],
+      "test_covers": "CI: fake inlets (header mapping, clock correction, gaps, loss, reconnect) and a real pylsl outlet -> inlet loopback with synthetic streams.",
+      "limits": "The NTS-over-LSL path has not carried real decoder output yet (the raw-signal LSL path has: lsl-signal-source). One machine only (localhost).",
       "extra": "lsl",
       "roadmap": null,
       "module": "fidetype.adapters.lsl"
@@ -171,7 +258,16 @@
         "tests/test_live.py"
       ],
       "docs": "docs/live-decode.md",
+      "support": "replay-only",
       "hardware_tested": [],
+      "real_data_evidence": [
+        "tools/ci/kt_lsl_replay.py"
+      ],
+      "transport": [
+        "lsl"
+      ],
+      "test_covers": "CI: the synthetic typist over fake inlets and a real pylsl loopback (loss and reconnect). The CI job replays the real KT-sEMG run3 over LSL into fidetype live --source lsl.",
+      "limits": "No real amplifier has sent its LSL stream to it (P4-06). Clock correction is tested on one machine only.",
       "extra": "lsl",
       "roadmap": null,
       "module": "fidetype.live.sources"
@@ -189,7 +285,17 @@
         "tests/test_adapter_openbci_gui_real.py"
       ],
       "docs": "docs/adapters.md#openbci-gui",
+      "support": "replay-only",
       "hardware_tested": [],
+      "real_data_evidence": [
+        "tests/test_adapter_files_real.py",
+        "tests/test_adapter_openbci_gui_real.py"
+      ],
+      "transport": [
+        "file"
+      ],
+      "test_covers": "CI: synthetic GUI files and packet drops (Sample Index jumps). Real: the OpenBCI GUI v6 sample file (Cyton, millisecond time stamps) and two GUI v5 recordings (Cyton 8 ch; Cyton + Daisy 16 ch), local tests.",
+      "limits": "No real recording with non-zero markers (P4-19). The Ganglion Sample Index rule is not checked (P4-20). GUI v4 files are refused. A file, not a live board.",
       "extra": null,
       "roadmap": null,
       "file_patterns": [
@@ -210,7 +316,17 @@
         "tests/test_restamp_meg.py"
       ],
       "docs": "wiki/entities/spanishbcbl-dataset.md",
+      "support": "replay-only",
       "hardware_tested": [],
+      "real_data_evidence": [
+        "experiments/2026-11-11-m1-09-async-full/results.md",
+        "src/fidetype/decoders/restamp_meg.py"
+      ],
+      "transport": [
+        "dataset"
+      ],
+      "test_covers": "CI: synthetic log-probs (conformance helper and restamp tests). Real: the ConvCTC output on the SpanishBCBL MEG segments of the 5 M1-09 runs (1,074 streams each), rebuilt with this adapter's header by restamp_meg, reach conformance level provenance (M5-13, local).",
+      "limits": "Data CC BY-NC 4.0: research only. Recorded MEG only: MEG needs a lab system, so no live MEG source exists.",
       "extra": null,
       "roadmap": null,
       "module": "fidetype.adapters.spanishbcbl_meg"
@@ -226,7 +342,16 @@
         "tests/test_data_spanishbcbl.py"
       ],
       "docs": "wiki/entities/spanishbcbl-dataset.md",
+      "support": "replay-only",
       "hardware_tested": [],
+      "real_data_evidence": [
+        "tests/test_data_spanishbcbl.py"
+      ],
+      "transport": [
+        "dataset"
+      ],
+      "test_covers": "CI: synthetic file names, logs and clocks. Real: one finished S25 block of the local cache (integration test, skipped in CI).",
+      "limits": "Data CC BY-NC 4.0: research only. Needs MNE for the raw MEG files.",
       "extra": "data",
       "roadmap": null,
       "module": "fidetype.data.spanishbcbl"
@@ -243,7 +368,14 @@
         "tests/test_adapter_conformance.py"
       ],
       "docs": "docs/live-decode.md",
+      "support": "synthetic-only",
       "hardware_tested": [],
+      "real_data_evidence": [],
+      "transport": [
+        "generated"
+      ],
+      "test_covers": "CI: the synthetic typist signal through fidetype live and the adapter conformance helper.",
+      "limits": "Synthetic signal only. It carries no brain or muscle data. Use it to test the plumbing.",
       "extra": null,
       "roadmap": null,
       "module": "fidetype.live.sources"
@@ -259,7 +391,17 @@
         "tests/test_adapter_text_nbest.py"
       ],
       "docs": "wiki/concepts/text-nbest-adapter.md",
+      "support": "replay-only",
       "hardware_tested": [],
+      "real_data_evidence": [
+        "experiments/2026-11-21-p5-33-withhold/results.md"
+      ],
+      "transport": [
+        "file",
+        "in-process"
+      ],
+      "test_covers": "CI: synthetic CSV and JSON Lines n-best files. Real: the item check (normalise_item) on the KT-sEMG LDA n-best lists through the trust drop-in (P5-33, local).",
+      "limits": "The CSV and JSON Lines file readers ran on synthetic files only.",
       "extra": null,
       "roadmap": null,
       "module": "fidetype.adapters.text_nbest"
@@ -276,7 +418,16 @@
         "tests/test_conformance.py"
       ],
       "docs": "wiki/entities/toronto-semg-typing-dataset.md",
+      "support": "replay-only",
       "hardware_tested": [],
+      "real_data_evidence": [
+        "tests/test_adapter_toronto_semg.py"
+      ],
+      "transport": [
+        "dataset"
+      ],
+      "test_covers": "CI: synthetic Intan RHD files made by a test writer. Real: the Toronto CleanData files, in a local test (skipped in CI without the data).",
+      "limits": "Recorded sessions only; no live Intan source.",
       "extra": null,
       "roadmap": null,
       "module": "fidetype.adapters.toronto_semg"
@@ -293,7 +444,16 @@
         "tests/test_conformance.py"
       ],
       "docs": "wiki/entities/willett-handwriting-2021.md",
+      "support": "replay-only",
       "hardware_tested": [],
+      "real_data_evidence": [
+        "experiments/2026-11-16-p6-02-scorer/results.md"
+      ],
+      "transport": [
+        "dataset"
+      ],
+      "test_covers": "CI: synthetic sessions. Real: sentences.mat of the public archive (SHA-256 pinned) in the P6-02 benchmark baselines (local).",
+      "limits": "Replays recorded real-time RNN output of one participant (T5). The RNN weights have no hash (PV-WEIGHTS fails).",
       "extra": "data",
       "roadmap": null,
       "module": "fidetype.adapters.willett_handwriting"
@@ -310,7 +470,16 @@
         "tests/test_conformance_capture.py"
       ],
       "docs": "wiki/concepts/websocket-input.md",
+      "support": "replay-only",
       "hardware_tested": [],
+      "real_data_evidence": [
+        "experiments/2026-11-13-m6-11-ws/b2t_replay_ws.py"
+      ],
+      "transport": [
+        "websocket"
+      ],
+      "test_covers": "CI: sans-IO cores (order, gaps, resume, auth) and a real server and client on localhost with synthetic streams. Real: the 816 Brain-to-Text '25 test trials over WebSocket, same decisions as the in-process replay (M6-11, local).",
+      "limits": "Localhost only; no test across a real network.",
       "extra": "ws",
       "roadmap": null,
       "module": "fidetype.adapters.ws"
@@ -324,7 +493,9 @@
       "licence": "Per dataset (often CC0 or CC BY 4.0); check each one. MOABB licence not checked.",
       "tests": [],
       "docs": "wiki/questions/roadmap-standard.md",
+      "support": "untested",
       "hardware_tested": [],
+      "real_data_evidence": [],
       "extra": null,
       "roadmap": "P14-42",
       "module": null
@@ -338,7 +509,9 @@
       "licence": "Open format; not checked.",
       "tests": [],
       "docs": "wiki/questions/roadmap-standard.md",
+      "support": "untested",
       "hardware_tested": [],
+      "real_data_evidence": [],
       "extra": null,
       "roadmap": "P14-42",
       "module": null
@@ -352,7 +525,9 @@
       "licence": "Not checked (vendor LSL connector). The LSL path itself exists (lsl-signal-source).",
       "tests": [],
       "docs": "wiki/concepts/lsl-input.md",
+      "support": "untested",
       "hardware_tested": [],
+      "real_data_evidence": [],
       "extra": null,
       "roadmap": "P4-05",
       "module": null
@@ -366,7 +541,9 @@
       "licence": "Not checked (vendor protocols; some bands are discontinued).",
       "tests": [],
       "docs": "wiki/questions/roadmap-standard.md",
+      "support": "untested",
       "hardware_tested": [],
+      "real_data_evidence": [],
       "extra": null,
       "roadmap": "P4-05",
       "module": null
@@ -380,7 +557,9 @@
       "licence": "Our own design (planned open hardware licence).",
       "tests": [],
       "docs": "wiki/questions/roadmap-standard.md#p18-02-wristband-driver-and-adapter",
+      "support": "untested",
       "hardware_tested": [],
+      "real_data_evidence": [],
       "extra": null,
       "roadmap": "P18-02",
       "module": null
@@ -394,7 +573,9 @@
       "licence": "Not checked. The vendor SDK is proprietary; an adapter may need a vendor licence.",
       "tests": [],
       "docs": "wiki/questions/roadmap-standard.md",
+      "support": "untested",
       "hardware_tested": [],
+      "real_data_evidence": [],
       "extra": null,
       "roadmap": "P4-05",
       "module": null
@@ -408,7 +589,9 @@
       "licence": "Not checked (vendor software).",
       "tests": [],
       "docs": "wiki/questions/roadmap-standard.md",
+      "support": "untested",
       "hardware_tested": [],
+      "real_data_evidence": [],
       "extra": null,
       "roadmap": "P4-05",
       "module": null
@@ -422,7 +605,9 @@
       "licence": "Open format. Competition data terms not checked.",
       "tests": [],
       "docs": "wiki/questions/roadmap-standard.md",
+      "support": "untested",
       "hardware_tested": [],
+      "real_data_evidence": [],
       "extra": null,
       "roadmap": "P14-42",
       "module": null
@@ -436,7 +621,9 @@
       "licence": "Not checked; check each dataset.",
       "tests": [],
       "docs": "wiki/questions/roadmap-standard.md",
+      "support": "untested",
       "hardware_tested": [],
+      "real_data_evidence": [],
       "extra": null,
       "roadmap": "P14-42",
       "module": null
@@ -450,7 +637,9 @@
       "licence": "Not checked. BrainFlow lists Muse boards (BrainFlow is MIT).",
       "tests": [],
       "docs": "wiki/questions/roadmap-standard.md#p4-15-device-support-matrix-generated-from-adapter-metadata",
+      "support": "untested",
       "hardware_tested": [],
+      "real_data_evidence": [],
       "extra": null,
       "roadmap": "P4-05",
       "module": null
@@ -464,7 +653,9 @@
       "licence": "Not checked (vendor SDK; BrainFlow lists the board).",
       "tests": [],
       "docs": "wiki/questions/roadmap-standard.md",
+      "support": "untested",
       "hardware_tested": [],
+      "real_data_evidence": [],
       "extra": null,
       "roadmap": "P4-05",
       "module": null
@@ -478,7 +669,9 @@
       "licence": "BrainFlow is MIT. Needs hardware (P4-06, externally blocked).",
       "tests": [],
       "docs": "wiki/entities/brainflow.md",
+      "support": "untested",
       "hardware_tested": [],
+      "real_data_evidence": [],
       "extra": null,
       "roadmap": "P4-06",
       "module": null
@@ -492,7 +685,9 @@
       "licence": "Not checked (vendor software; lab hardware only).",
       "tests": [],
       "docs": "wiki/questions/roadmap-standard.md",
+      "support": "untested",
       "hardware_tested": [],
+      "real_data_evidence": [],
       "extra": null,
       "roadmap": "P4-05",
       "module": null
@@ -506,7 +701,9 @@
       "licence": "Not checked (vendor SDK and LSL app).",
       "tests": [],
       "docs": "wiki/questions/roadmap-standard.md",
+      "support": "untested",
       "hardware_tested": [],
+      "real_data_evidence": [],
       "extra": null,
       "roadmap": "P4-05",
       "module": null
@@ -520,7 +717,9 @@
       "licence": "Open format. pyxdf licence not checked (a reader of our own needs no dependency).",
       "tests": [],
       "docs": "wiki/concepts/lsl-input.md",
+      "support": "untested",
       "hardware_tested": [],
+      "real_data_evidence": [],
       "extra": null,
       "roadmap": "P14-42",
       "module": null
@@ -534,7 +733,9 @@
       "licence": "Not checked.",
       "tests": [],
       "docs": "wiki/questions/roadmap-standard.md",
+      "support": "untested",
       "hardware_tested": [],
+      "real_data_evidence": [],
       "extra": null,
       "roadmap": "P14-42",
       "module": null

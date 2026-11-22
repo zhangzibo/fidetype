@@ -23,7 +23,21 @@ Fields of one entry:
 ``roadmap`` planned rows: the roadmap item
 ``file_patterns`` file readers: file-name globs (case-insensitive) that
             ``fidetype live --source file`` matches to pick the reader
+``support`` implemented rows: ``real-device`` / ``replay-only`` /
+            ``synthetic-only`` (:data:`SUPPORT_TEXT`); planned rows: ``untested``
+``transport`` implemented rows: list of :data:`TRANSPORTS` keys
+``real_data_evidence`` repository paths (tests, CI scripts, experiment
+            results) where it ran on real data or a real device
+``test_covers`` implemented rows: what the tests cover (CI and real data)
+``limits``  implemented rows: the known limits
 ========== ==============================================================
+
+Rules that keep the claims honest (:func:`validate`): ``real-device`` needs
+``hardware_tested``; ``real-device`` and ``replay-only`` need
+``real_data_evidence``; ``synthetic-only`` has none; ``tested`` needs
+``real-device`` or ``replay-only`` (exception: a ``transport`` that ran
+the real protocol library in a loopback, and a ``synthetic-source``);
+``experimental`` is ``synthetic-only``.
 
 A ``file-reader`` module also has ``open_source(path, ...)`` (the source
 protocol of ``fidetype live``). :func:`pick_file_reader` and
@@ -31,7 +45,7 @@ protocol of ``fidetype live``). :func:`pick_file_reader` and
 
 Command line (CI runs the check through ``tests/test_adapter_registry.py``)::
 
-    python -m fidetype.adapters.registry            # write docs/adapters.md and docs/adapters.json
+    python -m fidetype.adapters.registry            # write docs/adapters.md, adapters.json, device-support.md
     python -m fidetype.adapters.registry --check    # fail if the committed files differ
     python -m fidetype.adapters.registry new my-format   # copy the adapter template
 
@@ -66,8 +80,32 @@ STATUS_TEXT = {
     "experimental": "Code and CI tests on synthetic data exist. It has not run on real recordings or a real device.",
     "planned": "No code yet. Not supported.",
 }
+#: Support level (P4-15): on what the adapter really ran. The evidence is in ``real_data_evidence``.
+SUPPORT_TEXT = {
+    "real-device": "It ran on a real device (column \"Real device\"). The evidence is in the repository.",
+    "replay-only": "It ran on real recorded data (public dataset files, real recording files or real decoder "
+                   "output). It never ran on a live device.",
+    "synthetic-only": "Its tests use synthetic data only (files made by the test, a fake or synthetic board, a "
+                      "loopback of the real protocol library with synthetic streams).",
+    "untested": "No test runs it. Planned rows only (no code).",
+}
+#: How the data reaches the adapter.
+TRANSPORTS = {
+    "file": "reads recording or decoder-output files",
+    "dataset": "reads the files of a public dataset",
+    "lsl": "Lab Streaming Layer (live, network)",
+    "brainflow": "BrainFlow board API (live, in the same process)",
+    "websocket": "WebSocket (live, network)",
+    "in-process": "a Python call in the same process",
+    "generated": "makes its own synthetic signal",
+}
+#: Kinds that may be ``tested`` with ``synthetic-only`` support (nothing real to read, or the real protocol
+#: library in a loopback; STATUS_TEXT["tested"]).
+SYNTHETIC_TESTED_KINDS = ("transport", "synthetic-source")
 SIGNALS = ("emg", "eeg", "meg", "opm-meg", "ecog", "intracortical", "fnirs", "other", "any")
 REQUIRED = ("id", "kind", "target", "signal", "status", "licence", "tests", "docs")
+#: Extra fields of an implemented (not planned) entry (P4-15).
+IMPL_REQUIRED = ("support", "transport", "test_covers", "limits", "real_data_evidence")
 #: Modules outside fidetype.adapters that hold readers or signal sources.
 EXTRA_MODULES = ("fidetype.live.sources", "fidetype.live.replay", "fidetype.data.spanishbcbl")
 #: Modules of fidetype.adapters that are tools, not adapters.
@@ -75,8 +113,10 @@ NOT_ADAPTERS = {"registry", "testing", "planned"}
 ROOT = Path(__file__).resolve().parents[3]
 DOC_MD = Path("docs/adapters.md")
 DOC_JSON = Path("docs/adapters.json")
+DOC_DEVICES = Path("docs/device-support.md")
 TEMPLATE_DIR = Path("templates/adapter")
-SCHEMA = "fidetype.adapter-registry/0.1"
+SCHEMA = "fidetype.adapter-registry/0.2"
+GENERATED = {DOC_MD.as_posix(), DOC_JSON.as_posix(), DOC_DEVICES.as_posix()}
 _ID_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 
 
@@ -96,14 +136,16 @@ def collect() -> list[dict[str, Any]]:
         info = getattr(importlib.import_module(mod), "ADAPTER_INFO", None)
         for e in ([info] if isinstance(info, dict) else list(info or [])):
             impl.append(_ordered({"module": mod, **e}))
-    planned = [_ordered({"status": "planned", "module": None, "tests": [], **e}) for e in PLANNED]
+    planned = [_ordered({"status": "planned", "module": None, "tests": [], "support": "untested",
+                         "real_data_evidence": [], **e}) for e in PLANNED]
     return sorted(impl, key=lambda e: e["id"]) + sorted(planned, key=lambda e: e["id"])
 
 
 def _ordered(e: dict[str, Any]) -> dict[str, Any]:
     """Fixed key order (the JSON stays diff-friendly); defaults for the optional fields; unknown keys last."""
     base = {"extra": None, "hardware_tested": [], "roadmap": None, **e}
-    keys = (*REQUIRED, "hardware_tested", "extra", "roadmap", "file_patterns", "module")
+    keys = (*REQUIRED, "support", "hardware_tested", "real_data_evidence", "transport", "test_covers", "limits",
+            "extra", "roadmap", "file_patterns", "module")
     return {**{k: base[k] for k in keys if k in base}, **{k: v for k, v in base.items() if k not in keys}}
 
 
@@ -137,11 +179,45 @@ def validate(entries: list[dict[str, Any]], root: Path = ROOT) -> list[str]:
                 errs.append(f"{tag}: a file reader needs file_patterns (a list of file-name globs)")
             if e.get("module") and not callable(getattr(importlib.import_module(e["module"]), "open_source", None)):
                 errs.append(f"{tag}: a file reader module needs open_source(path, ...)")
-        for p in [*e.get("tests", []), str(e.get("docs", "")).split("#")[0]]:
-            if p and p != DOC_MD.as_posix() and not (root / p).exists():  # the catalogue is generated
+        errs += _support_errors(e)
+        for p in [*e.get("tests", []), *(e.get("real_data_evidence") or []), str(e.get("docs", "")).split("#")[0]]:
+            if p and p not in GENERATED and not (root / p).exists():  # the generated pages may be absent
                 errs.append(f"{tag}: path {p!r} does not exist")
     declared = {e["module"] for e in entries if e.get("module")}
     errs += [f"{m}: module declares no ADAPTER_INFO" for m in adapter_modules() if m not in declared]
+    return errs
+
+
+def _support_errors(e: dict[str, Any]) -> list[str]:
+    """P4-15: the support level, the evidence and the status must agree (no claim without evidence)."""
+    tag, st, sup = e.get("id", "?"), e.get("status"), e.get("support")
+    ev, hw = e.get("real_data_evidence"), e.get("hardware_tested") or []
+    errs = []
+    if st != "planned":
+        errs += [f"{tag}: missing field {k!r} (P4-15)" for k in IMPL_REQUIRED if k not in e]
+        tr = e.get("transport")
+        if "transport" in e and (not isinstance(tr, list) or not tr or any(t not in TRANSPORTS for t in tr)):
+            errs.append(f"{tag}: transport must be a non-empty list of {list(TRANSPORTS)}")
+        for k in ("test_covers", "limits"):
+            if k in e and not (isinstance(e[k], str) and e[k].strip()):
+                errs.append(f"{tag}: {k} must be a non-empty text")
+    if sup not in SUPPORT_TEXT:
+        return [*errs, f"{tag}: support {sup!r} not in {list(SUPPORT_TEXT)}"]
+    if not isinstance(ev, list):
+        return [*errs, f"{tag}: real_data_evidence must be a list of repository paths"]
+    if (st == "planned") != (sup == "untested"):
+        errs.append(f"{tag}: support 'untested' is for planned rows only (status {st!r}, support {sup!r})")
+    if (sup == "real-device") != bool(hw):
+        errs.append(f"{tag}: support 'real-device' needs hardware_tested, and hardware_tested needs 'real-device'")
+    if sup in ("real-device", "replay-only") and not ev:
+        errs.append(f"{tag}: support {sup!r} needs real_data_evidence (the test or result that shows it)")
+    if sup in ("synthetic-only", "untested") and ev:
+        errs.append(f"{tag}: support {sup!r} cannot list real_data_evidence")
+    if st == "tested" and sup == "synthetic-only" and e.get("kind") not in SYNTHETIC_TESTED_KINDS:
+        errs.append(f"{tag}: status 'tested' with synthetic-only tests (only a {' or '.join(SYNTHETIC_TESTED_KINDS)}"
+                    " may be tested without real data); use 'experimental'")
+    if st == "experimental" and sup != "synthetic-only":
+        errs.append(f"{tag}: status 'experimental' means synthetic-only tests (support {sup!r}); use 'tested'")
     return errs
 
 
@@ -201,11 +277,11 @@ def open_file_source(path: str | Path, reader: str | None = None, **options: Any
     return e, fn(path, **opts)
 
 
-def _link(path: str) -> str:
-    """A repository path as a link from docs/adapters.md."""
+def _link(path: str, page: Path = DOC_MD) -> str:
+    """A repository path as a link from ``page`` (a generated page in docs/)."""
     base, _, anchor = path.partition("#")
     tail = f"#{anchor}" if anchor else ""
-    if base == DOC_MD.as_posix():
+    if base == page.as_posix():
         return tail or "#"
     return f"{base[len('docs/'):]}{tail}" if base.startswith("docs/") else f"../{base}{tail}"
 
@@ -218,6 +294,7 @@ def render_md(entries: list[dict[str, Any]]) -> str:
     impl = [e for e in entries if e["status"] != "planned"]
     planned = [e for e in entries if e["status"] == "planned"]
     count = {s: sum(e["status"] == s for e in entries) for s in STATUS_TEXT}
+    n_dev = sum(e.get("support") == "real-device" for e in entries)
     L = [
         "# Adapter catalogue",
         "",
@@ -229,7 +306,11 @@ def render_md(entries: list[dict[str, Any]]) -> str:
         f"The machine-readable registry is [adapters.json](adapters.json) (schema `{SCHEMA}`).",
         "",
         f"**Counts:** {count['tested']} tested, {count['experimental']} experimental, {count['planned']} planned. "
-        "**No adapter is tested on a real device yet** (column \"Real device\"; roadmap P4-06, externally blocked).",
+        + (f"{n_dev} adapter(s) ran on a real device (column \"Real device\")." if n_dev else "**No adapter is tested on a real device yet** (column \"Real device\"; roadmap P4-06, "
+                "externally blocked)."),
+        "",
+        "Which device, file format or dataset works, on what data each one ran and its known limits: "
+        "[device support matrix](device-support.md) (generated from the same metadata).",
         "",
         "To add an adapter, read [CONTRIBUTING.md, section 7](../CONTRIBUTING.md#7-adapters-add-a-decoder-or-a-device). "
         "The template is in [templates/adapter/](../templates/adapter/).",
@@ -248,15 +329,16 @@ def render_md(entries: list[dict[str, Any]]) -> str:
         "",
         "## Adapters in the repository",
         "",
-        "| Id | Kind | Device, dataset or format | Signal | Status | Real device | Licence notes | Tests | Docs |",
-        "|---|---|---|---|---|---|---|---|---|",
+        "| Id | Kind | Device, dataset or format | Signal | Status | Support | Real device | Licence notes | Tests "
+        "| Docs |",
+        "|---|---|---|---|---|---|---|---|---|---|",
     ]
     for e in impl:
         tests = ", ".join(f"[{Path(t).name}]({_link(t)})" for t in e["tests"])
         extra = f" (extra `[{e['extra']}]`)" if e.get("extra") else ""
         hw = ", ".join(e["hardware_tested"]) or "none"
         L.append(f"| `{e['id']}` | {e['kind']} | {_cell(e['target'])}{extra} | {e['signal']} | "
-                 f"`{e['status']}` | {_cell(hw)} | {_cell(e['licence'])} | {tests} | "
+                 f"`{e['status']}` | `{e.get('support')}` | {_cell(hw)} | {_cell(e['licence'])} | {tests} | "
                  f"[docs]({_link(e['docs'])}) |")
     L += ["", "Module of each adapter:", ""]
     L += [f"- `{e['id']}`: `{e['module']}`" for e in impl]
@@ -294,9 +376,86 @@ def _details(impl: list[dict[str, Any]]) -> list[str]:
     return ["", "## Details of adapters without their own page", *out] if out else []
 
 
+#: Sections of the device support matrix: (heading, kinds).
+DEVICE_GROUPS = (
+    ("Live devices and signal sources", ("device-source", "synthetic-source")),
+    ("Recording files", ("file-reader",)),
+    ("Public datasets (recorded data)", ("dataset-replay", "dataset-reader")),
+    ("Decoder outputs and transports", ("decoder-output", "transport")),
+)
+
+
+def render_devices_md(entries: list[dict[str, Any]]) -> str:
+    """docs/device-support.md (P4-15): the device support matrix, from the same metadata as the catalogue."""
+    impl = [e for e in entries if e["status"] != "planned"]
+    planned = [e for e in entries if e["status"] == "planned"]
+    count = {s: sum(e.get("support") == s for e in entries) for s in SUPPORT_TEXT}
+    real = [e for e in impl if e.get("support") == "real-device"]
+    page = DOC_DEVICES
+    L = [
+        "# Device support matrix",
+        "",
+        "<!-- GENERATED FILE. DO NOT EDIT. Made by `python -m fidetype.adapters.registry` from the ADAPTER_INFO of",
+        "     each adapter module and src/fidetype/adapters/planned.py (roadmap P4-15).",
+        "     CI fails when this page and the metadata differ (tests/test_adapter_registry.py). -->",
+        "",
+        "This page tells you which devices, recording files and public datasets work with Fidetype, on what data "
+        "each adapter ran, and its known limits. A script makes the page from the metadata in the code. "
+        "The full catalogue (licences, tests, modules) is [adapters.md](adapters.md).",
+        "",
+        f"**Support:** {count['real-device']} real device, {count['replay-only']} replay only, "
+        f"{count['synthetic-only']} synthetic only, {count['untested']} untested (planned).",
+        "",
+        (f"Real devices: {', '.join(sorted({h for e in real for h in e['hardware_tested']}))}." if real else
+         "**No adapter has run on a real device yet.** The project has no EEG, EMG or MEG hardware. Real-device "
+         "tests are roadmap P4-06 and M6-12 (externally blocked: they need hardware and volunteers)."),
+        "",
+        "## Support levels",
+        "",
+        "| Support | Meaning |",
+        "|---|---|",
+        *[f"| `{k}` | {v} |" for k, v in SUPPORT_TEXT.items()],
+        "",
+        "The status column uses the catalogue levels: "
+        + "; ".join(f"`{k}`: {v.rstrip('.')}" for k, v in STATUS_TEXT.items() if k != "planned")
+        + ". The registry refuses `tested` without real data, except for a transport (real protocol library in a "
+          "loopback) and the synthetic source. The registry also refuses `real-device` or `replay-only` without "
+          "a test or result in the repository (column \"Tests cover\", \"Evidence\").",
+        "",
+        "Transports: " + "; ".join(f"`{k}` = {v}" for k, v in TRANSPORTS.items()) + ".",
+    ]
+    hdr = ["| Device or format | Reader id | Modality | Transport | Status | Support | Tests cover | Known limits "
+           "| Docs |", "|---|---|---|---|---|---|---|---|---|"]
+    for title, kinds in DEVICE_GROUPS:
+        rows = [e for e in impl if e["kind"] in kinds]
+        if not rows:
+            continue
+        L += ["", f"## {title}", "", *hdr]
+        for e in rows:
+            ev = ", ".join(f"[{Path(p).name if Path(p).name != 'results.md' else Path(p).parent.name}]"
+                           f"({_link(p, page)})" for p in e["real_data_evidence"])
+            covers = _cell(e["test_covers"]) + (f" Evidence: {ev}." if ev else "")
+            hw = f" Devices: {', '.join(e['hardware_tested'])}." if e["hardware_tested"] else ""
+            extra = f" (extra `[{e['extra']}]`)" if e.get("extra") else ""
+            L.append(f"| {_cell(e['target'])}{extra} | `{e['id']}` | {e['signal']} | "
+                     f"{', '.join(e['transport'])} | `{e['status']}` | `{e['support']}` | {covers}{hw} | "
+                     f"{_cell(e['limits'])} | [docs]({_link(e['docs'], page)}) |")
+    L += ["", "## Planned (no code, not supported)", "",
+          "These rows have no code. Their support is `untested`. Each row names its roadmap item.", "",
+          "| Device, dataset or format | Id | Kind | Modality | Support | Roadmap |", "|---|---|---|---|---|---|"]
+    L += [f"| {_cell(e['target'])} | `{e['id']}` | {e['kind']} | {e['signal']} | `{e['support']}` | "
+          f"{e['roadmap']} |" for e in planned]
+    L += ["", "## Add or change a row", "",
+          "Edit the `ADAPTER_INFO` of the adapter module (fields `status`, `support`, `hardware_tested`, "
+          "`real_data_evidence`, `transport`, `test_covers`, `limits`), then run "
+          "`python -m fidetype.adapters.registry`. Do not edit this page. See "
+          "[CONTRIBUTING.md, section 7](../CONTRIBUTING.md#7-adapters-add-a-decoder-or-a-device)."]
+    return "\n".join(L) + "\n"
+
+
 def render_json(entries: list[dict[str, Any]]) -> str:
     doc = {"schema": SCHEMA, "generated_by": "python -m fidetype.adapters.registry", "status_meaning": STATUS_TEXT,
-           "kinds": KINDS, "adapters": entries}
+           "support_meaning": SUPPORT_TEXT, "transports": TRANSPORTS, "kinds": KINDS, "adapters": entries}
     return json.dumps(doc, indent=2, ensure_ascii=False) + "\n"
 
 
@@ -305,7 +464,7 @@ def outputs(root: Path = ROOT) -> dict[Path, str]:
     errs = validate(entries, root)
     if errs:
         raise ValueError("invalid adapter registry:\n  " + "\n  ".join(errs))
-    return {DOC_MD: render_md(entries), DOC_JSON: render_json(entries)}
+    return {DOC_MD: render_md(entries), DOC_JSON: render_json(entries), DOC_DEVICES: render_devices_md(entries)}
 
 
 def check(root: Path = ROOT) -> list[str]:
@@ -342,7 +501,8 @@ def main(argv: list[str] | None = None) -> int:
                                  description="Build the adapter catalogue, check it, or copy the adapter template.")
     ap.add_argument("command", nargs="?", choices=["build", "new"], default="build")
     ap.add_argument("id", nargs="?", help="new: the adapter id (kebab-case)")
-    ap.add_argument("--check", action="store_true", help="fail if docs/adapters.md or docs/adapters.json is stale")
+    ap.add_argument("--check", action="store_true",
+                    help="fail if docs/adapters.md, docs/adapters.json or docs/device-support.md is stale")
     a = ap.parse_args(argv)
     if a.command == "new":
         if not a.id:

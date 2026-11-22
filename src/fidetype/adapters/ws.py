@@ -70,6 +70,12 @@ ADAPTER_INFO = {
     "target": "WebSocket binding nts-ws/0.1 (FEP-0004): NTS in both directions, decisions out",
     "licence": "Code Apache-2.0. websockets is BSD-3-Clause.",
     "tests": ["tests/test_adapter_ws.py", "tests/test_conformance_capture.py"], "docs": "wiki/concepts/websocket-input.md",
+    "support": "replay-only", "transport": ["websocket"],
+    "real_data_evidence": ["experiments/2026-11-13-m6-11-ws/b2t_replay_ws.py"],
+    "test_covers": "CI: sans-IO cores (order, gaps, resume, auth) and a real server and client on "
+                   "localhost with synthetic streams. Real: the 816 Brain-to-Text '25 test trials "
+                   "over WebSocket, same decisions as the in-process replay (M6-11, local).",
+    "limits": "Localhost only; no test across a real network.",
 }
 
 ADAPTER_VERSION = "0.1"

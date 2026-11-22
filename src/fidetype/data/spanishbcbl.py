@@ -53,6 +53,11 @@ ADAPTER_INFO = {
     "target": "SpanishBCBL typing MEG: file discovery, behavioural logs, clock alignment, typed text",
     "licence": "Code Apache-2.0. Data CC BY-NC 4.0 (research only). Brain2Qwerty loader (CC BY-NC): not copied.",
     "tests": ["tests/test_data_spanishbcbl.py"], "docs": "wiki/entities/spanishbcbl-dataset.md",
+    "support": "replay-only", "transport": ["dataset"],
+    "real_data_evidence": ["tests/test_data_spanishbcbl.py"],
+    "test_covers": "CI: synthetic file names, logs and clocks. Real: one finished S25 block of the "
+                   "local cache (integration test, skipped in CI).",
+    "limits": "Data CC BY-NC 4.0: research only. Needs MNE for the raw MEG files.",
 }
 
 LICENCE_NOTICE = (

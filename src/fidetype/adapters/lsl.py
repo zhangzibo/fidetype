@@ -154,6 +154,12 @@ ADAPTER_INFO = {
     "licence": "Code Apache-2.0. pylsl and liblsl are MIT. No LSL code copied.",
     "tests": ["tests/test_adapter_lsl.py", "tests/test_lsl_reconnect.py", "tests/test_lsl_open_timeout.py"],
     "docs": "wiki/concepts/lsl-input.md",
+    "support": "synthetic-only", "transport": ["lsl"],
+    "real_data_evidence": [],
+    "test_covers": "CI: fake inlets (header mapping, clock correction, gaps, loss, reconnect) and a "
+                   "real pylsl outlet -> inlet loopback with synthetic streams.",
+    "limits": "The NTS-over-LSL path has not carried real decoder output yet (the raw-signal LSL path"
+              " has: lsl-signal-source). One machine only (localhost).",
 }
 
 ADAPTER_VERSION = "0.1"

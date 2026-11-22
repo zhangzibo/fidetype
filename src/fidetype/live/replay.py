@@ -36,6 +36,12 @@ ADAPTER_INFO = {
     "target": "KT-sEMG recording replayed as live raw-signal LSL streams (fidetype live replay-kt)",
     "licence": "Code Apache-2.0. Data CC BY 4.0 (copyright 2021 Nokia). pylsl is MIT.",
     "tests": ["tests/test_live.py", "tools/ci/kt_lsl_replay.py"], "docs": "docs/live-decode.md",
+    "support": "replay-only", "transport": ["dataset", "lsl"],
+    "real_data_evidence": ["tools/ci/kt_lsl_replay.py"],
+    "test_covers": "CI: the real KT-sEMG run3 (77 s, 32 channels, 2000 Hz) replayed over a real LSL "
+                   "loopback into fidetype live; the NTS output is checked.",
+    "limits": "A replay of a recording, not a live device. The guard never commits on 77 s (in-sample"
+              " plumbing model).",
 }
 
 __all__ = ["publish_signal", "replay_kt"]

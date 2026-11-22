@@ -61,7 +61,7 @@ fidetype live --source brainflow --board ganglion --serial-port COM4            
 - A board has no key-onset markers. So `--source brainflow` uses **fixed timing**: one window every `hop_s` seconds (model card; `--hop` changes it).
 - `--kind eeg|emg|exg` selects the board channels. The model must have the same channel count and sample rate as the board; else the command stops with a clear message.
 - The BrainFlow Synthetic board makes sine waves and noise. They carry no text. The correct output is **no commit**. The command prints a note about this.
-- Real OpenBCI boards are **not tested** (no hardware; roadmap P4-06, externally blocked).
+- Real OpenBCI boards are **not tested** (no hardware; roadmap P4-06, externally blocked). The support level of each source and reader is in the [device support matrix](device-support.md).
 
 The NTS header carries the board as vendor keys `brainflow.board_id` and `brainflow.board_name` (NTS MET-3; roadmap P4-09).
 

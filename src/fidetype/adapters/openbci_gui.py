@@ -54,6 +54,13 @@ ADAPTER_INFO = {
     "tests": ["tests/test_adapter_openbci_gui.py", "tests/test_adapter_files_real.py",
               "tests/test_adapter_openbci_gui_real.py"],
     "docs": "docs/adapters.md#openbci-gui",
+    "support": "replay-only", "transport": ["file"],
+    "real_data_evidence": ["tests/test_adapter_files_real.py", "tests/test_adapter_openbci_gui_real.py"],
+    "test_covers": "CI: synthetic GUI files and packet drops (Sample Index jumps). Real: the OpenBCI "
+                   "GUI v6 sample file (Cyton, millisecond time stamps) and two GUI v5 recordings "
+                   "(Cyton 8 ch; Cyton + Daisy 16 ch), local tests.",
+    "limits": "No real recording with non-zero markers (P4-19). The Ganglion Sample Index rule is not"
+              " checked (P4-20). GUI v4 files are refused. A file, not a live board.",
 }
 
 

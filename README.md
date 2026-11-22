@@ -70,6 +70,7 @@ NTS adds one thing that telemetry does not need: a **trust layer**. For each utt
 | Trust layer | Calibration, conformal sets, a hallucination guard and a decision policy | `fidetype.trust` ([concept](docs/concepts.md#trust-layer)) |
 | Conformance | Golden vectors and checks for producers and consumers, per profile | [`spec/conformance/`](spec/conformance/) ([guide](docs/conformance.md)) |
 | Benchmark | Scores neural text entry from NTS files on public datasets | [`benchmark/`](benchmark/README.md) |
+| Devices | Which devices, recording files and public datasets work, on what data each adapter ran, known limits. Generated from the adapter metadata | [Device support matrix](docs/device-support.md) |
 
 More: [docs/concepts.md](docs/concepts.md) and the [diagram page](wiki/diagrams/index.html) (open it through `node tools/serve.js`).
 

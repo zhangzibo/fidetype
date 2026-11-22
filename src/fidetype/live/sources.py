@@ -47,11 +47,22 @@ ADAPTER_INFO = [
     {"id": "lsl-signal-source", "kind": "device-source", "signal": "any", "status": "tested", "extra": "lsl",
      "target": "Any raw-signal LSL stream and its marker stream (LSLSource of fidetype live; reconnect P4-11)",
      "licence": "Code Apache-2.0. pylsl is MIT.", "tests": ["tests/test_live_reconnect.py", "tests/test_live.py"],
-     "docs": "docs/live-decode.md"},
+     "docs": "docs/live-decode.md",
+     "support": "replay-only", "transport": ["lsl"],
+     "real_data_evidence": ["tools/ci/kt_lsl_replay.py"],
+     "test_covers": "CI: the synthetic typist over fake inlets and a real pylsl loopback (loss and "
+                    "reconnect). The CI job replays the real KT-sEMG run3 over LSL into fidetype live"
+                    " --source lsl.",
+     "limits": "No real amplifier has sent its LSL stream to it (P4-06). Clock correction is tested "
+               "on one machine only."},
     {"id": "synthetic-typist", "kind": "synthetic-source", "signal": "other", "status": "tested",
      "target": "Synthetic typist signal with key-press markers (SyntheticSource; no real data)",
      "licence": "Code Apache-2.0. Synthetic data, no licence needed.",
-     "tests": ["tests/test_live.py", "tests/test_adapter_conformance.py"], "docs": "docs/live-decode.md"},
+     "tests": ["tests/test_live.py", "tests/test_adapter_conformance.py"], "docs": "docs/live-decode.md",
+     "support": "synthetic-only", "transport": ["generated"],
+     "real_data_evidence": [],
+     "test_covers": "CI: the synthetic typist signal through fidetype live and the adapter conformance helper.",
+     "limits": "Synthetic signal only. It carries no brain or muscle data. Use it to test the plumbing."},
 ]
 
 __all__ = ["Chunk", "SyntheticSource", "ArraySource", "BrainFlowSource", "LSLSource"]

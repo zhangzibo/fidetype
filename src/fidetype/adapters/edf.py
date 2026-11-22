@@ -33,6 +33,12 @@ ADAPTER_INFO = {
     "target": "EDF, EDF+ (continuous) and BDF files (many EEG, EMG and sleep systems)",
     "licence": "Code Apache-2.0; open format, no third-party code. Data: the licence of each file.",
     "tests": ["tests/test_adapter_edf.py", "tests/test_adapter_files_real.py"], "docs": "docs/adapters.md#edf",
+    "support": "replay-only", "transport": ["file"],
+    "real_data_evidence": ["tests/test_adapter_files_real.py"],
+    "test_covers": "CI: synthetic EDF, EDF+ and BDF files made by the test. Real: PhysioNet EEGMMIDB "
+                   "EDF+ and the MNE test EDF+ / BDF files, in a local test (values equal MNE within "
+                   "one digital step; skipped in CI without the files).",
+    "limits": "Continuous files only: EDF+D (discontinuous) raises an error. A file, not a live device.",
 }
 
 

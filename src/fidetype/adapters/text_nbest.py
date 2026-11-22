@@ -76,6 +76,12 @@ ADAPTER_INFO = {
     "target": "Any text-only decoder: CSV id,text or JSON Lines n-best lists -> hypothesis stream",
     "licence": "Code Apache-2.0. No dependency beyond the standard library and NumPy.",
     "tests": ["tests/test_adapter_text_nbest.py"], "docs": "wiki/concepts/text-nbest-adapter.md",
+    "support": "replay-only", "transport": ["file", "in-process"],
+    "real_data_evidence": ["experiments/2026-11-21-p5-33-withhold/results.md"],
+    "test_covers": "CI: synthetic CSV and JSON Lines n-best files. Real: the item check "
+                   "(normalise_item) on the KT-sEMG LDA n-best lists through the trust drop-in "
+                   "(P5-33, local).",
+    "limits": "The CSV and JSON Lines file readers ran on synthetic files only.",
 }
 
 ADAPTER_NAME = "fidetype.adapters.text_nbest"

@@ -55,6 +55,14 @@ ADAPTER_INFO = {
     "target": "SpanishBCBL typing MEG (Brain2Qwerty data): ConvCTC output per typing segment",
     "licence": "Code Apache-2.0. Data CC BY-NC 4.0: research only, streams carry data.research_only = true.",
     "tests": ["tests/test_conformance.py", "tests/test_restamp_meg.py"], "docs": "wiki/entities/spanishbcbl-dataset.md",
+    "support": "replay-only", "transport": ["dataset"],
+    "real_data_evidence": ["experiments/2026-11-11-m1-09-async-full/results.md",
+                           "src/fidetype/decoders/restamp_meg.py"],
+    "test_covers": "CI: synthetic log-probs (conformance helper and restamp tests). Real: the ConvCTC output "
+                   "on the SpanishBCBL MEG segments of the 5 M1-09 runs (1,074 streams each), rebuilt with "
+                   "this adapter's header by restamp_meg, reach conformance level provenance (M5-13, local).",
+    "limits": "Data CC BY-NC 4.0: research only. Recorded MEG only: MEG needs a lab system, so no "
+              "live MEG source exists.",
 }
 
 ADAPTER_NAME = "fidetype.adapters.spanishbcbl_meg"

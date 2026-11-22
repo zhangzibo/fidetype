@@ -99,6 +99,11 @@ ADAPTER_INFO = {
     "licence": "Code Apache-2.0 (own Intan RHD reader). Data CC BY 4.0. Baseline code CC BY-SA 4.0: not copied.",
     "tests": ["tests/test_adapter_toronto_semg.py", "tests/test_conformance.py"],
     "docs": "wiki/entities/toronto-semg-typing-dataset.md",
+    "support": "replay-only", "transport": ["dataset"],
+    "real_data_evidence": ["tests/test_adapter_toronto_semg.py"],
+    "test_covers": "CI: synthetic Intan RHD files made by a test writer. Real: the Toronto CleanData "
+                   "files, in a local test (skipped in CI without the data).",
+    "limits": "Recorded sessions only; no live Intan source.",
 }
 
 ADAPTER_NAME = "fidetype.adapters.toronto_semg"

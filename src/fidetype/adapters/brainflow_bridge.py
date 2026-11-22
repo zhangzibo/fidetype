@@ -82,6 +82,12 @@ ADAPTER_INFO = {
     "licence": "Code Apache-2.0. brainflow is MIT. Real boards untested (roadmap P4-06, needs hardware).",
     "tests": ["tests/test_brainflow_bridge.py", "tests/test_live.py", "tests/test_adapter_conformance.py"],
     "docs": "wiki/entities/brainflow.md",
+    "support": "synthetic-only", "transport": ["brainflow", "lsl"],
+    "real_data_evidence": [],
+    "test_covers": "CI: the BrainFlow Synthetic board (sine waves and noise, no text) and a fake "
+                   "board; the bridge into a real pylsl loopback.",
+    "limits": "No real board is tested (P4-06, externally blocked: needs hardware). Fixed timing "
+              "only: a board gives no key-onset markers. No reconnect in fidetype live.",
 }
 
 UNIT = "microvolts"

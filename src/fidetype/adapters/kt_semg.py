@@ -77,6 +77,13 @@ ADAPTER_INFO = {
     "target": "KT-sEMG (Nokia, forearm sEMG during natural typing): key presses, LDA reference decoder",
     "licence": "Code Apache-2.0. Data CC BY 4.0 (copyright 2021 Nokia).",
     "tests": ["tests/test_adapter_kt_semg.py", "tests/test_conformance.py"], "docs": "wiki/entities/kt-semg-dataset.md",
+    "support": "replay-only", "transport": ["dataset"],
+    "real_data_evidence": ["tools/ci/kt_lsl_replay.py"],
+    "test_covers": "CI: synthetic key logs and signal files. The CI job tools/ci/kt_lsl_replay.py "
+                   "downloads the real KT-sEMG run3 (SHA-256 pinned) and trains the reference decoder"
+                   " on it.",
+    "limits": "One public dataset. In the CI job the LDA reference decoder is in-sample (a plumbing "
+              "check, no accuracy claim).",
 }
 
 ADAPTER_NAME = "fidetype.adapters.kt_semg"

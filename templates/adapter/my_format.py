@@ -29,12 +29,18 @@ from fidetype.live.sources import ArraySource
 # the adapter has read real files or a real device; then "tested". A "file-reader" also gives
 # "file_patterns": the file-name globs (case-insensitive) with which `fidetype live --source file --path FILE`
 # picks this reader (`--reader my-format` picks it by id). A device source has no file_patterns.
+# Support (P4-15, docs/device-support.md): "synthetic-only" until it has run on real data. Then "replay-only"
+# (real files or a public dataset) or "real-device" (also fill "hardware_tested"), and list the test or result
+# that shows it in "real_data_evidence". The registry refuses a claim without evidence.
 ADAPTER_INFO = {
     "id": "my-format", "kind": "file-reader", "signal": "eeg", "status": "experimental",
     "file_patterns": ["*.my-format.npz"],
     "target": "TODO: the device, file format or dataset",
     "licence": "Code Apache-2.0. TODO: licence of the format, SDK or data.",
     "tests": ["tests/test_adapter_my_format.py"], "docs": "docs/adapters.md",
+    "support": "synthetic-only", "transport": ["file"], "real_data_evidence": [],
+    "test_covers": "CI: synthetic files made by the test.",
+    "limits": "TODO: what does not work yet (no real file read, missing format variants, ...).",
 }
 
 

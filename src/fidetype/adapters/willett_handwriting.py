@@ -94,6 +94,12 @@ ADAPTER_INFO = {
     "licence": "Code Apache-2.0. Data CC0. Reads sentences.mat with SciPy (BSD-3-Clause).",
     "tests": ["tests/test_adapter_willett_handwriting.py", "tests/test_conformance.py"],
     "docs": "wiki/entities/willett-handwriting-2021.md",
+    "support": "replay-only", "transport": ["dataset"],
+    "real_data_evidence": ["experiments/2026-11-16-p6-02-scorer/results.md"],
+    "test_covers": "CI: synthetic sessions. Real: sentences.mat of the public archive (SHA-256 "
+                   "pinned) in the P6-02 benchmark baselines (local).",
+    "limits": "Replays recorded real-time RNN output of one participant (T5). The RNN weights have no"
+              " hash (PV-WEIGHTS fails).",
 }
 
 ADAPTER_NAME = "fidetype.adapters.willett_handwriting"

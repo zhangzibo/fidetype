@@ -83,6 +83,13 @@ ADAPTER_INFO = {
     "target": "Brain-to-Text '25 (Card et al. 2024, participant T15, attempted speech): phoneme CTC logits",
     "licence": "Code Apache-2.0. Data CC0 (Dryad).",
     "tests": ["tests/test_adapter_b2t25.py", "tests/test_conformance.py"], "docs": "wiki/entities/brain-to-text-25.md",
+    "support": "replay-only", "transport": ["dataset"],
+    "real_data_evidence": ["tests/test_adapter_b2t25.py"],
+    "test_covers": "CI: synthetic phoneme logits. Real: the T15 copy-task file of the public dataset,"
+                   " in a local test (skipped in CI without the file).",
+    "limits": "Replays recorded decoder output of one participant (T15). No live intracortical "
+              "source. The published decoder weights have no hash (conformance check PV-WEIGHTS "
+              "fails).",
 }
 
 ADAPTER_NAME = "fidetype.adapters.b2t25"

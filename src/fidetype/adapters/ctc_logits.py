@@ -87,6 +87,13 @@ ADAPTER_INFO = {
     "licence": "Code Apache-2.0. No dependency beyond NumPy.",
     "tests": ["tests/test_adapter_ctc_logits.py", "tests/test_conformance.py", "tests/test_adapter_conformance.py"],
     "docs": "wiki/concepts/ctc-logits-adapter.md",
+    "support": "replay-only", "transport": ["file", "in-process"],
+    "real_data_evidence": ["experiments/2026-11-16-p11-01-emg-decoder/results.md"],
+    "test_covers": "CI: synthetic logits, probabilities and padded batches. Real: the output of our "
+                   "emg2qwerty decoder (P11-01: 2,445 streams, all trust-ready, local run); the "
+                   "pretrained decoders call it on each decode.",
+    "limits": "The input must be CTC scores (T, V) with a known vocabulary. It cannot check that the "
+              "scores come from the decoder that the header names.",
 }
 
 ADAPTER_NAME = "fidetype.adapters.ctc_logits"
