@@ -2,8 +2,8 @@
 title: Public datasets for Fidetype (survey 2026-11-10)
 type: question
 tags: [dataset, licence, emg, eeg, meg, implant, ecog, survey]
-sources: [neural-input-landscape-2026, brain2qwerty-v1, brain2qwerty-code, emg2qwerty]
-updated: 2026-11-21
+sources: [neural-input-landscape-2026, brain2qwerty-v1, brain2qwerty-code, emg2qwerty, generic-neuromotor-interface]
+updated: 2026-11-22
 ---
 
 # Public datasets for Fidetype
@@ -30,7 +30,7 @@ Fit columns: **(a)** decoder training, **(b)** trust-layer / eWPM evaluation (ne
 | [emg2qwerty](../entities/emg2qwerty.md) | wrist sEMG (2 bands) | typing | 108 | 308.4 GB tar.gz (HTTP header); 346 h, 1,135 sessions | 2 kHz, 2 × 16 ch | prompts, keylogger keys + timestamps | open (S3) | CC BY-NC-SA 4.0 (no; README says CC BY-NC 4.0) | ✔ | ✔ | ✔ | ✔ |
 | [KT-sEMG (Nokia)](../entities/kt-semg-dataset.md) | forearm sEMG | free typing | 1 typist | 21.0 GB (88 files, API); >148,000 keystrokes | 2000 Hz, 2 × 16 ch | keystrokes, ms timestamps | open (Harvard Dataverse) | CC BY 4.0 (yes, attribution) | ✔ | ~ | ✔ | ~ |
 | [Toronto sEMG typing](../entities/toronto-semg-typing-dataset.md) | forearm sEMG | typing (letters + space) | 19 | 2.77 GB (1 zip, API); 2 sessions each | 2 kHz, 16 ch | keylogger letters + timestamps | open (Borealis) | CC BY 4.0 (yes, attribution) | ✔ | ~ | ✔ | ~ |
-| generic-neuromotor-interface (Meta) | wrist sEMG | handwriting, gestures, wrist | 100 per task | handwriting 98.8 / 31.5 / 10.4 h (train/val/test) | 2 kHz | prompt start/end times; text labels unclear | open (script) | CC BY-NC 4.0 (no) | ✔ | ~ | ✔ | ✔ |
+| generic-neuromotor-interface (Meta; [paper](../sources/generic-neuromotor-interface.md)) | wrist sEMG | handwriting, gestures, wrist | 100 per task | handwriting 98.8 / 31.5 / 10.4 h (train/val/test) | 2 kHz | prompt start/end times; text labels unclear | open (script) | CC BY-NC 4.0 per repo; paper says BY-NC-SA 4.0 (no) | ✔ | ~ | ✔ | ✔ |
 | emg2pose (Meta) | wrist sEMG | hand pose | 193 | 462.8 GB tar (HTTP header); 370 h | 2 kHz | joint angles | open (S3) | CC BY-NC-SA 4.0 (no) | ✘ | ✘ | ✔ | ✔ |
 | [Willett 2021 handwriting](../entities/willett-handwriting-2021.md) | intracortical (2 × 96 Utah) | attempted handwriting | 1 (T5) | 1.41 GB; 10.7 h, 1,000 sentences, 43,501 characters | binned spikes | sentences, characters, real-time outputs | open (Dryad) | CC0 (yes) | ✔ | ✔ | ✔ | ~ |
 | FALCON H2 | intracortical | handwriting (benchmark copy) | — | 1.22 GB (DANDI 000950) | binned | characters | open (DANDI) | CC BY 4.0 (yes) | ✔ | ~ | ✔ | ✘ |

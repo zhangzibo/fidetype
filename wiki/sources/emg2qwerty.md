@@ -2,8 +2,8 @@
 title: "emg2qwerty: A Large Dataset with Baselines for Touch Typing using Surface Electromyography (Sivakumar et al. 2024)"
 type: source
 tags: [dataset, emg, semg, typing, wrist, ctc, benchmark, personalisation, nc-licence, research-only]
-sources: [emg2qwerty]
-updated: 2026-11-21
+sources: [emg2qwerty, generic-neuromotor-interface]
+updated: 2026-11-22
 ---
 
 # emg2qwerty (paper)
@@ -99,9 +99,10 @@ CER in %, mean ± SD over the 8 test users. Every gain from personalisation and 
 - Our P11-07 causal decoder with an in-beam char LM: 10.10 % ([P11-07 results](../../experiments/2026-11-20-p11-07-emg-beam-lm/results.md)). The matched reference is 6.95 % (with LM), not 11.28 %.
 - Matched-target rule (P11-25, 2026-11-21): a CER is compared only with the published number of the same condition (LM or no LM; causal or 100 ms lookahead). The usability line (about 10 %, p. 9) is a second, separate bar. See [frontier decoder quality](../questions/frontier-decoder-quality.md#matched-emg-decoder-target-p11-25-2026-11-21).
 - Brain2Qwerty v2 cites this paper for a "causal Conformer". The paper does not describe one. See the contradiction note on [Brain2Qwerty v2](brain2qwerty-v2.md#limitations--future-work-authors).
+  - **Verdict (2026-11-22, P11-26): confusion confirmed.** The causal, streaming Conformer for handwriting is in the [CTRL-labs generic neuromotor interface paper](generic-neuromotor-interface.md) (Nature 2025, Methods, PDF p. 16). That paper uses the same sEMG-RD. All eight authors of this paper are among its CTRL-labs co-authors (PDF p. 10). This paper cites its bioRxiv preprint for the hardware (p. 5).
 
 ## Feeds
 - Entities: [emg2qwerty](../entities/emg2qwerty.md), [Meta Neural Band](../entities/meta-neural-band.md), [Meta FAIR Brain & AI](../entities/meta-fair-brain-ai.md).
 - Concepts: [CTC](../concepts/ctc.md), [Synchronous vs asynchronous decoding](../concepts/synchronous-vs-asynchronous-decoding.md), [EEG](../concepts/eeg.md).
 - Questions: [Public datasets](../questions/public-datasets.md), [Frontier decoder quality](../questions/frontier-decoder-quality.md), [Research directions](../questions/research-directions.md).
-- Other sources: [Brain2Qwerty v2](brain2qwerty-v2.md), [Neural input landscape 2026](neural-input-landscape-2026.md).
+- Other sources: [Brain2Qwerty v2](brain2qwerty-v2.md), [Neural input landscape 2026](neural-input-landscape-2026.md), [Generic neuromotor interface (CTRL-labs)](generic-neuromotor-interface.md).

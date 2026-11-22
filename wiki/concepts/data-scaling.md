@@ -2,8 +2,8 @@
 title: Data scaling in non-invasive decoding
 type: concept
 tags: [scaling, data]
-sources: [brain2qwerty-v1, brain2qwerty-v2]
-updated: 2026-11-08
+sources: [brain2qwerty-v1, brain2qwerty-v2, generic-neuromotor-interface]
+updated: 2026-11-22
 ---
 
 # Data scaling
@@ -24,5 +24,7 @@ Invasive BCIs train on thousands of sentences over 10–40 h ([v2](../sources/br
 > **Our take:** If the scaling holds, the bottleneck is data collection, which needs a scanner, rather than modelling. Without a lab, the levers we have are (a) making better use of existing data, through cross-subject and self-supervised pretraining on *all* public MEG, including non-typing datasets such as LibriBrain, and (b) arguing for a shared open data effort. Whether pretraining on public MEG from other tasks transfers to typing is an open question.
 
 > **Our take (2026-11-08):** Our first decoder, trained on about 2.5 h, does not beat a shuffled-MEG control ([decoder M1 results](../questions/decoder-m1-results.md)). This fits the scaling law: at low volume, the async decoder learns only the text prior.
+
+> **Our take (2026-11-22):** wrist sEMG shows the same pattern. The [CTRL-labs generic neuromotor interface paper](../sources/generic-neuromotor-interface.md) fits a power law in participants and parameters for all three tasks (Fig. 2e–g). Its handwriting corpora go from 25 to 6,527 participants (Methods, PDF p. 15).
 
 Related: [MEG](meg.md) · [Model soup](model-soup.md)

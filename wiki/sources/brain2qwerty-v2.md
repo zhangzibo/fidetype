@@ -2,8 +2,8 @@
 title: "Brain2Qwerty v2: Accurate Decoding of Natural Sentences from Non-Invasive Brain Recordings"
 type: source
 tags: [meg, typing, decoding, asynchronous, ctc, llm, scaling]
-sources: [brain2qwerty-v2, emg2qwerty]
-updated: 2026-11-21
+sources: [brain2qwerty-v2, emg2qwerty, generic-neuromotor-interface]
+updated: 2026-11-22
 ---
 
 # Brain2Qwerty v2 (Meta preprint, June 2026)
@@ -131,11 +131,13 @@ Downstream WER correlates with encoder CER (r = 0.78), so **the encoder is the b
 The LLM produces **fluent but wrong** sentences when the encoder signal is weak. For example, it decoded "had she not fallen down the stairs" for the target "cars are not allowed on this road". This raises CER even as WER and SemER improve. The authors note that the decoding objective may need to depend on use (a password vs a dialogue).
 
 ## Limitations / future work (authors)
-1. The model is **not causal** and outputs a sentence only at its end. The authors suggest a causal Conformer, as in [emg2qwerty](../entities/emg2qwerty.md).
+1. The model is **not causal** and outputs a sentence only at its end. The authors suggest a causal Conformer and cite [emg2qwerty](../entities/emg2qwerty.md) for it. The causal Conformer is in fact in the [CTRL-labs generic neuromotor interface paper](generic-neuromotor-interface.md).
 
-   > **Contradiction:** v2 says Sivakumar et al. (2024) used "a causal Conformer with low-latency to decode handwriting" (Discussion, p. 10). The [emg2qwerty paper](emg2qwerty.md) describes a **TDS ConvNet** for **typing**, trained with 100 ms of future context and tested on whole sessions (Sec. 5.1–5.2, pp. 7–8). It does not mention a Conformer. We keep both claims.
+   > **Contradiction:** v2 says Sivakumar et al. (2024) used "a causal Conformer with low-latency to decode handwriting" (Discussion, p. 10). The [emg2qwerty paper](emg2qwerty.md) describes a **TDS ConvNet** for **typing**, trained with 100 ms of future context and tested on whole sessions (Sec. 5.1–5.2, pp. 7–8). It does not mention a Conformer. The reference list resolves "Sivakumar et al., 2024" to emg2qwerty (p. 19). v2 does not cite the CTRL-labs paper. We keep both claims.
 
-   > **Our take:** v2 may mix up emg2qwerty with the CTRL-labs 2024 generic neuromotor interface paper, which covers handwriting. We have not checked that paper.
+   > **Verdict (2026-11-22, gap 179 / P11-26): confusion confirmed.** The [CTRL-labs generic neuromotor interface paper](generic-neuromotor-interface.md) (Nature 2025; bioRxiv 2024) decodes **handwriting** with a **15-layer Conformer** that is **causal**: "self-attention is solely applied to a fixed local window situated directly before the current time step" (Methods, PDF p. 16). FastEmit reduces "the streaming latency" (PDF p. 15). Every part of the v2 phrase fits that paper. None of "Conformer", "causal" or "handwriting" fits emg2qwerty.
+
+   > **Our take:** v2 cites the wrong paper of the same group (same device; all eight emg2qwerty authors are CTRL-labs co-authors). We cannot know the intent. The template for a causal decoder is the CTRL-labs paper.
 
 2. **Inter-subject variability** is large (N-gram CER ranges from 17.1% to 41.0%). The authors' stated priority is better encoders through cross-subject transfer or self-supervised pretraining.
 3. Participants are healthy and typing overtly. Patients have no key presses, so there are no labels for training or fine-tuning.

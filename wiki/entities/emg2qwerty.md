@@ -2,8 +2,8 @@
 title: emg2qwerty (wrist-EMG typing dataset)
 type: entity
 tags: [dataset, emg, typing, public, nc-licence, downloaded, replay-adapter, p11-01-decoder]
-sources: [emg2qwerty, brain2qwerty-v1, brain2qwerty-v2, neural-input-landscape-2026]
-updated: 2026-11-21
+sources: [emg2qwerty, brain2qwerty-v1, brain2qwerty-v2, neural-input-landscape-2026, generic-neuromotor-interface]
+updated: 2026-11-22
 ---
 
 # emg2qwerty
@@ -26,7 +26,7 @@ updated: 2026-11-21
   - Both Brain2Qwerty papers cite it as the model for **continuous, causal decoding** ([v1](../sources/brain2qwerty-v1.md) ref. 42, [v2](../sources/brain2qwerty-v2.md)).
   - It is the *largest public* typing dataset of any modality. It can be decoded with the same CTC machinery.
 
-> **Contradiction:** v2 says this work used "a causal Conformer with low-latency to decode handwriting". The paper describes a **TDS ConvNet** for **typing**, trained with 900 ms past and **100 ms future** context, and tested on whole sessions ([paper](../sources/emg2qwerty.md), Sec. 5.1–5.2 pp. 7–8). It mentions Conformers nowhere.
+> **Contradiction:** v2 says this work used "a causal Conformer with low-latency to decode handwriting". The paper describes a **TDS ConvNet** for **typing**, trained with 900 ms past and **100 ms future** context, and tested on whole sessions ([paper](../sources/emg2qwerty.md), Sec. 5.1–5.2 pp. 7–8). It mentions Conformers nowhere. **Verdict (2026-11-22, P11-26): confusion confirmed.** The causal Conformer for handwriting is in the sibling [CTRL-labs generic neuromotor interface paper](../sources/generic-neuromotor-interface.md) (Methods, PDF p. 16). v2 does not cite that paper.
 
 > **Contradiction:** earlier wiki text called the hardware "affordable". That holds for consumer EMG bands (for example the [Meta Neural Band](meta-neural-band.md), which gives no raw EMG). It does not hold for the sEMG-RD that recorded this data (paper, p. 9).
 
