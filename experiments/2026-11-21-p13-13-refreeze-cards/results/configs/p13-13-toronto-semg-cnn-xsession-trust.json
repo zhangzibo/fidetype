@@ -1,0 +1,50 @@
+{
+ "schema": "fidetype.p13-13.card-config/0.1",
+ "config_id": "tcfg-4f186d334bef2f50",
+ "cards": [
+  "v0.1/toronto-semg-composed__cnn-xsession__trust",
+  "v0.2/toronto-semg__cnn-xsession__trust"
+ ],
+ "config": {
+  "name": "p13-13-toronto-semg-cnn-xsession-trust",
+  "frame_temperature": 1.777648155892916,
+  "sentence_temperature": 5.42059653311194,
+  "char_temperature": 1.0,
+  "conformal_alpha": 0.1,
+  "conformal_score": "lac",
+  "conformal_mode": "conditional",
+  "conformal_q": 0.9114739467746436,
+  "guard": {
+   "low_conf_threshold": 0.5,
+   "consistency_k": 5,
+   "cluster_max_word_edits": 0,
+   "w_evidence": 1.0,
+   "w_consistency": 1.0,
+   "combine": "max"
+  },
+  "policy": {
+   "commit_p": 0.3,
+   "commit_max_risk": 1.0,
+   "commit_max_set": null,
+   "offer_max_k": 2,
+   "abstain_risk": 1.01,
+   "final_fallback": "offer",
+   "offer_words": false,
+   "word_conf_threshold": 0.9,
+   "offer_words_k": 3,
+   "offer_words_min_conf": 0.0,
+   "offer_words_max_slots": null
+  },
+  "use_guard": true,
+  "word_max_alternatives": 5,
+  "policy_class": "trust",
+  "risk_control": {},
+  "recipe": {
+   "refit": "P13-13 (gap 85)",
+   "build": "experiments/2026-11-17-p6-02b-v02-entries/run.py stage toronto (v0.2) = experiments/2026-11-11-emg-toronto/trust.py (v0.1)",
+   "decoder": "key-press CNN (xsession) + English char 6-gram beam, lm_weight 1.0",
+   "fit": "TrustPipeline.fit(fit half A, fit half B), composed sentences, seed 0, max_wrong_commit 0.05"
+  },
+  "schema": "fidetype.trust-config/0.1"
+ }
+}

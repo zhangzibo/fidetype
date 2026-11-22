@@ -108,6 +108,27 @@
   ],
   "b2t25-t15-copytask__ours__crc.json": [
    {
+    "commit": null,
+    "date": null,
+    "subject": "in the commit that holds this page",
+    "action": "changed",
+    "changed": [
+     "rerun"
+    ],
+    "schema": "fidetype.benchmark.result/0.1",
+    "split_version": "tracks-v0.1",
+    "split_digest": "f3a17b32b24eff560b33c74e3b24beaa604f265216239757881940e72ae5c812",
+    "scorer_version": "benchmark-0.1",
+    "metric_versions": {
+     "safe_wpm": "safe-wpm/0.1"
+    },
+    "rerun_level": "rescore",
+    "ewpm": 11.553005605711514,
+    "safe_wpm": 4.900806083076966,
+    "safe_wpm_status": "above-alpha",
+    "seq": -1
+   },
+   {
     "commit": "a7f0b6b",
     "date": "2026-11-19",
     "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
@@ -233,6 +254,27 @@
   ],
   "b2t25-t15-copytask__ours__ltt.json": [
    {
+    "commit": null,
+    "date": null,
+    "subject": "in the commit that holds this page",
+    "action": "changed",
+    "changed": [
+     "rerun"
+    ],
+    "schema": "fidetype.benchmark.result/0.1",
+    "split_version": "tracks-v0.1",
+    "split_digest": "f3a17b32b24eff560b33c74e3b24beaa604f265216239757881940e72ae5c812",
+    "scorer_version": "benchmark-0.1",
+    "metric_versions": {
+     "safe_wpm": "safe-wpm/0.1"
+    },
+    "rerun_level": "rescore",
+    "ewpm": 11.51463409412569,
+    "safe_wpm": 4.047852720654133,
+    "safe_wpm_status": "certified",
+    "seq": -1
+   },
+   {
     "commit": "a7f0b6b",
     "date": "2026-11-19",
     "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
@@ -357,6 +399,27 @@
    }
   ],
   "b2t25-t15-copytask__ours__trust.json": [
+   {
+    "commit": null,
+    "date": null,
+    "subject": "in the commit that holds this page",
+    "action": "changed",
+    "changed": [
+     "rerun"
+    ],
+    "schema": "fidetype.benchmark.result/0.1",
+    "split_version": "tracks-v0.1",
+    "split_digest": "f3a17b32b24eff560b33c74e3b24beaa604f265216239757881940e72ae5c812",
+    "scorer_version": "benchmark-0.1",
+    "metric_versions": {
+     "safe_wpm": "safe-wpm/0.1"
+    },
+    "rerun_level": "rescore",
+    "ewpm": 11.545649629165746,
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "seq": -1
+   },
    {
     "commit": "a7f0b6b",
     "date": "2026-11-19",
@@ -564,6 +627,27 @@
   ],
   "b2t25-t15-copytask__published__crc.json": [
    {
+    "commit": null,
+    "date": null,
+    "subject": "in the commit that holds this page",
+    "action": "changed",
+    "changed": [
+     "rerun"
+    ],
+    "schema": "fidetype.benchmark.result/0.1",
+    "split_version": "tracks-v0.1",
+    "split_digest": "f3a17b32b24eff560b33c74e3b24beaa604f265216239757881940e72ae5c812",
+    "scorer_version": "benchmark-0.1",
+    "metric_versions": {
+     "safe_wpm": "safe-wpm/0.1"
+    },
+    "rerun_level": "rescore",
+    "ewpm": 18.7985492726047,
+    "safe_wpm": 13.422448647918946,
+    "safe_wpm_status": "certified",
+    "seq": -1
+   },
+   {
     "commit": "a7f0b6b",
     "date": "2026-11-19",
     "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
@@ -689,6 +773,27 @@
   ],
   "b2t25-t15-copytask__published__ltt.json": [
    {
+    "commit": null,
+    "date": null,
+    "subject": "in the commit that holds this page",
+    "action": "changed",
+    "changed": [
+     "rerun"
+    ],
+    "schema": "fidetype.benchmark.result/0.1",
+    "split_version": "tracks-v0.1",
+    "split_digest": "f3a17b32b24eff560b33c74e3b24beaa604f265216239757881940e72ae5c812",
+    "scorer_version": "benchmark-0.1",
+    "metric_versions": {
+     "safe_wpm": "safe-wpm/0.1"
+    },
+    "rerun_level": "rescore",
+    "ewpm": 18.729233593282384,
+    "safe_wpm": 12.241472849274949,
+    "safe_wpm_status": "certified",
+    "seq": -1
+   },
+   {
     "commit": "a7f0b6b",
     "date": "2026-11-19",
     "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
@@ -813,6 +918,27 @@
    }
   ],
   "b2t25-t15-copytask__published__trust.json": [
+   {
+    "commit": null,
+    "date": null,
+    "subject": "in the commit that holds this page",
+    "action": "changed",
+    "changed": [
+     "rerun"
+    ],
+    "schema": "fidetype.benchmark.result/0.1",
+    "split_version": "tracks-v0.1",
+    "split_digest": "f3a17b32b24eff560b33c74e3b24beaa604f265216239757881940e72ae5c812",
+    "scorer_version": "benchmark-0.1",
+    "metric_versions": {
+     "safe_wpm": "safe-wpm/0.1"
+    },
+    "rerun_level": "rescore",
+    "ewpm": 18.767072914257195,
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "seq": -1
+   },
    {
     "commit": "a7f0b6b",
     "date": "2026-11-19",
@@ -1020,6 +1146,27 @@
   ],
   "spanishbcbl-meg-async__convctc-m-async__crc.json": [
    {
+    "commit": null,
+    "date": null,
+    "subject": "in the commit that holds this page",
+    "action": "changed",
+    "changed": [
+     "rerun"
+    ],
+    "schema": "fidetype.benchmark.result/0.1",
+    "split_version": "tracks-v0.1",
+    "split_digest": "28ba9fb27d66d1a72282a837450a7bae2cbd75588c5d5ca4a69dee2d202d808c",
+    "scorer_version": "benchmark-0.1",
+    "metric_versions": {
+     "safe_wpm": "safe-wpm/0.1"
+    },
+    "rerun_level": "rescore",
+    "ewpm": 3.1978330883464774,
+    "safe_wpm": 0.029275959301280442,
+    "safe_wpm_status": "certified",
+    "seq": -1
+   },
+   {
     "commit": "a7f0b6b",
     "date": "2026-11-19",
     "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
@@ -1145,6 +1292,27 @@
   ],
   "spanishbcbl-meg-async__convctc-m-async__ltt.json": [
    {
+    "commit": null,
+    "date": null,
+    "subject": "in the commit that holds this page",
+    "action": "changed",
+    "changed": [
+     "rerun"
+    ],
+    "schema": "fidetype.benchmark.result/0.1",
+    "split_version": "tracks-v0.1",
+    "split_digest": "28ba9fb27d66d1a72282a837450a7bae2cbd75588c5d5ca4a69dee2d202d808c",
+    "scorer_version": "benchmark-0.1",
+    "metric_versions": {
+     "safe_wpm": "safe-wpm/0.1"
+    },
+    "rerun_level": "rescore",
+    "ewpm": 3.197898124879401,
+    "safe_wpm": 0.029166901195842948,
+    "safe_wpm_status": "certified",
+    "seq": -1
+   },
+   {
     "commit": "a7f0b6b",
     "date": "2026-11-19",
     "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
@@ -1269,6 +1437,27 @@
    }
   ],
   "spanishbcbl-meg-async__convctc-m-async__trust.json": [
+   {
+    "commit": null,
+    "date": null,
+    "subject": "in the commit that holds this page",
+    "action": "changed",
+    "changed": [
+     "rerun"
+    ],
+    "schema": "fidetype.benchmark.result/0.1",
+    "split_version": "tracks-v0.1",
+    "split_digest": "28ba9fb27d66d1a72282a837450a7bae2cbd75588c5d5ca4a69dee2d202d808c",
+    "scorer_version": "benchmark-0.1",
+    "metric_versions": {
+     "safe_wpm": "safe-wpm/0.1"
+    },
+    "rerun_level": "rescore",
+    "ewpm": 3.202971571465368,
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "seq": -1
+   },
    {
     "commit": "a7f0b6b",
     "date": "2026-11-19",
@@ -1476,6 +1665,27 @@
   ],
   "toronto-semg-composed__cnn-calib__crc.json": [
    {
+    "commit": null,
+    "date": null,
+    "subject": "in the commit that holds this page",
+    "action": "changed",
+    "changed": [
+     "rerun"
+    ],
+    "schema": "fidetype.benchmark.result/0.1",
+    "split_version": "tracks-v0.1",
+    "split_digest": "ef8a7a2be68aff5fa7c5fae7988ceee1f63999781292dab26ba0e7f9515739fe",
+    "scorer_version": "benchmark-0.1",
+    "metric_versions": {
+     "safe_wpm": "safe-wpm/0.1"
+    },
+    "rerun_level": "rescore",
+    "ewpm": 7.976984532053387,
+    "safe_wpm": 0.5473422892202503,
+    "safe_wpm_status": "certified",
+    "seq": -1
+   },
+   {
     "commit": "a7f0b6b",
     "date": "2026-11-19",
     "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
@@ -1599,6 +1809,27 @@
    }
   ],
   "toronto-semg-composed__cnn-calib__trust.json": [
+   {
+    "commit": null,
+    "date": null,
+    "subject": "in the commit that holds this page",
+    "action": "changed",
+    "changed": [
+     "rerun"
+    ],
+    "schema": "fidetype.benchmark.result/0.1",
+    "split_version": "tracks-v0.1",
+    "split_digest": "ef8a7a2be68aff5fa7c5fae7988ceee1f63999781292dab26ba0e7f9515739fe",
+    "scorer_version": "benchmark-0.1",
+    "metric_versions": {
+     "safe_wpm": "safe-wpm/0.1"
+    },
+    "rerun_level": "rescore",
+    "ewpm": 8.02440661976506,
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "seq": -1
+   },
    {
     "commit": "a7f0b6b",
     "date": "2026-11-19",
@@ -1806,6 +2037,27 @@
   ],
   "toronto-semg-composed__cnn-xsession__crc.json": [
    {
+    "commit": null,
+    "date": null,
+    "subject": "in the commit that holds this page",
+    "action": "changed",
+    "changed": [
+     "rerun"
+    ],
+    "schema": "fidetype.benchmark.result/0.1",
+    "split_version": "tracks-v0.1",
+    "split_digest": "ef8a7a2be68aff5fa7c5fae7988ceee1f63999781292dab26ba0e7f9515739fe",
+    "scorer_version": "benchmark-0.1",
+    "metric_versions": {
+     "safe_wpm": "safe-wpm/0.1"
+    },
+    "rerun_level": "rescore",
+    "ewpm": 4.676921023830239,
+    "safe_wpm": 0.25189348854789406,
+    "safe_wpm_status": "certified",
+    "seq": -1
+   },
+   {
     "commit": "a7f0b6b",
     "date": "2026-11-19",
     "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
@@ -1929,6 +2181,27 @@
    }
   ],
   "toronto-semg-composed__cnn-xsession__trust.json": [
+   {
+    "commit": null,
+    "date": null,
+    "subject": "in the commit that holds this page",
+    "action": "changed",
+    "changed": [
+     "rerun"
+    ],
+    "schema": "fidetype.benchmark.result/0.1",
+    "split_version": "tracks-v0.1",
+    "split_digest": "ef8a7a2be68aff5fa7c5fae7988ceee1f63999781292dab26ba0e7f9515739fe",
+    "scorer_version": "benchmark-0.1",
+    "metric_versions": {
+     "safe_wpm": "safe-wpm/0.1"
+    },
+    "rerun_level": "rescore",
+    "ewpm": 4.676921023830239,
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "seq": -1
+   },
    {
     "commit": "a7f0b6b",
     "date": "2026-11-19",
@@ -2136,6 +2409,27 @@
   ],
   "toronto-semg-composed__cnn-xsubject__crc.json": [
    {
+    "commit": null,
+    "date": null,
+    "subject": "in the commit that holds this page",
+    "action": "changed",
+    "changed": [
+     "rerun"
+    ],
+    "schema": "fidetype.benchmark.result/0.1",
+    "split_version": "tracks-v0.1",
+    "split_digest": "ef8a7a2be68aff5fa7c5fae7988ceee1f63999781292dab26ba0e7f9515739fe",
+    "scorer_version": "benchmark-0.1",
+    "metric_versions": {
+     "safe_wpm": "safe-wpm/0.1"
+    },
+    "rerun_level": "rescore",
+    "ewpm": 4.0800135493987755,
+    "safe_wpm": 0.0,
+    "safe_wpm_status": "vacuous",
+    "seq": -1
+   },
+   {
     "commit": "a7f0b6b",
     "date": "2026-11-19",
     "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
@@ -2259,6 +2553,27 @@
    }
   ],
   "toronto-semg-composed__cnn-xsubject__trust.json": [
+   {
+    "commit": null,
+    "date": null,
+    "subject": "in the commit that holds this page",
+    "action": "changed",
+    "changed": [
+     "rerun"
+    ],
+    "schema": "fidetype.benchmark.result/0.1",
+    "split_version": "tracks-v0.1",
+    "split_digest": "ef8a7a2be68aff5fa7c5fae7988ceee1f63999781292dab26ba0e7f9515739fe",
+    "scorer_version": "benchmark-0.1",
+    "metric_versions": {
+     "safe_wpm": "safe-wpm/0.1"
+    },
+    "rerun_level": "rescore",
+    "ewpm": 4.0800135493987755,
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "seq": -1
+   },
    {
     "commit": "a7f0b6b",
     "date": "2026-11-19",
@@ -2783,6 +3098,27 @@
   ],
   "b2t25-t15__ours__crc.json": [
    {
+    "commit": null,
+    "date": null,
+    "subject": "in the commit that holds this page",
+    "action": "changed",
+    "changed": [
+     "rerun"
+    ],
+    "schema": "fidetype.benchmark.result/0.2",
+    "split_version": "tracks-v0.2",
+    "split_digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb",
+    "scorer_version": "0.2",
+    "metric_versions": {
+     "safe_wpm": "safe-wpm/0.1"
+    },
+    "rerun_level": "rescore",
+    "ewpm": 11.238716639032663,
+    "safe_wpm": 4.900806083076966,
+    "safe_wpm_status": "above-alpha",
+    "seq": -1
+   },
+   {
     "commit": "a7f0b6b",
     "date": "2026-11-19",
     "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
@@ -2867,6 +3203,27 @@
   ],
   "b2t25-t15__ours__ltt.json": [
    {
+    "commit": null,
+    "date": null,
+    "subject": "in the commit that holds this page",
+    "action": "changed",
+    "changed": [
+     "rerun"
+    ],
+    "schema": "fidetype.benchmark.result/0.2",
+    "split_version": "tracks-v0.2",
+    "split_digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb",
+    "scorer_version": "0.2",
+    "metric_versions": {
+     "safe_wpm": "safe-wpm/0.1"
+    },
+    "rerun_level": "rescore",
+    "ewpm": 11.168567365404328,
+    "safe_wpm": 4.047852720654133,
+    "safe_wpm_status": "certified",
+    "seq": -1
+   },
+   {
     "commit": "a7f0b6b",
     "date": "2026-11-19",
     "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
@@ -2950,6 +3307,27 @@
    }
   ],
   "b2t25-t15__ours__trust.json": [
+   {
+    "commit": null,
+    "date": null,
+    "subject": "in the commit that holds this page",
+    "action": "changed",
+    "changed": [
+     "rerun"
+    ],
+    "schema": "fidetype.benchmark.result/0.2",
+    "split_version": "tracks-v0.2",
+    "split_digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb",
+    "scorer_version": "0.2",
+    "metric_versions": {
+     "safe_wpm": "safe-wpm/0.1"
+    },
+    "rerun_level": "rescore",
+    "ewpm": 11.233809455394123,
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "seq": -1
+   },
    {
     "commit": "a7f0b6b",
     "date": "2026-11-19",
@@ -3119,6 +3497,27 @@
   ],
   "b2t25-t15__published__crc.json": [
    {
+    "commit": null,
+    "date": null,
+    "subject": "in the commit that holds this page",
+    "action": "changed",
+    "changed": [
+     "rerun"
+    ],
+    "schema": "fidetype.benchmark.result/0.2",
+    "split_version": "tracks-v0.2",
+    "split_digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb",
+    "scorer_version": "0.2",
+    "metric_versions": {
+     "safe_wpm": "safe-wpm/0.1"
+    },
+    "rerun_level": "rescore",
+    "ewpm": 17.06245654702212,
+    "safe_wpm": 13.422448647918946,
+    "safe_wpm_status": "certified",
+    "seq": -1
+   },
+   {
     "commit": "a7f0b6b",
     "date": "2026-11-19",
     "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
@@ -3203,6 +3602,27 @@
   ],
   "b2t25-t15__published__ltt.json": [
    {
+    "commit": null,
+    "date": null,
+    "subject": "in the commit that holds this page",
+    "action": "changed",
+    "changed": [
+     "rerun"
+    ],
+    "schema": "fidetype.benchmark.result/0.2",
+    "split_version": "tracks-v0.2",
+    "split_digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb",
+    "scorer_version": "0.2",
+    "metric_versions": {
+     "safe_wpm": "safe-wpm/0.1"
+    },
+    "rerun_level": "rescore",
+    "ewpm": 16.78149249277393,
+    "safe_wpm": 12.241472849274949,
+    "safe_wpm_status": "certified",
+    "seq": -1
+   },
+   {
     "commit": "a7f0b6b",
     "date": "2026-11-19",
     "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
@@ -3286,6 +3706,27 @@
    }
   ],
   "b2t25-t15__published__trust.json": [
+   {
+    "commit": null,
+    "date": null,
+    "subject": "in the commit that holds this page",
+    "action": "changed",
+    "changed": [
+     "rerun"
+    ],
+    "schema": "fidetype.benchmark.result/0.2",
+    "split_version": "tracks-v0.2",
+    "split_digest": "1120f8195e5021adc8833d06c63e984ad2463b8c0d21acf5dea86c7830b1ceeb",
+    "scorer_version": "0.2",
+    "metric_versions": {
+     "safe_wpm": "safe-wpm/0.1"
+    },
+    "rerun_level": "rescore",
+    "ewpm": 16.929380303760855,
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "seq": -1
+   },
    {
     "commit": "a7f0b6b",
     "date": "2026-11-19",
@@ -3938,6 +4379,27 @@
   ],
   "spanishbcbl-meg__convctc-m-async__crc.json": [
    {
+    "commit": null,
+    "date": null,
+    "subject": "in the commit that holds this page",
+    "action": "changed",
+    "changed": [
+     "rerun"
+    ],
+    "schema": "fidetype.benchmark.result/0.2",
+    "split_version": "tracks-v0.2",
+    "split_digest": "5fc96f5229c8d541b9ae828ac24cb6b4edd488b7338f4a30261be9fd4dc04ef6",
+    "scorer_version": "0.2",
+    "metric_versions": {
+     "safe_wpm": "safe-wpm/0.1"
+    },
+    "rerun_level": "rescore",
+    "ewpm": 3.1128806371568642,
+    "safe_wpm": 0.029275959301280435,
+    "safe_wpm_status": "certified",
+    "seq": -1
+   },
+   {
     "commit": "a7f0b6b",
     "date": "2026-11-19",
     "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
@@ -4022,6 +4484,27 @@
   ],
   "spanishbcbl-meg__convctc-m-async__ltt.json": [
    {
+    "commit": null,
+    "date": null,
+    "subject": "in the commit that holds this page",
+    "action": "changed",
+    "changed": [
+     "rerun"
+    ],
+    "schema": "fidetype.benchmark.result/0.2",
+    "split_version": "tracks-v0.2",
+    "split_digest": "5fc96f5229c8d541b9ae828ac24cb6b4edd488b7338f4a30261be9fd4dc04ef6",
+    "scorer_version": "0.2",
+    "metric_versions": {
+     "safe_wpm": "safe-wpm/0.1"
+    },
+    "rerun_level": "rescore",
+    "ewpm": 3.1131757179306496,
+    "safe_wpm": 0.029166901195842945,
+    "safe_wpm_status": "certified",
+    "seq": -1
+   },
+   {
     "commit": "a7f0b6b",
     "date": "2026-11-19",
     "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
@@ -4105,6 +4588,27 @@
    }
   ],
   "spanishbcbl-meg__convctc-m-async__trust.json": [
+   {
+    "commit": null,
+    "date": null,
+    "subject": "in the commit that holds this page",
+    "action": "changed",
+    "changed": [
+     "rerun"
+    ],
+    "schema": "fidetype.benchmark.result/0.2",
+    "split_version": "tracks-v0.2",
+    "split_digest": "5fc96f5229c8d541b9ae828ac24cb6b4edd488b7338f4a30261be9fd4dc04ef6",
+    "scorer_version": "0.2",
+    "metric_versions": {
+     "safe_wpm": "safe-wpm/0.1"
+    },
+    "rerun_level": "rescore",
+    "ewpm": 3.11436890624909,
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "seq": -1
+   },
    {
     "commit": "a7f0b6b",
     "date": "2026-11-19",
@@ -4274,6 +4778,27 @@
   ],
   "toronto-semg__cnn-calib__crc.json": [
    {
+    "commit": null,
+    "date": null,
+    "subject": "in the commit that holds this page",
+    "action": "changed",
+    "changed": [
+     "rerun"
+    ],
+    "schema": "fidetype.benchmark.result/0.2",
+    "split_version": "tracks-v0.2",
+    "split_digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f",
+    "scorer_version": "0.2",
+    "metric_versions": {
+     "safe_wpm": "safe-wpm/0.1"
+    },
+    "rerun_level": "rescore",
+    "ewpm": 7.869594592455035,
+    "safe_wpm": 0.5473422892202501,
+    "safe_wpm_status": "certified",
+    "seq": -1
+   },
+   {
     "commit": "a7f0b6b",
     "date": "2026-11-19",
     "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
@@ -4357,6 +4882,27 @@
    }
   ],
   "toronto-semg__cnn-calib__trust.json": [
+   {
+    "commit": null,
+    "date": null,
+    "subject": "in the commit that holds this page",
+    "action": "changed",
+    "changed": [
+     "rerun"
+    ],
+    "schema": "fidetype.benchmark.result/0.2",
+    "split_version": "tracks-v0.2",
+    "split_digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f",
+    "scorer_version": "0.2",
+    "metric_versions": {
+     "safe_wpm": "safe-wpm/0.1"
+    },
+    "rerun_level": "rescore",
+    "ewpm": 7.869594592455035,
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "seq": -1
+   },
    {
     "commit": "a7f0b6b",
     "date": "2026-11-19",
@@ -4526,6 +5072,27 @@
   ],
   "toronto-semg__cnn-xsession__crc.json": [
    {
+    "commit": null,
+    "date": null,
+    "subject": "in the commit that holds this page",
+    "action": "changed",
+    "changed": [
+     "rerun"
+    ],
+    "schema": "fidetype.benchmark.result/0.2",
+    "split_version": "tracks-v0.2",
+    "split_digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f",
+    "scorer_version": "0.2",
+    "metric_versions": {
+     "safe_wpm": "safe-wpm/0.1"
+    },
+    "rerun_level": "rescore",
+    "ewpm": 4.63363533729744,
+    "safe_wpm": 0.251893488547894,
+    "safe_wpm_status": "certified",
+    "seq": -1
+   },
+   {
     "commit": "a7f0b6b",
     "date": "2026-11-19",
     "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
@@ -4609,6 +5176,27 @@
    }
   ],
   "toronto-semg__cnn-xsession__trust.json": [
+   {
+    "commit": null,
+    "date": null,
+    "subject": "in the commit that holds this page",
+    "action": "changed",
+    "changed": [
+     "rerun"
+    ],
+    "schema": "fidetype.benchmark.result/0.2",
+    "split_version": "tracks-v0.2",
+    "split_digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f",
+    "scorer_version": "0.2",
+    "metric_versions": {
+     "safe_wpm": "safe-wpm/0.1"
+    },
+    "rerun_level": "rescore",
+    "ewpm": 4.63363533729744,
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "seq": -1
+   },
    {
     "commit": "a7f0b6b",
     "date": "2026-11-19",
@@ -4778,6 +5366,27 @@
   ],
   "toronto-semg__cnn-xsubject__crc.json": [
    {
+    "commit": null,
+    "date": null,
+    "subject": "in the commit that holds this page",
+    "action": "changed",
+    "changed": [
+     "rerun"
+    ],
+    "schema": "fidetype.benchmark.result/0.2",
+    "split_version": "tracks-v0.2",
+    "split_digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f",
+    "scorer_version": "0.2",
+    "metric_versions": {
+     "safe_wpm": "safe-wpm/0.1"
+    },
+    "rerun_level": "rescore",
+    "ewpm": 4.034756948981316,
+    "safe_wpm": 0.0,
+    "safe_wpm_status": "vacuous",
+    "seq": -1
+   },
+   {
     "commit": "a7f0b6b",
     "date": "2026-11-19",
     "subject": "P13-11 + P13-12: recipe values or reasons, hallucination recipes, leaderboard freshness check (gaps 83, 84)",
@@ -4861,6 +5470,27 @@
    }
   ],
   "toronto-semg__cnn-xsubject__trust.json": [
+   {
+    "commit": null,
+    "date": null,
+    "subject": "in the commit that holds this page",
+    "action": "changed",
+    "changed": [
+     "rerun"
+    ],
+    "schema": "fidetype.benchmark.result/0.2",
+    "split_version": "tracks-v0.2",
+    "split_digest": "eab0f0f23fe4a712ce7277cd2bef304951863491286424b6e493d3118047c23f",
+    "scorer_version": "0.2",
+    "metric_versions": {
+     "safe_wpm": "safe-wpm/0.1"
+    },
+    "rerun_level": "rescore",
+    "ewpm": 4.034756948981316,
+    "safe_wpm": null,
+    "safe_wpm_status": "not-certified",
+    "seq": -1
+   },
    {
     "commit": "a7f0b6b",
     "date": "2026-11-19",

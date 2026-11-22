@@ -1,0 +1,51 @@
+{
+ "schema": "fidetype.p13-13.card-config/0.1",
+ "config_id": "tcfg-4ba03bcde2ca2cd7",
+ "cards": [
+  "v0.1/b2t25-t15-copytask__ours__trust",
+  "v0.2/b2t25-t15__ours__trust"
+ ],
+ "config": {
+  "name": "p13-13-b2t25-t15-ours-trust",
+  "frame_temperature": 3.780895226360392,
+  "sentence_temperature": 4.555122539314097,
+  "char_temperature": 1.0,
+  "conformal_alpha": 0.1,
+  "conformal_score": "lac",
+  "conformal_mode": "conditional",
+  "conformal_q": 0.9175417258727783,
+  "guard": {
+   "low_conf_threshold": 0.5,
+   "consistency_k": 5,
+   "cluster_max_word_edits": 0,
+   "w_evidence": 1.0,
+   "w_consistency": 1.0,
+   "combine": "max"
+  },
+  "policy": {
+   "commit_p": 0.5,
+   "commit_max_risk": 0.5,
+   "commit_max_set": null,
+   "offer_max_k": 2,
+   "abstain_risk": 1.01,
+   "final_fallback": "offer",
+   "offer_words": false,
+   "word_conf_threshold": 0.9,
+   "offer_words_k": 3,
+   "offer_words_min_conf": 0.0,
+   "offer_words_max_slots": null
+  },
+  "use_guard": true,
+  "word_max_alternatives": 5,
+  "policy_class": "trust",
+  "risk_control": {},
+  "recipe": {
+   "refit": "P13-13 (gap 85)",
+   "build": "experiments/2026-11-17-p6-02b-v02-entries/run.py stage b2t (v0.2) = M2-13 items (experiments/2026-11-11-m2-13-conformal) + tools/benchmark/import_baselines.py (v0.1)",
+   "decoder": "experiments/2026-11-10-b2t25-trust ours",
+   "fit": "TrustPipeline.fit(fit, fit): first half of each day, plug-in policy grid, max_wrong_commit 0.05, seed 0",
+   "commit_threshold": "plug-in grid commit_p (lam_old)"
+  },
+  "schema": "fidetype.trust-config/0.1"
+ }
+}

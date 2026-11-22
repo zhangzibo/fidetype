@@ -49,7 +49,7 @@ Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
   [score] python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__published__always-commit --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__published__always-commit.json
   ```
 
-- **Card et al. 2024 online decoder (published sentence) (online, per-user) / trust gate + CRC** (`b2t25-t15__published__crc.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.2 digest 1120f8195e50; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer 0.2 B=2000 seed=0; weights: weights not released by the authors (Card et al. 2024); policy config: no frozen config saved; code git b9fa645
+- **Card et al. 2024 online decoder (published sentence) (online, per-user) / trust gate + CRC** (`b2t25-t15__published__crc.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.2 digest 1120f8195e50; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer 0.2 B=2000 seed=0; weights: weights not released by the authors (Card et al. 2024); policy config tcfg-3824599997d61b6e; code git b9fa645
 
   ```
   [truth] python -m fidetype.benchmark truth b2t25-t15 --data <data> --out <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl
@@ -57,7 +57,7 @@ Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
   [score] python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__published__crc --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__published__crc.json
   ```
 
-- **Card et al. 2024 online decoder (published sentence) (online, per-user) / trust gate (plug-in fit)** (`b2t25-t15__published__trust.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.2 digest 1120f8195e50; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer 0.2 B=2000 seed=0; weights: weights not released by the authors (Card et al. 2024); policy config: no frozen config saved; code git b9fa645
+- **Card et al. 2024 online decoder (published sentence) (online, per-user) / trust gate (plug-in fit)** (`b2t25-t15__published__trust.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.2 digest 1120f8195e50; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer 0.2 B=2000 seed=0; weights: weights not released by the authors (Card et al. 2024); policy config tcfg-3c03e78a91ba60a9; code git b9fa645
 
   ```
   [truth] python -m fidetype.benchmark truth b2t25-t15 --data <data> --out <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl
@@ -65,7 +65,7 @@ Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
   [score] python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__published__trust --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__published__trust.json
   ```
 
-- **Card et al. 2024 online decoder (published sentence) (online, per-user) / trust gate + LTT** (`b2t25-t15__published__ltt.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.2 digest 1120f8195e50; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer 0.2 B=2000 seed=0; weights: weights not released by the authors (Card et al. 2024); policy config: no frozen config saved; code git b9fa645
+- **Card et al. 2024 online decoder (published sentence) (online, per-user) / trust gate + LTT** (`b2t25-t15__published__ltt.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.2 digest 1120f8195e50; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer 0.2 B=2000 seed=0; weights: weights not released by the authors (Card et al. 2024); policy config tcfg-2c25a97b2e5364a9; code git b9fa645
 
   ```
   [truth] python -m fidetype.benchmark truth b2t25-t15 --data <data> --out <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl
@@ -89,7 +89,7 @@ Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
   [score] python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__ours__always-commit --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__ours__always-commit.json
   ```
 
-- **Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0)) / trust gate + CRC** (`b2t25-t15__ours__crc.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.2 digest 1120f8195e50; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer 0.2 B=2000 seed=0; weights: no weights; policy config: no frozen config saved; code git b9fa645
+- **Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0)) / trust gate + CRC** (`b2t25-t15__ours__crc.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.2 digest 1120f8195e50; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer 0.2 B=2000 seed=0; weights: no weights; policy config tcfg-9c8e8262e92b4da5; code git b9fa645
 
   ```
   [truth] python -m fidetype.benchmark truth b2t25-t15 --data <data> --out <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl
@@ -97,7 +97,7 @@ Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
   [score] python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__ours__crc --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__ours__crc.json
   ```
 
-- **Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0)) / trust gate (plug-in fit)** (`b2t25-t15__ours__trust.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.2 digest 1120f8195e50; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer 0.2 B=2000 seed=0; weights: no weights; policy config: no frozen config saved; code git b9fa645
+- **Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0)) / trust gate (plug-in fit)** (`b2t25-t15__ours__trust.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.2 digest 1120f8195e50; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer 0.2 B=2000 seed=0; weights: no weights; policy config tcfg-4ba03bcde2ca2cd7; code git b9fa645
 
   ```
   [truth] python -m fidetype.benchmark truth b2t25-t15 --data <data> --out <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl
@@ -105,7 +105,7 @@ Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
   [score] python -m fidetype.benchmark score b2t25-t15 <derived>/p6-02b-v02-entries/submissions/b2t25-t15__ours__trust --truth <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/b2t25-t15__ours__trust.json
   ```
 
-- **Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0)) / trust gate + LTT** (`b2t25-t15__ours__ltt.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.2 digest 1120f8195e50; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer 0.2 B=2000 seed=0; weights: no weights; policy config: no frozen config saved; code git b9fa645
+- **Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0)) / trust gate + LTT** (`b2t25-t15__ours__ltt.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.2 digest 1120f8195e50; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer 0.2 B=2000 seed=0; weights: no weights; policy config tcfg-29d158260e0d503a; code git b9fa645
 
   ```
   [truth] python -m fidetype.benchmark truth b2t25-t15 --data <data> --out <derived>/p6-02b-v02-entries/truth/b2t25-t15.jsonl
@@ -211,7 +211,7 @@ No-BCI reference (gaze typing only, 20 chars/min): **4.27 eWPM**.
 
 Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
 
-- **Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated) / trust gate + CRC** (`toronto-semg__cnn-calib__crc.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.2 digest eab0f0f23fe4; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer 0.2 B=2000 seed=0; weights sha256 580801cf591c; policy config: no frozen config saved; code git b9fa645
+- **Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated) / trust gate + CRC** (`toronto-semg__cnn-calib__crc.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.2 digest eab0f0f23fe4; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer 0.2 B=2000 seed=0; weights sha256 580801cf591c; policy config tcfg-27d57285bb044879; code git b9fa645
 
   ```
   [truth] python -m fidetype.benchmark truth toronto-semg --data <data> --cache <window cache> --sentences <eng_tatoeba_heldout.txt> --out <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl
@@ -219,7 +219,7 @@ Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
   [score] python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-calib__crc --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-calib__crc.json
   ```
 
-- **Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated) / trust gate (plug-in fit)** (`toronto-semg__cnn-calib__trust.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.2 digest eab0f0f23fe4; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer 0.2 B=2000 seed=0; weights sha256 580801cf591c; policy config: no frozen config saved; code git b9fa645
+- **Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated) / trust gate (plug-in fit)** (`toronto-semg__cnn-calib__trust.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.2 digest eab0f0f23fe4; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer 0.2 B=2000 seed=0; weights sha256 580801cf591c; policy config tcfg-85083946606c4c71; code git b9fa645
 
   ```
   [truth] python -m fidetype.benchmark truth toronto-semg --data <data> --cache <window cache> --sentences <eng_tatoeba_heldout.txt> --out <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl
@@ -235,7 +235,7 @@ Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
   [score] python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-calib__always-commit --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-calib__always-commit.json
   ```
 
-- **Key-press CNN + en char 6-gram beam (Fidetype) (cross-session) / trust gate + CRC** (`toronto-semg__cnn-xsession__crc.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.2 digest eab0f0f23fe4; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer 0.2 B=2000 seed=0; weights sha256 4ee4bd245a3e; policy config: no frozen config saved; code git b9fa645
+- **Key-press CNN + en char 6-gram beam (Fidetype) (cross-session) / trust gate + CRC** (`toronto-semg__cnn-xsession__crc.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.2 digest eab0f0f23fe4; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer 0.2 B=2000 seed=0; weights sha256 4ee4bd245a3e; policy config tcfg-d8bacbc6d4316e4d; code git b9fa645
 
   ```
   [truth] python -m fidetype.benchmark truth toronto-semg --data <data> --cache <window cache> --sentences <eng_tatoeba_heldout.txt> --out <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl
@@ -243,7 +243,7 @@ Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
   [score] python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-xsession__crc --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-xsession__crc.json
   ```
 
-- **Key-press CNN + en char 6-gram beam (Fidetype) (cross-session) / trust gate (plug-in fit)** (`toronto-semg__cnn-xsession__trust.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.2 digest eab0f0f23fe4; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer 0.2 B=2000 seed=0; weights sha256 4ee4bd245a3e; policy config: no frozen config saved; code git b9fa645
+- **Key-press CNN + en char 6-gram beam (Fidetype) (cross-session) / trust gate (plug-in fit)** (`toronto-semg__cnn-xsession__trust.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.2 digest eab0f0f23fe4; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer 0.2 B=2000 seed=0; weights sha256 4ee4bd245a3e; policy config tcfg-4f186d334bef2f50; code git b9fa645
 
   ```
   [truth] python -m fidetype.benchmark truth toronto-semg --data <data> --cache <window cache> --sentences <eng_tatoeba_heldout.txt> --out <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl
@@ -259,7 +259,7 @@ Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
   [score] python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-xsession__always-commit --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-xsession__always-commit.json
   ```
 
-- **Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject) / trust gate + CRC** (`toronto-semg__cnn-xsubject__crc.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.2 digest eab0f0f23fe4; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer 0.2 B=2000 seed=0; weights sha256 e4221b406693; policy config: no frozen config saved; code git b9fa645
+- **Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject) / trust gate + CRC** (`toronto-semg__cnn-xsubject__crc.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.2 digest eab0f0f23fe4; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer 0.2 B=2000 seed=0; weights sha256 e4221b406693; policy config tcfg-8b5f62b08c397f27; code git b9fa645
 
   ```
   [truth] python -m fidetype.benchmark truth toronto-semg --data <data> --cache <window cache> --sentences <eng_tatoeba_heldout.txt> --out <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl
@@ -267,7 +267,7 @@ Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
   [score] python -m fidetype.benchmark score toronto-semg <derived>/p6-02b-v02-entries/submissions/toronto-semg__cnn-xsubject__crc --truth <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/toronto-semg__cnn-xsubject__crc.json
   ```
 
-- **Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject) / trust gate (plug-in fit)** (`toronto-semg__cnn-xsubject__trust.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.2 digest eab0f0f23fe4; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer 0.2 B=2000 seed=0; weights sha256 e4221b406693; policy config: no frozen config saved; code git b9fa645
+- **Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject) / trust gate (plug-in fit)** (`toronto-semg__cnn-xsubject__trust.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.2 digest eab0f0f23fe4; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer 0.2 B=2000 seed=0; weights sha256 e4221b406693; policy config tcfg-8d787ba942383efd; code git b9fa645
 
   ```
   [truth] python -m fidetype.benchmark truth toronto-semg --data <data> --cache <window cache> --sentences <eng_tatoeba_heldout.txt> --out <derived>/p6-02b-v02-entries/truth/toronto-semg.jsonl
@@ -341,7 +341,7 @@ No-BCI reference (gaze typing only, 20 chars/min): **3.15 eWPM**.
 
 Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
 
-- **ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY] / trust gate (plug-in fit)** (`spanishbcbl-meg__convctc-m-async__trust.json`): level rescore; dataset spanishbcbl hf-snapshot-2026-11-08 r1; split tracks-v0.2 digest 5fc96f5229c8; adapter fidetype.adapters.spanishbcbl_meg 0.0.1 sha256 d38ef246a541; scorer 0.2 B=2000 seed=0; weights sha256 61eb79502154; policy config: no frozen config saved; code git b9fa645
+- **ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY] / trust gate (plug-in fit)** (`spanishbcbl-meg__convctc-m-async__trust.json`): level rescore; dataset spanishbcbl hf-snapshot-2026-11-08 r1; split tracks-v0.2 digest 5fc96f5229c8; adapter fidetype.adapters.spanishbcbl_meg 0.0.1 sha256 d38ef246a541; scorer 0.2 B=2000 seed=0; weights sha256 61eb79502154; policy config tcfg-3222ca89560b8def; code git b9fa645
 
   ```
   [truth] python -m fidetype.benchmark truth spanishbcbl-meg --data <data> --out <derived>/p6-02b-v02-entries/truth/spanishbcbl-meg.jsonl
@@ -349,7 +349,7 @@ Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
   [score] python -m fidetype.benchmark score spanishbcbl-meg <derived>/p6-02b-v02-entries/submissions/spanishbcbl-meg__convctc-m-async__trust --truth <derived>/p6-02b-v02-entries/truth/spanishbcbl-meg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/spanishbcbl-meg__convctc-m-async__trust.json
   ```
 
-- **ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY] / trust gate + LTT** (`spanishbcbl-meg__convctc-m-async__ltt.json`): level rescore; dataset spanishbcbl hf-snapshot-2026-11-08 r1; split tracks-v0.2 digest 5fc96f5229c8; adapter fidetype.adapters.spanishbcbl_meg 0.0.1 sha256 d38ef246a541; scorer 0.2 B=2000 seed=0; weights sha256 61eb79502154; policy config: no frozen config saved; code git b9fa645
+- **ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY] / trust gate + LTT** (`spanishbcbl-meg__convctc-m-async__ltt.json`): level rescore; dataset spanishbcbl hf-snapshot-2026-11-08 r1; split tracks-v0.2 digest 5fc96f5229c8; adapter fidetype.adapters.spanishbcbl_meg 0.0.1 sha256 d38ef246a541; scorer 0.2 B=2000 seed=0; weights sha256 61eb79502154; policy config tcfg-078f5c49dc4cf0f5; code git b9fa645
 
   ```
   [truth] python -m fidetype.benchmark truth spanishbcbl-meg --data <data> --out <derived>/p6-02b-v02-entries/truth/spanishbcbl-meg.jsonl
@@ -357,7 +357,7 @@ Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
   [score] python -m fidetype.benchmark score spanishbcbl-meg <derived>/p6-02b-v02-entries/submissions/spanishbcbl-meg__convctc-m-async__ltt --truth <derived>/p6-02b-v02-entries/truth/spanishbcbl-meg.jsonl --B 2000 --seed 0 --out benchmark/results/v0.2/spanishbcbl-meg__convctc-m-async__ltt.json
   ```
 
-- **ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY] / trust gate + CRC** (`spanishbcbl-meg__convctc-m-async__crc.json`): level rescore; dataset spanishbcbl hf-snapshot-2026-11-08 r1; split tracks-v0.2 digest 5fc96f5229c8; adapter fidetype.adapters.spanishbcbl_meg 0.0.1 sha256 d38ef246a541; scorer 0.2 B=2000 seed=0; weights sha256 61eb79502154; policy config: no frozen config saved; code git b9fa645
+- **ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY] / trust gate + CRC** (`spanishbcbl-meg__convctc-m-async__crc.json`): level rescore; dataset spanishbcbl hf-snapshot-2026-11-08 r1; split tracks-v0.2 digest 5fc96f5229c8; adapter fidetype.adapters.spanishbcbl_meg 0.0.1 sha256 d38ef246a541; scorer 0.2 B=2000 seed=0; weights sha256 61eb79502154; policy config tcfg-59f2fac9381cbda8; code git b9fa645
 
   ```
   [truth] python -m fidetype.benchmark truth spanishbcbl-meg --data <data> --out <derived>/p6-02b-v02-entries/truth/spanishbcbl-meg.jsonl
@@ -479,7 +479,7 @@ No-BCI reference (gaze typing only, 20 chars/min): **3.15 eWPM**.
 
 Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
 
-- **ConvCTC-M async + es char 6-gram beam (Fidetype) / trust gate (plug-in fit)** (`spanishbcbl-meg-async__convctc-m-async__trust.json`): level rescore; dataset spanishbcbl hf-snapshot-2026-11-08 r1; split tracks-v0.1 digest 28ba9fb27d66; adapter fidetype.adapters.spanishbcbl_meg 0.0.1 sha256 d38ef246a541; scorer benchmark-0.1 B=2000 seed=0; weights sha256 61eb79502154; policy config: no frozen config saved; code git 7d74c0f
+- **ConvCTC-M async + es char 6-gram beam (Fidetype) / trust gate (plug-in fit)** (`spanishbcbl-meg-async__convctc-m-async__trust.json`): level rescore; dataset spanishbcbl hf-snapshot-2026-11-08 r1; split tracks-v0.1 digest 28ba9fb27d66; adapter fidetype.adapters.spanishbcbl_meg 0.0.1 sha256 d38ef246a541; scorer benchmark-0.1 B=2000 seed=0; weights sha256 61eb79502154; policy config tcfg-3222ca89560b8def; code git 7d74c0f
 
   ```
   [truth] python -m fidetype.benchmark prepare spanishbcbl-meg-async --data <data> --out <truth-dir>/spanishbcbl-meg-async.jsonl
@@ -488,7 +488,7 @@ Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
   [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
   ```
 
-- **ConvCTC-M async + es char 6-gram beam (Fidetype) / trust gate + LTT** (`spanishbcbl-meg-async__convctc-m-async__ltt.json`): level rescore; dataset spanishbcbl hf-snapshot-2026-11-08 r1; split tracks-v0.1 digest 28ba9fb27d66; adapter fidetype.adapters.spanishbcbl_meg 0.0.1 sha256 d38ef246a541; scorer benchmark-0.1 B=2000 seed=0; weights sha256 61eb79502154; policy config: no frozen config saved; code git 1d4ff8c
+- **ConvCTC-M async + es char 6-gram beam (Fidetype) / trust gate + LTT** (`spanishbcbl-meg-async__convctc-m-async__ltt.json`): level rescore; dataset spanishbcbl hf-snapshot-2026-11-08 r1; split tracks-v0.1 digest 28ba9fb27d66; adapter fidetype.adapters.spanishbcbl_meg 0.0.1 sha256 d38ef246a541; scorer benchmark-0.1 B=2000 seed=0; weights sha256 61eb79502154; policy config tcfg-078f5c49dc4cf0f5; code git 1d4ff8c
 
   ```
   [truth] python -m fidetype.benchmark prepare spanishbcbl-meg-async --data <data> --out <truth-dir>/spanishbcbl-meg-async.jsonl
@@ -497,7 +497,7 @@ Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
   [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
   ```
 
-- **ConvCTC-M async + es char 6-gram beam (Fidetype) / trust gate + CRC** (`spanishbcbl-meg-async__convctc-m-async__crc.json`): level rescore; dataset spanishbcbl hf-snapshot-2026-11-08 r1; split tracks-v0.1 digest 28ba9fb27d66; adapter fidetype.adapters.spanishbcbl_meg 0.0.1 sha256 d38ef246a541; scorer benchmark-0.1 B=2000 seed=0; weights sha256 61eb79502154; policy config: no frozen config saved; code git 1d4ff8c
+- **ConvCTC-M async + es char 6-gram beam (Fidetype) / trust gate + CRC** (`spanishbcbl-meg-async__convctc-m-async__crc.json`): level rescore; dataset spanishbcbl hf-snapshot-2026-11-08 r1; split tracks-v0.1 digest 28ba9fb27d66; adapter fidetype.adapters.spanishbcbl_meg 0.0.1 sha256 d38ef246a541; scorer benchmark-0.1 B=2000 seed=0; weights sha256 61eb79502154; policy config tcfg-59f2fac9381cbda8; code git 1d4ff8c
 
   ```
   [truth] python -m fidetype.benchmark prepare spanishbcbl-meg-async --data <data> --out <truth-dir>/spanishbcbl-meg-async.jsonl
@@ -551,7 +551,7 @@ Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
   [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
   ```
 
-- **Card et al. 2024 online decoder (published sentence) (online, per-user) / trust gate + CRC** (`b2t25-t15-copytask__published__crc.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.1 digest f3a17b32b24e; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer benchmark-0.1 B=2000 seed=0; weights: weights not released by the authors (Card et al. 2024); policy config: no frozen config saved; code git 1d4ff8c
+- **Card et al. 2024 online decoder (published sentence) (online, per-user) / trust gate + CRC** (`b2t25-t15-copytask__published__crc.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.1 digest f3a17b32b24e; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer benchmark-0.1 B=2000 seed=0; weights: weights not released by the authors (Card et al. 2024); policy config tcfg-3824599997d61b6e; code git 1d4ff8c
 
   ```
   [truth] python -m fidetype.benchmark prepare b2t25-t15-copytask --data <data> --out <truth-dir>/b2t25-t15-copytask.jsonl
@@ -560,7 +560,7 @@ Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
   [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
   ```
 
-- **Card et al. 2024 online decoder (published sentence) (online, per-user) / trust gate (plug-in fit)** (`b2t25-t15-copytask__published__trust.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.1 digest f3a17b32b24e; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer benchmark-0.1 B=2000 seed=0; weights: weights not released by the authors (Card et al. 2024); policy config: no frozen config saved; code git 7d74c0f
+- **Card et al. 2024 online decoder (published sentence) (online, per-user) / trust gate (plug-in fit)** (`b2t25-t15-copytask__published__trust.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.1 digest f3a17b32b24e; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer benchmark-0.1 B=2000 seed=0; weights: weights not released by the authors (Card et al. 2024); policy config tcfg-3c03e78a91ba60a9; code git 7d74c0f
 
   ```
   [truth] python -m fidetype.benchmark prepare b2t25-t15-copytask --data <data> --out <truth-dir>/b2t25-t15-copytask.jsonl
@@ -569,7 +569,7 @@ Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
   [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
   ```
 
-- **Card et al. 2024 online decoder (published sentence) (online, per-user) / trust gate + LTT** (`b2t25-t15-copytask__published__ltt.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.1 digest f3a17b32b24e; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer benchmark-0.1 B=2000 seed=0; weights: weights not released by the authors (Card et al. 2024); policy config: no frozen config saved; code git 1d4ff8c
+- **Card et al. 2024 online decoder (published sentence) (online, per-user) / trust gate + LTT** (`b2t25-t15-copytask__published__ltt.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.1 digest f3a17b32b24e; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer benchmark-0.1 B=2000 seed=0; weights: weights not released by the authors (Card et al. 2024); policy config tcfg-2c25a97b2e5364a9; code git 1d4ff8c
 
   ```
   [truth] python -m fidetype.benchmark prepare b2t25-t15-copytask --data <data> --out <truth-dir>/b2t25-t15-copytask.jsonl
@@ -578,7 +578,7 @@ Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
   [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
   ```
 
-- **Phoneme beam -> CMUdict word decoder (Fidetype) / trust gate + CRC** (`b2t25-t15-copytask__ours__crc.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.1 digest f3a17b32b24e; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer benchmark-0.1 B=2000 seed=0; weights: no weights; policy config: no frozen config saved; code git 1d4ff8c
+- **Phoneme beam -> CMUdict word decoder (Fidetype) / trust gate + CRC** (`b2t25-t15-copytask__ours__crc.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.1 digest f3a17b32b24e; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer benchmark-0.1 B=2000 seed=0; weights: no weights; policy config tcfg-9c8e8262e92b4da5; code git 1d4ff8c
 
   ```
   [truth] python -m fidetype.benchmark prepare b2t25-t15-copytask --data <data> --out <truth-dir>/b2t25-t15-copytask.jsonl
@@ -587,7 +587,7 @@ Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
   [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
   ```
 
-- **Phoneme beam -> CMUdict word decoder (Fidetype) / trust gate (plug-in fit)** (`b2t25-t15-copytask__ours__trust.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.1 digest f3a17b32b24e; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer benchmark-0.1 B=2000 seed=0; weights: no weights; policy config: no frozen config saved; code git 7d74c0f
+- **Phoneme beam -> CMUdict word decoder (Fidetype) / trust gate (plug-in fit)** (`b2t25-t15-copytask__ours__trust.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.1 digest f3a17b32b24e; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer benchmark-0.1 B=2000 seed=0; weights: no weights; policy config tcfg-4ba03bcde2ca2cd7; code git 7d74c0f
 
   ```
   [truth] python -m fidetype.benchmark prepare b2t25-t15-copytask --data <data> --out <truth-dir>/b2t25-t15-copytask.jsonl
@@ -596,7 +596,7 @@ Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
   [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
   ```
 
-- **Phoneme beam -> CMUdict word decoder (Fidetype) / trust gate + LTT** (`b2t25-t15-copytask__ours__ltt.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.1 digest f3a17b32b24e; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer benchmark-0.1 B=2000 seed=0; weights: no weights; policy config: no frozen config saved; code git 1d4ff8c
+- **Phoneme beam -> CMUdict word decoder (Fidetype) / trust gate + LTT** (`b2t25-t15-copytask__ours__ltt.json`): level rescore; dataset brain-to-text-25 dryad-2025-07-03 r1; split tracks-v0.1 digest f3a17b32b24e; adapter fidetype.adapters.b2t25 0.0.1 sha256 44c9ae95fa2f; scorer benchmark-0.1 B=2000 seed=0; weights: no weights; policy config tcfg-29d158260e0d503a; code git 1d4ff8c
 
   ```
   [truth] python -m fidetype.benchmark prepare b2t25-t15-copytask --data <data> --out <truth-dir>/b2t25-t15-copytask.jsonl
@@ -638,7 +638,7 @@ No-BCI reference (gaze typing only, 20 chars/min): **4.27 eWPM**.
 
 Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
 
-- **Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated) / trust gate (plug-in fit)** (`toronto-semg-composed__cnn-calib__trust.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.1 digest ef8a7a2be68a; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer benchmark-0.1 B=2000 seed=0; weights sha256 580801cf591c; policy config: no frozen config saved; code git 7d74c0f
+- **Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated) / trust gate (plug-in fit)** (`toronto-semg-composed__cnn-calib__trust.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.1 digest ef8a7a2be68a; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer benchmark-0.1 B=2000 seed=0; weights sha256 580801cf591c; policy config tcfg-85083946606c4c71; code git 7d74c0f
 
   ```
   [truth] python -m fidetype.benchmark prepare toronto-semg-composed --data <data> --out <truth-dir>/toronto-semg-composed.jsonl
@@ -647,7 +647,7 @@ Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
   [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
   ```
 
-- **Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated) / trust gate + CRC** (`toronto-semg-composed__cnn-calib__crc.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.1 digest ef8a7a2be68a; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer benchmark-0.1 B=2000 seed=0; weights sha256 580801cf591c; policy config: no frozen config saved; code git 1d4ff8c
+- **Key-press CNN + en char 6-gram beam (Fidetype) (session-calibrated) / trust gate + CRC** (`toronto-semg-composed__cnn-calib__crc.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.1 digest ef8a7a2be68a; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer benchmark-0.1 B=2000 seed=0; weights sha256 580801cf591c; policy config tcfg-27d57285bb044879; code git 1d4ff8c
 
   ```
   [truth] python -m fidetype.benchmark prepare toronto-semg-composed --data <data> --out <truth-dir>/toronto-semg-composed.jsonl
@@ -665,7 +665,7 @@ Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
   [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
   ```
 
-- **Key-press CNN + en char 6-gram beam (Fidetype) (cross-session) / trust gate + CRC** (`toronto-semg-composed__cnn-xsession__crc.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.1 digest ef8a7a2be68a; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer benchmark-0.1 B=2000 seed=0; weights sha256 4ee4bd245a3e; policy config: no frozen config saved; code git 1d4ff8c
+- **Key-press CNN + en char 6-gram beam (Fidetype) (cross-session) / trust gate + CRC** (`toronto-semg-composed__cnn-xsession__crc.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.1 digest ef8a7a2be68a; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer benchmark-0.1 B=2000 seed=0; weights sha256 4ee4bd245a3e; policy config tcfg-d8bacbc6d4316e4d; code git 1d4ff8c
 
   ```
   [truth] python -m fidetype.benchmark prepare toronto-semg-composed --data <data> --out <truth-dir>/toronto-semg-composed.jsonl
@@ -674,7 +674,7 @@ Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
   [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
   ```
 
-- **Key-press CNN + en char 6-gram beam (Fidetype) (cross-session) / trust gate (plug-in fit)** (`toronto-semg-composed__cnn-xsession__trust.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.1 digest ef8a7a2be68a; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer benchmark-0.1 B=2000 seed=0; weights sha256 4ee4bd245a3e; policy config: no frozen config saved; code git 7d74c0f
+- **Key-press CNN + en char 6-gram beam (Fidetype) (cross-session) / trust gate (plug-in fit)** (`toronto-semg-composed__cnn-xsession__trust.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.1 digest ef8a7a2be68a; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer benchmark-0.1 B=2000 seed=0; weights sha256 4ee4bd245a3e; policy config tcfg-4f186d334bef2f50; code git 7d74c0f
 
   ```
   [truth] python -m fidetype.benchmark prepare toronto-semg-composed --data <data> --out <truth-dir>/toronto-semg-composed.jsonl
@@ -692,7 +692,7 @@ Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
   [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
   ```
 
-- **Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject) / trust gate + CRC** (`toronto-semg-composed__cnn-xsubject__crc.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.1 digest ef8a7a2be68a; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer benchmark-0.1 B=2000 seed=0; weights sha256 e4221b406693; policy config: no frozen config saved; code git 1d4ff8c
+- **Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject) / trust gate + CRC** (`toronto-semg-composed__cnn-xsubject__crc.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.1 digest ef8a7a2be68a; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer benchmark-0.1 B=2000 seed=0; weights sha256 e4221b406693; policy config tcfg-8b5f62b08c397f27; code git 1d4ff8c
 
   ```
   [truth] python -m fidetype.benchmark prepare toronto-semg-composed --data <data> --out <truth-dir>/toronto-semg-composed.jsonl
@@ -701,7 +701,7 @@ Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
   [safe-wpm] python -I experiments/2026-11-16-p14-05-safe-wpm/run.py tracks
   ```
 
-- **Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject) / trust gate (plug-in fit)** (`toronto-semg-composed__cnn-xsubject__trust.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.1 digest ef8a7a2be68a; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer benchmark-0.1 B=2000 seed=0; weights sha256 e4221b406693; policy config: no frozen config saved; code git 7d74c0f
+- **Key-press CNN + en char 6-gram beam (Fidetype) (cross-subject) / trust gate (plug-in fit)** (`toronto-semg-composed__cnn-xsubject__trust.json`): level rescore; dataset toronto-semg borealis-v1-file-836662 r1; split tracks-v0.1 digest ef8a7a2be68a; adapter fidetype.adapters.toronto_semg 0.0.1 sha256 bc3f52c3291e; scorer benchmark-0.1 B=2000 seed=0; weights sha256 e4221b406693; policy config tcfg-8d787ba942383efd; code git 7d74c0f
 
   ```
   [truth] python -m fidetype.benchmark prepare toronto-semg-composed --data <data> --out <truth-dir>/toronto-semg-composed.jsonl

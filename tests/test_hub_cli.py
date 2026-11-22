@@ -244,6 +244,55 @@ def test_recipe_value_or_reason():
     assert "decoder weights: 5317b0600a5cbfc6..." in text and "policy config: tcfg-da682400ae229448" in text
 
 
+def test_every_trust_card_has_a_frozen_config():
+    """P13-13 (gap 85): every committed trust card records a checkable config_id, or an accepted reason."""
+    files = _cards()
+    if not files:
+        pytest.skip("no committed cards")
+    n_trust = n_id = 0
+    for p in files:
+        card = json.loads(p.read_text(encoding="utf-8"))
+        key = f"{p.parent.name}/{p.stem}"
+        assert R.config_id_problems(card, ROOT, key) == [], (key, R.config_id_problems(card, ROOT, key))
+        if not R.is_always_commit(card):
+            n_trust += 1
+            n_id += bool(card["rerun"]["policy"]["config_id"])
+    assert n_trust >= 30 and n_id == n_trust  # no trust card is left without a config_id today
+
+
+def test_config_id_problems_flags_a_card_without_a_config(tmp_path):
+    """Synthetic cards: a trust card with no config_id, a pending reason, a wrong id or a wrong source fails."""
+    from fidetype.trust.frozen import FrozenTrustConfig
+
+    cfg = FrozenTrustConfig(name="synthetic").with_policy(commit_p=0.5)
+    (tmp_path / "cfg.json").write_text(json.dumps({"config_id": cfg.config_id, "cards": ["v0.2/a"],
+                                                   "config": cfg.to_dict()}), encoding="utf-8")
+
+    def card(pol, policy_name="trust gate + LTT", method="ltt"):
+        return {"policy": {"name": policy_name}, "guarantee": {"method": method}, "rerun": {"policy": pol}}
+
+    ok = card({"config_id": cfg.config_id, "config_id_source": "cfg.json"})
+    assert R.config_id_problems(ok, tmp_path, "v0.2/a") == []
+    assert "does not list" in " ".join(R.config_id_problems(ok, tmp_path, "v0.2/b"))
+    bare = card({"config_id": None})
+    assert "exactly one" in " ".join(R.config_id_problems(bare))
+    pending = card({"config_id": None, "config_id_reason": "no frozen config saved: fitted in memory (gap 85)"})
+    assert "needs a config_id" in " ".join(R.config_id_problems(pending))
+    for why in R.TRUST_CARD_REASONS:
+        assert R.config_id_problems(card({"config_id": None, "config_id_reason": why + " (details)"})) == []
+    always = card({"config_id": None, "config_id_reason": "always-commit: no trust configuration exists"},
+                  "always-commit", "none")
+    assert R.is_always_commit(always) and R.config_id_problems(always) == []
+    wrong = card({"config_id": "tcfg-0000000000000000", "config_id_source": "cfg.json"})
+    assert "gives" in " ".join(R.config_id_problems(wrong, tmp_path))
+    missing = card({"config_id": cfg.config_id, "config_id_source": "nope.json"})
+    assert "not found" in " ".join(R.config_id_problems(missing, tmp_path))
+    changed = json.loads((tmp_path / "cfg.json").read_text(encoding="utf-8"))
+    changed["config"]["policy"]["commit_p"] = 0.6  # the file no longer gives the recorded id
+    (tmp_path / "cfg.json").write_text(json.dumps(changed), encoding="utf-8")
+    assert "gives" in " ".join(R.config_id_problems(ok, tmp_path, "v0.2/a"))
+
+
 def test_recipe_checker_and_adapter_hash(tmp_path):
     a = R.adapter_id("fidetype.adapters.b2t25")
     assert a["module"] == "fidetype.adapters.b2t25" and len(a["sha256"]) == 64

@@ -329,6 +329,58 @@ def _value_or_reason(r: Mapping[str, Any]) -> list[str]:
     return errs
 
 
+#: P13-13: the reasons a trust card (any policy other than always-commit) may give in place of a ``config_id``.
+#: A new submission that names no config gets :data:`NO_CONFIG_GIVEN`; a card whose refit gave other decisions
+#: says so. Any other reason (for example "no frozen config saved ... (gap 85)") is flagged.
+TRUST_CARD_REASONS = (NO_CONFIG_GIVEN, "refit does not reproduce the card")
+
+
+def is_always_commit(card: Mapping[str, Any]) -> bool:
+    """True when the card's policy commits every top-1 text (no trust configuration exists)."""
+    g = card.get("guarantee") or {}
+    name = str((card.get("policy") or {}).get("name", "")).lower()
+    return g.get("method") in (None, "none") and "always" in name
+
+
+def config_id_problems(card: Mapping[str, Any], root: Any = None, card_key: str | None = None) -> list[str]:
+    """Return the problems of the policy ``config_id`` of one leaderboard card (P13-13; empty list = valid).
+
+    - ``config_id`` or ``config_id_reason``, exactly one (as :func:`check_recipe`).
+    - A trust card (not always-commit) without a ``config_id`` gives one of :data:`TRUST_CARD_REASONS`.
+    - With ``root`` (the repository folder): ``config_id_source`` names a committed file. If the file holds the
+      frozen ``config``, its recomputed id equals ``config_id``; otherwise the file records that id. If the file
+      lists the ``cards`` it backs, ``card_key`` (``"v0.x/<stem>"``) is in the list.
+    """
+    pol = ((card.get("rerun") or {}).get("policy")) or {}
+    cid, why = pol.get("config_id"), pol.get("config_id_reason")
+    has_why = isinstance(why, str) and bool(why.strip())
+    if bool(cid) == has_why:
+        return ["rerun.policy: config_id or config_id_reason (exactly one)"]
+    errs: list[str] = []
+    if cid and not _CONFIG_ID.match(str(cid)):
+        errs.append("rerun.policy.config_id: tcfg- + 16 hex characters")
+    if not cid and not is_always_commit(card) and not str(why).startswith(TRUST_CARD_REASONS):
+        errs.append(f"rerun.policy: a trust card needs a config_id (or a reason that starts with one of "
+                    f"{[r[:40] for r in TRUST_CARD_REASONS]}), not {str(why)[:60]!r}")
+    if cid and root is not None:
+        src = pol.get("config_id_source")
+        p = Path(root) / str(src or "")
+        if not src or not p.is_file():
+            return errs + [f"rerun.policy.config_id_source: committed file not found ({src!r})"]
+        d = json.loads(p.read_text(encoding="utf-8"))
+        if isinstance(d.get("config"), Mapping):
+            from fidetype.trust.frozen import FrozenTrustConfig
+
+            got = FrozenTrustConfig.from_dict(dict(d["config"])).config_id
+            if got != cid:
+                errs.append(f"rerun.policy.config_id: {cid} but the frozen config in {src} gives {got}")
+        elif cid not in ((d.get("sheet") or {}).get("config_id"), d.get("config_id")):
+            errs.append(f"rerun.policy.config_id: {src} does not record {cid}")
+        if card_key is not None and "cards" in d and card_key not in d["cards"]:
+            errs.append(f"rerun.policy.config_id_source: {src} does not list {card_key}")
+    return errs
+
+
 def rerun_level(card: Mapping[str, Any]) -> str:
     """``rescore`` / ``replay`` / ``full``, or ``no`` when the card has no recipe (design section 5.2)."""
     r = card.get("rerun")

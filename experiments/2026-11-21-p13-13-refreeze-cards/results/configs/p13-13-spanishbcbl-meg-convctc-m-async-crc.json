@@ -1,0 +1,60 @@
+{
+ "schema": "fidetype.p13-13.card-config/0.1",
+ "config_id": "tcfg-59f2fac9381cbda8",
+ "cards": [
+  "v0.1/spanishbcbl-meg-async__convctc-m-async__crc",
+  "v0.2/spanishbcbl-meg__convctc-m-async__crc"
+ ],
+ "config": {
+  "name": "p13-13-spanishbcbl-meg-convctc-m-async-crc",
+  "frame_temperature": 3.295918403993801,
+  "sentence_temperature": 19.999915690182068,
+  "char_temperature": 1.0,
+  "conformal_alpha": 0.1,
+  "conformal_score": "lac",
+  "conformal_mode": "conditional",
+  "conformal_q": "inf",
+  "guard": {
+   "low_conf_threshold": 0.5,
+   "consistency_k": 5,
+   "cluster_max_word_edits": 0,
+   "w_evidence": 1.0,
+   "w_consistency": 1.0,
+   "combine": "max"
+  },
+  "policy": {
+   "commit_p": 0.10239239302166811,
+   "commit_max_risk": 0.3,
+   "commit_max_set": null,
+   "offer_max_k": 1,
+   "abstain_risk": 1.01,
+   "final_fallback": "offer",
+   "offer_words": false,
+   "word_conf_threshold": 0.9,
+   "offer_words_k": 3,
+   "offer_words_min_conf": 0.0,
+   "offer_words_max_slots": null
+  },
+  "use_guard": true,
+  "word_max_alternatives": 5,
+  "policy_class": "trust",
+  "risk_control": {
+   "method": "crc",
+   "alpha": 0.05,
+   "delta": null,
+   "threshold": 0.10239239302166811,
+   "feasible": true,
+   "n": 437,
+   "bound": 0.0319634703196347,
+   "combine": "replace"
+  },
+  "recipe": {
+   "refit": "P13-13 (gap 85)",
+   "build": "experiments/2026-11-17-p6-02b-v02-entries/run.py stage meg (v0.2) = experiments/2026-11-11-g1-async-meg-trust items + tools/benchmark/import_baselines.py (v0.1)",
+   "decoder": "ConvCTC-M async (M1-09 r4b-full-medium) + Spanish char 6-gram beam",
+   "fit": "TrustPipeline.fit(val, val), M2 policy spec 'trust' (aac_gaze, max_wrong_commit 0.05)",
+   "commit_threshold": "CRC lambda on val, alpha 0.05 (replaces the grid commit_p)"
+  },
+  "schema": "fidetype.trust-config/0.1"
+ }
+}

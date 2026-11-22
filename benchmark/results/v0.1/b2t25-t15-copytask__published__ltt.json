@@ -227,8 +227,8 @@
   },
   "policy": {
    "name": "trust gate + LTT",
-   "config_id": null,
-   "config_id_reason": "no frozen config saved: the source experiment of the card (see sources) fitted the trust policy (TrustPipeline) in memory and kept only the decisions, before the cards recorded config ids; FrozenTrustConfig.from_pipeline on a refit gives the id (gap 85, P13-13)",
+   "config_id": "tcfg-2c25a97b2e5364a9",
+   "config_id_source": "experiments/2026-11-21-p13-13-refreeze-cards/results/configs/p13-13-b2t25-t15-published-ltt.json",
    "guarantee": "ltt"
   },
   "scorer": {
@@ -269,6 +269,6 @@
   },
   "code_ref": "git 1d4ff8c (last commit that changed this card before P13-06)",
   "recorded": "2026-11-18, backfill by P13-06 (tools/benchmark/add_rerun_recipes.py)",
-  "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill)"
+  "amended": "2026-11-19, P13-11: decoder weights SHA-256 and policy config_id (tools/benchmark/add_rerun_recipes.py --fill); 2026-11-21, P13-13: policy config_id from a refit with the build-step settings, frozen by FrozenTrustConfig.from_pipeline; the refit gives the same decisions as the card (tools/benchmark/add_rerun_recipes.py --refrozen)"
  }
 }

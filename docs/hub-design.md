@@ -279,7 +279,7 @@ The user answered the questions of section 10 on 2026-11-18: "i would like to ha
 | P13-10 (gap 82) | The rest of the P13-06 scope: `fidetype hub replay`, RA-4 unit key in the adapter headers, RA-7 3-way transport test, a `replay`-level rerun of one `b2t25-t15` card byte for byte, the dataset fields of `tracks.py` read from the registry |
 | P13-11 (gap 83) | **Done 2026-11-19** ([section 12.6](#126-weights-hash-config-id-and-hallucination-recipes-p13-11)): weights SHA-256 and policy `config_id` filled where an artifact exists, else an explicit reason; every hallucination card has a recipe |
 | P13-12 (gap 84) | **Done 2026-11-19** ([section 12.7](#127-leaderboard-freshness-check-p13-12)): CI regenerates `benchmark/site/` and fails on a difference; history rows for cards committed together with their pages |
-| P13-13 (gap 85) | Refit and freeze the trust configs of the 30 pre-P5-23 trust cards (CRC / LTT / plug-in) so that their recipes carry a `config_id` instead of a reason |
+| P13-13 (gap 85) | **Done 2026-11-21** ([section 12.8](#128-frozen-configs-for-the-pre-p5-23-trust-cards-p13-13)): the 30 pre-P5-23 trust cards (CRC / LTT / plug-in) were refit and frozen; all 30 give the same decisions as the card and carry a `config_id` |
 | P13-07 (gap 79) | Registry entries for B2T '24, Willett handwriting, KT-sEMG and emg2qwerty; checksums for the B2T '25 HDF5 zip and a per-file manifest for SpanishBCBL |
 | P6-10 | Training-data declaration and the pkl / HDF5 overlap map (the `same_units.map` of the B2T '25 entry) |
 
@@ -366,7 +366,7 @@ The weights stay outside the repository. `tools/benchmark/add_rerun_recipes.py -
 | 52 leaderboard cards | Value | Reason |
 |---|---|---|
 | Weights SHA-256 | 30 (ConvCTC-M async, Toronto CNN calib / xsession / xsubject, T12 v2, M4-12, M4-13) | 22: no trained part (8, phoneme beam over the published logits), not released by the authors (10, Card et al. 2024 and Willett et al. 2021), LDA fitted in memory by the build step (4) |
-| Policy `config_id` | 6 (every drop-in guard card) | 46: always-commit has no trust config (16); the TrustPipeline was fitted in memory and not frozen (30, gap 85 = P13-13) |
+| Policy `config_id` | 6 (every drop-in guard card) | 46: always-commit has no trust config (16); the TrustPipeline was fitted in memory and not frozen (30, gap 85 = P13-13; filled on 2026-11-21, section 12.8) |
 
 Hallucination cards (`benchmark/results/halluc-v0.*/*.card.json`, 32 cards): every card has a recipe at level `rescore`. The command `python -m fidetype.benchmark.hallucination rescore <outcomes> --protocol <p> --alpha-wrong <a> --alpha-fluent <b> --check <card>` uses committed files only, and all 32 commands reproduce their card. `--check` leaves out the `rerun` block, accepts the `meta.outcomes_file` pointer of the protocol 0.2 cards, and compares floats with a relative tolerance of 1e-9 (the Clopper-Pearson bisection gives other last bits on Linux). All 32 carry the guard `config_id` and the decoder weights SHA-256 (T12 v2, M4-12 fixed0 or M4-13 long0). The track block names the split file `splits/halluc-v0.1/<dataset>.json` (split version `halluc-v0.1`, file SHA-256). Tests: `tests/test_hub_cli.py`.
 
@@ -381,3 +381,21 @@ A page cannot name the commit that holds it: the hash exists only after the comm
 | CI job `leaderboard` | `actions/checkout` with `fetch-depth: 0`, then `python -m fidetype.benchmark.leaderboard --check`: regenerate with base = the parent of the commit that holds the pages, and fail on any difference. `all-green` needs this job |
 
 If the check fails, run the build command again and commit `benchmark/site/`. Without git history (a shallow clone) the check fails with a message; the other CI jobs keep the shallow checkout, and there the full-history tests skip. Tests: `tests/test_leaderboard_track_pages.py`.
+
+### 12.8 Frozen configs for the pre-P5-23 trust cards (P13-13)
+
+Status: **done** 2026-11-21. Results: [experiments/2026-11-21-p13-13-refreeze-cards](../experiments/2026-11-21-p13-13-refreeze-cards/results.md).
+
+The 30 trust cards of `b2t25-t15`, `b2t25-t15-copytask`, `spanishbcbl-meg`, `spanishbcbl-meg-async`, `toronto-semg` and `toronto-semg-composed` (plug-in, CRC and LTT policies) were made before the frozen `config_id`. Their build steps fitted a TrustPipeline in memory. P13-13 refit each pipeline with the build-step settings and froze it with `FrozenTrustConfig.from_pipeline`. A new pipeline built from the loaded file gives the same decisions as every card (real input and both controls). Each v0.1 card and its v0.2 card share one config (15 configs).
+
+| Field | Value |
+|---|---|
+| `policy.config_id` | `tcfg-` + 16 hex of the frozen config |
+| `policy.config_id_source` | `experiments/2026-11-21-p13-13-refreeze-cards/results/configs/<name>.json`: `config_id`, `cards` (the `v0.x/<stem>` cards it backs) and `config` (numbers and settings only) |
+| `rerun.amended` | adds the P13-13 note |
+
+CRC and LTT cards of `b2t25-t15` and `spanishbcbl-meg`: the threshold was chosen outside the pipeline fit (M2-13), so the config holds `commit_p` = the CRC or LTT lambda and a `risk_control` record with `combine: replace`. `toronto-semg` CRC cards: CRC is inside the fit (`combine: max`).
+
+Tool: `tools/benchmark/add_rerun_recipes.py --refrozen --write` writes the ids; it recomputes each id from the file and writes a card only when `results.json` says "decisions equal". A card whose refit does not reproduce keeps a reason that starts with "refit does not reproduce the card". `--fill` reads the same files.
+
+Check (future cards): `fidetype.benchmark.hub.recipe.config_id_problems(card, root, card_key)`. A trust card (any policy other than always-commit) needs a `config_id`, or a reason from `TRUST_CARD_REASONS` (a new submission that names no config, or a failed refit). A `config_id` needs a committed `config_id_source`; if that file holds the frozen `config`, its recomputed id must be equal, and if it lists `cards`, the card must be in the list. `tests/test_hub_cli.py` runs it on every committed card (CI) and on synthetic cards.

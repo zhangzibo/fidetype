@@ -23,6 +23,16 @@ pre-registration); ``--runs <runs>`` hashes the local files again, read only, an
 config ids come from the committed guard files and results of the build experiments (a guard file is loaded and
 its id recomputed). ``--halluc`` adds a recipe to every hallucination score card
 (``benchmark/results/halluc-v0.*/*.card.json``): level ``rescore`` from the committed outcomes file.
+
+P13-13 (gap 85) adds a third mode:
+
+    .venv\Scripts\python.exe -I tools/benchmark/add_rerun_recipes.py --refrozen --write
+
+It reads the frozen configs of the refit trust cards (:data:`REFROZEN`, one ``configs/*.json`` file per
+TrustPipeline: ``config_id``, the ``cards`` it backs and the ``config`` itself). For each listed card it
+recomputes the id from the config, checks that ``results.json`` of the refit says "decisions equal" for that
+card, and writes ``config_id`` + ``config_id_source`` in place of ``config_id_reason``. A card whose refit does
+not reproduce keeps a reason that says so. ``--fill`` reads the same files, so it gives the same values.
 """
 
 from __future__ import annotations
@@ -178,6 +188,48 @@ CONFIG_FILES = {
 
 _ALWAYS = "always-commit: no trust configuration exists; every top-1 text is committed"
 
+#: P13-13 (gap 85): the refit and frozen TrustPipeline configs of the 30 pre-P5-23 trust cards.
+REFROZEN = "experiments/2026-11-21-p13-13-refreeze-cards/results"
+AMENDED_P1313 = ("2026-11-21, P13-13: policy config_id from a refit with the build-step settings, frozen by "
+                 "FrozenTrustConfig.from_pipeline; the refit gives the same decisions as the card "
+                 "(tools/benchmark/add_rerun_recipes.py --refrozen)")
+_NOT_REPRODUCED = ("refit does not reproduce the card (P13-13): a refit with the build-step settings gives other "
+                   "decisions; see {res}")
+
+
+_REFROZEN_CACHE: dict[str, dict] | None = None
+
+
+def _refrozen_cached() -> dict[str, dict]:
+    global _REFROZEN_CACHE
+    if _REFROZEN_CACHE is None:
+        _REFROZEN_CACHE = refrozen()
+    return _REFROZEN_CACHE
+
+
+def refrozen() -> dict[str, dict]:
+    """``"v0.x/<stem>"`` -> {"config_id", "config_id_source"} or {"config_id_reason"} for the P13-13 cards."""
+    from fidetype.trust.frozen import FrozenTrustConfig
+
+    base = REPO / REFROZEN
+    res_p = base / "results.json"
+    if not res_p.is_file():
+        return {}
+    equal = {c["card"]: bool(c["decisions_equal"]) for c in json.loads(res_p.read_text(encoding="utf-8"))["cards"]}
+    out: dict[str, dict] = {}
+    for p in sorted((base / "configs").glob("*.json")):
+        d = json.loads(p.read_text(encoding="utf-8"))
+        got = FrozenTrustConfig.from_dict(d["config"]).config_id
+        if got != d["config_id"]:
+            raise SystemExit(f"{p.name}: config_id {d['config_id']} but the content gives {got}")
+        for c in d["cards"]:
+            if equal.get(c):
+                out[c] = {"config_id": got, "config_id_source": p.relative_to(REPO).as_posix()}
+            else:
+                out[c] = {"config_id": None,
+                          "config_id_reason": _NOT_REPRODUCED.format(res=f"{REFROZEN}/results.json")}
+    return out
+
 
 def _sha_file(path: Path) -> str:
     h = hashlib.sha256()
@@ -217,6 +269,10 @@ def weights_value(name: str, runs: Path | None) -> dict:
 
 def config_value(card: dict, name: str) -> dict:
     """``config_id`` from the committed guard file / results, or ``config_id_reason``."""
+    key = ("v0.2/" if str(card.get("schema", "")).endswith("/0.2") else "v0.1/") + name
+    ref = _refrozen_cached().get(key)
+    if ref is not None:  # P13-13: a refit and frozen TrustPipeline (or the reason why the refit fails)
+        return dict(ref)
     rel = next((v for k, v in CONFIG_FILES.items() if name.startswith(k)), None)
     if rel is not None:
         d = json.loads((REPO / rel).read_text(encoding="utf-8"))
@@ -255,7 +311,8 @@ def fill_ids(card: dict, path: Path, runs: Path | None) -> dict:
         pol.pop(k, None)
     r["policy"] = {**{k: v for k, v in pol.items() if k == "name"}, **config_value(card, path.stem),
                    **{k: v for k, v in pol.items() if k != "name"}}
-    r["amended"] = AMENDED
+    key = ("v0.2/" if str(card.get("schema", "")).endswith("/0.2") else "v0.1/") + path.stem
+    r["amended"] = f"{AMENDED}; {AMENDED_P1313}" if key in _refrozen_cached() else AMENDED
     return r
 
 
@@ -326,12 +383,15 @@ def halluc_main(write: bool, force: bool, runs: Path | None) -> int:
     return 0
 
 
-def fill_main(write: bool, runs: Path | None) -> int:
+def fill_main(write: bool, runs: Path | None, only: set[str] | None = None) -> int:
+    """``only``: the ``"v0.x/<stem>"`` keys to fill (``--refrozen``: the P13-13 cards); None = every card."""
     n, filled = 0, {"weights": 0, "weights_reason": 0, "config": 0, "config_reason": 0}
     w_keys = {"weights_sha256", "weights_sha256_reason", "weights_files", "weights_sha256_kind"}
     c_keys = {"config_id", "config_id_reason", "config_id_source"}
     for folder in ("v0.1", "v0.2"):
         for p in sorted((REPO / "benchmark" / "results" / folder).glob("*.json")):
+            if only is not None and f"{folder}/{p.stem}" not in only:
+                continue
             card = json.loads(p.read_text(encoding="utf-8"))
             old = card["rerun"]
             new = fill_ids(card, p, runs)
@@ -367,11 +427,17 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--force", action="store_true")
     ap.add_argument("--fill", action="store_true", help="P13-11: weights SHA-256 and policy config_id (or reason)")
     ap.add_argument("--halluc", action="store_true", help="P13-11: recipes for the hallucination score cards")
+    ap.add_argument("--refrozen", action="store_true", help="P13-13: config_id of the refit trust cards")
     ap.add_argument("--runs", default=None, help="local runs folder: hash the weights again (read only)")
     a = ap.parse_args(argv)
     runs = Path(a.runs) if a.runs else None
     if a.fill:
         return fill_main(a.write, runs)
+    if a.refrozen:
+        only = set(refrozen())
+        if not only:
+            raise SystemExit(f"no P13-13 configs found in {REFROZEN}")
+        return fill_main(a.write, runs, only)
     if a.halluc:
         return halluc_main(a.write, a.force, runs)
     n = 0

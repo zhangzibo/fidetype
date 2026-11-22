@@ -1,0 +1,1255 @@
+{
+ "n_cards": 30,
+ "n_configs": 15,
+ "n_decisions_equal": 30,
+ "n_threshold_equal": 30,
+ "cards": [
+  {
+   "card": "v0.1/b2t25-t15-copytask__ours__trust",
+   "config_id": "tcfg-4ba03bcde2ca2cd7",
+   "decisions_equal": true,
+   "threshold_equal": true
+  },
+  {
+   "card": "v0.2/b2t25-t15__ours__trust",
+   "config_id": "tcfg-4ba03bcde2ca2cd7",
+   "decisions_equal": true,
+   "threshold_equal": true
+  },
+  {
+   "card": "v0.1/b2t25-t15-copytask__ours__crc",
+   "config_id": "tcfg-9c8e8262e92b4da5",
+   "decisions_equal": true,
+   "threshold_equal": true
+  },
+  {
+   "card": "v0.2/b2t25-t15__ours__crc",
+   "config_id": "tcfg-9c8e8262e92b4da5",
+   "decisions_equal": true,
+   "threshold_equal": true
+  },
+  {
+   "card": "v0.1/b2t25-t15-copytask__ours__ltt",
+   "config_id": "tcfg-29d158260e0d503a",
+   "decisions_equal": true,
+   "threshold_equal": true
+  },
+  {
+   "card": "v0.2/b2t25-t15__ours__ltt",
+   "config_id": "tcfg-29d158260e0d503a",
+   "decisions_equal": true,
+   "threshold_equal": true
+  },
+  {
+   "card": "v0.1/b2t25-t15-copytask__published__trust",
+   "config_id": "tcfg-3c03e78a91ba60a9",
+   "decisions_equal": true,
+   "threshold_equal": true
+  },
+  {
+   "card": "v0.2/b2t25-t15__published__trust",
+   "config_id": "tcfg-3c03e78a91ba60a9",
+   "decisions_equal": true,
+   "threshold_equal": true
+  },
+  {
+   "card": "v0.1/b2t25-t15-copytask__published__crc",
+   "config_id": "tcfg-3824599997d61b6e",
+   "decisions_equal": true,
+   "threshold_equal": true
+  },
+  {
+   "card": "v0.2/b2t25-t15__published__crc",
+   "config_id": "tcfg-3824599997d61b6e",
+   "decisions_equal": true,
+   "threshold_equal": true
+  },
+  {
+   "card": "v0.1/b2t25-t15-copytask__published__ltt",
+   "config_id": "tcfg-2c25a97b2e5364a9",
+   "decisions_equal": true,
+   "threshold_equal": true
+  },
+  {
+   "card": "v0.2/b2t25-t15__published__ltt",
+   "config_id": "tcfg-2c25a97b2e5364a9",
+   "decisions_equal": true,
+   "threshold_equal": true
+  },
+  {
+   "card": "v0.1/spanishbcbl-meg-async__convctc-m-async__trust",
+   "config_id": "tcfg-3222ca89560b8def",
+   "decisions_equal": true,
+   "threshold_equal": true
+  },
+  {
+   "card": "v0.2/spanishbcbl-meg__convctc-m-async__trust",
+   "config_id": "tcfg-3222ca89560b8def",
+   "decisions_equal": true,
+   "threshold_equal": true
+  },
+  {
+   "card": "v0.1/spanishbcbl-meg-async__convctc-m-async__crc",
+   "config_id": "tcfg-59f2fac9381cbda8",
+   "decisions_equal": true,
+   "threshold_equal": true
+  },
+  {
+   "card": "v0.2/spanishbcbl-meg__convctc-m-async__crc",
+   "config_id": "tcfg-59f2fac9381cbda8",
+   "decisions_equal": true,
+   "threshold_equal": true
+  },
+  {
+   "card": "v0.1/spanishbcbl-meg-async__convctc-m-async__ltt",
+   "config_id": "tcfg-078f5c49dc4cf0f5",
+   "decisions_equal": true,
+   "threshold_equal": true
+  },
+  {
+   "card": "v0.2/spanishbcbl-meg__convctc-m-async__ltt",
+   "config_id": "tcfg-078f5c49dc4cf0f5",
+   "decisions_equal": true,
+   "threshold_equal": true
+  },
+  {
+   "card": "v0.1/toronto-semg-composed__cnn-calib__trust",
+   "config_id": "tcfg-85083946606c4c71",
+   "decisions_equal": true,
+   "threshold_equal": true
+  },
+  {
+   "card": "v0.2/toronto-semg__cnn-calib__trust",
+   "config_id": "tcfg-85083946606c4c71",
+   "decisions_equal": true,
+   "threshold_equal": true
+  },
+  {
+   "card": "v0.1/toronto-semg-composed__cnn-calib__crc",
+   "config_id": "tcfg-27d57285bb044879",
+   "decisions_equal": true,
+   "threshold_equal": true
+  },
+  {
+   "card": "v0.2/toronto-semg__cnn-calib__crc",
+   "config_id": "tcfg-27d57285bb044879",
+   "decisions_equal": true,
+   "threshold_equal": true
+  },
+  {
+   "card": "v0.1/toronto-semg-composed__cnn-xsession__trust",
+   "config_id": "tcfg-4f186d334bef2f50",
+   "decisions_equal": true,
+   "threshold_equal": true
+  },
+  {
+   "card": "v0.2/toronto-semg__cnn-xsession__trust",
+   "config_id": "tcfg-4f186d334bef2f50",
+   "decisions_equal": true,
+   "threshold_equal": true
+  },
+  {
+   "card": "v0.1/toronto-semg-composed__cnn-xsession__crc",
+   "config_id": "tcfg-d8bacbc6d4316e4d",
+   "decisions_equal": true,
+   "threshold_equal": true
+  },
+  {
+   "card": "v0.2/toronto-semg__cnn-xsession__crc",
+   "config_id": "tcfg-d8bacbc6d4316e4d",
+   "decisions_equal": true,
+   "threshold_equal": true
+  },
+  {
+   "card": "v0.1/toronto-semg-composed__cnn-xsubject__trust",
+   "config_id": "tcfg-8d787ba942383efd",
+   "decisions_equal": true,
+   "threshold_equal": true
+  },
+  {
+   "card": "v0.2/toronto-semg__cnn-xsubject__trust",
+   "config_id": "tcfg-8d787ba942383efd",
+   "decisions_equal": true,
+   "threshold_equal": true
+  },
+  {
+   "card": "v0.1/toronto-semg-composed__cnn-xsubject__crc",
+   "config_id": "tcfg-8b5f62b08c397f27",
+   "decisions_equal": true,
+   "threshold_equal": true
+  },
+  {
+   "card": "v0.2/toronto-semg__cnn-xsubject__crc",
+   "config_id": "tcfg-8b5f62b08c397f27",
+   "decisions_equal": true,
+   "threshold_equal": true
+  }
+ ],
+ "stages": {
+  "b2t": {
+   "n_fit": 812,
+   "n_test": 816,
+   "ours": {
+    "temperature": 3.780895226360392,
+    "thresholds": {
+     "trust": {
+      "refit": 0.5,
+      "card": 0.5,
+      "equal": true
+     },
+     "crc": {
+      "refit": 0.48927426845213917,
+      "card": 0.48927426845213917,
+      "equal": true
+     },
+     "ltt": {
+      "refit": 0.54,
+      "card": 0.54,
+      "equal": true
+     }
+    },
+    "cal_scores_vs_items": {
+     "n": 812,
+     "equal_1e-9": true,
+     "max_abs_diff": 0.0
+    },
+    "policies": {
+     "trust": {
+      "config_id": "tcfg-4ba03bcde2ca2cd7",
+      "commit_p": 0.5,
+      "v0.2": {
+       "real": {
+        "n": 816,
+        "commits": 189,
+        "commits_card": 189,
+        "action_mismatch": 0,
+        "top1_mismatch": 0,
+        "score_mismatch": 0,
+        "max_abs_score_diff": 0.0
+       },
+       "shuffled": {
+        "n": 816,
+        "commits": 0,
+        "commits_card": 0,
+        "action_mismatch": 0,
+        "top1_mismatch": 0,
+        "score_mismatch": 0,
+        "max_abs_score_diff": 0.0
+       },
+       "zeros": {
+        "n": 816,
+        "commits": 0,
+        "commits_card": 0,
+        "action_mismatch": 0,
+        "top1_mismatch": 0,
+        "score_mismatch": 0,
+        "max_abs_score_diff": 0.0
+       },
+       "equal": true
+      },
+      "v0.1": {
+       "n": 816,
+       "commits": 189,
+       "commits_v01": 189,
+       "decision_mismatch": 0,
+       "equal": true
+      },
+      "cards": {
+       "v0.1": {
+        "card": "v0.1/b2t25-t15-copytask__ours__trust",
+        "threshold": null,
+        "n_cal": null,
+        "n_trials": 816,
+        "n_commits": 189,
+        "commit_rate": 0.23161764705882354
+       },
+       "v0.2": {
+        "card": "v0.2/b2t25-t15__ours__trust",
+        "threshold": null,
+        "n_cal": null,
+        "n_trials": 816,
+        "n_commits": 189,
+        "commit_rate": 0.23161764705882354
+       }
+      }
+     },
+     "crc": {
+      "config_id": "tcfg-9c8e8262e92b4da5",
+      "commit_p": 0.48927426845213917,
+      "v0.2": {
+       "real": {
+        "n": 816,
+        "commits": 199,
+        "commits_card": 199,
+        "action_mismatch": 0,
+        "top1_mismatch": 0,
+        "score_mismatch": 0,
+        "max_abs_score_diff": 0.0
+       },
+       "shuffled": {
+        "n": 816,
+        "commits": 0,
+        "commits_card": 0,
+        "action_mismatch": 0,
+        "top1_mismatch": 0,
+        "score_mismatch": 0,
+        "max_abs_score_diff": 0.0
+       },
+       "zeros": {
+        "n": 816,
+        "commits": 0,
+        "commits_card": 0,
+        "action_mismatch": 0,
+        "top1_mismatch": 0,
+        "score_mismatch": 0,
+        "max_abs_score_diff": 0.0
+       },
+       "equal": true
+      },
+      "v0.1": {
+       "n": 816,
+       "commits": 199,
+       "commits_v01": 199,
+       "decision_mismatch": 0,
+       "equal": true
+      },
+      "cards": {
+       "v0.1": {
+        "card": "v0.1/b2t25-t15-copytask__ours__crc",
+        "threshold": 0.48927426845213917,
+        "n_cal": 812,
+        "n_trials": 816,
+        "n_commits": 199,
+        "commit_rate": 0.24387254901960784
+       },
+       "v0.2": {
+        "card": "v0.2/b2t25-t15__ours__crc",
+        "threshold": null,
+        "n_cal": 812,
+        "n_trials": 816,
+        "n_commits": 199,
+        "commit_rate": 0.24387254901960784
+       }
+      }
+     },
+     "ltt": {
+      "config_id": "tcfg-29d158260e0d503a",
+      "commit_p": 0.54,
+      "v0.2": {
+       "real": {
+        "n": 816,
+        "commits": 159,
+        "commits_card": 159,
+        "action_mismatch": 0,
+        "top1_mismatch": 0,
+        "score_mismatch": 0,
+        "max_abs_score_diff": 0.0
+       },
+       "shuffled": {
+        "n": 816,
+        "commits": 0,
+        "commits_card": 0,
+        "action_mismatch": 0,
+        "top1_mismatch": 0,
+        "score_mismatch": 0,
+        "max_abs_score_diff": 0.0
+       },
+       "zeros": {
+        "n": 816,
+        "commits": 0,
+        "commits_card": 0,
+        "action_mismatch": 0,
+        "top1_mismatch": 0,
+        "score_mismatch": 0,
+        "max_abs_score_diff": 0.0
+       },
+       "equal": true
+      },
+      "v0.1": {
+       "n": 816,
+       "commits": 159,
+       "commits_v01": 159,
+       "decision_mismatch": 0,
+       "equal": true
+      },
+      "cards": {
+       "v0.1": {
+        "card": "v0.1/b2t25-t15-copytask__ours__ltt",
+        "threshold": 0.54,
+        "n_cal": 812,
+        "n_trials": 816,
+        "n_commits": 159,
+        "commit_rate": 0.1948529411764706
+       },
+       "v0.2": {
+        "card": "v0.2/b2t25-t15__ours__ltt",
+        "threshold": null,
+        "n_cal": 812,
+        "n_trials": 816,
+        "n_commits": 159,
+        "commit_rate": 0.1948529411764706
+       }
+      }
+     }
+    },
+    "seconds": 397.1
+   },
+   "published": {
+    "temperature": 3.780895226360392,
+    "thresholds": {
+     "trust": {
+      "refit": 0.7,
+      "card": 0.7,
+      "equal": true
+     },
+     "crc": {
+      "refit": 0.6717050752793481,
+      "card": 0.6717050752793481,
+      "equal": true
+     },
+     "ltt": {
+      "refit": 0.72,
+      "card": 0.72,
+      "equal": true
+     }
+    },
+    "cal_scores_vs_items": {
+     "n": 812,
+     "equal_1e-9": true,
+     "max_abs_diff": 0.0
+    },
+    "policies": {
+     "trust": {
+      "config_id": "tcfg-3c03e78a91ba60a9",
+      "commit_p": 0.7,
+      "v0.2": {
+       "real": {
+        "n": 816,
+        "commits": 386,
+        "commits_card": 386,
+        "action_mismatch": 0,
+        "top1_mismatch": 0,
+        "score_mismatch": 0,
+        "max_abs_score_diff": 0.0
+       },
+       "shuffled": {
+        "n": 816,
+        "commits": 0,
+        "commits_card": 0,
+        "action_mismatch": 0,
+        "top1_mismatch": 0,
+        "score_mismatch": 0,
+        "max_abs_score_diff": 0.0
+       },
+       "zeros": {
+        "n": 816,
+        "commits": 0,
+        "commits_card": 0,
+        "action_mismatch": 0,
+        "top1_mismatch": 0,
+        "score_mismatch": 0,
+        "max_abs_score_diff": 0.0
+       },
+       "equal": true
+      },
+      "v0.1": {
+       "n": 816,
+       "commits": 386,
+       "commits_v01": 386,
+       "decision_mismatch": 0,
+       "equal": true
+      },
+      "cards": {
+       "v0.1": {
+        "card": "v0.1/b2t25-t15-copytask__published__trust",
+        "threshold": null,
+        "n_cal": null,
+        "n_trials": 816,
+        "n_commits": 386,
+        "commit_rate": 0.4730392156862745
+       },
+       "v0.2": {
+        "card": "v0.2/b2t25-t15__published__trust",
+        "threshold": null,
+        "n_cal": null,
+        "n_trials": 816,
+        "n_commits": 386,
+        "commit_rate": 0.4730392156862745
+       }
+      }
+     },
+     "crc": {
+      "config_id": "tcfg-3824599997d61b6e",
+      "commit_p": 0.6717050752793481,
+      "v0.2": {
+       "real": {
+        "n": 816,
+        "commits": 405,
+        "commits_card": 405,
+        "action_mismatch": 0,
+        "top1_mismatch": 0,
+        "score_mismatch": 0,
+        "max_abs_score_diff": 0.0
+       },
+       "shuffled": {
+        "n": 816,
+        "commits": 0,
+        "commits_card": 0,
+        "action_mismatch": 0,
+        "top1_mismatch": 0,
+        "score_mismatch": 0,
+        "max_abs_score_diff": 0.0
+       },
+       "zeros": {
+        "n": 816,
+        "commits": 0,
+        "commits_card": 0,
+        "action_mismatch": 0,
+        "top1_mismatch": 0,
+        "score_mismatch": 0,
+        "max_abs_score_diff": 0.0
+       },
+       "equal": true
+      },
+      "v0.1": {
+       "n": 816,
+       "commits": 405,
+       "commits_v01": 405,
+       "decision_mismatch": 0,
+       "equal": true
+      },
+      "cards": {
+       "v0.1": {
+        "card": "v0.1/b2t25-t15-copytask__published__crc",
+        "threshold": 0.6717050752793481,
+        "n_cal": 812,
+        "n_trials": 816,
+        "n_commits": 405,
+        "commit_rate": 0.4963235294117647
+       },
+       "v0.2": {
+        "card": "v0.2/b2t25-t15__published__crc",
+        "threshold": null,
+        "n_cal": 812,
+        "n_trials": 816,
+        "n_commits": 405,
+        "commit_rate": 0.4963235294117647
+       }
+      }
+     },
+     "ltt": {
+      "config_id": "tcfg-2c25a97b2e5364a9",
+      "commit_p": 0.72,
+      "v0.2": {
+       "real": {
+        "n": 816,
+        "commits": 364,
+        "commits_card": 364,
+        "action_mismatch": 0,
+        "top1_mismatch": 0,
+        "score_mismatch": 0,
+        "max_abs_score_diff": 0.0
+       },
+       "shuffled": {
+        "n": 816,
+        "commits": 0,
+        "commits_card": 0,
+        "action_mismatch": 0,
+        "top1_mismatch": 0,
+        "score_mismatch": 0,
+        "max_abs_score_diff": 0.0
+       },
+       "zeros": {
+        "n": 816,
+        "commits": 0,
+        "commits_card": 0,
+        "action_mismatch": 0,
+        "top1_mismatch": 0,
+        "score_mismatch": 0,
+        "max_abs_score_diff": 0.0
+       },
+       "equal": true
+      },
+      "v0.1": {
+       "n": 816,
+       "commits": 364,
+       "commits_v01": 364,
+       "decision_mismatch": 0,
+       "equal": true
+      },
+      "cards": {
+       "v0.1": {
+        "card": "v0.1/b2t25-t15-copytask__published__ltt",
+        "threshold": 0.72,
+        "n_cal": 812,
+        "n_trials": 816,
+        "n_commits": 364,
+        "commit_rate": 0.44607843137254904
+       },
+       "v0.2": {
+        "card": "v0.2/b2t25-t15__published__ltt",
+        "threshold": null,
+        "n_cal": 812,
+        "n_trials": 816,
+        "n_commits": 364,
+        "commit_rate": 0.44607843137254904
+       }
+      }
+     }
+    },
+    "seconds": 52.2
+   },
+   "seconds": 455.2
+  },
+  "meg": {
+   "n_val": 437,
+   "n_test": 637,
+   "temperature": 3.295918403993801,
+   "thresholds": {
+    "trust": {
+     "refit": 0.5,
+     "card": 0.5,
+     "equal": true
+    },
+    "crc": {
+     "refit": 0.10239239302166811,
+     "card": 0.10239239302166811,
+     "equal": true
+    },
+    "ltt": {
+     "refit": 0.0,
+     "card": 0.0,
+     "equal": true
+    }
+   },
+   "cal_scores_vs_items": {
+    "n": 437,
+    "equal_1e-9": true,
+    "max_abs_diff": 0.0
+   },
+   "policies": {
+    "trust": {
+     "config_id": "tcfg-3222ca89560b8def",
+     "commit_p": 0.5,
+     "v0.2": {
+      "real": {
+       "n": 637,
+       "commits": 0,
+       "commits_card": 0,
+       "action_mismatch": 0,
+       "top1_mismatch": 0,
+       "score_mismatch": 0,
+       "max_abs_score_diff": 0.0
+      },
+      "shuffled": {
+       "n": 637,
+       "commits": 0,
+       "commits_card": 0,
+       "action_mismatch": 0,
+       "top1_mismatch": 0,
+       "score_mismatch": 0,
+       "max_abs_score_diff": 0.0
+      },
+      "zeros": {
+       "n": 637,
+       "commits": 0,
+       "commits_card": 0,
+       "action_mismatch": 0,
+       "top1_mismatch": 0,
+       "score_mismatch": 0,
+       "max_abs_score_diff": 0.0
+      },
+      "equal": true
+     },
+     "v0.1": {
+      "n": 637,
+      "commits": 0,
+      "commits_v01": 0,
+      "decision_mismatch": 0,
+      "equal": true
+     },
+     "cards": {
+      "v0.1": {
+       "card": "v0.1/spanishbcbl-meg-async__convctc-m-async__trust",
+       "threshold": null,
+       "n_cal": null,
+       "n_trials": 637,
+       "n_commits": 0,
+       "commit_rate": 0.0
+      },
+      "v0.2": {
+       "card": "v0.2/spanishbcbl-meg__convctc-m-async__trust",
+       "threshold": null,
+       "n_cal": null,
+       "n_trials": 637,
+       "n_commits": 0,
+       "commit_rate": 0.0
+      }
+     }
+    },
+    "crc": {
+     "config_id": "tcfg-59f2fac9381cbda8",
+     "commit_p": 0.10239239302166811,
+     "v0.2": {
+      "real": {
+       "n": 637,
+       "commits": 14,
+       "commits_card": 14,
+       "action_mismatch": 0,
+       "top1_mismatch": 0,
+       "score_mismatch": 0,
+       "max_abs_score_diff": 0.0
+      },
+      "shuffled": {
+       "n": 637,
+       "commits": 0,
+       "commits_card": 0,
+       "action_mismatch": 0,
+       "top1_mismatch": 0,
+       "score_mismatch": 0,
+       "max_abs_score_diff": 0.0
+      },
+      "zeros": {
+       "n": 637,
+       "commits": 0,
+       "commits_card": 0,
+       "action_mismatch": 0,
+       "top1_mismatch": 0,
+       "score_mismatch": 0,
+       "max_abs_score_diff": 0.0
+      },
+      "equal": true
+     },
+     "v0.1": {
+      "n": 637,
+      "commits": 14,
+      "commits_v01": 14,
+      "decision_mismatch": 0,
+      "equal": true
+     },
+     "cards": {
+      "v0.1": {
+       "card": "v0.1/spanishbcbl-meg-async__convctc-m-async__crc",
+       "threshold": 0.10239239302166811,
+       "n_cal": 437,
+       "n_trials": 637,
+       "n_commits": 14,
+       "commit_rate": 0.02197802197802198
+      },
+      "v0.2": {
+       "card": "v0.2/spanishbcbl-meg__convctc-m-async__crc",
+       "threshold": null,
+       "n_cal": 437,
+       "n_trials": 637,
+       "n_commits": 14,
+       "commit_rate": 0.02197802197802198
+      }
+     }
+    },
+    "ltt": {
+     "config_id": "tcfg-078f5c49dc4cf0f5",
+     "commit_p": 0.0,
+     "v0.2": {
+      "real": {
+       "n": 637,
+       "commits": 15,
+       "commits_card": 15,
+       "action_mismatch": 0,
+       "top1_mismatch": 0,
+       "score_mismatch": 0,
+       "max_abs_score_diff": 0.0
+      },
+      "shuffled": {
+       "n": 637,
+       "commits": 0,
+       "commits_card": 0,
+       "action_mismatch": 0,
+       "top1_mismatch": 0,
+       "score_mismatch": 0,
+       "max_abs_score_diff": 0.0
+      },
+      "zeros": {
+       "n": 637,
+       "commits": 0,
+       "commits_card": 0,
+       "action_mismatch": 0,
+       "top1_mismatch": 0,
+       "score_mismatch": 0,
+       "max_abs_score_diff": 0.0
+      },
+      "equal": true
+     },
+     "v0.1": {
+      "n": 637,
+      "commits": 15,
+      "commits_v01": 15,
+      "decision_mismatch": 0,
+      "equal": true
+     },
+     "cards": {
+      "v0.1": {
+       "card": "v0.1/spanishbcbl-meg-async__convctc-m-async__ltt",
+       "threshold": 0.0,
+       "n_cal": 437,
+       "n_trials": 637,
+       "n_commits": 15,
+       "commit_rate": 0.023547880690737835
+      },
+      "v0.2": {
+       "card": "v0.2/spanishbcbl-meg__convctc-m-async__ltt",
+       "threshold": null,
+       "n_cal": 437,
+       "n_trials": 637,
+       "n_commits": 15,
+       "commit_rate": 0.023547880690737835
+      }
+     }
+    }
+   },
+   "seconds": 171.0
+  },
+  "toronto": {
+   "conditions": {
+    "calib": {
+     "lm_weight": 1.0,
+     "policies": {
+      "trust": {
+       "config_id": "tcfg-85083946606c4c71",
+       "commit_p": 0.7,
+       "commit_p_build": 0.7,
+       "commit_p_equal": true,
+       "risk_control": {},
+       "v0.2": {
+        "real": {
+         "n": 551,
+         "commits": 21,
+         "commits_card": 21,
+         "action_mismatch": 0,
+         "top1_mismatch": 0,
+         "score_mismatch": 0,
+         "max_abs_score_diff": 0.0
+        },
+        "shuffled": {
+         "n": 551,
+         "commits": 0,
+         "commits_card": 0,
+         "action_mismatch": 0,
+         "top1_mismatch": 0,
+         "score_mismatch": 0,
+         "max_abs_score_diff": 0.0
+        },
+        "zeros": {
+         "n": 551,
+         "commits": 0,
+         "commits_card": 0,
+         "action_mismatch": 0,
+         "top1_mismatch": 0,
+         "score_mismatch": 0,
+         "max_abs_score_diff": 0.0
+        },
+        "equal": true
+       },
+       "v0.1": {
+        "n": 551,
+        "commits": 21,
+        "commit_rate": 0.038112522686025406,
+        "commit_rate_v01": 0.038112522686025406,
+        "commits_v01": 21,
+        "equal": true
+       },
+       "cards": {
+        "v0.1": {
+         "card": "v0.1/toronto-semg-composed__cnn-calib__trust",
+         "threshold": null,
+         "n_cal": null,
+         "n_trials": 551,
+         "n_commits": null,
+         "commit_rate": 0.038112522686025406
+        },
+        "v0.2": {
+         "card": "v0.2/toronto-semg__cnn-calib__trust",
+         "threshold": null,
+         "n_cal": null,
+         "n_trials": 551,
+         "n_commits": 21,
+         "commit_rate": 0.038112522686025406
+        }
+       }
+      },
+      "crc": {
+       "config_id": "tcfg-27d57285bb044879",
+       "commit_p": 0.7,
+       "commit_p_build": 0.7,
+       "commit_p_equal": true,
+       "risk_control": {
+        "method": "crc",
+        "alpha": 0.05,
+        "delta": null,
+        "threshold": 0.4480289413056333,
+        "feasible": true,
+        "n": 142,
+        "bound": 0.04895104895104895,
+        "combine": "max"
+       },
+       "v0.2": {
+        "real": {
+         "n": 551,
+         "commits": 21,
+         "commits_card": 21,
+         "action_mismatch": 0,
+         "top1_mismatch": 0,
+         "score_mismatch": 0,
+         "max_abs_score_diff": 0.0
+        },
+        "shuffled": {
+         "n": 551,
+         "commits": 0,
+         "commits_card": 0,
+         "action_mismatch": 0,
+         "top1_mismatch": 0,
+         "score_mismatch": 0,
+         "max_abs_score_diff": 0.0
+        },
+        "zeros": {
+         "n": 551,
+         "commits": 0,
+         "commits_card": 0,
+         "action_mismatch": 0,
+         "top1_mismatch": 0,
+         "score_mismatch": 0,
+         "max_abs_score_diff": 0.0
+        },
+        "equal": true
+       },
+       "v0.1": {
+        "n": 551,
+        "commits": 21,
+        "commit_rate": 0.038112522686025406,
+        "commit_rate_v01": 0.038112522686025406,
+        "commits_v01": 21,
+        "equal": true
+       },
+       "cards": {
+        "v0.1": {
+         "card": "v0.1/toronto-semg-composed__cnn-calib__crc",
+         "threshold": 0.4480289413056333,
+         "n_cal": 142,
+         "n_trials": 551,
+         "n_commits": 21,
+         "commit_rate": 0.038112522686025406
+        },
+        "v0.2": {
+         "card": "v0.2/toronto-semg__cnn-calib__crc",
+         "threshold": null,
+         "n_cal": 142,
+         "n_trials": 551,
+         "n_commits": 21,
+         "commit_rate": 0.038112522686025406
+        }
+       },
+       "crc_threshold": {
+        "refit": 0.4480289413056333,
+        "card_v01": 0.4480289413056333,
+        "equal": true
+       }
+      }
+     },
+     "seconds": 58.2
+    },
+    "xsession": {
+     "lm_weight": 1.0,
+     "policies": {
+      "trust": {
+       "config_id": "tcfg-4f186d334bef2f50",
+       "commit_p": 0.3,
+       "commit_p_build": 0.3,
+       "commit_p_equal": true,
+       "risk_control": {},
+       "v0.2": {
+        "real": {
+         "n": 551,
+         "commits": 10,
+         "commits_card": 10,
+         "action_mismatch": 0,
+         "top1_mismatch": 0,
+         "score_mismatch": 0,
+         "max_abs_score_diff": 0.0
+        },
+        "shuffled": {
+         "n": 551,
+         "commits": 1,
+         "commits_card": 1,
+         "action_mismatch": 0,
+         "top1_mismatch": 0,
+         "score_mismatch": 0,
+         "max_abs_score_diff": 0.0
+        },
+        "zeros": {
+         "n": 551,
+         "commits": 0,
+         "commits_card": 0,
+         "action_mismatch": 0,
+         "top1_mismatch": 0,
+         "score_mismatch": 0,
+         "max_abs_score_diff": 0.0
+        },
+        "equal": true
+       },
+       "v0.1": {
+        "n": 551,
+        "commits": 10,
+        "commit_rate": 0.018148820326678767,
+        "commit_rate_v01": 0.018148820326678767,
+        "commits_v01": 10,
+        "equal": true
+       },
+       "cards": {
+        "v0.1": {
+         "card": "v0.1/toronto-semg-composed__cnn-xsession__trust",
+         "threshold": null,
+         "n_cal": null,
+         "n_trials": 551,
+         "n_commits": null,
+         "commit_rate": 0.018148820326678767
+        },
+        "v0.2": {
+         "card": "v0.2/toronto-semg__cnn-xsession__trust",
+         "threshold": null,
+         "n_cal": null,
+         "n_trials": 551,
+         "n_commits": 10,
+         "commit_rate": 0.018148820326678767
+        }
+       }
+      },
+      "crc": {
+       "config_id": "tcfg-d8bacbc6d4316e4d",
+       "commit_p": 0.3,
+       "commit_p_build": 0.3,
+       "commit_p_equal": true,
+       "risk_control": {
+        "method": "crc",
+        "alpha": 0.05,
+        "delta": null,
+        "threshold": 0.20359210958258184,
+        "feasible": true,
+        "n": 142,
+        "bound": 0.04895104895104895,
+        "combine": "max"
+       },
+       "v0.2": {
+        "real": {
+         "n": 551,
+         "commits": 10,
+         "commits_card": 10,
+         "action_mismatch": 0,
+         "top1_mismatch": 0,
+         "score_mismatch": 0,
+         "max_abs_score_diff": 0.0
+        },
+        "shuffled": {
+         "n": 551,
+         "commits": 1,
+         "commits_card": 1,
+         "action_mismatch": 0,
+         "top1_mismatch": 0,
+         "score_mismatch": 0,
+         "max_abs_score_diff": 0.0
+        },
+        "zeros": {
+         "n": 551,
+         "commits": 0,
+         "commits_card": 0,
+         "action_mismatch": 0,
+         "top1_mismatch": 0,
+         "score_mismatch": 0,
+         "max_abs_score_diff": 0.0
+        },
+        "equal": true
+       },
+       "v0.1": {
+        "n": 551,
+        "commits": 10,
+        "commit_rate": 0.018148820326678767,
+        "commit_rate_v01": 0.018148820326678767,
+        "commits_v01": 10,
+        "equal": true
+       },
+       "cards": {
+        "v0.1": {
+         "card": "v0.1/toronto-semg-composed__cnn-xsession__crc",
+         "threshold": 0.20359210958258184,
+         "n_cal": 142,
+         "n_trials": 551,
+         "n_commits": 10,
+         "commit_rate": 0.018148820326678767
+        },
+        "v0.2": {
+         "card": "v0.2/toronto-semg__cnn-xsession__crc",
+         "threshold": null,
+         "n_cal": 142,
+         "n_trials": 551,
+         "n_commits": 10,
+         "commit_rate": 0.018148820326678767
+        }
+       },
+       "crc_threshold": {
+        "refit": 0.20359210958258184,
+        "card_v01": 0.20359210958258184,
+        "equal": true
+       }
+      }
+     },
+     "seconds": 56.7
+    },
+    "xsubject": {
+     "lm_weight": 1.5,
+     "policies": {
+      "trust": {
+       "config_id": "tcfg-8d787ba942383efd",
+       "commit_p": 0.3,
+       "commit_p_build": 0.3,
+       "commit_p_equal": true,
+       "risk_control": {},
+       "v0.2": {
+        "real": {
+         "n": 551,
+         "commits": 0,
+         "commits_card": 0,
+         "action_mismatch": 0,
+         "top1_mismatch": 0,
+         "score_mismatch": 0,
+         "max_abs_score_diff": 0.0
+        },
+        "shuffled": {
+         "n": 551,
+         "commits": 0,
+         "commits_card": 0,
+         "action_mismatch": 0,
+         "top1_mismatch": 0,
+         "score_mismatch": 0,
+         "max_abs_score_diff": 0.0
+        },
+        "zeros": {
+         "n": 551,
+         "commits": 0,
+         "commits_card": 0,
+         "action_mismatch": 0,
+         "top1_mismatch": 0,
+         "score_mismatch": 0,
+         "max_abs_score_diff": 0.0
+        },
+        "equal": true
+       },
+       "v0.1": {
+        "n": 551,
+        "commits": 0,
+        "commit_rate": 0.0,
+        "commit_rate_v01": 0.0,
+        "commits_v01": 0,
+        "equal": true
+       },
+       "cards": {
+        "v0.1": {
+         "card": "v0.1/toronto-semg-composed__cnn-xsubject__trust",
+         "threshold": null,
+         "n_cal": null,
+         "n_trials": 551,
+         "n_commits": null,
+         "commit_rate": 0.0
+        },
+        "v0.2": {
+         "card": "v0.2/toronto-semg__cnn-xsubject__trust",
+         "threshold": null,
+         "n_cal": null,
+         "n_trials": 551,
+         "n_commits": 0,
+         "commit_rate": 0.0
+        }
+       }
+      },
+      "crc": {
+       "config_id": "tcfg-8b5f62b08c397f27",
+       "commit_p": "inf",
+       "commit_p_build": null,
+       "commit_p_equal": true,
+       "risk_control": {
+        "method": "crc",
+        "alpha": 0.05,
+        "delta": null,
+        "threshold": "inf",
+        "feasible": true,
+        "n": 142,
+        "bound": 0.006993006993006993,
+        "combine": "max"
+       },
+       "v0.2": {
+        "real": {
+         "n": 551,
+         "commits": 0,
+         "commits_card": 0,
+         "action_mismatch": 0,
+         "top1_mismatch": 0,
+         "score_mismatch": 0,
+         "max_abs_score_diff": 0.0
+        },
+        "shuffled": {
+         "n": 551,
+         "commits": 0,
+         "commits_card": 0,
+         "action_mismatch": 0,
+         "top1_mismatch": 0,
+         "score_mismatch": 0,
+         "max_abs_score_diff": 0.0
+        },
+        "zeros": {
+         "n": 551,
+         "commits": 0,
+         "commits_card": 0,
+         "action_mismatch": 0,
+         "top1_mismatch": 0,
+         "score_mismatch": 0,
+         "max_abs_score_diff": 0.0
+        },
+        "equal": true
+       },
+       "v0.1": {
+        "n": 551,
+        "commits": 0,
+        "commit_rate": 0.0,
+        "commit_rate_v01": 0.0,
+        "commits_v01": 0,
+        "equal": true
+       },
+       "cards": {
+        "v0.1": {
+         "card": "v0.1/toronto-semg-composed__cnn-xsubject__crc",
+         "threshold": null,
+         "n_cal": 142,
+         "n_trials": 551,
+         "n_commits": 0,
+         "commit_rate": 0.0
+        },
+        "v0.2": {
+         "card": "v0.2/toronto-semg__cnn-xsubject__crc",
+         "threshold": null,
+         "n_cal": 142,
+         "n_trials": 551,
+         "n_commits": 0,
+         "commit_rate": 0.0
+        }
+       },
+       "crc_threshold": {
+        "refit": "inf",
+        "card_v01": null,
+        "equal": true
+       }
+      }
+     },
+     "seconds": 50.7
+    }
+   },
+   "seconds": 165.8
+  }
+ }
+}
