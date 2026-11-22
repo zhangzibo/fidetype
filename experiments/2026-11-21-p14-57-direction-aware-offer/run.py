@@ -536,7 +536,9 @@ def stage_score(E: Env) -> None:
                          and r["guards"][k]["action"] == "offer")
             recs = [r for kk, r in K.rows.items() if kk[0] == k and kk[1] == "p55_" + s]
             rep = sum(r["action"] == r["p55_action"] and abs(r["coh"] - r["p55_coh"]) <= 1e-6 for r in recs)
-            repeat_ok &= rep == len(recs) == before
+            # (score-stage fix after the first score run: recs holds the inputs that were offers for EITHER guard,
+            # so the check is "every record repeats" and "the repeated offers of this guard = its P14-55 offers")
+            repeat_ok &= rep == len(recs) and sum(r["action"] == "offer" for r in recs) == before
             now = sum(after(r, c) == "offer" for r in recs)
             oc = offer_control(n_test, real_off1, [ControlResult(s, s, n, 0, int(math.floor(0.05 * n + 1e-9)), now)],
                                rate=0.05)

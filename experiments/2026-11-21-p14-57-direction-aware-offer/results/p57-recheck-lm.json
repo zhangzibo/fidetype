@@ -1,0 +1,66 @@
+{
+ "rule": "pass if null offer rate <= 0.5 x real offer rate, and (null offers <= floor(0.05 x n) or one-sided Fisher exact p <= 0.05); real = the LTT items",
+ "mode": "warn",
+ "max_ratio": 0.5,
+ "p_max": 0.05,
+ "real": {
+  "n": 40,
+  "n_offer": 32,
+  "offer_rate": 0.8
+ },
+ "controls": [
+  {
+   "name": "uniform",
+   "n": 300,
+   "n_offer": 0,
+   "offer_rate": 0.0,
+   "ratio_to_real": 0.0,
+   "allowed_without_test": 15,
+   "p_value": 8.97189e-38,
+   "passed": true
+  },
+  {
+   "name": "shuffled",
+   "n": 300,
+   "n_offer": 0,
+   "offer_rate": 0.0,
+   "ratio_to_real": 0.0,
+   "allowed_without_test": 15,
+   "p_value": 8.97189e-38,
+   "passed": true
+  },
+  {
+   "name": "user",
+   "n": 106,
+   "n_offer": 0,
+   "offer_rate": 0.0,
+   "ratio_to_real": 0.0,
+   "allowed_without_test": 5,
+   "p_value": 4.38056e-25,
+   "passed": true
+  }
+ ],
+ "passed": true,
+ "commits_match_sheet": true,
+ "ltt_commits": 0,
+ "control_commits": {
+  "uniform": "0/300",
+  "shuffled": "0/300",
+  "user": "0/106"
+ },
+ "guard": "lm",
+ "config_id": "tcfg-26ae951a20a0cddd",
+ "gates": [
+  {
+   "schema": "fidetype.offer-gate/0.1",
+   "feature": "coherence",
+   "threshold": 0.002820748898623049,
+   "note": "P14-54 (plan 09def1e): fitted on the 66 non-LTT val sentences only (threshold = the smallest real offer value); withholds an OFFER when the frame-order coherence is below the threshold; never changes a COMMIT"
+  },
+  {
+   "schema": "fidetype.offer-gate/0.1",
+   "feature": "-nb_decay_asym",
+   "threshold": 0.0
+  }
+ ]
+}

@@ -1,0 +1,58 @@
+[2026-11-21 21:14:17] (rss 31 MB, peak 31 MB) keep_awake: on (SetThreadExecutionState)
+[2026-11-21 21:14:17] (rss 101 MB, peak 104 MB) start ['select', 'p57', 'p58', 'score']; coherence thresholds {'builtin': 0.004183090472992479, 'lm': 0.002820748898623049}; C5 lo -1.1697116125105564
+[2026-11-21 21:15:13] (rss 324 MB, peak 440 MB) select: builtin done (55 s)
+[2026-11-21 21:15:48] (rss 336 MB, peak 440 MB) select: lm done (91 s)
+[2026-11-21 21:15:48] (rss 336 MB, peak 440 MB) select: {"builtin": ["-nb_decay_asym", 14, 66], "lm": ["-nb_decay_asym", 19, 66]}
+[2026-11-21 21:18:00] (rss 324 MB, peak 440 MB) p57: builtin real + rev_out done (132 s)
+[2026-11-21 21:19:34] (rss 333 MB, peak 440 MB) p57: lm real + rev_out done (226 s)
+[2026-11-21 21:20:22] (rss 580 MB, peak 639 MB) p57: P14-54 timeshuf done (274 s)
+[2026-11-21 21:20:57] (rss 584 MB, peak 639 MB) p57: P14-54 zero done (309 s)
+[2026-11-21 21:21:46] (rss 585 MB, peak 664 MB) p57: P14-54 frameshuf done (358 s)
+[2026-11-21 21:24:18] (rss 661 MB, peak 795 MB) heartbeat
+[2026-11-21 21:34:19] (rss 631 MB, peak 795 MB) heartbeat
+[2026-11-21 21:38:38] (rss 658 MB, peak 795 MB) p57: P14-54 uniform done (1370 s)
+[2026-11-21 21:38:38] (rss 658 MB, peak 795 MB) p57: P14-55 offered null inputs to make again: 22 (['rev_in', 'ts'])
+[2026-11-21 21:39:23] (rss 679 MB, peak 954 MB) p57: P14-55 nulls made again (1415 s)
+[2026-11-21 21:44:20] (rss 1056 MB, peak 1123 MB) heartbeat
+[2026-11-21 21:54:21] (rss 712 MB, peak 1212 MB) heartbeat
+[2026-11-21 22:04:22] (rss 683 MB, peak 1212 MB) heartbeat
+[2026-11-21 22:14:24] (rss 477 MB, peak 1212 MB) heartbeat
+[2026-11-21 22:24:26] (rss 479 MB, peak 1212 MB) heartbeat
+[2026-11-21 22:34:28] (rss 414 MB, peak 1212 MB) heartbeat
+[2026-11-21 22:44:29] (rss 374 MB, peak 1212 MB) heartbeat
+[2026-11-21 22:48:45] (rss 572 MB, peak 1212 MB) p57: V re-check builtin: passed True, real {'n': 40, 'n_offer': 33, 'offer_rate': 0.825}, [('uniform', 0, 300), ('shuffled', 0, 300), ('user', 0, 106)] (5577 s)
+[2026-11-21 22:49:07] (rss 611 MB, peak 1212 MB) STOP file found: exit 3
+[2026-11-21 22:49:14] (rss 31 MB, peak 31 MB) keep_awake: on (SetThreadExecutionState)
+[2026-11-21 22:49:14] (rss 102 MB, peak 104 MB) start ['p58', 'p57', 'score']; coherence thresholds {'builtin': 0.004183090472992479, 'lm': 0.002820748898623049}; C5 lo -1.1697116125105564
+[2026-11-21 22:49:23] (rss 168 MB, peak 448 MB) p58: lo_new 0.56593 parts {'lo_real_hd': 0.5659314232741417, 'lo_null': -1.1690092361623337} (shipped lo -1.16971); score check 0.00e+00
+[2026-11-21 22:49:24] (rss 169 MB, peak 448 MB) p58: stability done (9 s)
+[2026-11-21 22:52:32] (rss 186 MB, peak 503 MB) p58: session 1/10 t5.2019.05.08 done (198 s)
+[2026-11-21 22:54:44] (rss 187 MB, peak 503 MB) p58: session 2/10 t5.2019.11.25 done (330 s)
+[2026-11-21 22:57:45] (rss 186 MB, peak 503 MB) p58: session 3/10 t5.2019.12.09 done (511 s)
+[2026-11-21 22:58:58] (rss 185 MB, peak 503 MB) p58: session 4/10 t5.2019.12.11 done (584 s)
+[2026-11-21 22:59:14] (rss 302 MB, peak 503 MB) heartbeat
+[2026-11-21 23:00:16] (rss 185 MB, peak 503 MB) p58: session 5/10 t5.2019.12.18 done (661 s)
+[2026-11-21 23:01:31] (rss 185 MB, peak 503 MB) p58: session 6/10 t5.2019.12.20 done (737 s)
+[2026-11-21 23:02:36] (rss 185 MB, peak 503 MB) p58: session 7/10 t5.2020.01.06 done (802 s)
+[2026-11-21 23:03:50] (rss 185 MB, peak 503 MB) p58: session 8/10 t5.2020.01.08 done (876 s)
+[2026-11-21 23:06:02] (rss 185 MB, peak 503 MB) p58: session 9/10 t5.2020.01.13 done (1008 s)
+[2026-11-21 23:08:27] (rss 188 MB, peak 503 MB) p58: session 10/10 t5.2020.01.15 done (1153 s)
+[2026-11-21 23:08:32] (rss 446 MB, peak 577 MB) p58: test done (1158 s)
+[2026-11-21 23:08:32] (rss 317 MB, peak 577 MB) p57: builtin real + rev_out done (0 s)
+[2026-11-21 23:08:32] (rss 317 MB, peak 577 MB) p57: lm real + rev_out done (0 s)
+[2026-11-21 23:08:33] (rss 564 MB, peak 577 MB) p57: P14-54 timeshuf done (0 s)
+[2026-11-21 23:08:33] (rss 564 MB, peak 577 MB) p57: P14-54 zero done (0 s)
+[2026-11-21 23:08:33] (rss 564 MB, peak 577 MB) p57: P14-54 frameshuf done (0 s)
+[2026-11-21 23:08:33] (rss 564 MB, peak 577 MB) p57: P14-54 uniform done (0 s)
+[2026-11-21 23:08:33] (rss 568 MB, peak 577 MB) p57: P14-55 offered null inputs to make again: 22 (['rev_in', 'ts'])
+[2026-11-21 23:08:33] (rss 568 MB, peak 577 MB) p57: P14-55 nulls made again (0 s)
+[2026-11-21 23:09:15] (rss 947 MB, peak 1008 MB) heartbeat
+[2026-11-21 23:11:06] (rss 973 MB, peak 1032 MB) p57: V re-check lm: passed True, real {'n': 40, 'n_offer': 32, 'offer_rate': 0.8}, [('uniform', 0, 300), ('shuffled', 0, 300), ('user', 0, 106)] (154 s)
+[2026-11-21 23:11:06] (rss 254 MB, peak 1032 MB) score: {"p57": {"builtin": {"D1": false, "D2": false, "D3": false, "D4": false}, "lm": {"D1": false, "D2": false, "D3": false, "D4": false}}, "p58": {"E1": {"pass": true, "value": 0.0037376628261006077}, "E2": {"pass": true, "value": "3 / 80"}}}
+[2026-11-21 23:11:06] (rss 253 MB, peak 1032 MB) keep_awake: cleared
+[2026-11-21 23:11:06] (rss 253 MB, peak 1032 MB) end of ['p58', 'p57', 'score'] (1312 s); peak 1032 MB
+[2026-11-21 23:11:33] (rss 31 MB, peak 31 MB) keep_awake: on (SetThreadExecutionState)
+[2026-11-21 23:11:33] (rss 102 MB, peak 104 MB) start ['score']; coherence thresholds {'builtin': 0.004183090472992479, 'lm': 0.002820748898623049}; C5 lo -1.1697116125105564
+[2026-11-21 23:11:34] (rss 171 MB, peak 171 MB) score: {"p57": {"builtin": {"D1": false, "D2": false, "D3": true, "D4": false}, "lm": {"D1": false, "D2": false, "D3": true, "D4": false}}, "p58": {"E1": {"pass": true, "value": 0.0037376628261006077}, "E2": {"pass": true, "value": "3 / 80"}}}
+[2026-11-21 23:11:34] (rss 168 MB, peak 171 MB) keep_awake: cleared
+[2026-11-21 23:11:34] (rss 168 MB, peak 171 MB) end of ['score'] (1 s); peak 171 MB

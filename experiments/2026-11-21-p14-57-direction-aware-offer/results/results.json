@@ -1,0 +1,464 @@
+{
+ "config_id": {
+  "builtin": "tcfg-39aac48688b8bd12",
+  "lm": "tcfg-26ae951a20a0cddd"
+ },
+ "coherence_threshold": {
+  "builtin": 0.004183090472992479,
+  "lm": 0.002820748898623049
+ },
+ "p57": {
+  "builtin": {
+   "chosen": "-nb_decay_asym",
+   "information_only": true,
+   "real": {
+    "n": 80,
+    "offer_coherence_only": 77,
+    "offer_both": 66,
+    "removed_by_direction": 11,
+    "direction_value": [
+     -0.520367,
+     -0.098162,
+     0.079856,
+     0.221738,
+     0.328752
+    ]
+   },
+   "rev_out": {
+    "n": 80,
+    "offer_coherence_only": 77,
+    "offer_both": 11
+   },
+   "equivalence_check": "160 / 160",
+   "p55_coherence_equal_real_rev": 80,
+   "D1": {
+    "pass": false,
+    "value": "11 / 80"
+   },
+   "D2": {
+    "pass": false,
+    "value": "11 / 80"
+   },
+   "D3": {
+    "pass": true,
+    "repeat_ok": true,
+    "sets": {
+     "ts": {
+      "n": 800,
+      "offer_p14_55": 14,
+      "made_again": 20,
+      "repeat_equal": 20,
+      "offer_both": 8,
+      "cp95_upper": 0.01797077970028614,
+      "offer_control_pass": true,
+      "pass": true
+     },
+     "fs": {
+      "n": 800,
+      "offer_p14_55": 0,
+      "made_again": 0,
+      "repeat_equal": 0,
+      "offer_both": 0,
+      "cp95_upper": 0.0037376628261006077,
+      "offer_control_pass": true,
+      "pass": true
+     },
+     "uni": {
+      "n": 800,
+      "offer_p14_55": 0,
+      "made_again": 0,
+      "repeat_equal": 0,
+      "offer_both": 0,
+      "cp95_upper": 0.0037376628261006077,
+      "offer_control_pass": true,
+      "pass": true
+     },
+     "rev_in": {
+      "n": 80,
+      "offer_p14_55": 2,
+      "made_again": 2,
+      "repeat_equal": 2,
+      "offer_both": 1,
+      "cp95_upper": 0.057928682117781724,
+      "offer_control_pass": true,
+      "pass": true
+     },
+     "do_nothing": {
+      "n": 27,
+      "offer_p14_55": 0,
+      "made_again": 0,
+      "repeat_equal": 0,
+      "offer_both": 0,
+      "cp95_upper": 0.10501923017634426,
+      "offer_control_pass": true,
+      "pass": true
+     },
+     "lines": {
+      "n": 80,
+      "offer_p14_55": 0,
+      "made_again": 0,
+      "repeat_equal": 0,
+      "offer_both": 0,
+      "cp95_upper": 0.036754197779982296,
+      "offer_control_pass": true,
+      "pass": true
+     }
+    }
+   },
+   "D4": {
+    "pass": false,
+    "sets": {
+     "timeshuf": {
+      "emit_coherence_only": 1,
+      "emit_both": 1,
+      "n": 80
+     },
+     "zero": {
+      "emit_coherence_only": 0,
+      "emit_both": 0,
+      "n": 80
+     },
+     "frameshuf": {
+      "emit_coherence_only": 0,
+      "emit_both": 0,
+      "n": 80
+     },
+     "uniform": {
+      "emit_coherence_only": 0,
+      "emit_both": 0,
+      "n": 80
+     },
+     "V_recheck": {
+      "passed": true,
+      "real": {
+       "n": 40,
+       "n_offer": 33,
+       "offer_rate": 0.825
+      },
+      "controls": [
+       [
+        "uniform",
+        0,
+        300
+       ],
+       [
+        "shuffled",
+        0,
+        300
+       ],
+       [
+        "user",
+        0,
+        106
+       ]
+      ],
+      "commits_match_sheet": true
+     }
+    }
+   }
+  },
+  "lm": {
+   "chosen": "-nb_decay_asym",
+   "information_only": true,
+   "real": {
+    "n": 80,
+    "offer_coherence_only": 77,
+    "offer_both": 60,
+    "removed_by_direction": 17,
+    "direction_value": [
+     -0.611356,
+     -0.18485,
+     0.075471,
+     0.277027,
+     0.371213
+    ]
+   },
+   "rev_out": {
+    "n": 80,
+    "offer_coherence_only": 78,
+    "offer_both": 18
+   },
+   "equivalence_check": "160 / 160",
+   "p55_coherence_equal_real_rev": 80,
+   "D1": {
+    "pass": false,
+    "value": "18 / 80"
+   },
+   "D2": {
+    "pass": false,
+    "value": "17 / 80"
+   },
+   "D3": {
+    "pass": true,
+    "repeat_ok": true,
+    "sets": {
+     "ts": {
+      "n": 800,
+      "offer_p14_55": 13,
+      "made_again": 20,
+      "repeat_equal": 20,
+      "offer_both": 7,
+      "cp95_upper": 0.016372027404704254,
+      "offer_control_pass": true,
+      "pass": true
+     },
+     "fs": {
+      "n": 800,
+      "offer_p14_55": 0,
+      "made_again": 0,
+      "repeat_equal": 0,
+      "offer_both": 0,
+      "cp95_upper": 0.0037376628261006077,
+      "offer_control_pass": true,
+      "pass": true
+     },
+     "uni": {
+      "n": 800,
+      "offer_p14_55": 0,
+      "made_again": 0,
+      "repeat_equal": 0,
+      "offer_both": 0,
+      "cp95_upper": 0.0037376628261006077,
+      "offer_control_pass": true,
+      "pass": true
+     },
+     "rev_in": {
+      "n": 80,
+      "offer_p14_55": 1,
+      "made_again": 2,
+      "repeat_equal": 2,
+      "offer_both": 0,
+      "cp95_upper": 0.036754197779982296,
+      "offer_control_pass": true,
+      "pass": true
+     },
+     "do_nothing": {
+      "n": 27,
+      "offer_p14_55": 0,
+      "made_again": 0,
+      "repeat_equal": 0,
+      "offer_both": 0,
+      "cp95_upper": 0.10501923017634426,
+      "offer_control_pass": true,
+      "pass": true
+     },
+     "lines": {
+      "n": 80,
+      "offer_p14_55": 0,
+      "made_again": 0,
+      "repeat_equal": 0,
+      "offer_both": 0,
+      "cp95_upper": 0.036754197779982296,
+      "offer_control_pass": true,
+      "pass": true
+     }
+    }
+   },
+   "D4": {
+    "pass": false,
+    "sets": {
+     "timeshuf": {
+      "emit_coherence_only": 1,
+      "emit_both": 0,
+      "n": 80
+     },
+     "zero": {
+      "emit_coherence_only": 0,
+      "emit_both": 0,
+      "n": 80
+     },
+     "frameshuf": {
+      "emit_coherence_only": 0,
+      "emit_both": 0,
+      "n": 80
+     },
+     "uniform": {
+      "emit_coherence_only": 0,
+      "emit_both": 0,
+      "n": 80
+     },
+     "V_recheck": {
+      "passed": true,
+      "real": {
+       "n": 40,
+       "n_offer": 32,
+       "offer_rate": 0.8
+      },
+      "controls": [
+       [
+        "uniform",
+        0,
+        300
+       ],
+       [
+        "shuffled",
+        0,
+        300
+       ],
+       [
+        "user",
+        0,
+        106
+       ]
+      ],
+      "commits_match_sheet": true
+     }
+    }
+   }
+  }
+ },
+ "p58": {
+  "lo_new": 0.5659314232741417,
+  "parts": {
+   "lo_real_hd": 0.5659314232741417,
+   "lo_null": -1.1690092361623337
+  },
+  "shipped_lo": -1.1697116125105564,
+  "val": {
+   "real_gated_new": 1,
+   "n_real": 66,
+   "null_pass_score_only": 0,
+   "n_null": 726,
+   "score_copy_check_maxabs": 0.0
+  },
+  "stability": {
+   "min_rule": {
+    "lo": [
+     -1.42863,
+     -1.146497,
+     0.273529,
+     1.473154,
+     2.001826
+    ],
+    "B_real_gated_of_33": [
+     0.0,
+     0.0,
+     1.0,
+     4.0,
+     9.0
+    ],
+    "B_real_gated_sum": 235,
+    "B_null_pass_of_363": [
+     0.0,
+     0.0,
+     0.0,
+     9.0,
+     12.0
+    ],
+    "B_null_pass_sum": 494
+   },
+   "new_rule": {
+    "lo": [
+     -0.428243,
+     -0.274986,
+     0.675705,
+     1.563432,
+     2.141169
+    ],
+    "B_real_gated_of_33": [
+     0.0,
+     0.0,
+     1.0,
+     4.0,
+     10.0
+    ],
+    "B_real_gated_sum": 281,
+    "B_null_pass_of_363": [
+     0.0,
+     0.0,
+     0.0,
+     2.0,
+     3.0
+    ],
+    "B_null_pass_sum": 71
+   },
+   "n_splits": 200,
+   "eval_n_per_split": {
+    "real": 33,
+    "null": 363
+   }
+  },
+  "test_new_draws": {
+   "n": 800,
+   "emit_new": 0,
+   "cp95_new": 0.0037376628261006077,
+   "per_draw_new": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "cluster_boot95_new": 0.0,
+   "pass_new": 0,
+   "emit_shipped": 18,
+   "cp95_shipped": 0.03318317303390534,
+   "per_draw_shipped": [
+    1,
+    3,
+    1,
+    3,
+    2,
+    1,
+    3,
+    2,
+    1,
+    1
+   ],
+   "sentences_ever_emit_new": 0
+  },
+  "test_real": {
+   "n": 80,
+   "gated_new": 3,
+   "gated_shipped": 1,
+   "emit_new": 77,
+   "emit_shipped": 79
+  },
+  "test_known_draws": {
+   "ts_d1_10": {
+    "n": 800,
+    "pass_new": 1,
+    "pass_old": 26,
+    "emit_old": 26
+   },
+   "uni_d1_10": {
+    "n": 800,
+    "pass_new": 0,
+    "pass_old": 0,
+    "emit_old": 0
+   },
+   "ts_d0": {
+    "pass_new": 0,
+    "emit_new": 0
+   },
+   "zero": {
+    "pass_new": 0
+   },
+   "rev_in": {
+    "n": 80,
+    "pass_new": 0,
+    "pass_old": 3,
+    "emit_old": 3
+   },
+   "lines": {
+    "n": 80,
+    "pass_new": 0,
+    "pass_old": 0,
+    "emit_old": 0
+   }
+  },
+  "E1": {
+   "pass": true,
+   "value": 0.0037376628261006077
+  },
+  "E2": {
+   "pass": true,
+   "value": "3 / 80"
+  }
+ }
+}

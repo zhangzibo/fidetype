@@ -1,0 +1,134 @@
+{
+ "builtin": {
+  "m_real_offers": 66,
+  "n": 66,
+  "loss": {
+   "nb_decay_asym": 52,
+   "-nb_decay_asym": 14,
+   "nb_time_asym": 52,
+   "-nb_time_asym": 14,
+   "time_asym": 17,
+   "-time_asym": 49
+  },
+  "chosen": "-nb_decay_asym",
+  "loss_limit": 3,
+  "information_only": true,
+  "values_real_offers": {
+   "nb_decay_asym": [
+    -0.222381,
+    -0.183338,
+    -0.070543,
+    0.109482,
+    0.290292
+   ],
+   "-nb_decay_asym": [
+    -0.290292,
+    -0.109482,
+    0.070543,
+    0.183338,
+    0.222381
+   ],
+   "nb_time_asym": [
+    -0.151047,
+    -0.11895,
+    -0.039334,
+    0.059618,
+    0.224178
+   ],
+   "-nb_time_asym": [
+    -0.224178,
+    -0.059618,
+    0.039334,
+    0.11895,
+    0.151047
+   ],
+   "time_asym": [
+    -0.088336,
+    -0.007308,
+    0.011969,
+    0.031393,
+    0.08326
+   ],
+   "-time_asym": [
+    -0.08326,
+    -0.031393,
+    -0.011969,
+    0.007308,
+    0.088336
+   ]
+  },
+  "rev_out_val": {
+   "offer_coherence_only": 66,
+   "offer_with_direction": 14,
+   "n": 66
+  },
+  "rev_coherence_equal_1e-9": 66,
+  "rev_direction_antisym_1e-9": 66
+ },
+ "lm": {
+  "m_real_offers": 66,
+  "n": 66,
+  "loss": {
+   "nb_decay_asym": 47,
+   "-nb_decay_asym": 19,
+   "nb_time_asym": 47,
+   "-nb_time_asym": 19,
+   "time_asym": 28,
+   "-time_asym": 38
+  },
+  "chosen": "-nb_decay_asym",
+  "loss_limit": 3,
+  "information_only": true,
+  "values_real_offers": {
+   "nb_decay_asym": [
+    -0.343759,
+    -0.266079,
+    -0.057512,
+    0.147881,
+    0.293712
+   ],
+   "-nb_decay_asym": [
+    -0.293712,
+    -0.147881,
+    0.057512,
+    0.266079,
+    0.343759
+   ],
+   "nb_time_asym": [
+    -0.154738,
+    -0.109606,
+    -0.021326,
+    0.059322,
+    0.129622
+   ],
+   "-nb_time_asym": [
+    -0.129622,
+    -0.059322,
+    0.021326,
+    0.109606,
+    0.154738
+   ],
+   "time_asym": [
+    -0.066456,
+    -0.009954,
+    0.001777,
+    0.017472,
+    0.031011
+   ],
+   "-time_asym": [
+    -0.031011,
+    -0.017472,
+    -0.001777,
+    0.009954,
+    0.066456
+   ]
+  },
+  "rev_out_val": {
+   "offer_coherence_only": 66,
+   "offer_with_direction": 19,
+   "n": 66
+  },
+  "rev_coherence_equal_1e-9": 66,
+  "rev_direction_antisym_1e-9": 66
+ }
+}
