@@ -6,12 +6,12 @@ edition = "2021"
 rust-version = "1.81"
 license = "Apache-2.0"
 authors = ["Zibo Zhang"]
-description = "Rust SDK for NeuralTextStream (NTS): writer, readers (JSON Lines + NPZ), v0.1 checks, FEP-0001/0003/0005 trust_decision rules and the conformance runner. no_std + alloc core."
+description = "Open-source toolkit for brain and body-signal typing: Rust SDK for the NeuralTextStream (NTS) format (no_std + alloc core)"
 repository = "https://github.com/zhangzibo/fidetype"
 homepage = "https://github.com/zhangzibo/fidetype"
 documentation = "https://docs.rs/fidetype"
 readme = "README.md"
-keywords = ["bci", "neural-interface", "nts", "conformance", "no-std"]
+keywords = ["bci", "emg", "eeg", "nts", "no-std"]
 categories = ["no-std", "parser-implementations", "science::neuroscience"]
 # Only the sources and the docs go into the .crate file. Tests and examples read the golden
 # vectors in ../../spec/conformance, which are not part of the crate.

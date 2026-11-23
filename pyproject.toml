@@ -3,7 +3,7 @@ name = "fidetype"
 # Version source of truth: __version__ in src/fidetype/__init__.py (see [tool.hatch.version]).
 # README: built from README.md with relative links made absolute (see [tool.hatch.metadata.hooks.fancy-pypi-readme]).
 dynamic = ["version", "readme"]
-description = "An open trust layer for neural text entry: calibrated, abstaining, hallucination-aware BCI text decoding."
+description = "Open-source toolkit for brain and body-signal typing"
 requires-python = ">=3.12"
 license = "Apache-2.0"
 license-files = ["LICENSE"]
@@ -19,6 +19,7 @@ keywords = [
     "calibration",
     "conformal-prediction",
     "hallucination-detection",
+    "nts",
 ]
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",

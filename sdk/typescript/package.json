@@ -1,7 +1,7 @@
 {
   "name": "@fidetype/sdk",
   "version": "0.1.0",
-  "description": "TypeScript SDK for NeuralTextStream (NTS): writer, reader, validation, trust_decision helpers and the conformance runner (Node and browser).",
+  "description": "Open-source toolkit for brain and body-signal typing: TypeScript SDK for the NeuralTextStream (NTS) format",
   "keywords": [
     "bci",
     "brain-computer-interface",
