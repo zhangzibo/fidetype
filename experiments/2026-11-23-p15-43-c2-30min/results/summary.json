@@ -1,0 +1,356 @@
+{
+ "note": "aggregate only; CER = total edits / total reference characters; test = 80 test sentences (last block of each session); greedy CTC, no LM, final step; recipe F-R20; arm E; plan.md (bd673ae)",
+ "status": "done",
+ "gpu_hours": 2.216,
+ "rule": "C2 passes on a seed if deranged test CER >= max(0.75, normal + 0.10); at a budget if on every seed 0-4",
+ "stages": {
+  "S30": {
+   "budget": "30",
+   "seeds": {
+    "2": {
+     "status": "done",
+     "pass": false
+    },
+    "3": {
+     "status": "done",
+     "pass": false
+    },
+    "4": {
+     "status": "done",
+     "pass": false
+    }
+   },
+   "status": "done",
+   "gpu_hours_at_end": 1.884
+  },
+  "S3": {
+   "budget": "3",
+   "seeds": {
+    "0": {
+     "status": "done",
+     "pass": true
+    },
+    "1": {
+     "status": "done",
+     "pass": false
+    },
+    "2": {
+     "status": "not_needed"
+    },
+    "3": {
+     "status": "not_needed"
+    },
+    "4": {
+     "status": "not_needed"
+    }
+   },
+   "status": "done",
+   "gpu_hours_at_end": 2.216
+  }
+ },
+ "C2": {
+  "3": {
+   "0": {
+    "status": "done",
+    "normal_test_cer": 0.7740719257540604,
+    "deranged_test_cer": 0.8909512761020881,
+    "needed": 0.8740719257540603,
+    "margin": 0.01687935034802779,
+    "pass": true,
+    "deranged_val_cer": 0.7849150435142975
+   },
+   "1": {
+    "status": "done",
+    "normal_test_cer": 0.8428074245939675,
+    "deranged_test_cer": 0.8767401392111369,
+    "needed": 0.9428074245939675,
+    "margin": -0.06606728538283058,
+    "pass": false,
+    "deranged_val_cer": 0.8023207625362619
+   },
+   "2": {
+    "status": "missing",
+    "pass": false,
+    "normal_test_cer": 0.8094547563805105,
+    "deranged_test_cer": null
+   },
+   "3": {
+    "status": "missing",
+    "pass": false,
+    "normal_test_cer": 0.7853828306264501,
+    "deranged_test_cer": null
+   },
+   "4": {
+    "status": "missing",
+    "pass": false,
+    "normal_test_cer": 0.7897331786542924,
+    "deranged_test_cer": null
+   }
+  },
+  "10": {
+   "0": {
+    "status": "not_run",
+    "pass": false
+   },
+   "1": {
+    "status": "not_run",
+    "pass": false
+   },
+   "2": {
+    "status": "done",
+    "normal_test_cer": 0.8062645011600929,
+    "deranged_test_cer": 0.8834106728538283,
+    "needed": 0.9062645011600928,
+    "margin": -0.02285382830626448,
+    "pass": false,
+    "deranged_val_cer": 0.8535018648984667
+   },
+   "3": {
+    "status": "done",
+    "normal_test_cer": 0.7705916473317865,
+    "deranged_test_cer": 0.843677494199536,
+    "needed": 0.8705916473317865,
+    "margin": -0.02691415313225054,
+    "pass": false,
+    "deranged_val_cer": 0.7961044343141318
+   },
+   "4": {
+    "status": "done",
+    "normal_test_cer": 0.7885730858468677,
+    "deranged_test_cer": 0.7874129930394431,
+    "needed": 0.8885730858468677,
+    "margin": -0.10116009280742455,
+    "pass": false,
+    "deranged_val_cer": 0.8416908412764194
+   }
+  },
+  "30": {
+   "0": {
+    "status": "done",
+    "normal_test_cer": 0.7468097447795824,
+    "deranged_test_cer": 0.877030162412993,
+    "needed": 0.8468097447795824,
+    "margin": 0.030220417633410657,
+    "pass": true,
+    "deranged_val_cer": 0.8968089515126398
+   },
+   "1": {
+    "status": "done",
+    "normal_test_cer": 0.7027262180974478,
+    "deranged_test_cer": 0.8697795823665894,
+    "needed": 0.8027262180974478,
+    "margin": 0.06705336426914155,
+    "pass": true,
+    "deranged_val_cer": 0.8937007874015748
+   },
+   "2": {
+    "status": "done",
+    "normal_test_cer": 0.7650812064965197,
+    "deranged_test_cer": 0.8491879350348028,
+    "needed": 0.8650812064965197,
+    "margin": -0.015893271461716818,
+    "pass": false,
+    "deranged_val_cer": 0.8305014504765852
+   },
+   "3": {
+    "status": "done",
+    "normal_test_cer": 0.822215777262181,
+    "deranged_test_cer": 0.8889211136890951,
+    "needed": 0.922215777262181,
+    "margin": -0.03329466357308586,
+    "pass": false,
+    "deranged_val_cer": 0.88789888106092
+   },
+   "4": {
+    "status": "done",
+    "normal_test_cer": 0.7711716937354989,
+    "deranged_test_cer": 0.8602088167053364,
+    "needed": 0.8711716937354989,
+    "margin": -0.01096287703016241,
+    "pass": false,
+    "deranged_val_cer": 0.8862411935350186
+   }
+  }
+ },
+ "budget_status": {
+  "3": "fail",
+  "10": "fail",
+  "30": "fail"
+ },
+ "smallest_passing_budget": "none",
+ "outcome": "C",
+ "budget_100_min": "not tested (no F-R20 100-min recipe; plan.md)",
+ "runs": [
+  {
+   "run": "E-b30-s2-labelshuf",
+   "arm": "E",
+   "budget": "30",
+   "seed": 2,
+   "label_shuffle": true,
+   "steps": 4000,
+   "skipped": 0,
+   "n_train": 46,
+   "minutes": 30.439,
+   "val_cer_final": 0.8305014504765852,
+   "val_shuffled_cer_final": 0.952755905511811,
+   "best_val_step": 2800,
+   "best_val_cer": 0.8284293410692084,
+   "library": {
+    "align": "forced",
+    "lag": 0,
+    "n_sentences": 46,
+    "n_failed": 0,
+    "n_snippets": 1900,
+    "snippet_len_median": 66.0,
+    "snippet_len_p10_p90": [
+     14.0,
+     192.10000000000014
+    ],
+    "chars_covered": " ',.abcdefghijklmnopqrstuvwxyz",
+    "n_tails": 46
+   },
+   "n_texts": 88188,
+   "aligner_val_cer_final": 0.8512225445503523,
+   "aligner_steps": 2000,
+   "test_cer_final": 0.8491879350348028,
+   "test_cer_bestval": 0.8549883990719258
+  },
+  {
+   "run": "E-b30-s3-labelshuf",
+   "arm": "E",
+   "budget": "30",
+   "seed": 3,
+   "label_shuffle": true,
+   "steps": 4000,
+   "skipped": 0,
+   "n_train": 46,
+   "minutes": 30.224,
+   "val_cer_final": 0.88789888106092,
+   "val_shuffled_cer_final": 0.9620803978450062,
+   "best_val_step": 2100,
+   "best_val_cer": 0.8775383340240365,
+   "library": {
+    "align": "forced",
+    "lag": 30,
+    "n_sentences": 46,
+    "n_failed": 0,
+    "n_snippets": 1977,
+    "snippet_len_median": 68.0,
+    "snippet_len_p10_p90": [
+     12.0,
+     195.4000000000001
+    ],
+    "chars_covered": " ',.?abcdefghijklmnopqrstuvwxyz",
+    "n_tails": 46
+   },
+   "n_texts": 100000,
+   "aligner_val_cer_final": 0.8632407791131371,
+   "aligner_steps": 2000,
+   "test_cer_final": 0.8889211136890951,
+   "test_cer_bestval": 0.8703596287703016
+  },
+  {
+   "run": "E-b30-s4-labelshuf",
+   "arm": "E",
+   "budget": "30",
+   "seed": 4,
+   "label_shuffle": true,
+   "steps": 4000,
+   "skipped": 0,
+   "n_train": 46,
+   "minutes": 30.087,
+   "val_cer_final": 0.8862411935350186,
+   "val_shuffled_cer_final": 0.9662246166597597,
+   "best_val_step": 2900,
+   "best_val_cer": 0.8725652714463323,
+   "library": {
+    "align": "forced",
+    "lag": 31,
+    "n_sentences": 46,
+    "n_failed": 0,
+    "n_snippets": 1970,
+    "snippet_len_median": 53.0,
+    "snippet_len_p10_p90": [
+     14.0,
+     195.0
+    ],
+    "chars_covered": " ',.?abcdefghijklmnopqrstuvwxyz",
+    "n_tails": 46
+   },
+   "n_texts": 100000,
+   "aligner_val_cer_final": 0.8655200994612515,
+   "aligner_steps": 2000,
+   "test_cer_final": 0.8602088167053364,
+   "test_cer_bestval": 0.8488979118329466
+  },
+  {
+   "run": "E-b3-s0-labelshuf",
+   "arm": "E",
+   "budget": "3",
+   "seed": 0,
+   "label_shuffle": true,
+   "steps": 1200,
+   "skipped": 0,
+   "n_train": 4,
+   "minutes": 3.713,
+   "val_cer_final": 0.7849150435142975,
+   "val_shuffled_cer_final": 0.8402403646912557,
+   "best_val_step": 1200,
+   "best_val_cer": 0.7849150435142975,
+   "library": {
+    "align": "forced",
+    "lag": 78,
+    "n_sentences": 4,
+    "n_failed": 0,
+    "n_snippets": 256,
+    "snippet_len_median": 78.0,
+    "snippet_len_p10_p90": [
+     46.0,
+     139.0
+    ],
+    "chars_covered": " ',.abcdefghijklmnoprstuvw",
+    "n_tails": 4
+   },
+   "n_texts": 35968,
+   "aligner_val_cer_final": 0.8646912556983009,
+   "aligner_steps": 600,
+   "test_cer_final": 0.8909512761020881,
+   "test_cer_bestval": 0.8909512761020881
+  },
+  {
+   "run": "E-b3-s1-labelshuf",
+   "arm": "E",
+   "budget": "3",
+   "seed": 1,
+   "label_shuffle": true,
+   "steps": 1200,
+   "skipped": 0,
+   "n_train": 5,
+   "minutes": 3.271,
+   "val_cer_final": 0.8023207625362619,
+   "val_shuffled_cer_final": 0.9057190219643597,
+   "best_val_step": 800,
+   "best_val_cer": 0.7907169498549523,
+   "library": {
+    "align": "forced",
+    "lag": 54,
+    "n_sentences": 5,
+    "n_failed": 0,
+    "n_snippets": 225,
+    "snippet_len_median": 69.0,
+    "snippet_len_p10_p90": [
+     17.0,
+     151.2
+    ],
+    "chars_covered": " ',.abcdefghiklmnoqrstuwy",
+    "n_tails": 5
+   },
+   "n_texts": 39026,
+   "aligner_val_cer_final": 0.934521342726896,
+   "aligner_steps": 600,
+   "test_cer_final": 0.8767401392111369,
+   "test_cer_bestval": 0.8805104408352669
+  }
+ ],
+ "time": "2026-11-23T00:26:40"
+}
