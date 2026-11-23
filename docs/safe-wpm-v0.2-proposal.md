@@ -1,6 +1,8 @@
 # Safe WPM v0.2: proposal (prefix credit and speech time)
 
-> **Status: PROPOSED, NOT ADOPTED.** The user decides adoption at the weekend (week of 2026-11-18). Until then, `safe-wpm/0.1` ([docs/safe-wpm.md](safe-wpm.md)) stays the headline metric. No published v0.1 number changes. The scorer computes v0.2 only when the caller asks for it (`metric_version="0.2"`). Adoption needs one switch: the default of `metric_version` and the leaderboard column. **P14-28 (2026-11-18) recommends adopting v0.2 only together with a reading cost per commit (section 6).**
+> **Adopted (user decision, 2026-11-22).** `safe-wpm/0.2` is adopted with three conditions: (1) the reading cost of section 6 is part of the definition (`aac-gaze-v1`: 0.5 s + 0.3 s per word per commit, minimum prefix 1 word); (2) a headline interval includes the calibration draw (docs/safe-wpm.md section 6b) with K >= 80 calibration draws; (3) the draws are partition-only (a new split of the calibration set, no resample with replacement inside a part). Numbers computed before this date keep their labels: a v0.1 number stays a v0.1 number, and a number labelled "proposed v0.2" is not re-labelled. A v0.2 value without the reading cost, or with fewer than 80 draws, is not an adopted-v0.2 headline. The scorer default (`metric_version="0.1"`), the leaderboard column and the status strings in the code change in a separate step (roadmap item P14-61, gap 196).
+>
+> History (status before 2026-11-22): **PROPOSED, NOT ADOPTED.** The user decides adoption at the weekend (week of 2026-11-18). Until then, `safe-wpm/0.1` ([docs/safe-wpm.md](safe-wpm.md)) stays the headline metric. No published v0.1 number changes. The scorer computes v0.2 only when the caller asks for it (`metric_version="0.2"`). Adoption needs one switch: the default of `metric_version` and the leaderboard column. **P14-28 (2026-11-18) recommends adopting v0.2 only together with a reading cost per commit (section 6).**
 
 Roadmap item: P14-26 (gap 66). Source: the [P14-23 bottleneck analysis](../wiki/questions/safe-wpm-bottleneck.md). Code: [`src/fidetype/benchmark/safe_wpm.py`](../src/fidetype/benchmark/safe_wpm.py) (`safe_wpm(..., metric_version="0.2")`, `prefix_outcome`). Tests: `tests/test_safe_wpm.py` (the `v02` tests). First user: P5-24 ([plan](../experiments/2026-11-18-p5-24-prefix-commits/plan.md)).
 
@@ -100,6 +102,8 @@ r = safe_wpm(committed, [x["correct"] for x in o], n_words, n_chars, neural_s,
 Command line: `fidetype benchmark safe-wpm --trials t.jsonl --guarantee g.json --metric-version 0.2`. Per-trial JSON fields: `committed`, `truth`, `neural_s`, and for a commit `committed_text` + `complete` (or `committed_words` + `penalty_chars`); optional `speech_s`. Without `--metric-version` the CLI scores v0.1, where only the exact sentence counts.
 
 ## 5. Adoption (the user's decision)
+
+**Decided 2026-11-22: adopt v0.2 with the section 6 reading cost** (see the status note at the top).
 
 | Option | Effect |
 |---|---|

@@ -1426,6 +1426,7 @@ Follow-ups of P13-01. Full list: [open gaps](open-gaps.md). No existing item mov
 | **P14-58** | C5 threshold rule that does not use the minimum real score (gap 172, done 2026-11-21, [details](#p14-58-c5-threshold-rule-without-the-minimum-real-score)) | P14-55, P14-49 | research labs |
 | **P14-59** | Ship the P14-58 C5 threshold in the `willett-hw` manifest: user decision (open gap 182, [details](#p14-59-ship-the-p14-58-c5-threshold-in-the-willett-hw-manifest)) | P14-58, P14-56 | research labs |
 | **P14-60** | Ship the `lm_beam_direction` offer gate in the `willett-hw` manifests, only if gap 189 passes (open gap 190, [details](#p14-60-ship-the-lm_beam_direction-offer-gate-in-the-willett-hw-manifests)) | P5-36, P14-56 | research labs |
+| **P14-61** | Switch the scorer and the leaderboard to the adopted safe-WPM v0.2 (open gap 196, [details](#p14-61-switch-the-scorer-and-the-leaderboard-to-the-adopted-safe-wpm-v02)) | P14-26, P14-28, P15-29 | research labs, small teams |
 
 #### P14-01 Pretrained decoders, one-line load and decode
 - **Serves:** small teams, research labs ([who uses Fidetype](who-uses-fidetype.md)).
@@ -1914,6 +1915,14 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** gap 189 = P5-37 (must pass first); P14-56 (done); CPU.
 - **Source:** P5-36b (2026-11-22, results `a7bfbc8`, [results](../../experiments/2026-11-22-p5-36b-two-direction-lm/results.md)): the direction gate is in the library but not in any packaged gate list, guard file or manifest. `config_id` values unchanged.
 - **Done when:** if gap 189 passes: the gate is in the manifest gate list of both `willett-hw` guards (new `config_id`), the `readout=` wiring passes it to the LM readout, the model cards state the gate, its rule and its cost, and the P14-56 offer-control blocks are re-checked and pass. If gap 189 fails: record the reason and close without a change.
+
+#### P14-61 Switch the scorer and the leaderboard to the adopted safe-WPM v0.2
+- **Gap:** 196 of the [open-gap list](open-gaps.md) (added 2026-11-22 by the user decision on safe-WPM v0.2). Follow-up of P14-26, P14-28, P15-29.
+- **Status:** `todo`.
+- **Serves:** research labs, small teams.
+- **Depends on:** P14-26, P14-28, P15-29 (done); CPU.
+- **Source:** user decision 2026-11-22 ("all recommended"): adopt `safe-wpm/0.2` with the reading cost (`aac-gaze-v1`, 0.5 s + 0.3 s per word per commit), calibration-inclusive intervals with K >= 80 draws, and partition-only draws. The docs say so ([docs/safe-wpm.md](../../docs/safe-wpm.md) sections 6a, 6b; [proposal](../../docs/safe-wpm-v0.2-proposal.md)). The code still says "proposed, not adopted": `V02_STATUS`, `CALIBRATION_INTERVAL`, the default `metric_version="0.1"`, the CLI help, the leaderboard banner and column, the site test (`tests/test_publishing_metadata.py`) and the track-page test.
+- **Done when:** the scorer default is v0.2 with the adopted reading cost, the status strings say "adopted 2026-11-22", the leaderboard shows v0.2 as the headline column with a dated note and v0.1 as a second column, every v0.1 number keeps its value and its v0.1 label (no re-label), `calibration_draw_interval` warns when K < 80 or the draws are not partition-only, the tests and the generated pages are updated, and CI is green.
 
 ## P15. Frontier (added 2026-11-15, leads)
 **Goal:** move toward the [north star](north-star.md): a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth. P15 runs the first experiments of the three frontier pillars and their follow-ups.

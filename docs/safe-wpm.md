@@ -126,7 +126,10 @@ All numbers use alpha 0.05. LTT entries use delta 0.1. Details and the rerun com
 - **One participant per set.** The replay sets have no CI. A trial bootstrap would be too narrow.
 - **Controls.** The leaderboard shows the required controls next to the value. Many baseline entries lack a null-commit audit at their threshold ("controls: no").
 
-## 6a. Proposed v0.2 (PROPOSED, NOT ADOPTED)
+## 6a. v0.2 (ADOPTED 2026-11-22; proposed 2026-11-18)
+
+> **Adopted (user decision, 2026-11-22).** `safe-wpm/0.2` is adopted with three conditions: (1) the reading cost of section 6 is part of the definition (`aac-gaze-v1`: 0.5 s + 0.3 s per word per commit, minimum prefix 1 word); (2) a headline interval includes the calibration draw (docs/safe-wpm.md section 6b) with K >= 80 calibration draws; (3) the draws are partition-only (a new split of the calibration set, no resample with replacement inside a part). Numbers computed before this date keep their labels: a v0.1 number stays a v0.1 number, and a number labelled "proposed v0.2" is not re-labelled. A v0.2 value without the reading cost, or with fewer than 80 draws, is not an adopted-v0.2 headline. The scorer default (`metric_version="0.1"`), the leaderboard column and the status strings in the code change in a separate step (roadmap item P14-61, gap 196).
+
 
 > **Proposed, not adopted (2026-11-18, P14-26).** The user decides adoption. v0.1 above stays the headline metric and no v0.1 number changes. Full text: [safe-wpm-v0.2-proposal.md](safe-wpm-v0.2-proposal.md).
 
@@ -140,7 +143,10 @@ All numbers use alpha 0.05. LTT entries use delta 0.1. Details and the rerun com
 - **First use (P5-24, pre-registered, [results](../experiments/2026-11-18-p5-24-prefix-commits/results.md)):** T15 M4-13 `val_eval` 701 with certified prefix commits: v0.2 4.87 [4.43, 5.30] (465 commits, 13 wrong); the same decisions under v0.1: 0.53 (literal, above alpha) or 1.03 (complete commits only). T12: v0.2 4.76, v0.1 0.00.
 - **Reading cost (P14-28, sensitivity, [proposal section 6](safe-wpm-v0.2-proposal.md#6-reading-cost-p14-28)):** optional `read_s_per_commit`, `read_s_per_word`, `min_prefix_words` (v0.2 only; defaults change nothing). With 0.5 s + 0.3 s/word per commit (`aac-gaze-v1`) the T15 prefix value is 4.67 [4.26, 5.07]; it falls to 4.02 at 5.99 s per commit. Recommended for adoption together with v0.2; the user decides.
 
-## 6b. Proposed reporting addition: an interval over calibration draws (PROPOSED, NOT ADOPTED)
+## 6b. Reporting addition: an interval over calibration draws (ADOPTED 2026-11-22 with v0.2; proposed 2026-11-19)
+
+> **Adopted (user decision, 2026-11-22), with two rules from P15-37 and P11-19:** use K >= 80 calibration draws (better 120), and partition-only draws (a new split per draw, no resample with replacement inside a part). Report the count of non-credited (above-alpha or not-certified) draws and the certified-only between-draw SD next to the interval. Intervals computed before this date (for example K = 40, or draws with resampling) keep their numbers and labels. The history note below is the text before adoption.
+
 
 > **Proposed, not adopted (2026-11-19, P15-29).** The user decides adoption. It changes no `safe-wpm/0.1` rule, value or status. Until adoption, a leaderboard entry reports the trial-bootstrap `ci` of section 3, and that CI is conditional on one calibration. Pre-registration and first use: [P15-29](../experiments/2026-11-20-p15-29-calibration-ci/plan.md) ([results](../experiments/2026-11-20-p15-29-calibration-ci/results.md)).
 
@@ -158,7 +164,7 @@ All numbers use alpha 0.05. LTT entries use delta 0.1. Details and the rerun com
 - **Cross-check.** The law of total variance: total SD² = mean within-draw SD² + between-draw SD². The function also returns the normal interval mean ± 1.96 × total SD.
 - **First use (P15-29, T15 L1 guard, K = 40, pinned pipeline values).** The result is 5.18 [0.00, 6.99]. The trial-bootstrap CI of one draw was 4.91 [4.25, 5.57]. 2 of the 40 draws are above alpha on the test set and earn 0.0. The certified draws range from 3.50 to 6.82. The lower end is not above the no-BCI reference 4.02. T12: 1.05 [0.00, 3.18].
 - **Second use (P11-17, EMG P11-14 L-FL guard, K = 40, user-cluster inner level).** The result is 5.00 [0.00, 9.55] against the EMG no-BCI reference 3.09. The trial-bootstrap CI of one draw was 6.80 [4.49, 9.63]. 9 of the 40 draws are above alpha on the test set and earn 0.0. The library `calibration_draw_interval` (prompt-level inner level) gives 5.00 [0.00, 7.84]. The lower end is not above 3.09 ([results](../experiments/2026-11-21-p11-17-emg-calibration-ci/results.md)).
-- **Current EMG headline (P11-19 + P11-28, BX3 L-FL sentence guard, partition-only draws; decided by the user on 2026-11-22).** EMG typing with the trust layer is above the no-BCI baseline after calibration uncertainty, narrowly, for one sentence guard (BX3, safe-WPM v0.1: 5.90 [3.45, 8.89] vs 3.09; replicated 5.99 [3.52, 8.96] with safety headroom 0.0107 in P11-28), on 8 users and one test set ([P11-19 results](../experiments/2026-11-21-p11-19-multi-split/results.md), [P11-28 results](../experiments/2026-11-22-p11-28-bx3-headroom/results.md)). The EMG prefix guard result 5.67 [3.43, 8.26] (P11-21) holds only under the proposed safe-WPM v0.2. This section (6b) is still proposed.
+- **Current EMG headline (P11-19 + P11-28, BX3 L-FL sentence guard, partition-only draws; decided by the user on 2026-11-22; a v0.1 number, label kept).** EMG typing with the trust layer is above the no-BCI baseline after calibration uncertainty, narrowly, for one sentence guard (BX3, safe-WPM v0.1: 5.90 [3.45, 8.89] vs 3.09; replicated 5.99 [3.52, 8.96] with safety headroom 0.0107 in P11-28), on 8 users and one test set ([P11-19 results](../experiments/2026-11-21-p11-19-multi-split/results.md), [P11-28 results](../experiments/2026-11-22-p11-28-bx3-headroom/results.md)). The EMG prefix guard result 5.67 [3.43, 8.26] (P11-21) holds only under the proposed safe-WPM v0.2. This section (6b) is still proposed.
 - **Limits.** The evaluation set is the same in every draw. Duplicates in a resampled LTT part make one draw's certificate invalid as a certificate; the draws only show the sampling variation. Pipeline values fitted before the guard (for example a frame temperature) can be refitted per draw or pinned; the report must say which.
 
 **Code.**
