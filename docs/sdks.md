@@ -1,6 +1,10 @@
 # SDKs
 
-Fidetype has three reference SDKs. All three read, write and check NeuralTextStream (NTS) and give the same conformance verdict on every golden vector. All three are at version 0.1.0, the first registry release. A C SDK is planned after NTS 1.0.
+The three reference SDKs (Python, TypeScript, Rust) side by side, which one to use, and the Python SDK guide.
+
+**Status:** Alpha ([status levels](glossary.md#status-levels))
+
+Fidetype has three reference SDKs. All three read, write and check NeuralTextStream ([NTS](glossary.md#nts-neuraltextstream)) and give the same conformance verdict on every [golden vector](glossary.md#golden-vector). All three are at version 0.1.0, the first registry release. A C SDK is planned after NTS 1.0.
 
 | | Python | TypeScript | Rust |
 |---|---|---|---|
@@ -26,7 +30,7 @@ Versions and releases: [RELEASING.md](RELEASING.md). Parity tests (Python = Type
 
 ## Python SDK guide
 
-The Python package is the reference implementation. Install it from a clone ([getting-started.md](getting-started.md#1-install)).
+The Python package is the reference implementation. Install it with `pip install fidetype`, or from a clone for development ([getting-started.md](getting-started.md#1-install)).
 
 ### Public API
 
@@ -51,7 +55,7 @@ A worked example is in [getting-started.md](getting-started.md#3-emit-a-stream-f
 | `fidetype.adapters` | LSL, BrainFlow bridge, WebSocket, dataset replay, text n-best |
 | `fidetype.benchmark` | Open benchmark v0.1 |
 | `fidetype.demo` | Offline demo |
-| `fidetype.eval` | Metrics: CER, WER, ECE, CTC greedy decode |
+| `fidetype.eval` | Metrics: [CER, WER](glossary.md#cer-wer), ECE (expected calibration error), CTC greedy decode |
 
 ### Examples
 

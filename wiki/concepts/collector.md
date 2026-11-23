@@ -100,7 +100,7 @@ Decision logs of the collector pass the FEP-0001 profile in the Python, TypeScri
 - v0.1: the `eof = "close"` warning (once per stream) and its counter; the `<receiver>/<id>` prefix with two receivers (a cut stream still reaches its own session); health default listen, refused open bind, warning with `allow_unauthenticated`, bearer token (`/metrics` 401 without it, `/healthz` open; token never in metrics or logs); `spec_version` on every decision and the FEP-0001 profile check; a blank final COMMIT is gated, and its blank-only OFFER becomes `ABSTAIN` with `shown = []` (TD-12; the log passes the FEP-0001 profile with no warning); `drop_blank_candidates` cases; gate rules and the `always_commit` refusal; file → trust → standalone `/decisions` with token, `from_seq = 1` replay after the input is done, and `/nts` refused.
 
 ## P3-04 integration test, latency budget, consumer entry point (2026-11-17)
-New parts ([docs](../../docs/collector.md#integration-test-and-latency-budget-p3-04)):
+New parts ([docs](../../docs/collector.md#integration-test-and-latency-budget)):
 
 | Part | Kind | What it does |
 |---|---|---|

@@ -1,6 +1,10 @@
 # Personalisation: one trust profile per user, drift detection, gated re-calibration
 
-A guard from [`calibrate`](trust-quickstart.md) is fitted to one person, one decoder and one period of time. Neural signals drift from day to day. This page shows how to keep one guard per user up to date **without** a weaker guarantee. Module: `fidetype.trust.personal` (profiles and the live controller) and `fidetype.trust.drift` (the drift tests). Roadmap item P5-01.
+Keep one trust guard per user up to date as the signals drift, without a weaker guarantee.
+
+**Status:** Alpha ([status levels](glossary.md#status-levels))
+
+A guard from [`calibrate`](trust-quickstart.md) is fitted to one person, one decoder and one period of time. Neural signals drift from day to day. This page shows how to keep one guard per user up to date **without** a weaker guarantee. Module: `fidetype.trust.personal` (profiles and the live controller) and `fidetype.trust.drift` (the drift tests). Terms: [glossary](glossary.md).
 
 Fidetype is research software, not a medical device. Nothing on this page is a medical or legal claim.
 
@@ -31,10 +35,10 @@ pt = PersonalTrust.load("profiles/user-17.json", null_inputs=nulls)   # next ses
 |---|---|
 | `user_hash` | `u:` + HMAC-SHA256(salt, user id), 32 hex digits. Never the raw id. Without a salt: plain SHA-256 (`id_hash: "sha256"`), which anyone can recompute from a guessed id |
 | `guard` | `TrustGuard.to_dict()`: frozen configuration, input settings, guarantee sheet |
-| `calibration` | Counts, rates (commit, top-1 right, wrong commit), `p_top1` quantiles, and up to 2,000 rounded reference scores for the drift test (`reference_scores`), with the guard risk of the same items (`reference_guard_risk`, since P5-10) |
+| `calibration` | Counts, rates (commit, top-1 right, wrong commit), `p_top1` quantiles, and up to 2,000 rounded reference scores for the drift test (`reference_scores`), with the guard risk of the same items (`reference_guard_risk`; newer profiles only, see section 4.1) |
 | `history` | One entry per change: `calibrate`, `drift_alarm`, `tighten`, `recalibrate_accepted`, `recalibrate_rejected`, each with its `config_id`. `profile.config_ids` lists every configuration the user had |
 | `drift` | The last summary of the drift tests (e-values, alarms; no scores) |
-| `consent_ref` | Placeholder for the consent record of P5-04. Stored as given, not checked |
+| `consent_ref` | A reference to the consent record ([provenance and privacy](provenance-and-privacy.md#5-consent-references)). Stored as given, not checked |
 | `profile_version` | Goes up by one at each change |
 
 **No text and no signal.** `save()` refuses a profile with a text-like key (`text`, `truth`, `choices`, `label`, `signal`, `samples`, `raw`, `inputs`, `user_id`, ...). The decoder's own word list (`lexicon`, `vocab`) inside the guard configuration is allowed. The re-calibration labels stay in memory only.
@@ -51,16 +55,16 @@ feedback ──► loss   ──► risk test (betting e-process)  ────�
    n_recal + n_check NEW labels ──► TrustGuardUpdater.propose_calibration
         calibrate() + its null controls  ──►  GuardedUpdateLoop checks:
         block LTT on the check block, evidence gate, uniform + shuffled
-        null controls, champion / challenger test (default-deny non-inferiority, P15-13)
+        null controls, champion / challenger test (default-deny non-inferiority)
                                                              ▼
         accepted: new guard (ends a tightening), tests restart
         rejected: nothing changes; the proposal stays open
 ```
 
-1. A higher commit threshold only removes commits, so tightening needs no evidence. Every other change goes through the existing gated update path (P15-02). There is no other way to change a live guard.
+1. A higher commit threshold only removes commits, so tightening needs no evidence. Every other change goes through the existing gated update path. There is no other way to change a live guard.
 2. A proposal uses only items labelled **after** the trigger: the old ones may come from the old distribution.
 3. `recalibrate_every=N` also proposes after N new labels (a schedule, without drift).
-4. A re-calibration keeps the live decoder: the candidate gets the live guard's `decoder_name`, `decoder_version` and `modality` (unless `calibrate_kwargs` set them). The update loop then uses its **same-decoder re-calibration rule** (P15-24): the new guard passes if its top-1 texts equal the live guard's, or if `P(Bin(N, 0.1) <= w) <= 0.05` for `w` worse items of `N` check items (`N = 48`: at most 1 worse item). A decoder change uses the stricter two-branch rule of P15-13. Guarantee of the re-calibration rule: if the new guard is worse on at least 10 % of the items, it is accepted with probability at most 0.05. The decoder rule gives this bound only if, in addition, the worse share among the items where the two differ is at least 0.6. So the re-calibration rule is never less safe. A challenger without champion outputs is refused (P15-23).
+4. A re-calibration keeps the live decoder: the candidate gets the live guard's `decoder_name`, `decoder_version` and `modality` (unless `calibrate_kwargs` set them). The update loop then uses its **same-decoder re-calibration rule**: the new guard passes if its top-1 texts equal the live guard's, or if `P(Bin(N, 0.1) <= w) <= 0.05` for `w` worse items of `N` check items (`N = 48`: at most 1 worse item). A decoder change uses the stricter two-branch rule of the update loop. Guarantee of the re-calibration rule: if the new guard is worse on at least 10 % of the items, it is accepted with probability at most 0.05. The decoder rule gives this bound only if, in addition, the worse share among the items where the two differ is at least 0.6. So the re-calibration rule is never less safe. A challenger without champion outputs is refused. Details: [personalisation record](../wiki/concepts/trust-personalisation.md).
 
 ## 4. The drift tests and their guarantee
 
@@ -73,7 +77,7 @@ Both are **anytime valid**: under the null hypothesis, `P(an alarm ever, over th
 
 Measured on synthetic data and on a 16-day T12 replay: see the [results](../experiments/2026-11-16-p5-01-personal/results.md).
 
-### 4.1 Opt-in: the guard-risk test (P5-10)
+### 4.1 Opt-in: the guard-risk test
 
 On the T12 replay the guard risk drifts while `p_top1` does not. Only a test on the guard risk sees this change. Turn it on with `guard_risk_test=True`:
 
@@ -89,13 +93,13 @@ pt = PersonalTrust.from_calibration("user-17", cal_x, cal_y, salt=SECRET, null_i
 | `on_guard_risk_drift` | `"propose"` | Its action: `"propose"`, `"tighten"` or `"ignore"` |
 
 - With the test on, `P(any false alarm) <= level_scores + level_risk + level_guard_risk`. Lower the other levels if you want to keep the total at 0.01 (the example above: 0.0025 + 0.005 + 0.0025).
-- The reference is `profile.calibration["reference_guard_risk"]`. `calibration_stats` writes it for the same sampled items as the reference scores (rounded to 1e-4; no text). A profile made before P5-10 does not have it: `guard_risk_test=True` then raises `ValueError`. Re-calibrate to get one.
+- The reference is `profile.calibration["reference_guard_risk"]`. `calibration_stats` writes it for the same sampled items as the reference scores (rounded to 1e-4; no text). An older profile does not have it: `guard_risk_test=True` then raises `ValueError`. Re-calibrate to get one.
 - **Why it is off by default.** With the same per-test levels, the test raises the total false-alarm budget (0.010 to 0.015). With a fixed total, it lowers the level of the two other tests, so they alarm later. Both change the behaviour for existing users. So the test is opt-in.
-- T12 replay through `PersonalTrust`: [P5-10 note](../experiments/2026-11-16-p5-01-personal/results.md#p5-10-guard-risk-test-through-personaltrust-2026-11-16).
+- T12 replay through `PersonalTrust`: [results](../experiments/2026-11-16-p5-01-personal/results.md#p5-10-guard-risk-test-through-personaltrust-2026-11-16).
 
-### 4.2 Opt-in: spread bets (P5-09)
+### 4.2 Opt-in: spread bets
 
-The default score test bets on the mean of the conformal p-values. It does not see a change of spread at the same centre (for example sd 1 to 2). `spread=True` (on `ConformalDriftTest`, `DriftMonitor` and `PersonalTrust`) adds the bets `1 + eps * (|2p - 1| - 1/2)`, `eps` in {-1, 1}. The false-alarm guarantee does not change. A pure mean shift is detected a little later. Numbers: [P5-09 results](../experiments/2026-11-16-p5-09-drift-spread/results.md). Default: `False` (the P5-01 test, bit for bit).
+The default score test bets on the mean of the conformal p-values. It does not see a change of spread at the same centre (for example sd 1 to 2). `spread=True` (on `ConformalDriftTest`, `DriftMonitor` and `PersonalTrust`) adds the bets `1 + eps * (|2p - 1| - 1/2)`, `eps` in {-1, 1}. The false-alarm guarantee does not change. A pure mean shift is detected a little later. Numbers: [results](../experiments/2026-11-16-p5-09-drift-spread/results.md). Default: `False` (the original test, bit for bit).
 
 ## 5. What is not covered
 
@@ -104,4 +108,4 @@ The default score test bets on the mean of the conformal p-values. It does not s
 - Wrong labels from the user make a wrong check block.
 - The detection delay depends on the size of the change. Ville's inequality bounds false alarms, not the delay.
 - A rejected proposal after a risk alarm leaves the guard in offer-only mode until a later proposal passes.
-- `consent_ref` is a reference only; deletion on request and the consent record are P5-04.
+- `consent_ref` is a reference only. Deletion on request and the consent record are in [provenance and privacy](provenance-and-privacy.md#7-deletion-on-request).

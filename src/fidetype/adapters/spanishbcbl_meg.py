@@ -59,8 +59,8 @@ ADAPTER_INFO = {
     "real_data_evidence": ["experiments/2026-11-11-m1-09-async-full/results.md",
                            "src/fidetype/decoders/restamp_meg.py"],
     "test_covers": "CI: synthetic log-probs (conformance helper and restamp tests). Real: the ConvCTC output "
-                   "on the SpanishBCBL MEG segments of the 5 M1-09 runs (1,074 streams each), rebuilt with "
-                   "this adapter's header by restamp_meg, reach conformance level provenance (M5-13, local).",
+                   "on the SpanishBCBL MEG segments of 5 full-dataset runs (1,074 streams each), rebuilt with "
+                   "this adapter's header by restamp_meg, reach conformance level provenance (local).",
     "limits": "Data CC BY-NC 4.0: research only. Recorded MEG only: MEG needs a lab system, so no "
               "live MEG source exists.",
 }

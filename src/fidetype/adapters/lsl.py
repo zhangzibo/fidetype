@@ -157,8 +157,8 @@ ADAPTER_INFO = {
     "support": "replay-only", "transport": ["lsl"],
     "real_data_evidence": ["experiments/2026-11-22-p4-21-lsl-replay/results.md"],
     "test_covers": "CI: fake inlets (header mapping, clock correction, gaps, loss, reconnect) and a "
-                   "real pylsl outlet -> inlet loopback with synthetic streams. Real (P4-21, local): the "
-                   "816 B2T '25 M4-06 test trials over a real pylsl loopback; hypothesis route decisions "
+                   "real pylsl outlet -> inlet loopback with synthetic streams. Real (local): the "
+                   "816 B2T '25 test trials over a real pylsl loopback; hypothesis route decisions "
                    "equal the in-process replay and the batch harness (816 / 816); 161,503 double64 "
                    "frames bit-equal.",
     "limits": "One machine only (localhost). The real replay is local (not in CI), unpaced, and does "

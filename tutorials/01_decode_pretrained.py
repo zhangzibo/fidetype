@@ -35,7 +35,7 @@ def step(n: int, text: str) -> None:
 
 # ------------------------------------------------------------------------------------------
 # Synthetic mode: a tiny random GRU-CTC model in a temporary folder.
-# The packaged models need weights that are not hosted yet (roadmap P14-02), so this mode uses
+# The packaged models need weights that are not hosted yet, so this mode uses
 # ftp.make_toy_manifest(): it writes random weights and a manifest that lists their SHA-256.
 # ------------------------------------------------------------------------------------------
 

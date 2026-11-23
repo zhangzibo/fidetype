@@ -1,5 +1,9 @@
 # Semantic conventions
 
+The registry of standard NTS metadata key names, and how to use it as a producer or a consumer.
+
+**Status:** Development ([status levels](glossary.md#status-levels))
+
 NTS streams carry metadata as named keys, for example `device.modality` in the header `meta`. The **semantic-convention registry** lists every key that the spec defines. Each entry gives the name, the type, the unit, the requirement level, the stability and the spec rules.
 
 The registry belongs to NTS 1.0 RC4 (draft). Since RC4 it is normative for the key names, types, value lists and validators (MET-10). The spec tables are informative copies, and the rules about the keys stay in the spec text.
@@ -41,14 +45,14 @@ Data licence keys ([FEP-0010](../spec/feps/0010-data-licence-keys.md), RC4 amend
 
 The provenance ledger reads the two stream keys into a `source` entry, so a decision's licence flags include the stream's licence.
 
-The validators check the types. The advisory check `NTS-LICENCE-MATCH` (RC4 amendment 7, P5-19) also warns when `data.research_only` is `false` and `data.licence` is a Creative Commons id with `NC` or `LicenseRef-unknown`. A Collector exporter with `refuse_research_only = true` drops research-only decisions (P5-18, [collector](collector.md)).
+The validators check the types. The advisory check `NTS-LICENCE-MATCH` (RC4 amendment 7) also warns when `data.research_only` is `false` and `data.licence` is a Creative Commons id with `NC` or `LicenseRef-unknown`. A Collector exporter with `refuse_research_only = true` drops [research-only](glossary.md#research-only) decisions ([collector](collector.md)).
 
 ## Use it as a producer
 
 1. Look up each key in [registry.md](../spec/semconv/registry.md). Use the given type.
 2. Check the "Requirement" column for the conformance level that you claim. For example, level `trust-ready` needs `device.modality`, `decoder.causal` and `data.derived = true`.
 3. Put your own keys in your own namespace, for example `acme.gain`. Do not add keys to a reserved namespace (MET-3).
-   Example: the BrainFlow bridge writes `brainflow.board_id` and `brainflow.board_name`, not `device.board_id` (roadmap P4-09). A BrainFlow board id has a meaning only inside BrainFlow, and only one producer writes it. The registry takes a key only from a FEP with real-producer evidence for a fact that is common to producers (SC-1, SC-9), so a vendor key stays in the vendor namespace. The common fact (the device model) already has the key `device.model`.
+   Example: the BrainFlow bridge writes `brainflow.board_id` and `brainflow.board_name`, not `device.board_id`. A BrainFlow board id has a meaning only inside BrainFlow, and only one producer writes it. The registry takes a key only from a [FEP](glossary.md#fep) with real-producer evidence for a fact that is common to producers (SC-1, SC-9), so a vendor key stays in the vendor namespace. The common fact (the device model) already has the key `device.model`.
 4. Run the conformance check on your stream:
 
 ```bash

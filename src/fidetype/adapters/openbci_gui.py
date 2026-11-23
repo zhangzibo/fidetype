@@ -1,4 +1,4 @@
-"""OpenBCI GUI recording reader -> a signal source for ``fidetype live`` (P14-42, from the adapter template).
+"""OpenBCI GUI recording reader -> a signal source for ``fidetype live`` (from the adapter template).
 
 The OpenBCI GUI (v5 and later) saves a text file ``OpenBCI-RAW-*.txt``
 (the sample files of the GUI: ``OpenBCI_GUI-*.txt``): ``%`` header lines
@@ -9,12 +9,12 @@ reader keeps the EXG channels; a ``Marker Channel`` column (non-zero
 values) becomes markers. Times: the first ``Timestamp`` plus
 ``(row + samples lost before the row) / sample_rate``. GUI v5 writes
 Unix seconds; the sample files of the GUI (v6 layout) write Unix
-milliseconds, so a first stamp above ``1e11`` is read as milliseconds
-(P4-16). The packet stamps of the file
+milliseconds, so a first stamp above ``1e11`` is read as milliseconds.
+The packet stamps of the file
 are not used, because they repeat inside a packet. Older GUI files (v4 and
 before, no column-name line) raise ``ValueError``.
 
-**Packet drops (P4-18).** On a Cyton board the ``Sample Index`` counts
+**Packet drops.** On a Cyton board the ``Sample Index`` counts
 0..255 and wraps (a wrap is not a drop). It steps by 1 (Cyton) or by 2
 (Cyton + Daisy: one row per two radio packets). An index step ``d`` other
 than that is a drop of ``((d - step) mod 256) / step`` rows (the same
@@ -31,9 +31,9 @@ that whole index cycles were lost too, they are added. ``on_drop``:
 
 Other boards (Ganglion and others) have other index rules; their index
 is not checked (``index_checked`` False). Real files read: the GUI
-sample file ``OpenBCI_GUI-v6-blinks-jawClench-alpha.txt`` (P4-16; ms
+sample file ``OpenBCI_GUI-v6-blinks-jawClench-alpha.txt`` (ms
 stamps), a Cyton GUI v5.0 file with 20 drops (seconds stamps) and a
-Cyton + Daisy GUI v5+ file with a ``Marker Channel`` (all zero) (P4-18).
+Cyton + Daisy GUI v5+ file with a ``Marker Channel`` (all zero).
 Our own code (Apache-2.0), NumPy only.
 """
 
@@ -59,8 +59,8 @@ ADAPTER_INFO = {
     "test_covers": "CI: synthetic GUI files and packet drops (Sample Index jumps). Real: the OpenBCI "
                    "GUI v6 sample file (Cyton, millisecond time stamps) and two GUI v5 recordings "
                    "(Cyton 8 ch; Cyton + Daisy 16 ch), local tests.",
-    "limits": "No real recording with non-zero markers (P4-19). The Ganglion Sample Index rule is not"
-              " checked (P4-20). GUI v4 files are refused. A file, not a live board.",
+    "limits": "No real recording with non-zero markers. The Ganglion Sample Index rule is not"
+              " checked. GUI v4 files are refused. A file, not a live board.",
 }
 
 

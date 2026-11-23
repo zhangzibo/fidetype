@@ -90,7 +90,7 @@ ADAPTER_INFO = {
     "support": "replay-only", "transport": ["file", "in-process"],
     "real_data_evidence": ["experiments/2026-11-16-p11-01-emg-decoder/results.md"],
     "test_covers": "CI: synthetic logits, probabilities and padded batches. Real: the output of our "
-                   "emg2qwerty decoder (P11-01: 2,445 streams, all trust-ready, local run); the "
+                   "emg2qwerty decoder (2,445 streams, all trust-ready, local run); the "
                    "pretrained decoders call it on each decode.",
     "limits": "The input must be CTC scores (T, V) with a known vocabulary. It cannot check that the "
               "scores come from the decoder that the header names.",

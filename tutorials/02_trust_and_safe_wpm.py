@@ -16,6 +16,11 @@ safe WPM. The numbers are toy numbers: they show the API, not a BCI result.
 Real mode: the packaged T15 decoder and its committed guard (alpha 0.05, delta 0.1) on the
 odd "val" trials of one session (the val_eval half, not used for calibration).
 
+Terms (docs/glossary.md): T15 is a participant with an intracortical implant; the B2T '25
+(Brain-to-Text '25) dataset holds the T15 recordings. alpha is the largest accepted
+wrong-commit rate; delta is the chance that the calibration bound does not hold. Safe WPM
+counts only text that the guard commits and that is exactly right.
+
 Licence: Apache-2.0. Synthetic data only, unless you pass --data.
 """
 
@@ -123,7 +128,7 @@ def safe_wpm_of(results, truths, neural_s, guard, *, timing: str, normalizer=Non
 
 
 def manual_safe_wpm(results, truths, neural_s, guard, *, timing: str) -> dict:
-    """The route before sw.from_decisions (P14-45). Kept only to check that both give the same report."""
+    """The older route, before sw.from_decisions existed. Kept only to check that both give the same report."""
     committed = [r.action == "commit" for r in results]
     correct = [c and r.text == t for c, r, t in zip(committed, results, truths)]
     sheet = guard.sheet.to_dict()

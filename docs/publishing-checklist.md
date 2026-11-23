@@ -1,5 +1,7 @@
 # Publishing checklist (first public release)
 
+> **For maintainers.** This page is the step-by-step record of the first public release. You do not need it to use Fidetype.
+
 > **Status: done 2026-11-21.** Release 0.1.0 is public. PyPI: https://pypi.org/project/fidetype/. npm: https://www.npmjs.com/package/@fidetype/sdk. crates.io: https://crates.io/crates/fidetype (docs: https://docs.rs/fidetype/0.1.0). Site: https://zhangzibo.github.io/fidetype/. GitHub releases: https://github.com/zhangzibo/fidetype/releases/tag/py-v0.1.0, https://github.com/zhangzibo/fidetype/releases/tag/ts-v0.1.0, https://github.com/zhangzibo/fidetype/releases/tag/rs-v0.1.0. The site now deploys by itself on every push to `main` (section G). The steps below are kept as the record and as a model for the next release. For the next npm or crates.io release, see [RELEASING.md](RELEASING.md) section 3.1 (trusted publishers, token expiry 2026-11-28).
 
 This page is for the maintainer. It lists every step to publish Fidetype for the first time: the Python package, the TypeScript SDK, the Rust crate, the GitHub Pages site and the GitHub releases. Do the steps in order. Each step has a time estimate, the exact commands, a check and a rollback.

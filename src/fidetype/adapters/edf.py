@@ -1,4 +1,4 @@
-"""EDF / EDF+ / BDF file reader -> a signal source for ``fidetype live`` (P14-42, from the adapter template).
+"""EDF / EDF+ / BDF file reader -> a signal source for ``fidetype live`` (from the adapter template).
 
 EDF (European Data Format, 16-bit) and BDF (BioSemi, 24-bit) are open,
 documented formats (https://www.edfplus.info/specs/). Many EEG, EMG and
@@ -8,7 +8,7 @@ BDF); EDF+D (discontinuous) raises ``ValueError``. The ``EDF/BDF
 Annotations`` signal becomes markers. Samples are in physical units
 (``channel_units``: the file's physical dimension, for example ``uV``).
 
-Checked on real files (P4-16): PhysioNet EEGMMIDB EDF+C (ODC-By 1.0) and
+Checked on real files: PhysioNet EEGMMIDB EDF+C (ODC-By 1.0) and
 the MNE-Python test EDF+C / BDF files (BSD-3-Clause) give the same values
 as MNE within one digital step (``tests/test_adapter_files_real.py``,
 local data only).

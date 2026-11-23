@@ -112,7 +112,7 @@ ADAPTER_INFO = {
     "real_data_evidence": ["experiments/2026-11-16-p11-01-emg-decoder/results.md",
         "experiments/2026-11-16-p6-02-scorer/results.md"],
     "test_covers": "CI: synthetic HDF5 sessions made by the test. Real: the emg2qwerty sessions in "
-                   "P11-01 (decoder training, 2,445 streams) and P6-02 (benchmark baselines), local "
+                   "the decoder training (2,445 streams) and the benchmark baselines, local "
                    "runs.",
     "limits": "Data CC BY-NC-SA 4.0: research use only. Recorded sessions only; the wristband that "
               "recorded them is not a supported device.",

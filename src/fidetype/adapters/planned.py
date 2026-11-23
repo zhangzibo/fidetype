@@ -22,7 +22,7 @@ PLANNED: list[dict] = [
      "docs": f"{_R}#p4-15-device-support-matrix-generated-from-adapter-metadata"},
     {"id": "openbci-cyton-board", "kind": "device-source", "signal": "eeg",
      "target": "OpenBCI Cyton / Ganglion on a real board (code exists in brainflow; a real-board test does not)",
-     "licence": "BrainFlow is MIT. Needs hardware (P4-06, externally blocked).", "roadmap": "P4-06",
+     "licence": "BrainFlow is MIT. Needs hardware (externally blocked).", "roadmap": "P4-06",
      "docs": "wiki/entities/brainflow.md"},
     {"id": "unicorn", "kind": "device-source", "signal": "eeg", "target": "g.tec Unicorn Hybrid Black (8-channel EEG)",
      "licence": "Not checked (vendor SDK and LSL app).", "roadmap": "P4-05", "docs": _R},

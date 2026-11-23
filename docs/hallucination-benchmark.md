@@ -1,8 +1,12 @@
 # Hallucination benchmark: does your decoder invent text?
 
-A brain-to-text decoder with a strong language model can write fluent text that the neural signal does not support. This benchmark measures that. It gives your decoder and your trust policy inputs **without** matching neural evidence, and it counts how often the system still **commits** text. It also counts wrong commits on real input that read well ("fluent-wrong").
+Tracks and a scorer that test whether your decoder and trust policy commit text that the neural signal does not support.
 
-The benchmark is a set of tracks next to the [open benchmark](../benchmark/README.md). It is not a separate leaderboard. Protocol id: `fidetype.halluc/0.2` (current; P15-15). The old protocol `fidetype.halluc/0.1` (P15-07) stays available: `--protocol 0.1`. The two protocols have the same tracks and files. Only the pass rule of the `swapped` track changes (section 1.1). Code: [`fidetype.benchmark.hallucination`](../src/fidetype/benchmark/hallucination.py). Roadmap items: P15-07, P15-15.
+**Status:** Alpha ([status levels](glossary.md#status-levels))
+
+A brain-to-text decoder with a strong language model can write fluent text that the neural signal does not support. This benchmark measures that. It gives your decoder and your trust policy inputs **without** matching neural evidence, and it counts how often the system still **commits** text. It also counts wrong commits on real input that read well ([fluent-wrong](glossary.md#fluent-wrong)). A [commit](glossary.md#commit-offer-withhold) is text that the system types without a user choice.
+
+The benchmark is a set of tracks next to the [open benchmark](../benchmark/README.md). It is not a separate leaderboard. Protocol id: `fidetype.halluc/0.2` (current). The old protocol `fidetype.halluc/0.1` stays available: `--protocol 0.1`. The two protocols have the same tracks and files. Only the pass rule of the `swapped` track changes (section 1.1). Code: [`fidetype.benchmark.hallucination`](../src/fidetype/benchmark/hallucination.py).
 
 Fidetype is research software, not a medical device.
 
@@ -19,7 +23,7 @@ Each control track has a `verdict`: `pass`, `fail` or `insufficient evidence` (0
 
 ### 1.1 The swapped rule of protocol 0.2
 
-Why: the 0.1 rule (≤ 0.05) lets a system that rarely commits pass without a signal check. On T15 two systems with swapped commits = real commits passed it.
+Why: the 0.1 rule (≤ 0.05) lets a system that rarely commits pass without a signal check. On the T15 set (data of implant participant [T15](glossary.md#t12-t15)) two systems with swapped commits = real commits passed it.
 
 Pairs: real item `j` and swapped item `j` have the **same signal** (trial `j`). Per pair, `R` = the real item commits, `S` = the swapped item makes an unsupported commit.
 
@@ -48,7 +52,7 @@ The same seed always gives the same control inputs. The generators are numpy `PC
 3. For each `i` in `idx`, in order: one frame permutation `rng.permutation(T_i)` (scrambled track).
 4. Swapped: `perm` is a derangement from `default_rng([seed, 11])`. No trial is paired with itself, and the two trials of a pair never have the same text.
 
-This is the recipe of the P15-05 and P15-06 experiments. Default seed: 0.
+Our baseline experiments use this recipe. Default seed: 0.
 
 ### Where the controls act
 
@@ -76,7 +80,7 @@ A wrong commit is **fluent** if a language model finds it plausible: `log p_LLM(
 
 | Mode | How | When |
 |---|---|---|
-| `llm` | A local GGUF model through `llama-cpp-python` (`pip install 'fidetype[llm]'`; CPU is enough). Default threshold −7.8817 nats per word (the P15-05 value for Qwen2.5-1.5B-Instruct Q4_K_M) | You have the model |
+| `llm` | A local GGUF model through `llama-cpp-python` (`pip install 'fidetype[llm]'`; CPU is enough). Default threshold −7.8817 nats per word (our measured value for Qwen2.5-1.5B-Instruct Q4_K_M) | You have the model |
 | `llm-table` | A precomputed table `text → log-prob` (for example an LLM cache). A missing text counts as fluent, and the card reports the count | You scored the texts before |
 | `conservative` | **Deterministic fallback.** Every wrong commit counts as fluent. Then `fluent_wrong_rate = wrong_commit_rate`: an upper bound | No LLM, or for CI |
 
@@ -116,7 +120,7 @@ python -m fidetype.benchmark.hallucination rescore outcomes.json --check card.js
 # the old protocol: add --protocol 0.1
 ```
 
-Each committed score card also holds a rerun recipe (key `rerun`, schema `fidetype.hub.recipe/0.1`, P13-11): the exact `rescore` command with the committed outcomes file, the guard `config_id`, the decoder weights SHA-256 and the split file hash. `rescore --check` leaves out the `rerun` block. `python -m fidetype.benchmark.hub recipe <card>` prints it.
+Each committed score card also holds a rerun recipe (key `rerun`, schema `fidetype.hub.recipe/0.1`): the exact `rescore` command with the committed outcomes file, the guard `config_id`, the decoder weights SHA-256 and the split file hash. `rescore --check` leaves out the `rerun` block. `python -m fidetype.benchmark.hub recipe <card>` prints it.
 
 `controls.npz` holds `null/00000`, ..., `scrambled/00000`, ... in item order. It is derived from your data: keep it local.
 
@@ -158,7 +162,7 @@ The benchmark ships the protocol, the split definitions and the scorer. It ships
 
 ### 5.1 Protocol 0.2 (current)
 
-Cards: [`benchmark/results/halluc-v0.2/`](../benchmark/results/halluc-v0.2/), re-scored from the committed 0.1 outcomes (the outcomes do not change). CI re-scores them (`tests/test_halluc_protocol_02.py`). Experiment: [P15-15 results](../experiments/2026-11-17-p15-15-halluc-0.2/results.md).
+Cards: [`benchmark/results/halluc-v0.2/`](../benchmark/results/halluc-v0.2/), re-scored from the committed 0.1 outcomes (the outcomes do not change). CI re-scores them (`tests/test_halluc_protocol_02.py`). Details: [protocol 0.2 experiment record](../experiments/2026-11-17-p15-15-halluc-0.2/results.md).
 
 | Set | System | Real commits | Swapped unsupported | n10 / n01 / n11 | m | Swapped verdict (0.2) | Controls 0.1 → 0.2 |
 |---|---|---|---|---|---|---|---|
@@ -169,11 +173,11 @@ Cards: [`benchmark/results/halluc-v0.2/`](../benchmark/results/halluc-v0.2/), re
 | T12 (400) | `p15-05-B0_rescore` | 15 | 15 | 14 / 14 / 1 | 29 | fail | pass → **fail** |
 | T12 (400) | `p15-06-B1_rescore_G` | 0 | 0 | 0 / 0 / 0 | 0 | insufficient evidence | pass → **insufficient evidence** |
 
-Both fluency modes give the same verdicts (the commit flags do not depend on fluency). No baseline passes under 0.2: none commits often **and** checks the signal (roadmap P15-16).
+Both fluency modes give the same verdicts (the commit flags do not depend on fluency). No baseline passes under 0.2: none commits often **and** checks the signal. A baseline that does both is open work.
 
 ### 5.2 Protocol 0.1 (old; kept for reference)
 
-Files: [`benchmark/results/halluc-v0.1/`](../benchmark/results/halluc-v0.1/). These cards use the old pass rule. CI re-scores every committed outcomes file with `protocol="0.1"` and checks that the score card is the same (`tests/test_halluc_bench.py`). Experiment: [`experiments/2026-11-16-p15-07-halluc-bench/`](../experiments/2026-11-16-p15-07-halluc-bench/results.md).
+Files: [`benchmark/results/halluc-v0.1/`](../benchmark/results/halluc-v0.1/). These cards use the old pass rule. CI re-scores every committed outcomes file with `protocol="0.1"` and checks that the score card is the same (`tests/test_halluc_bench.py`). Details: [protocol 0.1 experiment record](../experiments/2026-11-16-p15-07-halluc-bench/results.md).
 
 | Set | System | Real commits | Wrong commits (CP95) | Fluent-wrong, LLM (CP95) | Fluent-wrong, conservative | Null | Scrambled | Swapped commits (CP95) | Swapped leaks | Controls |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -184,13 +188,13 @@ Files: [`benchmark/results/halluc-v0.1/`](../benchmark/results/halluc-v0.1/). Th
 | T12 (400) | `p15-05-B0_rescore` | 15 | 8/400 [0.0087, 0.0390] | 4/400 [0.0027, 0.0254] | 8 | 0/300 | 0/300 | 15/400 [0.0211, 0.0611] | 7 | pass |
 | T12 (400) | `p15-06-B1_rescore_G` | 0 | 0/400 [0.0000, 0.0092] | 0/400 [0.0000, 0.0092] | 0 | 0/300 | 0/300 | 0/400 [0.0000, 0.0092] | 0 | pass |
 
-Systems: `p14-03-guard` = the P14-03 drop-in guard (α = 0.05), n-gram word decoder, no LLM. `p15-05-B0_rescore` = LLM rescoring (Qwen2.5-1.5B-Instruct), no grounding. `p15-06-B1_rescore_G` = LLM rescoring + CTC grounding + the P15-06 fluent-wrong bound. LLM fluency thresholds: T15 −7.8817, T12 −8.9165 nats per word.
+Systems (the ids are the file names of the score cards): `p14-03-guard` = the drop-in [trust guard](trust-quickstart.md) ([α](glossary.md#alpha-delta) = 0.05), n-gram word decoder, no LLM. `p15-05-B0_rescore` = LLM rescoring (Qwen2.5-1.5B-Instruct), no grounding. `p15-06-B1_rescore_G` = LLM rescoring + CTC grounding + a fluent-wrong bound ([`fidetype.trust.halluc_bound`](../src/fidetype/trust/halluc_bound.py)). LLM fluency thresholds: T15 −7.8817, T12 −8.9165 nats per word.
 
 What the baselines show:
 
 - Null and scrambled: 0 commits everywhere.
-- Swapped: for the two systems without grounding, swapped commits equal real commits (`swapped_to_real_commit_ratio` = 1.0 in the card). These systems follow the language side and ignore the signal. On T12 the P14-03 guard fails the track.
-- The P15-06 guard passes all tracks but never commits on these sets.
+- Swapped: for the two systems without grounding, swapped commits equal real commits (`swapped_to_real_commit_ratio` = 1.0 in the card). These systems follow the language side and ignore the signal. On T12 the `p14-03-guard` system fails the track.
+- The `p15-06-B1_rescore_G` system passes all tracks but never commits on these sets.
 - Protocol 0.2 changes 5 of these 6 verdicts (section 5.1).
 
 ## 6. Limits

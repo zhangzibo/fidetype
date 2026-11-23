@@ -1,5 +1,9 @@
 # Trust guarantee sheet: what the drop-in guard promises
 
+What the trust guard promises, under which assumptions, what it does not promise, and how to read its audit log.
+
+**Status:** Alpha, except the optional bounds of sections 9 to 11 (Development) ([status levels](glossary.md#status-levels))
+
 `fidetype.trust.calibrate` (see the [10-minute quickstart](trust-quickstart.md)) returns a guard and a **guarantee sheet** (`print(guard.sheet)`). This page explains each line of the sheet: what is guaranteed, under which assumptions, what is **not** guaranteed, and how to read the audit log.
 
 Fidetype is research software, not a medical device. Nothing on this page is a medical or legal claim.
@@ -15,6 +19,7 @@ Fidetype is research software, not a medical device. Nothing on this page is a m
 | Wrong-commit rate | Wrong commits / **all** utterances (not / commits) |
 | α (`alpha`) | The largest wrong-commit rate that you accept. Default 0.05 |
 | δ (`delta`) | The probability that the calibration draw was unlucky and the bound does not hold. Default 0.1 |
+| Commit, offer, withhold | The three answers of the guard ([glossary](glossary.md#commit-offer-withhold)). Only a commit types text by itself |
 
 Example: α = 0.05, δ = 0.1. Over many utterances, at most 5 % of all utterances become wrong commits. This is true for at least 90 % of the calibration sets that you could have drawn.
 
@@ -53,7 +58,7 @@ If an assumption is false, the numbers on the sheet can be wrong in either direc
 | Any single utterance | The bound is on a rate over many utterances |
 | A bound per user, per session or per sentence type | The bound is on the mix of the calibration data. One user in a mix can be worse |
 | Data that differ from the calibration data | See A1 |
-| The error rate among commits (precision) | The rate is wrong commits / all utterances. With few commits, many of them can be wrong (M2-19: 6 of 9 commits wrong at a rate of 0.0086). An optional bound exists: section 10 |
+| The error rate among commits (precision) | The rate is wrong commits / all utterances. With few commits, many of them can be wrong (in one early test, 6 of 9 commits were wrong at a rate of 0.0086). An optional bound exists: section 10 |
 | A minimum number of commits or a typing speed | The guard may commit rarely or never. It trades commits for safety |
 | Offered and withheld text | Only commits count. An offer can hold no right choice |
 | Hallucination on inputs that the null controls do not cover | The controls test two kinds of null input (section 5), not every failure |
@@ -61,7 +66,7 @@ If an assumption is false, the numbers on the sheet can be wrong in either direc
 
 ## 5. Null controls (refusal rule)
 
-Every calibration runs two null controls. This follows the project rule of 2026-11-15: every trust-config re-tune keeps the commit gate on and passes a uniform and a shuffled control ([streaming trust layer](../wiki/concepts/streaming-trust-layer.md)). The rule came from M2-19, where a re-tuned config committed 186 of 300 no-signal streams.
+Every calibration runs two null controls. This follows a project rule: every re-tune of a trust configuration keeps the commit gate on and passes a uniform and a shuffled control. The rule came from an early test, where a re-tuned configuration committed 186 of 300 no-signal streams. Details: [streaming trust layer](../wiki/concepts/streaming-trust-layer.md).
 
 | Control | Logits input | n-best input |
 |---|---|---|
@@ -77,11 +82,11 @@ Every calibration runs two null controls. This follows the project rule of 2026-
 - For very short utterances (one or two letters), a shuffle can give a real word ("no" → "on"). Then a commit on the shuffled control is not always a hallucination.
 - The controls are a sanity check, not a proof. They do not test drift, a new user or other failures.
 
-### 5a. Offer null control (P5-31)
+### 5a. Offer null control
 
-The commit controls count only COMMITs. A guard can also OFFER a list of choices. An offer list that the guard shows as often on null input as on real input does not depend on the signal. P14-41 found this case: the offer-only `willett-hw` guard offers on 77 of 80 frame-shuffled test inputs, and on 77 of 80 real test inputs.
+The commit controls count only COMMITs. A guard can also OFFER a list of choices. An offer list that the guard shows as often on null input as on real input does not depend on the signal. We found this case in the `willett-hw` guard ([record](../experiments/2026-11-20-p14-41-willett-guard/results.md)): the offer-only `willett-hw` guard offers on 77 of 80 frame-shuffled test inputs, and on 77 of 80 real test inputs.
 
-The offer null control counts the OFFERs on the same control inputs (no extra decoding). It compares each control with the **real offer rate**: the OFFERs of the final guard on the LTT items.
+The offer null control counts the OFFERs on the same control inputs (no extra decoding). It compares each control with the **real offer rate**: the OFFERs of the final guard on the [LTT](glossary.md#ltt-learn-then-test) items.
 
 **Pass rule (pre-stated).** A control with n inputs and k offers passes if both are true:
 
@@ -94,9 +99,9 @@ A guard that never offers passes (0 ≤ 0). A guard that offers on null input bu
 
 | Mode | What happens on a failure |
 |---|---|
-| `"warn"` (default) | The result is in `sheet.offers`. The sheet gets a warning that starts with `offer null control (P5-31) FAILED`. The guard, its `config_id`, `feasible`, the commit threshold and the commit controls do not change |
+| `"warn"` (default) | The result is in `sheet.offers`. The sheet gets a warning of the form `offer null control (...) FAILED: ...`. The guard, its `config_id`, `feasible`, the commit threshold and the commit controls do not change |
 | `"refuse"` | `calibrate` raises `NullControlError` and returns no guard |
-| `"off"` | The control does not run. The sheet has the bytes of a guard before P5-31 |
+| `"off"` | The control does not run. The sheet has the same bytes as a sheet from a version without this control |
 
 Why a warning first:
 
@@ -106,13 +111,13 @@ Why a warning first:
 
 What a failure means for you: do not show the offer list as a suggestion of the user's intent. Show it as "no reliable reading", or withhold it. Use `offer_control="refuse"` if your product shows offers as suggestions.
 
-**Decision (user, 2026-11-22, gap 152):** the default stays `"warn"`. The `"refuse"` rule applies only to guards that ship an offer gate (section 5b): a packaged manifest whose trust block has an `offer_gate` must carry an `offer_control` block with verdict `"pass"`, or the manifest parser refuses it. Today this holds for `t15-m4-13` and both `willett-hw` guards. `kt-semg-lda` has no offer gate and keeps its failing block in `"warn"` mode (gap 155).
+**Policy:** the default stays `"warn"`. The `"refuse"` rule applies only to guards that ship an offer gate (section 5b): a packaged manifest whose trust block has an `offer_gate` must carry an `offer_control` block with verdict `"pass"`, or the manifest parser refuses it. Today this holds for `t15-m4-13` and both `willett-hw` guards. `kt-semg-lda` has no offer gate and keeps its failing block in `"warn"` mode (an open issue).
 
 **Check a saved guard.** `fidetype.trust.recheck_offer_control(guard, inputs, null_inputs=...)` runs the control on a saved guard without a new calibration. Give it the calibration inputs in the same order (and the same `null_inputs`). It makes the same split and the same control inputs from `sheet.seed`, so the commit counts must equal the sheet (`commits_match_sheet: True`).
 
-### 5b. Offer gate (P5-33)
+### 5b. Offer gate
 
-An offer gate makes a guard WITHHOLD an offer when the input shows no evidence of signal.
+An [offer gate](glossary.md#offer-gate) makes a guard WITHHOLD an offer when the input shows no evidence of signal.
 
 ```python
 from fidetype.trust import OfferGate
@@ -125,15 +130,15 @@ guard.set_offer_gate(OfferGate("coherence", 0.187))   # or ft.load(path, offer_g
 - A guard file stores the gate under `offer_gate`, but only when a gate is set. Old files keep their bytes. `ft.load(path, offer_gate=False)` switches a stored gate off.
 - `recheck_offer_control` sees the gate.
 
-Packaged guards: `t15-m4-13` has the gate `coherence >= 0.187` in its manifest (`trust.offer_gate`). It is on by default, and `model.guard(offer_gate=False)` switches it off. With the gate, the guard passes the offer null control (uniform 0 / 300, frame-shuffled 0 / 300, real 212 / 271). The 54 LTT commits do not change. Results: [P5-33](../experiments/2026-11-21-p5-33-withhold/results.md).
+Packaged guards: `t15-m4-13` has the gate `coherence >= 0.187` in its manifest (`trust.offer_gate`). It is on by default, and `model.guard(offer_gate=False)` switches it off. With the gate, the guard passes the offer null control (uniform 0 / 300, frame-shuffled 0 / 300, real 212 / 271). The 54 LTT commits do not change. Details: [record](../experiments/2026-11-21-p5-33-withhold/results.md).
 
-Both `willett-hw` guards have the gate too (P14-54): `coherence >= 0.00418` in `trust.offer_gate` (built-in readout) and `coherence >= 0.00282` in `readouts.lm.trust.offer_gate` (LM readout). With the gate, both pass the offer null control (uniform, frame-shuffled and time-shuffled input 0 offers each; real 40 / 40); without it, they offered on 297 / 300 and 289 / 300 frame-shuffled inputs. The thresholds differ because the built-in guard applies its frame temperature (1.49) before the feature is computed. Results: [P14-54](../experiments/2026-11-21-p14-54-willett-order-gate/results.md).
+Both `willett-hw` guards have the gate too: `coherence >= 0.00418` in `trust.offer_gate` (built-in readout) and `coherence >= 0.00282` in `readouts.lm.trust.offer_gate` (LM readout). With the gate, both pass the offer null control (uniform, frame-shuffled and time-shuffled input 0 offers each; real 40 / 40); without it, they offered on 297 / 300 and 289 / 300 frame-shuffled inputs. The thresholds differ because the built-in guard applies its frame temperature (1.49) before the feature is computed. Details: [record](../experiments/2026-11-21-p14-54-willett-order-gate/results.md).
 
 ## 6. Reading the sheet
 
 | Line | Meaning | Look for |
 |---|---|---|
-| `config_id` | Content id (`tcfg-` + 16 hex) of the frozen configuration. The audit log cites it | The same id in your audit log and in your report |
+| `config_id` | Content id (the prefix `tcfg-` and 16 hex digits) of the frozen configuration. The audit log cites it | The same id in your audit log and in your report |
 | `input` | Input kind and decoder (`builtin:...`, `builtin:...+lexicon(N words)` or `custom:<function>`) | The decoder that you use live |
 | `guarantee` | P(wrong-commit rate ≤ α) ≥ 1 − δ | The α and δ that you claim |
 | `calibration items` | n = fit + policy grid + LTT | — |
@@ -188,9 +193,9 @@ Held-out check of the drop-in API, used as an outside user would use it (public 
 
 Both rates are below alpha. On T12 (later sessions, so with drift) the CP95 upper bound is above alpha: one draw does not prove the bound, and most commits are wrong (the bound is not on precision, section 4). Both sets are intracortical speech with our own decoders; other modalities are not yet validated.
 
-## 9. Optional: a bound on fluent-wrong commits (P15-06)
+## 9. Optional: a bound on fluent-wrong commits
 
-If a language model (LLM) helps your decoder, the guard can also bound the rate of **fluent-wrong** commits: committed text that is wrong but reads well. It is off by default; without these arguments nothing changes.
+If a language model (LLM) helps your decoder, the guard can also bound the rate of [**fluent-wrong**](glossary.md#fluent-wrong) commits: committed text that is wrong but reads well. It is off by default; without these arguments nothing changes.
 
 ```python
 from fidetype.trust.halluc_bound import CommitGrounding
@@ -212,9 +217,9 @@ guard = ft.calibrate(cal_logits, cal_texts, vocab=VOCAB, decode_fn=my_decoder,
 
 Not guaranteed: wrong commits that the LLM finds non-fluent (they count only in section 1); that each committed word was said. `ft.load` needs the same `grounding=` again. Validated on T15 (one set): the bound held in all arms, but with the strict selection rule the LLM-rescoring guard did not commit at all ([experiment](../experiments/2026-11-16-p15-06-halluc-bound/results.md)).
 
-## 10. Optional: a bound on the error rate among commits (P5-02)
+## 10. Optional: a bound on the error rate among commits
 
-Section 1 bounds wrong commits / **all** utterances. A guard that commits rarely meets it even if most of its commits are wrong (P14-03: T15 2 of 2 commits wrong, T12 15 of 25). The precision bound answers the user's question: "when it types, is it right?". It is off by default; without these arguments nothing changes.
+Section 1 bounds wrong commits / **all** utterances. A guard that commits rarely meets it even if most of its commits are wrong (in the validation of section 8: T15 2 of 2 commits wrong, T12 15 of 25). The precision bound answers the user's question: "when it types, is it right?". It is off by default; without these arguments nothing changes.
 
 ```python
 guard = ft.calibrate(cal_logits, cal_texts, vocab=VOCAB, decode_fn=my_decoder,
@@ -227,16 +232,16 @@ print(guard.sheet)                                   # adds a "precision bound" 
 | Error rate among commits | Wrong COMMITs / all COMMITs. Precision = 1 − this rate |
 | Guarantee | With probability at least 1 − `precision_delta` (default δ), the error rate among commits on new utterances is at most 1 − `target_precision` |
 | Together with section 1 | Both statements hold together with probability at least 1 − δ − `precision_delta` (union bound) |
-| Together with section 9 | Allowed since the P5-02 completion. With `grounding=` / `llm=` **and** `target_precision=`, the precision risk is a **third risk of the same joint test** (no second test on the same LTT part): p-value = max(p_wc, p_h, p_precision) for each grid point (`commit_p`, `tau_commit`, `tau_word`), test order from the policy part, fixed-sequence test on the LTT part at level δ_j = min(`halluc_delta`, `precision_delta`). Then wrong-commit ≤ α, fluent-wrong ≤ α_h and error among commits ≤ 1 − `target_precision` hold **together** with probability at least 1 − δ_j. The sheet shows both blocks; the precision block has `joint_with: halluc` |
+| Together with section 9 | Allowed. With `grounding=` / `llm=` **and** `target_precision=`, the precision risk is a **third risk of the same joint test** (no second test on the same LTT part): p-value = max(p_wc, p_h, p_precision) for each grid point (`commit_p`, `tau_commit`, `tau_word`), test order from the policy part, fixed-sequence test on the LTT part at level δ_j = min(`halluc_delta`, `precision_delta`). Then wrong-commit ≤ α, fluent-wrong ≤ α_h and error among commits ≤ 1 − `target_precision` hold **together** with probability at least 1 − δ_j. The sheet shows both blocks; the precision block has `joint_with: halluc` |
 | How | For each threshold `commit_p` (grid 1.00 → 0.00, step 0.01, or `precision_grid`): exact binomial p-value P(Bin(commits, β) ≤ wrong) on the commits of the LTT part, β = 1 − `target_precision`. Given the number of commits, the commits are an exchangeable sample, so the p-value is valid. p ≤ δ is the same test as "one-sided Clopper-Pearson upper bound ≤ β". The error rate is not monotone in `commit_p`, so the test order comes from the policy part (smallest p-value first), and a fixed-sequence test on the LTT part certifies the thresholds ([learn then test](../wiki/concepts/learn-then-test.md)) |
 | Selection | The certified threshold with the most commits, but never below the plain `commit_p`. A higher threshold only removes commits, so section 1 and the null controls still hold |
 | No certified threshold | The guard never commits (sheet warning). It still offers and withholds |
 | Cost | To certify a threshold, the LTT part needs at least log δ / log(`target_precision`) right commits: 22 for 0.9, 45 for 0.95, 230 for 0.99 (δ 0.1). A decoder that is rarely right cannot get a useful precision guarantee |
-| Sheet | A "precision bound" block: target, δ_p, the selected threshold, the P14-03 threshold, how many thresholds were tested and certified, the test commits and a one-sided CP lower bound on precision |
+| Sheet | A "precision bound" block: target, δ_p, the selected threshold, the plain threshold, how many thresholds were tested and certified, the test commits and a one-sided CP lower bound on precision |
 
-Not guaranteed: precision for one session or one user; any single commit; data that differ from the calibration data (section 3). The joint test with section 9 needs more data: each certified grid point must pass all three tests on the same LTT part. `ft.load` needs nothing extra (with section 9: the same `grounding=`). Code: [`src/fidetype/trust/precision_bound.py`](../src/fidetype/trust/precision_bound.py). Validated on synthetic exchangeable data (the test suite: violation rate at most δ over 200 draws). On the P14-03 replay sets (T15, T12; targets 0.5 to 0.95) no threshold was certified: the decoders are right on only about 8 % of sentences, so the guard never commits (P14-03 guard: 2 of 2 and 15 of 25 commits wrong). Safe, but not yet useful on these decoders ([experiment](../experiments/2026-11-16-p5-02-precision/results.md)).
+Not guaranteed: precision for one session or one user; any single commit; data that differ from the calibration data (section 3). The joint test with section 9 needs more data: each certified grid point must pass all three tests on the same LTT part. `ft.load` needs nothing extra (with section 9: the same `grounding=`). Code: [`src/fidetype/trust/precision_bound.py`](../src/fidetype/trust/precision_bound.py). Validated on synthetic exchangeable data (the test suite: violation rate at most δ over 200 draws). On the replay sets of section 8 (T15, T12; targets 0.5 to 0.95) no threshold was certified: the decoders are right on only about 8 % of sentences, so the guard never commits (plain guard: 2 of 2 and 15 of 25 commits wrong). Safe, but not yet useful on these decoders ([experiment](../experiments/2026-11-16-p5-02-precision/results.md)).
 
-## 10a. Optional: a learned commit score (P5-23)
+## 10a. Optional: a learned commit score
 
 By default the guard commits when `p_top1` (the calibrated probability of the top-1 text) is at or above the certified threshold. `p_top1` uses only the n-best scores. Other outputs of the decoder also show whether the top-1 text is right. With `confidence="learned"`, a small model combines them into one commit score. The guarantee of section 1 does not change. Off by default: without the argument nothing changes.
 
@@ -258,9 +263,9 @@ print(guard.sheet)                                   # "commit threshold  learne
 | Results | `TrustResult.commit_score` and the audit record key `commit_score`. `p_top1` is still reported |
 | Not combined (this version) | `grounding=`, `llm=`, `target_precision=` (a `ValueError`); `guard.online(...)` (a `ValueError`: the online methods move a threshold on `p_top1`) |
 
-Not guaranteed: anything beyond section 1. A learned score can commit more often than `p_top1` (more right words), but it can also commit less. It needs enough items: it is fitted on about 62 % of the calibration items, and the LTT part is the same size as before. Code: [`src/fidetype/trust/commit_score.py`](../src/fidetype/trust/commit_score.py). Validated (pre-registered, [P5-23 results](../experiments/2026-11-18-p5-23-learned-confidence/results.md)): T15 M4-13 `val_eval` (701): safe WPM 2.64 vs 2.23 with `p_top1` (paired difference +0.42 [0.07, 0.78]), 113 commits and 10 wrong (0.0143) vs 104 and 17; T12 (400): 1.87 vs 1.27, difference not clear (interval includes 0), 15 wrong in both. Null controls 0 / 300 everywhere. One participant per set.
+Not guaranteed: anything beyond section 1. A learned score can commit more often than `p_top1` (more right words), but it can also commit less. It needs enough items: it is fitted on about 62 % of the calibration items, and the LTT part is the same size as before. Code: [`src/fidetype/trust/commit_score.py`](../src/fidetype/trust/commit_score.py). Validated (pre-registered, [results](../experiments/2026-11-18-p5-23-learned-confidence/results.md)): T15 `t15-m4-13` `val_eval` (701): [safe WPM](glossary.md#safe-wpm) 2.64 vs 2.23 with `p_top1` (paired difference +0.42 [0.07, 0.78]), 113 commits and 10 wrong (0.0143) vs 104 and 17; T12 (400): 1.87 vs 1.27, difference not clear (interval includes 0), 15 wrong in both. Null controls 0 / 300 everywhere. One participant per set.
 
-## 10b. Optional: certified word-prefix commits (P5-24)
+## 10b. Optional: certified word-prefix commits
 
 `calibrate(..., confidence="learned", commit_unit="prefix")` lets the guard commit the first words of the top-1 text when the whole text is not safe to commit. The default stays `commit_unit="sentence"`.
 
@@ -275,9 +280,9 @@ Not guaranteed: anything beyond section 1. A learned score can commit more often
 | Output | `TrustResult.text` is the committed prefix; `n_words_committed`, `complete`, `commit_unit`; the decision event has `commit_unit`, `n_words_committed`, `n_words_top1`, `complete`. `guard.is_right(result, truth)` applies the loss. |
 | Controls | The uniform and shuffled null controls run on the final prefix guard; every prefix commit counts. |
 
-Not in this version: `online()`, `target_precision=`, `grounding=`, `llm=`. A plain n-best prefix posterior is not offered: when all candidates share a prefix its mass is 1.0, also when the truth is not in the list, so LTT finds no feasible threshold (P14-23). Score a prefix guard with [safe WPM v0.2 (proposed)](safe-wpm-v0.2-proposal.md); v0.1 gives a right prefix 0 words.
+Not in this version: `online()`, `target_precision=`, `grounding=`, `llm=`. A plain n-best prefix posterior is not offered: when all candidates share a prefix its mass is 1.0, also when the truth is not in the list, so LTT finds no feasible threshold ([analysis](../wiki/questions/safe-wpm-bottleneck.md)). Score a prefix guard with [safe WPM v0.2 (proposed)](safe-wpm-v0.2-proposal.md); v0.1 gives a right prefix 0 words.
 
-### 10b.1 A frozen external prefix score (P5-35)
+### 10b.1 A frozen external prefix score
 
 `calibrate(..., commit_unit="prefix", prefix_score=score)` certifies a prefix score that you fitted elsewhere (for example from a second decoder, a language model or a wide competitor set). `score` is a `fidetype.trust.FrozenPrefixScore(fn, name=, version=, spec=)`.
 
@@ -290,11 +295,11 @@ Not in this version: `online()`, `target_precision=`, `grounding=`, `llm=`. A pl
 | Guard file | Keeps `name`, `version`, `spec` and the digest, not the function. `ft.load(path, prefix_score=score)` needs the same score again: no score or another digest raises `ValueError`. Files of other guards do not change (no new keys). |
 | Sheet | `commit threshold  external prefix score >= ...`; a `commit score  external, frozen` block with the name, version and digest; one more assumption: the score was frozen before calibration and was not fitted, tuned or selected on the LTT items. The `offline_ltt` policy sheet has `status.commit_score = "external"`. |
 
-The LTT guarantee needs a score that did not see the LTT items. The library cannot check this. Fit the score on other data, or on the fit + policy-grid items of the same `seed` split (P11-16 did this). Not combined with `target_precision=`, `grounding=`, `llm=`, `online()`, or the hybrid guard (P5-26).
+The LTT guarantee needs a score that did not see the LTT items. The library cannot check this. Fit the score on other data, or on the fit + policy-grid items of the same `seed` split (our EMG prefix guard did this). Not combined with `target_precision=`, `grounding=`, `llm=`, `online()`, or the hybrid guard.
 
-Validated (P5-35, [results](../experiments/2026-11-21-p5-35-external-prefix-score/results.md)): the P11-16 LX-FL prefix guard (EMG, research only) reproduced through `prefix_score=`: same threshold 0.86, same null-control counts (uniform 0, shuffled 5, user 0 of 300) and the same decisions on 3 x 1,221 test prompts (real: 671 commits, 592 prefix, 46 wrong; time-shuffled and zero EMG: 0 commits), now with a guard file and `config_id`.
+Validated ([results](../experiments/2026-11-21-p5-35-external-prefix-score/results.md)): our EMG prefix guard (emg2qwerty data, research only) reproduced through `prefix_score=`: same threshold 0.86, same null-control counts (uniform 0, shuffled 5, user 0 of 300) and the same decisions on 3 x 1,221 test prompts (real: 671 commits, 592 prefix, 46 wrong; time-shuffled and zero EMG: 0 commits), now with a guard file and `config_id`.
 
-## 10c. Optional: streaming word-by-word prefix commits (P5-27)
+## 10c. Optional: streaming word-by-word prefix commits
 
 `fidetype.trust.stream_commit.calibrate_streaming(base, inputs, texts, step_frames=...)` builds a guard that decides at checkpoints while an utterance goes on, not only at its end. `base` is a calibrated prefix guard (10b) with logits input from a **causal** decoder: the first n frames of a stored output must be what the decoder emits live.
 
@@ -309,11 +314,11 @@ Validated (P5-35, [results](../experiments/2026-11-21-p5-35-external-prefix-scor
 | Events | One event per commit (`fidetype.stream-commit-event/0.1`) with the words added, the words committed so far, the checkpoint time and a hash chain (`prev_id` -> `id`); `StreamingPrefixGuard.check_chain(events)` verifies it. |
 | Controls | Uniform and shuffled null inputs are streamed through the final guard; an input with one or more commits counts; more than floor(alpha * n) refuses the guard. |
 
-T15 result (P5-27, pre-registered, [results](../experiments/2026-11-18-p5-27-streaming-prefix/results.md)): step 6 frames (0.48 s), LTT threshold 0.99, controls 0 / 300 and 0 / 300, 5 / 701 wrong trials (0.0071). Under the proposed v0.2 + reading cost it gives 2.34 [2.11, 2.57] against 4.67 for the one-commit prefix guard (10b): the one-commit guard wins. The streaming guard commits words about 10 s earlier, but its single threshold over about 39 checkpoints per trial is strict, and it never extends a commit at the end. Use 10b for words; use 10c only where early commits matter more than the number of words.
+T15 result (pre-registered, [results](../experiments/2026-11-18-p5-27-streaming-prefix/results.md)): step 6 frames (0.48 s), LTT threshold 0.99, controls 0 / 300 and 0 / 300, 5 / 701 wrong trials (0.0071). Under the proposed v0.2 + reading cost it gives 2.34 [2.11, 2.57] against 4.67 for the one-commit prefix guard (10b): the one-commit guard wins. The streaming guard commits words about 10 s earlier, but its single threshold over about 39 checkpoints per trial is strict, and it never extends a commit at the end. Use 10b for words; use 10c only where early commits matter more than the number of words.
 
 Score it with `safe_wpm(..., metric_version="0.2", n_commits=...)`, the proposed "several commits per trial" extension (section 7 of the [v0.2 proposal](safe-wpm-v0.2-proposal.md)). The default behaviour of `calibrate` does not change.
 
-## 11. Online use: adaptive risk control for drift (P5-02, P15-04)
+## 11. Online use: adaptive risk control for drift
 
 The guard above is calibrated once. Its bound needs exchangeable data (section 3). Live data drift: within a session, between days, after a decoder update. Adaptive conformal methods move the COMMIT threshold from the user's feedback. Their bound holds for **any** sequence of utterances. But it is a **long-run average**, not a 1 − δ statement.
 
@@ -341,11 +346,11 @@ for s in og.policy_sheets(): print(s)    # offline sheet(s) + the online sheet (
 | Audit log | Each decision goes into the audit log of the wrapped guard, with an `online` record (method, threshold, ticket, score) |
 | The wrapped guard | It does not change. `guard.decide` gives the same results as before |
 
-Tested in `tests/test_trust_p5_02_sheets_online.py`: a synthetic stream drifts after calibration (30 % of the utterances are confidently wrong). The offline guard's wrong-commit rate rises above 2α. The `aci` online guard keeps the realised rate below its certificate and near α.
+Tested in the test suite (`tests/test_trust_p5_02_sheets_online.py`): a synthetic stream drifts after calibration (30 % of the utterances are confidently wrong). The offline guard's wrong-commit rate rises above 2α. The `aci` online guard keeps the realised rate below its certificate and near α.
 
 Not covered: silent errors (a wrong commit that the user does not correct looks right); one short session (slack O(1/(η T))); any single utterance.
 
-### 11.2 Feedback only on what was shown (P15-04)
+### 11.2 Feedback only on what was shown
 
 For online re-calibration during use, the user's feedback exists only for text that was SHOWN (a commit that the user may correct, or an offer that the user picks from or retypes). Withheld items get no label. `BanditCommitRiskControl` works with exactly this feedback. On the drop-in guard, use `guard.online("bandit", explore=0.05)`. On a `DecisionPolicy`:
 
@@ -365,9 +370,9 @@ bp.controller.report()               # realised rate, certificate, audit per thr
 
 Audit details. Items that the policy forbids to commit (score −inf) are never explored: they add nothing to the audit. With the floor on (`floor=True`), audit rows for grid thresholds below the floor are marked `floored` in `report()["audit"]` and their numbers are None: scores below the floor never reach the controller, so these rows are not bounds for those thresholds. Review: [G3 audit review](../wiki/questions/g3-audit-review.md).
 
-Not covered: silent errors (wrong commits that the user does not correct), one short session, future items for the audit bound. Full scope: [F1 guarantee scope](../wiki/questions/f1-guarantee-scope.md). Code: [`src/fidetype/trust/bandit_risk.py`](../src/fidetype/trust/bandit_risk.py), [`src/fidetype/trust/online_guard.py`](../src/fidetype/trust/online_guard.py). Replay: [P15-04](../experiments/2026-11-16-p15-04-bandit/results.md).
+Not covered: silent errors (wrong commits that the user does not correct), one short session, future items for the audit bound. Full scope: [F1 guarantee scope](../wiki/questions/f1-guarantee-scope.md). Code: [`src/fidetype/trust/bandit_risk.py`](../src/fidetype/trust/bandit_risk.py), [`src/fidetype/trust/online_guard.py`](../src/fidetype/trust/online_guard.py). Replay: [record](../experiments/2026-11-16-p15-04-bandit/results.md).
 
-## 12. One guarantee sheet per policy (P5-02)
+## 12. One guarantee sheet per policy
 
 Each way to choose the COMMIT threshold gives a different kind of statement. `PolicySheet` states each one in **one format**: machine-readable JSON (schema `fidetype.guarantee-sheet/1.0`) and printable text.
 

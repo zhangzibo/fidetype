@@ -1,8 +1,12 @@
 # Conformance
 
+How to check that your producer writes valid NTS and that your consumer reads it correctly, and how to join the self-certification list.
+
+**Status:** Release Candidate ([status levels](glossary.md#status-levels))
+
 The conformance suite tells you if a producer writes valid NeuralTextStream (NTS) and if a consumer reads it correctly. Each check cites its spec rule. The rules are in [NTS 1.0 RC4, section 9](../spec/nts-1.0-rc4.md#9-conformance) (draft).
 
-Start with the **conformance kit** and `nts-conform` (below). Use the golden vectors (further down) when you want every edge case. The **implementation levels** (NTS Core, NTS Full, NTS Trust-ready) and the **self-certification list** are further down.
+Start with the **conformance kit** and `nts-conform` (below). Use the [golden vectors](glossary.md#golden-vector) (further down) when you want every edge case. The **implementation levels** (NTS Core, NTS Full, NTS Trust-ready) and the **self-certification list** are further down.
 
 ## The conformance kit and `nts-conform`
 
@@ -16,11 +20,11 @@ The kit is a short list of realistic example files: 36 files (kit version 0.2.0)
 | `lsl-capture`, `lsl-decisions-capture`: LSL binding `nts-lsl/0.1` | 8.2 | K26-K28 |
 | `ws-capture`, `ws-decisions-capture`: WebSocket binding `nts-ws/0.1` | 8.3 | K29-K31 |
 
-Binary protobuf is not a wire form in RC4. The proto files define the data model and the JSON mapping; the binary framing is roadmap P1-05. The JSON Lines files of the kit are the JSON mapping.
+Binary protobuf is not a wire form in RC4. The proto files define the data model and the JSON mapping; the binary framing is planned work. The JSON Lines files of the kit are the JSON mapping.
 
 Verdicts: `accept` (no failed check, no advisory warning), `accept-with-warnings` (only the listed advisory checks warn), `reject` (at least the listed checks fail). `nts-conform list` prints the full table.
 
-New in kit 0.2.0 (P7-02, P1-16): K32 (EMG keys on an EEG stream: the advisory MET-11 warning `NTS-MODALITY-MATCH`), and K33-K36, valid streams that stop below stream level provenance (K33 no `source` and no `meta`: core; K34 no provenance keys: trust-ready; K35 an offline decoder that still writes `latency`: core; K36 `calibration.applied` without `decoder.calibration_method`: core).
+New in kit 0.2.0: K32 (EMG keys on an EEG stream: the advisory MET-11 warning `NTS-MODALITY-MATCH`), and K33-K36, valid streams that stop below stream level provenance (K33 no `source` and no `meta`: core; K34 no provenance keys: trust-ready; K35 an offline decoder that still writes `latency`: core; K36 `calibration.applied` without `decoder.calibration_method`: core).
 
 ### Check your producer's files
 
@@ -54,7 +58,7 @@ Exit codes: 0 = every target passes, 1 = a target fails, 2 = an input error (no 
 
 ### Record a capture from a live producer (LSL, WebSocket)
 
-`nts-conform capture` records what a consumer receives from your running producer and writes it as a capture file (roadmap P7-06). Then `nts-conform check` judges it like any other file.
+`nts-conform capture` records what a consumer receives from your running producer and writes it as a capture file. Then `nts-conform check` judges it like any other file.
 
 ```sh
 # LSL (needs pylsl: pip install "fidetype[lsl]"). QUERY = a stream name, or key=value pairs (name, type, source_id).
@@ -139,21 +143,21 @@ Current entries (all from this repository; no outside entry yet):
 | `fidetype-python` (reference reader, validator, `nts-conform`) | consumer | NTS Trust-ready, text + intent + control, nts-lsl/0.1 + nts-ws/0.1 |
 | `fidetype-typescript` (`@fidetype/sdk`) | consumer | NTS Trust-ready, same scope |
 | `fidetype-rust` (crate `fidetype`) | consumer | NTS Trust-ready, same scope |
-| `fidetype-collector` (`fidetype-collector consume`: file, LSL and WebSocket receivers + `validate`, [collector](collector.md#the-collector-as-a-consumer-the-conformance-kit-p7-05-p7-07)) | consumer | NTS Trust-ready, text + intent + control, `nts-lsl/0.1` + `nts-ws/0.1` |
+| `fidetype-collector` (`fidetype-collector consume`: file, LSL and WebSocket receivers + `validate`, [collector](collector.md#the-collector-as-a-consumer-the-conformance-kit)) | consumer | NTS Trust-ready, text + intent + control, `nts-lsl/0.1` + `nts-ws/0.1` |
 | `adapter-text-nbest` | producer | NTS Trust-ready, text |
 | `adapter-spanishbcbl`, `-toronto`, `-ctc-logits`, `-kt-semg`, `-emg2qwerty` | producer | NTS Core (frames only); stream level provenance |
 | `adapter-b2t25`, `adapter-willett` | producer | NTS Core (frames only); stream level trust-ready (no published weights hash) |
 | `binding-lsl` (`replay_to_lsl` frames + events streams, `DecisionOutlet`) | producer | NTS Trust-ready, text, nts-lsl/0.1 |
 | `binding-ws` (`WSProducer` / `replay_to_ws`, the `/decisions` channel of `WSServer`) | producer | NTS Trust-ready, text, nts-ws/0.1 |
-| `fidetype-live-lsl` (`fidetype live --publish lsl`: `NTSOutlet` frames + events streams, `DecisionOutlet`; [live decode](live-decode.md#8a-publish-over-a-binding---publish-p14-16)) | producer | NTS Trust-ready, text, nts-lsl/0.1 |
+| `fidetype-live-lsl` (`fidetype live --publish lsl`: `NTSOutlet` frames + events streams, `DecisionOutlet`; [live decode](live-decode.md#8a-publish-over-a-binding---publish)) | producer | NTS Trust-ready, text, nts-lsl/0.1 |
 | `fidetype-live-ws` (`fidetype live --publish ws://.../nts` + `ws://.../decisions`: `WSProducer`, `/decisions` of `WSServer`) | producer | NTS Trust-ready, text, nts-ws/0.1 |
 | `fidetype-live-file` (`fidetype live --out S.jsonl`: the NTS input stream and the decision log `S.decisions.jsonl`; [live decode](live-decode.md#8-what-the-nts-file-holds)) | producer | NTS Trust-ready, text |
 
-The two `binding-*` entries (P7-06) come from captures of our own outlets. `python -m fidetype.conformance.binding_producers --out DIR` runs them in one process on loopback with synthetic input (WebSocket on 127.0.0.1; LSL with `ResolveScope = machine`), records them with `nts-conform capture` and writes each capture with its received stream. CI (job `live`) runs it and `nts-conform check DIR/lsl` / `DIR/ws --require-level trust-ready`.
+The two `binding-*` entries come from captures of our own outlets. `python -m fidetype.conformance.binding_producers --out DIR` runs them in one process on loopback with synthetic input (WebSocket on 127.0.0.1; LSL with `ResolveScope = machine`), records them with `nts-conform capture` and writes each capture with its received stream. CI (job `live`) runs it and `nts-conform check DIR/lsl` / `DIR/ws --require-level trust-ready`.
 
-The two `fidetype-live-*` entries (P14-16) come from captures of the `fidetype live` command itself. `--target live-lsl --target live-ws` runs `fidetype live --source synthetic --publish ...` in a child process on loopback and records it the same way. CI (job `live`) checks them at `--require-level trust-ready`.
+The two `fidetype-live-*` entries come from captures of the `fidetype live` command itself. `--target live-lsl --target live-ws` runs `fidetype live --source synthetic --publish ...` in a child process on loopback and records it the same way. CI (job `live`) checks them at `--require-level trust-ready`.
 
-The `fidetype-live-file` entry (P14-17) checks the two files of `fidetype live --out S.jsonl` together: the NTS input stream (no `trust_decision`, rule TD-4) and the decision log `S.decisions.jsonl` (`--decisions-out`). `tools/conformance/certify.py` runs `fidetype live --source synthetic --speed 0 --utterances 4 --out live.nts.jsonl` and `nts-conform check` on both files.
+The `fidetype-live-file` entry checks the two files of `fidetype live --out S.jsonl` together: the NTS input stream (no `trust_decision`, rule TD-4) and the decision log `S.decisions.jsonl` (`--decisions-out`). `tools/conformance/certify.py` runs `fidetype live --source synthetic --speed 0 --utterances 4 --out live.nts.jsonl` and `nts-conform check` on both files.
 
 ### Add your implementation (pull request)
 
@@ -166,7 +170,7 @@ The `fidetype-live-file` entry (P14-17) checks the two files of `fidetype live -
 4. Add one entry to `certified.json`: `id` (lower case, digits, `-`), `implementation`, `language`, `class` (`producer` or `consumer`), `level` (`core`, `full`, `trust-ready`) and `level_title`, `profiles`, `bindings`, `spec` (`NTS 1.0 RC4 (draft)`: a claim names the draft, CNF-1), `kit_version` (from the report), `version` (of your implementation), `evidence` (the path from step 3, relative to `spec/conformance/`), `evidence_command` (the command of step 1), `maintainer`, `repository` (public URL), `licence`, `date` (YYYY-MM-DD). Optional: a link to your passing CI run.
 5. Run `nts-conform certified --check` and open the pull request with the label `conformance`. A maintainer checks the evidence file and the command; CI runs the same check.
 
-A listing is self-certification: we check the evidence, not your implementation. It is not a licence to use the Fidetype name or a mark (roadmap P7-03). If a later kit version adds entries, your entry stays at its kit version until you send a new report.
+A listing is self-certification: we check the evidence, not your implementation. It is not a licence to use the Fidetype name or a mark (a trademark policy is planned work). If a later kit version adds entries, your entry stays at its kit version until you send a new report.
 
 ## Check a producer (your stream files)
 
@@ -186,7 +190,7 @@ These `--level` values are the **stream levels** of spec 9.2 (one stream), not t
 | `trust-ready` | The SHOULD rules that a trust layer needs (`source`, `device.modality`, `decoder.causal`, `data.derived`, `language`) (CNF-3) |
 | `provenance` | Stream id, decoder name and version, weights hash, calibration id, pseudonymous ids (CNF-4) |
 
-Advisory checks warn but never block a level. One of them is `NTS-MODALITY-MATCH` (MET-11, P1-16): a key of `emg.*`, `meg.*` or `implant.*` on a stream whose `device.modality` does not fit (`emg.*` with `emg`; `meg.*` with `meg` or `opm-meg`; `implant.*` with `intracortical` or `ecog`). The Python, TypeScript and Rust validators give the same warning (vectors V93-V96, kit K32). Another one is `NTS-LICENCE-MATCH` (MET-12, P5-19, RC4 amendment 7): `data.research_only = false` with a `data.licence` that surely does not allow commercial use, that is, a Creative Commons id with `NC` (`CC-BY-NC-4.0`, `cc-by-nc-sa-4.0`, ...) or `LicenseRef-unknown`. Other ids give no warning. Same warning in the three validators (vectors V101-V104).
+Advisory checks warn but never block a level. One of them is `NTS-MODALITY-MATCH` (MET-11): a key of `emg.*`, `meg.*` or `implant.*` on a stream whose `device.modality` does not fit (`emg.*` with `emg`; `meg.*` with `meg` or `opm-meg`; `implant.*` with `intracortical` or `ecog`). The Python, TypeScript and Rust validators give the same warning (vectors V93-V96, kit K32). Another one is `NTS-LICENCE-MATCH` (MET-12, RC4 amendment 7): `data.research_only = false` with a `data.licence` that surely does not allow commercial use, that is, a Creative Commons id with `NC` (`CC-BY-NC-4.0`, `cc-by-nc-sa-4.0`, ...) or `LicenseRef-unknown`. Other ids give no warning. Same warning in the three validators (vectors V101-V104).
 
 `fidetype conformance list` prints every check with its level and spec clause.
 

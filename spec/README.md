@@ -1,5 +1,9 @@
 # Fidetype specifications
 
+Every version of the NeuralTextStream (NTS) specification, the enhancement proposals (FEPs) and the conformance material.
+
+**Status:** NTS 1.0 RC4: Release Candidate (draft for public comment). NTS 0.1: the first released version ([status levels](../docs/glossary.md#status-levels))
+
 This folder holds the written specifications of Fidetype. A spec is the normative contract. The Python code in `src/fidetype/` is the reference implementation.
 
 | Spec | Version | Status | What it defines |
@@ -29,13 +33,13 @@ python -m fidetype.conformance consumer --cmd "my-reader {path}"   # exit 0 = ac
 
 The golden vectors are in [`conformance/v0.1/`](conformance/v0.1/). Details: [wiki/concepts/conformance-suite.md](../wiki/concepts/conformance-suite.md).
 
-**Conformance kit, levels and self-certification (P7-01, P7-02; RC4 amendment 3):** the kit [`conformance/kit/`](conformance/kit/kit.json) (36 files over every wire form) and `nts-conform` give a per-rule report, the stream level of each file and the implementation level: **NTS Core**, **NTS Full** or **NTS Trust-ready** (RC4 9.6; [`conformance/levels.json`](conformance/levels.json)). Implementations that claim a level are listed in [`conformance/certified.json`](conformance/certified.json) with their evidence (RC4 9.7). How to: [docs/conformance.md](../docs/conformance.md).
+**Conformance kit, levels and self-certification (RC4 amendment 3):** the kit [`conformance/kit/`](conformance/kit/kit.json) (36 files over every wire form) and `nts-conform` give a per-rule report, the stream level of each file and the implementation level: **NTS Core**, **NTS Full** or **NTS Trust-ready** (RC4 9.6; [`conformance/levels.json`](conformance/levels.json)). Implementations that claim a level are listed in [`conformance/certified.json`](conformance/certified.json) with their evidence (RC4 9.7). How to: [docs/conformance.md](../docs/conformance.md).
 
 The TypeScript SDK ([`sdk/typescript/`](../sdk/typescript/README.md)) runs the same vectors for every profile and gives the same verdict as the Python reference (`npm run cross-check`). The JSON schemas in [`schemas/`](schemas/) are structural; its TypeScript types are generated from them.
 
-**Protobuf source of truth (P1-02, draft):** [`proto/neuraltextstream/v1/*.proto`](proto/) describe the full 1.0 RC2 data model (proto3, package `neuraltextstream.v1`). [`schemas/nts-v1.schema.json`](schemas/nts-v1.schema.json) is generated from them (`python tools/proto/gen_jsonschema.py`) and gives the SDK verdict on every vector that fails or passes on one line (178 of 178). Mapping rules, the rules a schema cannot express and the open questions: [proto/README.md](proto/README.md).
+**Protobuf source of truth (draft):** [`proto/neuraltextstream/v1/*.proto`](proto/) describe the full 1.0 RC2 data model (proto3, package `neuraltextstream.v1`). [`schemas/nts-v1.schema.json`](schemas/nts-v1.schema.json) is generated from them (`python tools/proto/gen_jsonschema.py`) and gives the SDK verdict on every vector that fails or passes on one line (178 of 178). Mapping rules, the rules a schema cannot express and the open questions: [proto/README.md](proto/README.md).
 
-**Semantic-convention registry (P1-04; normative since RC4, MET-10):** [`semconv/`](semconv/) holds the key conventions of RC4 as YAML: the 24 `meta` keys of section 3.4 and the recommended `trust_decision` `input` (6.1.1) and `declaration` (6.1.2) keys, each with type, unit, requirement level per conformance level, stability and rule ids. The reference page [semconv/registry.md](semconv/registry.md) is generated (`python tools/semconv/semconv.py`). CI job `semconv` checks that the YAML agrees with the spec tables, the proto files, the generated JSON Schema, the three SDK validators and the conformance vectors. The modality namespaces (`emg.*`, `eeg.*`, ...) are reserved but have no keys yet (SC-1: deferred to a FEP with real-producer evidence). How to use it: [docs/semconv.md](../docs/semconv.md).
+**Semantic-convention registry (normative since RC4, MET-10):** [`semconv/`](semconv/) holds the key conventions of RC4 as YAML: the 24 `meta` keys of section 3.4 and the recommended `trust_decision` `input` (6.1.1) and `declaration` (6.1.2) keys, each with type, unit, requirement level per conformance level, stability and rule ids. The reference page [semconv/registry.md](semconv/registry.md) is generated (`python tools/semconv/semconv.py`). CI job `semconv` checks that the YAML agrees with the spec tables, the proto files, the generated JSON Schema, the three SDK validators and the conformance vectors. The modality namespaces (`emg.*`, `eeg.*`, ...) are reserved but have no keys yet (SC-1: deferred to a FEP with real-producer evidence). How to use it: [docs/semconv.md](../docs/semconv.md).
 
 Opt-in profiles test draft FEPs on top of v0.1. They do not change the v0.1 levels or vectors:
 
@@ -62,7 +66,7 @@ FEPs 0001-0005 and 0007-0010 are folded into [NTS 1.0 RC4](nts-1.0-rc4.md). Thei
 | [0007](feps/0007-unknown-enum-values.md) | Unknown enumeration values: version-gated acceptance with a safe fallback per enumeration (forward compatibility of registries) | Draft (in 1.0 RC3, section 11.2.1) | vectors in `v0.1`, `fep-0001`, `fep-0003`, `fep-0005` |
 | [0008](feps/0008-optional-field-types-and-semconv.md) | Optional field types (GEN-11, gap G-12) and the semantic-convention registry (normative YAML, planned namespaces reserved, non-empty strings, open and closed lists, units; SC-2 … SC-8) | Draft (in 1.0 RC4, sections 1.6, 3.4, A.8) | vectors in `v0.1`, `fep-0001`, `fep-0003`, `fep-0005` |
 | [0009](feps/0009-modality-semantic-conventions.md) | Modality keys for `emg`, `meg`, `implant` from producer evidence (MET-11; SC-1 partly; SC-9 open for `eeg`, `fnirs`) | Draft (in the 1.0 RC4 amendment of 2026-11-16, sections 1.6, 3.4, 12.5, A.8) | V83 … V87 in `v0.1` |
-| [0010](feps/0010-data-licence-keys.md) | Data licence keys: `data.licence`, `data.research_only` in `meta` and `research_only` in `trust_decision.input` (MET-12, TD-15; gap 47) | Draft (in RC4 amendment 6 of 2026-11-17, sections 1.6, 3.4, 6.1.1, 6.2) | V98 … V100 in `v0.1` |
+| [0010](feps/0010-data-licence-keys.md) | Data licence keys: `data.licence`, `data.research_only` in `meta` and `research_only` in `trust_decision.input` (MET-12, TD-15) | Draft (in RC4 amendment 6 of 2026-11-17, sections 1.6, 3.4, 6.1.1, 6.2) | V98 … V100 in `v0.1` |
 | [0006](feps/0006-collector.md) | The collector (reference architecture, not a format change): receivers → processors → exporters, pipelines, TOML / JSON configuration, loss and privacy rules, health and metrics | Draft (not in 1.0; reference v0 `fidetype collector`) | - |
 
 ## Stability levels
@@ -95,7 +99,7 @@ spec/
   conformance/fep-0003/       golden vectors of the opt-in FEP-0003 profile (.jsonl)
   conformance/fep-0004/       golden vectors of the opt-in FEP-0004 profile (WebSocket scenarios, .json)
   conformance/fep-0005/       golden vectors of the opt-in FEP-0005 profile (.jsonl)
-  proto/neuraltextstream/v1/  proto3 files of the 1.0 data model (source of truth, P1-02); proto/README.md = mapping rules
+  proto/neuraltextstream/v1/  proto3 files of the 1.0 data model (source of truth); proto/README.md = mapping rules
   schemas/nts-v1.schema.json  JSON Schema of one 1.0 JSON Lines event, GENERATED from proto/ (do not edit)
   schemas/nts-v0.1/           JSON schemas (draft 2020-12, structural) of the v0.1 JSON Lines events
   schemas/fep-0001/           JSON schemas of the FEP-0001 objects (segment_end, n-best item, decode_declaration, trust_decision)

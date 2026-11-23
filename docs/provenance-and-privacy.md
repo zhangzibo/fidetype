@@ -1,6 +1,10 @@
 # Provenance, licences, consent and deletion
 
-This page shows how to record where each output came from (data, weights, calibration), how licence flags travel to each output, how to reference consent, how to filter personal data in the Collector, and how to delete a person's data. Roadmap items P5-03, P5-04, P5-14 (signed anchors) and P5-15 (erasure in Collector output files).
+Record where each output came from, carry licence flags to each output, reference consent, filter personal data and delete a person's data on request.
+
+**Status:** Alpha ([status levels](glossary.md#status-levels))
+
+This page shows how to record where each output came from (data, weights, calibration), how licence flags travel to each output, how to reference consent, how to filter personal data in the [Collector](glossary.md#collector), and how to delete a person's data. Data with a non-commercial licence makes an output [research only](glossary.md#research-only).
 
 > **Not legal advice.** These tools help you document consent, keep less data and delete data on request. They do not make a deployment compliant. See the [neural-data law table](../wiki/questions/neural-data-law.md) (design information only).
 
@@ -50,7 +54,7 @@ You can also write the lineage as a file and load it with `record_lineage_spec(l
 
 An artifact inherits the most restrictive flags of all its inputs. `record_artifact(..., purpose="product")` refuses an artifact whose inputs the product policy does not allow (`LicenceError`). The default policy `project` is the project's licence rule: product weights come only from CC0 data or our own consented data.
 
-### Keep research-only output out of a product exporter (P5-18)
+### Keep research-only output out of a product exporter
 
 Every trust layer writes `trust_decision.input.research_only` when it knows the licence of its input (FEP-0010, TD-15). A Collector exporter can refuse such decisions:
 
@@ -69,10 +73,10 @@ unknown_licence = "refuse"     # default; "pass" exports decisions without the k
 | absent, or not a boolean (**unknown licence**) | exported | `unknown_licence = "refuse"`: dropped, counter `licence_unknown_refused`; `"pass"`: exported |
 
 Rules:
-- The option works on every exporter type (`jsonl`, `stdout`, `websocket`, `lsl`, `os_text`). It acts on decisions (`trust_decision`, `intent_decision`, `control_decision`) and, on a `jsonl` or `stdout` exporter of input events, on whole streams (next table, P5-22).
+- The option works on every exporter type (`jsonl`, `stdout`, `websocket`, `lsl`, `os_text`). It acts on decisions (`trust_decision`, `intent_decision`, `control_decision`) and, on a `jsonl` or `stdout` exporter of input events, on whole streams (next table).
 - An exporter that only writes decisions lets input events pass; it does not write them anyway.
 
-Input-event exporters (P5-22). The header of each stream decides for the whole stream (header and every event up to its `end`):
+Input-event exporters. The header of each stream decides for the whole stream (header and every event up to its `end`):
 
 | Header `meta` of a stream | `refuse_research_only = true` |
 |---|---|
@@ -143,7 +147,7 @@ A signed anchor without `--public-key` fails: nobody checked the signature. Reda
 
 Key rules: keep the private key in a secret store or a file with owner-only access, on the operator's side. Publish the public key (for example next to the release notes). Make a new key pair when a person who had access leaves; old anchors stay valid with the old public key.
 
-### 4.1a Automatic signed anchors (P5-16)
+### 4.1a Automatic signed anchors
 
 The Collector and the Python API can write signed anchors by themselves. Then a rewrite of the newest entries is covered between two manual runs. Each anchor is a separate file `anchor-<seq>.json` in its own directory. An older anchor is never changed.
 
@@ -237,9 +241,9 @@ FT_SUBJECT=<subject.id> FT_LEDGER_KEY=<key> python -m fidetype.trust.privacy era
 3. The bodies of these entries are removed (tombstones). Each entry keeps `body_sha256`, so the chain still verifies. The random `salt` goes with the body, so nobody can confirm a guessed text from the digest.
 4. The receipt lists the request reference, the user hash, the ledger ids, the counts and the new heads. It holds no raw id and no path.
 
-Limits: copies outside these files (backups, synced folders) are not reached. A ledger written before P5-04 (hash rule `v0`) cannot be redacted without breaking its chain; start a new ledger.
+Limits: copies outside these files (backups, synced folders) are not reached. A ledger written with the old hash rule `v0` cannot be redacted without breaking its chain; start a new ledger.
 
-## 8. Erasure in Collector output files (P5-15)
+## 8. Erasure in Collector output files
 
 The Collector also writes plain files: decision logs, NTS stream files, the `os_text` stub log. Prepare them so that an erasure can find one subject's items.
 

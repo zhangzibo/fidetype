@@ -1,10 +1,14 @@
 # Benchmark tracks v0.2
 
-This page defines the seven benchmark tracks of the Fidetype open benchmark (roadmap item P6-01). Each track is one scored task on one public dataset. Each track has a fixed, versioned split file. The split files hold **only salted hashes**: no text, no signals, no plain trial ids.
+The seven tracks of the Fidetype open benchmark, their fixed splits, and how to verify your copy of each dataset.
+
+**Status:** Alpha ([status levels](glossary.md#status-levels))
+
+This page defines the seven benchmark tracks of the Fidetype open benchmark. Each track is one scored task on one public dataset. Each track has a fixed, versioned split file. The split files hold **only salted hashes**: no text, no signals, no plain trial ids.
 
 - Code: [`src/fidetype/benchmark/tracks.py`](../src/fidetype/benchmark/tracks.py)
 - Split files: [`src/fidetype/benchmark/splits/tracks-v0.2/`](../src/fidetype/benchmark/splits/tracks-v0.2/)
-- How to submit: [benchmark-submission.md](benchmark-submission.md) (format v0.2 + one-command scorer, P6-02), [`benchmark/README.md`](../benchmark/README.md)
+- How to submit: [benchmark-submission.md](benchmark-submission.md) (format v0.2 + one-command scorer), [`benchmark/README.md`](../benchmark/README.md)
 - Metrics: [safe WPM](safe-wpm.md), [hallucination benchmark](hallucination-benchmark.md), [error metrics](../wiki/concepts/error-metrics.md)
 - Data licences: [`LICENSES/DATA.md`](../LICENSES/DATA.md)
 
@@ -19,6 +23,8 @@ This page defines the seven benchmark tracks of the Fidetype open benchmark (roa
 | `kt-semg` | forearm sEMG | KT-sEMG (Nokia) | CC BY 4.0 | 172 typing bursts in 6 runs | train 20 runs, cal 3 runs / 89 bursts | run |
 | `spanishbcbl-meg` | MEG | SpanishBCBL | CC BY-NC 4.0, **research only** | 637 trials | train 4026, val 437 | sentence x participant |
 | `emg2qwerty` | wrist sEMG | emg2qwerty (Meta) | CC BY-NC-SA 4.0, **research only** | 104 sessions (one per user) | train 927, val 104 | user |
+
+T15, T12 and T5 are the codes of participants with intracortical implants ([T12, T15](glossary.md#t12-t15)). The [glossary](glossary.md) explains each dataset name and the modalities ([EMG, MEG](glossary.md#eeg-meg-emg-semg)).
 
 `python -m fidetype.benchmark.tracks list` prints this list. `info <track>` prints the full definition: task, metrics, controls, timing, licence, attribution, split rule and counts.
 
@@ -99,7 +105,7 @@ Each track names its adapter call (`info <track>`, field `adapter`).
 
 The `b2t25-t15` track scores trials of `t15_copyTask.pkl`. The B2T '25 neural data (`t15_copyTask_neuralData.zip`, HDF5 files `data_train.hdf5`, `data_val.hdf5`, `data_test.hdf5` per session) hold the **same trials** in another form ([T15 split audit](../wiki/questions/t15-split-audit.md)). The normal B2T '25 recipe trains on HDF5 `train`. That partition holds 366 of the 816 test trials (368 with the less exact matches). So a decoder trained on all of HDF5 `train` is trained on about 45 % of the test set.
 
-**Rule.** Before you train, tune or calibrate on the HDF5 files for a `b2t25-t15` entry, leave out every HDF5 trial that matches a test unit. Then declare it in `submission.json` with `"exclude": "track-test-matches"` ([submission format](benchmark-submission.md#train--test-overlap-check-p6-10)).
+**Rule.** Before you train, tune or calibrate on the HDF5 files for a `b2t25-t15` entry, leave out every HDF5 trial that matches a test unit. Then declare it in `submission.json` with `"exclude": "track-test-matches"` ([submission format](benchmark-submission.md#train--test-overlap-check)).
 
 | HDF5 file | Trials to leave out | Strict match | Possible match (one of several candidates) |
 |---|---|---|---|

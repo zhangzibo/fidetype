@@ -1,6 +1,8 @@
 # Benchmark hub design: versioned dataset registry and replay adapters
 
-Status: **design v0.1** (roadmap item P13-01, 2026-11-18). The user decided the seven open questions on 2026-11-18 ([Decisions](#decisions-2026-11-18)). Code that exists: the registry file and its checker (P13-01), the hub command line and the rerun recipe in every score card (P13-06, 2026-11-18; [section 12](#12-hub-command-line-and-rerun-recipes-p13-06)). Later items: guarantee columns (P13-02), the pull-request flow (P13-03), the replay command and the transport test (P13-10).
+> **Design record.** This page records a design and its decisions. It is not a user guide. For the user guide, see the [benchmark guide](../benchmark/README.md).
+
+Status: **design v0.1** (roadmap item P13-01, 2026-11-18). The maintainer decided the seven open questions on 2026-11-18 ([Decisions](#decisions-2026-11-18)). Code that exists: the registry file and its checker (P13-01), the hub command line and the rerun recipe in every score card (P13-06, 2026-11-18; [section 12](#12-hub-command-line-and-rerun-recipes-p13-06)). Later items: guarantee columns (P13-02), the pull-request flow (P13-03), the replay command and the transport test (P13-10).
 
 The hub **extends** the P6 leaderboard. It does not replace it. Everything below reuses what exists:
 

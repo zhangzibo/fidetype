@@ -1,6 +1,10 @@
 # Live decode from lab tools: `fidetype live`
 
-One command reads a live signal, decodes it and puts the trust guard on top. You get one trust decision per segment (commit, offer or withhold) and, if you ask, a valid NeuralTextStream (NTS) file.
+Run one command that reads a live signal, decodes it and puts the trust guard on top.
+
+**Status:** Alpha ([status levels](glossary.md#status-levels))
+
+You get one trust decision per segment ([commit, offer or withhold](glossary.md#commit-offer-withhold)) and, if you ask, a valid [NeuralTextStream (NTS)](glossary.md#nts-neuraltextstream) file. Sources: [LSL](glossary.md#lsl) streams, BrainFlow boards, recording files and a synthetic source.
 
 ```
 signal source  ->  windows  ->  model  ->  key beam search  ->  trust guard  ->  decisions + NTS
@@ -8,7 +12,7 @@ signal source  ->  windows  ->  model  ->  key beam search  ->  trust guard  -> 
  OpenBCI, synth)    or fixed)    posterior)  segment)            withhold)
 ```
 
-Roadmap items: P14-04 (this path) and P4-02 (LSL and BrainFlow adapters, synthetic-board test). Code: [`src/fidetype/live/`](../src/fidetype/live/). Tests: [`tests/test_live.py`](../tests/test_live.py).
+Code: [`src/fidetype/live/`](../src/fidetype/live/). Tests: [`tests/test_live.py`](../tests/test_live.py).
 
 > **Read this first.** Our models do not transfer to a new person, a new device or a new electrode position without training and calibration. The live path checks the plumbing and the trust decisions. Decoding quality comes from replay of public data ([benchmark tracks](benchmark-tracks.md)). Fidetype is research software, not a medical device.
 
@@ -61,9 +65,9 @@ fidetype live --source brainflow --board ganglion --serial-port COM4            
 - A board has no key-onset markers. So `--source brainflow` uses **fixed timing**: one window every `hop_s` seconds (model card; `--hop` changes it).
 - `--kind eeg|emg|exg` selects the board channels. The model must have the same channel count and sample rate as the board; else the command stops with a clear message.
 - The BrainFlow Synthetic board makes sine waves and noise. They carry no text. The correct output is **no commit**. The command prints a note about this.
-- Real OpenBCI boards are **not tested** (no hardware; roadmap P4-06, externally blocked). The support level of each source and reader is in the [device support matrix](device-support.md).
+- Real OpenBCI boards are **not tested** (no hardware; externally blocked). The support level of each source and reader is in the [device support matrix](device-support.md).
 
-The NTS header carries the board as vendor keys `brainflow.board_id` and `brainflow.board_name` (NTS MET-3; roadmap P4-09).
+The NTS header carries the board as vendor keys `brainflow.board_id` and `brainflow.board_name` (NTS rule MET-3).
 
 ## 3a. Recording files: `--source file`
 
@@ -79,7 +83,7 @@ fidetype live --source file --reader openbci-gui --path renamed.txt         # pi
 - Timing: the file markers (for example EDF+ annotations `keypress` and `segment_end`) drive the windows as with `--source synthetic`. A file with no `keypress` markers gets **fixed timing** and a note; give `--segment-s` to end segments. Other file markers (for example the PhysioNet EDF+ annotations `T0`, `T1`, `T2`) open no window.
 - The model must have the same channel count and sample rate as the file; else the command stops with a clear message.
 - The NTS header has `fidetype.live.source = "file"`, `fidetype.file_reader` (the reader id) and the reader's own meta keys (for example `edf.format`). The readers never copy personal header fields (EDF "patient", "recording") into `meta`.
-- Both readers are `tested` (P4-16): they read real public files outside the repository (PhysioNet EEGMMIDB EDF+, the MNE-Python test EDF+ and BDF files, the OpenBCI GUI sample file) and give the same values as a second reader (MNE; the Python `csv` module) within the format resolution. Test: `tests/test_adapter_files_real.py` (skipped when the files are absent). The OpenBCI GUI sample files write the `Timestamp` column in milliseconds; the reader reads a first stamp above 1e11 as milliseconds.
+- Both readers are `tested`: they read real public files outside the repository (PhysioNet EEGMMIDB EDF+, the MNE-Python test EDF+ and BDF files, the OpenBCI GUI sample file) and give the same values as a second reader (MNE; the Python `csv` module) within the format resolution. Test: `tests/test_adapter_files_real.py` (skipped when the files are absent). The OpenBCI GUI sample files write the `Timestamp` column in milliseconds; the reader reads a first stamp above 1e11 as milliseconds.
 - A new reader joins with no change to the command: see [CONTRIBUTING.md 7.1](../CONTRIBUTING.md#71-add-a-new-adapter-in-about-50-lines).
 
 ## 4. LSL streams
@@ -92,7 +96,7 @@ fidetype live --source lsl --stream-name MyEMG --model my.model.json --guard my.
 - Markers: `--markers auto` (default) reads the stream named by `desc/fidetype/events_source_id` of the signal stream (the BrainFlow bridge and the replay commands set it). `--markers <name>` reads that marker stream; `--markers none` reads none.
 - Marker strings: `keypress` (a key onset; never the key itself) and `segment_end`. A plain-string marker stream from your stimulus program works.
 - Times are corrected to the receiver clock with LSL `time_correction()`.
-- **Reconnect (P4-11).** When the signal or marker stream is lost, `fidetype live` resolves both again (same `source_id`, else name and type; the reconnect code of `fidetype lsl run`, with backoff: 0.05 s, x2, at most 2 s between tries). Options: `--max-reconnects N` (default 5 per run; 0 = end the run at a loss), `--reconnect-timeout S` (default 30 s per loss), `--reconnect-backoff F` (default 2). A stream that comes back with another channel count or rate ends the run.
+- **Reconnect.** When the signal or marker stream is lost, `fidetype live` resolves both again (same `source_id`, else name and type; the reconnect code of `fidetype lsl run`, with backoff: 0.05 s, x2, at most 2 s between tries). Options: `--max-reconnects N` (default 5 per run; 0 = end the run at a loss), `--reconnect-timeout S` (default 30 s per loss), `--reconnect-backoff F` (default 2). A stream that comes back with another channel count or rate ends the run.
 - **No decision on a cut input** (spec LSL-G2). At a loss the decoder drops the open segment, the pending key onsets and the signal buffer (no window spans the gap). It also drops the first segment after the gap, up to the next `segment_end` (its start can be inside the gap). A time jump of more than 2.5 sample periods inside a live stream is handled the same way (LSL-G1).
 - **Gap record in the NTS file** (LSL-G1 `abort` mode, LSL-G3 fields): one event per gap,
 
@@ -101,7 +105,7 @@ fidetype live --source lsl --stream-name MyEMG --model my.model.json --guard my.
    "stream": "MyEMG", "lsl_cause": "lost"}
   ```
 
-  `t_start` = last sample before the gap, `t_end` = first sample after it, `missing_frames` = missing samples, `lsl_cause` = `lost` or `timestamp` (a file reader can give `sample_index`: an OpenBCI GUI packet drop, P4-18). A consumer drops its open utterance there. A run that ends while the stream is lost writes `{"type": "lsl_status", "status": "lost", ...}`. The file keeps its one header (JSONL rule 6.2.1); the run summary counts `losses`, `gaps`, `dropped_segments` and `dropped_frames`.
+  `t_start` = last sample before the gap, `t_end` = first sample after it, `missing_frames` = missing samples, `lsl_cause` = `lost` or `timestamp` (a file reader can give `sample_index`: an OpenBCI GUI packet drop). A consumer drops its open utterance there. A run that ends while the stream is lost writes `{"type": "lsl_status", "status": "lost", ...}`. The file keeps its one header (JSONL rule 6.2.1); the run summary counts `losses`, `gaps`, `dropped_segments` and `dropped_frames`.
 
 Test the LSL path on one machine with no data:
 
@@ -129,11 +133,11 @@ fidetype live --source lsl --stream-name fidetype.replay.kt-semg \
 
 - Splits: the runs of benchmark track `kt-semg` (tracks v0.2). The model trains on train runs, the guard calibrates on other train runs plus the `cal` runs, and the replay uses a `test` run.
 - The model is the KT-sEMG reference decoder (log-RMS window features, shrinkage LDA) with a causal running z-score. It is a weak baseline. Expect mostly offers and withholds.
-- Key onsets come from the key log of the recording (oracle timing, as in the P4-01 replay streams). To find them in the EMG instead, add `--timing detect` (section 5a).
+- Key onsets come from the key log of the recording (oracle timing, as in the earlier KT-sEMG replay streams). To find them in the EMG instead, add `--timing detect` (section 5a).
 - The trained files stay on your machine. We do not ship KT-sEMG weights.
 - Our run: see [the results](../experiments/2026-11-16-p14-04-live/results.md).
 
-## 5a. Key onsets from the signal: `--timing detect` (P4-10)
+## 5a. Key onsets from the signal: `--timing detect`
 
 A real EMG board sends no key markers. `--timing detect` finds the key onsets in the signal with a causal detector ([`fidetype.live.onset`](../src/fidetype/live/onset.py), numpy only) and cuts one key window per onset. `keypress` markers are then ignored; `segment_end` markers (or `--segment-s`) still end the segments.
 
@@ -149,9 +153,9 @@ fidetype live --source lsl --stream-name fidetype.replay.kt-semg --timing detect
 
 - The detector adds about 10 ms (envelope: none) to the window wait, because the key window already needs `post_s` = 50 ms after the onset.
 - A guard calibrated with `markers` timing is not calibrated for `detect` timing (other frames). Re-calibrate the guard with `detect` timing.
-- Results on the 6 KT-sEMG test runs at ±50 ms ([P4-10 results](../experiments/2026-11-17-p4-10-onset/results.md)): linear detector recall 0.829, precision 0.456, F1 0.588 (0.73 on the two runs with dense typing; many false alarms on runs with little typing); envelope F1 0.461. Matched onsets: median error about 20 ms.
+- Results on the 6 KT-sEMG test runs at ±50 ms ([results](../experiments/2026-11-17-p4-10-onset/results.md)): linear detector recall 0.829, precision 0.456, F1 0.588 (0.73 on the two runs with dense typing; many false alarms on runs with little typing); envelope F1 0.461. Matched onsets: median error about 20 ms.
 
-## 5b. CI: replay of a public recording (P14-11)
+## 5b. CI: replay of a public recording
 
 The CI job `live-kt` downloads KT-sEMG `run3` (77 s, 53 MB; copyright 2021 Nokia, CC BY 4.0, doi:10.7910/DVN/AV6XIR) from Harvard Dataverse, checks the SHA-256 values in [`tools/ci/kt-semg-run3.sha256`](../tools/ci/kt-semg-run3.sha256), caches the files (`actions/cache`), trains an **in-sample plumbing model** on run3 (`train-kt --fit-run run3 --guard-run run3 --guard-chunk-keys 5`; its guard never commits), replays run3 over a pylsl loopback with `markers` and with `detect` timing, and checks three things: `nts-conform check --require-level trust-ready` passes on the NTS file and the decision log together (`--out` + `--decisions-out`, section 8), the NTS file has no trust decision and the decision log has them, and the header has the replay attribution. Nothing from the recording is committed. Run it locally:
 
@@ -201,9 +205,9 @@ fidetype live --source synthetic --speed 0 --out s.nts.jsonl                    
 nts-conform check s.nts.jsonl s.nts.decisions.jsonl --require-level trust-ready  # producer level: NTS Trust-ready
 ```
 
-> **Changed in P14-17 (2026-11-17).** Before, `--out` put the `trust_decision` events into the NTS file, next to the input events. `nts-conform check` failed that file (FEP1-TD-INPUT, TD-4), but `fidetype validate` passed it: the v0.1 suite read `trust_decision` as an unknown event type and ignored it. Now the v0.1 suite has the core check `NTS-TD-INPUT` (all three SDKs, vector V97), and both tools reject such a file. Old files: move the `trust_decision` lines to a separate file. `--publish` used the split before P14-17 (section 8a).
+> **Changed on 2026-11-17.** Before, `--out` put the `trust_decision` events into the NTS file, next to the input events. `nts-conform check` failed that file (FEP1-TD-INPUT, TD-4), but `fidetype validate` passed it: the v0.1 suite read `trust_decision` as an unknown event type and ignored it. Now the v0.1 suite has the core check `NTS-TD-INPUT` (all three SDKs, vector V97), and both tools reject such a file. Old files: move the `trust_decision` lines to a separate file. `--publish` already used the split before this change (section 8a).
 
-## 8a. Publish over a binding: `--publish` (P14-16)
+## 8a. Publish over a binding (`--publish`)
 
 `--publish TARGET` sends the output of the run to other programs in real time. Repeat the option for more targets. `--out` and `--decisions-out` still write the files (section 8).
 
@@ -228,10 +232,10 @@ nts-conform capture --lsl fidetype.live --out live.capture.json                 
 
 ## 9. Limits
 
-- Onset detection (`--timing detect`): tested on one typist (KT-sEMG); see the P4-10 results for its recall and false alarms. Segment ends still come from markers or `--segment-s`.
+- Onset detection (`--timing detect`): tested on one typist (KT-sEMG); see the section 5a results for its recall and false alarms. Segment ends still come from markers or `--segment-s`.
 - BrainFlow boards have no reconnect in `fidetype live` (only `--source lsl`).
 - `--publish`: one NTS stream per run; a WebSocket target has no token or TLS option in `fidetype live` yet.
-- Real OpenBCI boards: untested (P4-06, hardware).
-- File readers (`--source file`): tested on synthetic files only (P4-16). A file is read into memory at the start; very long recordings need enough RAM.
+- Real OpenBCI boards: untested (no hardware).
+- File readers (`--source file`): CI tests use synthetic files only; the real public files are read in a local test (section 3a). A file is read into memory at the start; very long recordings need enough RAM.
 - The CI replay of KT-sEMG run3 uses an in-sample model: it checks plumbing, not accuracy.
 - The trust guarantee holds only for the decoder, device, user and session type of the calibration data ([trust guarantee](trust-guarantee.md)).

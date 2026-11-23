@@ -45,7 +45,7 @@ from fidetype.live.synthetic import KEYPRESS, SEGMENT_END, SyntheticTypist, Utte
 #: Catalogue metadata (P14-42): read by fidetype.adapters.registry -> docs/adapters.md.
 ADAPTER_INFO = [
     {"id": "lsl-signal-source", "kind": "device-source", "signal": "any", "status": "tested", "extra": "lsl",
-     "target": "Any raw-signal LSL stream and its marker stream (LSLSource of fidetype live; reconnect P4-11)",
+     "target": "Any raw-signal LSL stream and its marker stream (LSLSource of fidetype live; with reconnect)",
      "licence": "Code Apache-2.0. pylsl is MIT.", "tests": ["tests/test_live_reconnect.py", "tests/test_live.py"],
      "docs": "docs/live-decode.md",
      "support": "replay-only", "transport": ["lsl"],
@@ -53,7 +53,7 @@ ADAPTER_INFO = [
      "test_covers": "CI: the synthetic typist over fake inlets and a real pylsl loopback (loss and "
                     "reconnect). The CI job replays the real KT-sEMG run3 over LSL into fidetype live"
                     " --source lsl.",
-     "limits": "No real amplifier has sent its LSL stream to it (P4-06). Clock correction is tested "
+     "limits": "No real amplifier has sent its LSL stream to it (needs hardware). Clock correction is tested "
                "on one machine only."},
     {"id": "synthetic-typist", "kind": "synthetic-source", "signal": "other", "status": "tested",
      "target": "Synthetic typist signal with key-press markers (SyntheticSource; no real data)",

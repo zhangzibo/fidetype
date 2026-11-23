@@ -152,9 +152,9 @@ def test_site_builds_with_no_broken_local_links(tmp_path):
     assert (out / "research.html").is_file()
     # Markdown pages keep GitHub heading ids, so deep links work on the site.
     assert 'id="42-rules"' in (out / "docs/hub-design.html").read_text(encoding="utf-8")
-    # A proposed metric is marked as proposed on its page and on the benchmark page.
-    assert "PROPOSED" in (out / "docs/safe-wpm-v0.2-proposal.html").read_text(encoding="utf-8")
-    assert "PROPOSED" in (out / "benchmark/index.html").read_text(encoding="utf-8")
+    # The metric status of the v0.2 page (adopted 2026-11-22) is shown on the benchmark page.
+    assert "Adopted" in (out / "docs/safe-wpm-v0.2-proposal.html").read_text(encoding="utf-8")
+    assert "ADOPTED" in (out / "benchmark/index.html").read_text(encoding="utf-8")
     # The certified list and the hub registry are generated from their JSON files.
     certified = json.loads((ROOT / "spec/conformance/certified.json").read_text(encoding="utf-8"))
     conf = (out / "conformance/index.html").read_text(encoding="utf-8")

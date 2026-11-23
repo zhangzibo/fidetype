@@ -1,5 +1,9 @@
 # Fidetype open benchmark v0.1
 
+How to score neural text entry on public datasets from NTS files, and how to submit a result to the leaderboard.
+
+**Status:** Alpha ([status levels](../docs/glossary.md#status-levels))
+
 This benchmark scores neural text entry from **NeuralTextStream (NTS) files**. The scorer does not need your decoder code. The benchmark ships **no data and no weights**. You download every dataset from its original source.
 
 - Leaderboard (generated): [`site/index.html`](site/index.html), [`site/leaderboard.md`](site/leaderboard.md)
@@ -18,7 +22,7 @@ This benchmark scores neural text entry from **NeuralTextStream (NTS) files**. T
 
 `python -m fidetype.benchmark info <track>` prints the source URL, version, checksum and download steps.
 
-## Tracks v0.2: seven datasets, licence-clean fixed splits (P6-01)
+## Tracks v0.2: seven datasets, licence-clean fixed splits
 
 Full definition: [docs/benchmark-tracks.md](../docs/benchmark-tracks.md). Split files: [`src/fidetype/benchmark/splits/tracks-v0.2/`](../src/fidetype/benchmark/splits/tracks-v0.2/). They hold only salted hashes (no text, no signals, no plain ids).
 
@@ -41,7 +45,7 @@ python -m fidetype.benchmark.tracks select <track> --data <path> --split test --
 
 Every entry on a v0.2 track reports CER / WER (key error rate on key tracks), eWPM next to the no-BCI reference, safe WPM at alpha 0.05, and runs the shuffled and null-input controls.
 
-### Submit and score on a v0.2 track (P6-02)
+### Submit and score on a v0.2 track
 
 Format and rules: [docs/benchmark-submission.md](../docs/benchmark-submission.md). A submission is a folder with `submission.json` (schema `fidetype.benchmark.submission/0.2`), `units.jsonl` (one row per scored unit, keyed by the salted unit hash of the split file: action, n-best texts, optional latency) or NTS streams, and the two required control runs `controls/shuffled.jsonl` and `controls/zeros.jsonl`.
 
@@ -51,13 +55,13 @@ python -m fidetype.benchmark truth <track> --data <path> --out truth.jsonl      
 python -m fidetype.benchmark score <track> <submission> --truth truth.jsonl --out card.json
 ```
 
-The score card holds CER / WER (key error rate on key tracks), eWPM next to the no-BCI reference, safe WPM at alpha with its certification status, wrong-commit rate, error among commits and commit rate, all with cluster-bootstrap CIs over the track CI unit, plus the control results. Exit code 0 only if the shuffled, zeros and null-commit (<= 5 %) controls pass. Baseline score cards: [`results/v0.2/`](results/v0.2/). All seven v0.2 tracks have entries: the four new tracks from P6-02, and b2t25-t15, toronto-semg and spanishbcbl-meg (the v0.1 decoders and policies rerun in the v0.2 format, same numbers where the definitions agree) from [P6-08](../experiments/2026-11-17-p6-02b-v02-entries/results.md).
+The score card holds [CER / WER](../docs/glossary.md#cer-wer) (key error rate on key tracks), [eWPM](../docs/glossary.md#ewpm) next to the no-BCI reference, [safe WPM](../docs/glossary.md#safe-wpm) at [alpha](../docs/glossary.md#alpha-delta) with its certification status, wrong-commit rate, error among commits and commit rate, all with cluster-bootstrap CIs over the track CI unit, plus the control results. Exit code 0 only if the shuffled, zeros and null-commit (<= 5 %) controls pass. Baseline score cards: [`results/v0.2/`](results/v0.2/). All seven v0.2 tracks have entries: the four new tracks, and b2t25-t15, toronto-semg and spanishbcbl-meg (the v0.1 decoders and policies rerun in the v0.2 format, same numbers where the definitions agree; [details](../experiments/2026-11-17-p6-02b-v02-entries/results.md)).
 
-### Train / test overlap check (P6-10)
+### Train / test overlap check
 
-Declare the data that your decoder, its tuning and its calibration used in the `training_data` field of `submission.json`. The scorer compares it with the scored units by id, by the committed B2T '25 HDF5 map, and by sentence text. The card gets an `overlap_check` block: `pass`, `overlap` or `not checked` (no declaration). An overlap gives a warning, and the board marks the entry `[TRAIN/TEST OVERLAP]`. Rules: [docs/benchmark-submission.md](../docs/benchmark-submission.md#train--test-overlap-check-p6-10). The B2T '25 HDF5 trials to leave out for `b2t25-t15`: [docs/benchmark-tracks.md](../docs/benchmark-tracks.md#train--test-overlap-b2t25-t15-and-the-hdf5-files).
+Declare the data that your decoder, its tuning and its calibration used in the `training_data` field of `submission.json`. The scorer compares it with the scored units by id, by the committed B2T '25 HDF5 map, and by sentence text. The card gets an `overlap_check` block: `pass`, `overlap` or `not checked` (no declaration). An overlap gives a warning, and the board marks the entry `[TRAIN/TEST OVERLAP]`. Rules: [docs/benchmark-submission.md](../docs/benchmark-submission.md#train--test-overlap-check). The B2T '25 HDF5 trials to leave out for `b2t25-t15`: [docs/benchmark-tracks.md](../docs/benchmark-tracks.md#train--test-overlap-b2t25-t15-and-the-hdf5-files).
 
-### Hub: datasets and rerun recipes (P13-06)
+### Hub: datasets and rerun recipes
 
 The hub command line reads the dataset registry. It prints the official source of each dataset and checks your local copy. It never downloads or re-hosts data. Every score card carries a rerun recipe (key `rerun`): the dataset version, the split digest, the adapter hash, the scorer version and the exact commands. Guide: [docs/hub-design.md section 12](../docs/hub-design.md#12-hub-command-line-and-rerun-recipes-p13-06).
 
@@ -71,7 +75,7 @@ python -m fidetype.benchmark.hub rerun <card> --submission <dir> --truth truth.j
 
 ## Hallucination tracks
 
-The tracks `real`, `null`, `scrambled` and `swapped` test whether a decoder + trust policy commits text without matching neural evidence, and they report the fluent-wrong rate. Guide: [docs/hallucination-benchmark.md](../docs/hallucination-benchmark.md). Protocol `fidetype.halluc/0.2` (P15-15): the swapped track uses a paired swapped / real commit-ratio test, so a system that rarely commits cannot pass it only because it rarely commits. Score cards (T15, T12): [`results/halluc-v0.2/`](results/halluc-v0.2/) (current) and [`results/halluc-v0.1/`](results/halluc-v0.1/) (old protocol, kept). Command: `python -m fidetype.benchmark.hallucination --help`.
+The tracks `real`, `null`, `scrambled` and `swapped` test whether a decoder + trust policy commits text without matching neural evidence, and they report the [fluent-wrong](../docs/glossary.md#fluent-wrong) rate. Guide: [docs/hallucination-benchmark.md](../docs/hallucination-benchmark.md). Protocol `fidetype.halluc/0.2`: the swapped track uses a paired swapped / real commit-ratio test, so a system that rarely commits cannot pass it only because it rarely commits. Score cards (T15, T12): [`results/halluc-v0.2/`](results/halluc-v0.2/) (current) and [`results/halluc-v0.1/`](results/halluc-v0.1/) (old protocol, kept). Command: `python -m fidetype.benchmark.hallucination --help`.
 
 ## How to submit
 
@@ -112,7 +116,7 @@ Reference submission: `tools/benchmark/make_b2t25_published.py` builds a full st
 |---|---|
 | CER | Character edit distance of the top-1 text / truth length, pooled over trials |
 | eWPM [95% CI] | Effective words per minute with the documented simulated user (`aac-gaze-v1`, word model); a sentence counts only if it ends exactly right |
-| Safe WPM @ alpha | Words per minute of committed, exactly right text; each wrong commit adds a correction time; shown only under a certified CRC / LTT bound; `! ABOVE alpha` if the measured test rate is above alpha ([docs/safe-wpm.md](../docs/safe-wpm.md), P14-05). Add `neural_s` (seconds) per trial to the truth file to use measured times |
+| Safe WPM @ alpha | Words per minute of committed, exactly right text; each wrong commit adds a correction time; shown only under a certified CRC / LTT bound; `! ABOVE alpha` if the measured test rate is above alpha ([docs/safe-wpm.md](../docs/safe-wpm.md)). Add `neural_s` (seconds) per trial to the truth file to use measured times |
 | Wrong-commit | Wrong commits / all trials (the marginal rate that CRC and LTT control) |
 | Error among commits | Wrong commits / commits |
 | Commit rate | Commits / all trials |
@@ -129,4 +133,4 @@ python -m fidetype.benchmark leaderboard --results benchmark/results/v0.1 benchm
 
 Never edit `site/` by hand. The folder can be served as a static site (GitHub Pages) later.
 
-Track pages (P13-09): the same command writes `site/tracks/<track>.html`, one page per track, and `site/history.json`. Each page has stable anchors: `#e-<card file name>` for one entry, `#history` for the entry history. The history comes from git: each commit that added or changed a card, with the date, the split, the scorer and metric versions and the rerun level of that version. Commit the regenerated `site/` together with the changed cards (or in a later commit). The history is read up to the parent of the commit that holds the pages, so a card change in that commit shows the row "this commit / with this page" (P13-12). CI regenerates `site/` and fails on a difference: `python -m fidetype.benchmark.leaderboard --check`. On the main page each track heading has the id `track-<track>`.
+Track pages: the same command writes `site/tracks/<track>.html`, one page per track, and `site/history.json`. Each page has stable anchors: `#e-<card file name>` for one entry, `#history` for the entry history. The history comes from git: each commit that added or changed a card, with the date, the split, the scorer and metric versions and the rerun level of that version. Commit the regenerated `site/` together with the changed cards (or in a later commit). The history is read up to the parent of the commit that holds the pages, so a card change in that commit shows the row "this commit / with this page". CI regenerates `site/` and fails on a difference: `python -m fidetype.benchmark.leaderboard --check`. On the main page each track heading has the id `track-<track>`.

@@ -1,5 +1,9 @@
 # Fidetype Rust SDK (`fidetype` crate)
 
+The Rust SDK reads, writes, checks and decides on NeuralTextStream (NTS), with a `no_std` core for device firmware.
+
+**Status:** Alpha ([status levels](https://github.com/zhangzibo/fidetype/blob/main/docs/glossary.md#status-levels))
+
 > Part of [Fidetype](https://github.com/zhangzibo/fidetype/blob/main/README.md). Status: NTS 1.0 is a draft RC ([RC4](https://github.com/zhangzibo/fidetype/blob/main/spec/nts-1.0-rc4.md)); this SDK is at version 0.1.0 (from 0.1.0: `cargo add fidetype`). All three SDKs side by side: [docs/sdks.md](https://github.com/zhangzibo/fidetype/blob/main/docs/sdks.md).
 
 Rust SDK for **NeuralTextStream (NTS) v0.1** and the draft FEP profiles. The core is **`no_std` + `alloc`**: it parses, checks, writes and decides without an operating system. So it can run in device firmware, for example on a Cortex-M microcontroller. The `std` feature (on by default) adds file helpers, the CLI `fidetype-rs` and the example program.
@@ -134,13 +138,13 @@ All six profiles pass this way (283/283 at NTS 1.0 RC2 with `fep-0005` and TD-12
 
 ## Conformance and parity with Python
 
-| Profile | Vectors | Rust | Same verdict and "ok" as Python | Fuzz mutants, same verdict as Python (seeds 1-6, `--n 30`, M7-12) |
+| Profile | Vectors | Rust | Same verdict and "ok" as Python | Fuzz mutants, same verdict as Python (seeds 1-6, `--n 30`) |
 |---|---|---|---|---|
 | `v0.1` (NPZ + JSON Lines) | 65 | 65/65 pass | 65/65 | PASS |
 | `fep-0001` streaming trust events | 56 | 56/56 pass | 56/56 | PASS |
 | `fep-0002` NTS over LSL (scenarios) | 35 | 35/35 pass | 35/35 | PASS |
 | `fep-0003` intent events | 44 | 44/44 pass | 44/44 | PASS |
-| `fep-0004` NTS over WebSocket (scenarios, M7-12) | 43 | 43/43 pass | 43/43 | PASS (7,740/7,740) |
+| `fep-0004` NTS over WebSocket (scenarios) | 43 | 43/43 pass | 43/43 | PASS (7,740/7,740) |
 | `fep-0005` control events (gap G-1) | 44 | 44/44 pass | 44/44 | PASS (7,560/7,560) |
 
 NTS 1.0 RC2, gap G-1 (2026-11-14): module `profiles::fep0005` ports the Python control profile and the validators of `fidetype.trust.control` (still `no_std` + `alloc`, no new dependency). For a decision log, `consume` returns `moving_ticks` (the "acted" list of control COMMITs, spec 6.4), `acted_intents` and `acted_texts`. Seeds 1-6 at `--n 30` give 44,196 mutants over the six profiles, all with the Python verdict. The reader accepts a header `spec_version` of `"0.1"`, `"1.0"` or `"1.<minor>"` (`fidetype::constants::is_supported_spec_version`); the writer still writes `"0.1"`.
@@ -167,8 +171,8 @@ Rules that matter for identical verdicts (in addition to those of the TypeScript
 | `str(x)` of a non-string marker sample is Python `repr` (`{'a': 1}` is not JSON) | `json::py_str`. |
 | ElementTree (expat) refuses a bare `&` in stream-info XML | the XML reader refuses it. |
 | `int(round(x))` for the gap length: half to even; an error for inf / NaN | `libm::rint` and an error. |
-| `blank_id` null = no blank class (spec 3.1, FEP-0002 section 10, vector L32): the greedy decoder decodes it | The structural trust model accepts it. (M7-11 fixed the reference, which raised IndexError before.) |
-| A boolean `frame_period` or `latency` passes as 1 or 0 (bool is an int in Python) | The structural trust model reads it as a number (M7-12; the TypeScript SDK got the same fix in M6-11). |
+| `blank_id` null = no blank class (spec 3.1, FEP-0002 section 10, vector L32): the greedy decoder decodes it | The structural trust model accepts it. (A later fix corrected the Python reference, which raised IndexError before.) |
+| A boolean `frame_period` or `latency` passes as 1 or 0 (bool is an int in Python) | The structural trust model reads it as a number (the TypeScript SDK got the same fix). |
 
 ### FEP-0002 note
 
@@ -195,7 +199,7 @@ That is the only dependency. The SDK has its own JSON parser (with Python semant
 
 ## Open items
 
-- **crates.io publishing is a user decision.** The crate is ready: `cargo package --list` and `cargo publish --dry-run --locked` pass in CI (job `packaging`). The name `fidetype` was free on 2026-11-14. Versioning, the release checklist and trusted publishing: [docs/RELEASING.md](https://github.com/zhangzibo/fidetype/blob/main/docs/RELEASING.md).
+- **crates.io publishing.** Version 0.1.0 is on crates.io. A maintainer publishes each release. `cargo package --list` and `cargo publish --dry-run --locked` pass in CI (job `packaging`). Versioning, the release checklist and trusted publishing: [docs/RELEASING.md](https://github.com/zhangzibo/fidetype/blob/main/docs/RELEASING.md).
 - No JSON Schema validator in Rust (the TypeScript SDK has one). The checks give the same verdicts without it.
 - docs.rs builds with all features and `--cfg docsrs` (`[package.metadata.docs.rs]`).
 - The parity fuzz mutates JSON vectors only, not NPZ files.

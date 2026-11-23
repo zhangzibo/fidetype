@@ -81,9 +81,9 @@ ADAPTER_INFO = {
                            "experiments/2026-11-22-p4-22-nbest-readers/results.md"],
     "test_covers": "CI: synthetic CSV and JSON Lines n-best files. Real: the item check "
                    "(normalise_item) on the KT-sEMG LDA n-best lists through the trust drop-in "
-                   "(P5-33, local); read_csv and read_jsonl on real B2T '25 decoder output (1,718 "
-                   "online 1-best texts, 816 M4-06 10-best lists with evidence): exact round trip, "
-                   "0 conformance failures (P4-22, local).",
+                   "(local); read_csv and read_jsonl on real B2T '25 decoder output (1,718 "
+                   "online 1-best texts, 816 10-best lists with evidence): exact round trip, "
+                   "0 conformance failures (local).",
     "limits": "The real CSV / JSON Lines files come from our converter (no local tool writes these "
               "forms); the real texts have no CSV quoting cases. One dataset family.",
 }

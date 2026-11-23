@@ -1,5 +1,7 @@
 # Releasing the Fidetype SDKs
 
+> **For maintainers.** This page tells a maintainer how to version and publish the SDKs. You do not need it to use Fidetype.
+
 This page tells a maintainer how to version and publish the three reference SDKs. **Publishing is a maintainer decision.** No automation in this repository publishes anything by itself. The weekend step-by-step guide (accounts, commands, checks, rollback, time per step) is [docs/publishing-checklist.md](publishing-checklist.md).
 
 | SDK | Folder | Registry | Package name | Version source of truth | Changelog |

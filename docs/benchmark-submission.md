@@ -1,10 +1,14 @@
 # Benchmark submission format v0.2 and the scorer
 
-This page defines how you submit a result on a [v0.2 benchmark track](benchmark-tracks.md) and how one command scores it (roadmap item P6-02).
+How to submit a result on a benchmark track, and how one command scores it into a score card.
+
+**Status:** Alpha ([status levels](glossary.md#status-levels))
+
+This page defines how you submit a result on a [v0.2 benchmark track](benchmark-tracks.md) and how one command scores it.
 
 - Code: [`src/fidetype/benchmark/scorecard.py`](../src/fidetype/benchmark/scorecard.py) (format, truth, scorer). The metrics come from [`scoring.py`](../src/fidetype/benchmark/scoring.py) and [`safe_wpm.py`](../src/fidetype/benchmark/safe_wpm.py).
 - Tests: [`tests/test_benchmark_scorer.py`](../tests/test_benchmark_scorer.py) and [`tests/test_benchmark_overlap.py`](../tests/test_benchmark_overlap.py) (synthetic data only).
-- Train / test overlap check (P6-10): [`src/fidetype/benchmark/overlap.py`](../src/fidetype/benchmark/overlap.py). See [Train / test overlap check](#train--test-overlap-check-p6-10).
+- Train / test overlap check: [`src/fidetype/benchmark/overlap.py`](../src/fidetype/benchmark/overlap.py). See [Train / test overlap check](#train--test-overlap-check).
 - Baselines: [`experiments/2026-11-16-p6-02-scorer/results.md`](../experiments/2026-11-16-p6-02-scorer/results.md). v0.2 entries for b2t25-t15, toronto-semg and spanishbcbl-meg (v0.1 decoders rerun in this format): [`experiments/2026-11-17-p6-02b-v02-entries/results.md`](../experiments/2026-11-17-p6-02b-v02-entries/results.md). Score cards: [`benchmark/results/v0.2/`](../benchmark/results/v0.2/). Board: [`benchmark/site/`](../benchmark/site/).
 
 ## The three commands
@@ -23,7 +27,7 @@ python -m fidetype.benchmark score <track> <submission> --data <path>          #
 
 `<track>` is one of `b2t25-t15`, `b2t24-t12`, `willett-hw`, `toronto-semg`, `kt-semg`, `spanishbcbl-meg`, `emg2qwerty`. `--data` is the same path as for `verify` ([benchmark tracks](benchmark-tracks.md)). The v0.1 form `score <submission> --truth ...` still works for the v0.1 tracks.
 
-From Python (P14-46):
+From Python:
 
 | Need | Call |
 |---|---|
@@ -72,7 +76,7 @@ Every row names its unit with the **salted unit hash** `h` of the track split fi
 |---|---|
 | `unit` | Required. The unit key |
 | `action` | `commit`, `offer` or `abstain` (default `commit`): the decision of your trust policy |
-| `nbest` | `nbest[0].text` is your top-1 text (used for CER and WER, for every action). `nbest[:offer_k]` are the choices of an OFFER. A commit or an offer needs at least one item |
+| `nbest` | `nbest[0].text` is your top-1 text (used for [CER and WER](glossary.md#cer-wer), for every action). `nbest[:offer_k]` are the choices of an OFFER. A commit or an offer needs at least one item |
 | `offer_k` | Optional. The number of shown choices (default 3) |
 | `score_semantics`, `latency_s` | Optional. `latency_s` is your decision latency; the card reports its median and p95 |
 | `x-...` | Optional. Your own keys |
@@ -88,7 +92,7 @@ Any other key is refused. So a row cannot carry truth text by accident (NTS spec
 | `spanishbcbl-meg` | characters | `char28` (as v0.1) |
 | `kt-semg`, `emg2qwerty` | space-separated W3C `KeyboardEvent.code` names, for example `KeyH KeyI Space` | one character per key, so **CER = key error rate** |
 
-**Scoring target (`emg2qwerty` only, P11-13).** The manifest field `target` selects what the scorer compares. Both sides (truth and every output text) go through the same normaliser, and the no-BCI reference and safe WPM use the same target text.
+**Scoring target (`emg2qwerty` only).** The manifest field `target` selects what the scorer compares. Both sides (truth and every output text) go through the same normaliser, and the no-BCI reference and safe WPM use the same target text.
 
 | `target` | Version | Normaliser | What is compared |
 |---|---|---|---|
@@ -102,7 +106,7 @@ Rule `intended-text/1` (`fidetype.benchmark.registry.keycodes_to_intended_text`)
 3. `Enter` is ignored.
 4. At the end, runs of spaces become one space, and the ends are stripped.
 
-Examples: `KeyH KeyX Backspace KeyI` -> `hi`; `Backspace KeyA` -> `a`; `KeyH KeyI Space Backspace KeyO` -> `hio`. This is the same rule as the P11-11 / P11-12 experiment code (a test checks this). Write the outputs as key codes in both cases: an intended text `hi o` is `KeyH KeyI Space KeyO`. A raw-key output is also valid under `intended_text`: the scorer applies the rule to it.
+Examples: `KeyH KeyX Backspace KeyI` -> `hi`; `Backspace KeyA` -> `a`; `KeyH KeyI Space Backspace KeyO` -> `hio`. This is the same rule as the code of our emg2qwerty experiments (a test checks this). Write the outputs as key codes in both cases: an intended text `hi o` is `KeyH KeyI Space KeyO`. A raw-key output is also valid under `intended_text`: the scorer applies the rule to it.
 
 A manifest without `target` scores exactly as before, with the default. On tracks with one target, `target` must be absent. A card from a manifest with `target` has a `target` block (name, version, normaliser, rule). The leaderboard never ranks the two targets in one table: each target gets its own table and its own no-BCI reference, and an `intended_text` entry carries `[target: intended_text]` in its name. Cards without a `target` block count as `raw_keys`.
 
@@ -112,7 +116,7 @@ Known limit: the eWPM user model keeps the track rate (301.33 keys/min) for the 
 
 ### `submission.json`
 
-Schema `fidetype.benchmark.submission/0.2`. All v0.1 fields stay. New fields: `regime` and `controls` (required), `training_data` (required for a checked entry, P6-10), `coverage` and `target` (optional).
+Schema `fidetype.benchmark.submission/0.2`. All v0.1 fields stay. New fields: `regime` and `controls` (required), `training_data` (required for a checked entry), `coverage` and `target` (optional).
 
 ```json
 {
@@ -139,9 +143,9 @@ Schema `fidetype.benchmark.submission/0.2`. All v0.1 fields stay. New fields: `r
 | `regime` | `cross-session`, `session-calibrated`, `cross-subject`, `personalised` or `other` |
 | `controls` | One sentence per control: how you made the input. Say if the control is at the input level (signal) or at the decoder output level (a stand-in) |
 | `coverage` | Leave it out if you cover every scored unit. With `{"subset": "<reason>"}` the scorer accepts missing units, scores only the covered ones, and the board marks the entry `[partial: n/N units]` |
-| `guarantee` | As v0.1. Safe WPM is certified only for `crc` or `ltt` with `alpha` |
+| `guarantee` | As v0.1. [Safe WPM](glossary.md#safe-wpm) is certified only for `crc` or `ltt` ([LTT](glossary.md#ltt-learn-then-test)) with `alpha` ([alpha](glossary.md#alpha-delta)) |
 | `target` | `emg2qwerty` only: `raw_keys` (default) or `intended_text` (see the text space above). Leave it out on every other track |
-| `training_data` | `"none"`, or the data that the decoder, its tuning and its calibration used. See [Train / test overlap check](#train--test-overlap-check-p6-10). Without it the card says `overlap: not checked` and the board marks the entry `[overlap not checked]` |
+| `training_data` | `"none"`, or the data that the decoder, its tuning and its calibration used. See [Train / test overlap check](#train--test-overlap-check). Without it the card says `overlap: not checked` and the board marks the entry `[overlap not checked]` |
 
 ## What the scorer checks
 
@@ -150,7 +154,7 @@ Schema `fidetype.benchmark.submission/0.2`. All v0.1 fields stay. New fields: `r
 3. Every scored unit has an output, unless `coverage.subset` is declared.
 4. The truth matches the split: for every truth row, the id hash, the fingerprint and the group hash must equal the split entry. A changed or other dataset version is refused.
 5. The controls: present, complete (same units as the real run), and passing.
-6. The train / test overlap (P6-10): the declared `training_data` against the scored units. `check` compares unit ids and partitions. `score` also compares the text. An overlap gives a warning. It does not change a number or the status.
+6. The train / test overlap: the declared `training_data` against the scored units. `check` compares unit ids and partitions. `score` also compares the text. An overlap gives a warning. It does not change a number or the status.
 
 ## The score card
 
@@ -182,7 +186,7 @@ The card holds no text. Research-only tracks (`spanishbcbl-meg`, `emg2qwerty`) c
 | `spanishbcbl-meg` | 152 chars/min | Brain2Qwerty v1 typing rate (v0.1) |
 | `emg2qwerty` | 301.33 keys/min | measured: keys / (first to last key-down time), 15 867 test prompts |
 
-## Train / test overlap check (P6-10)
+## Train / test overlap check
 
 An entry must not be scored on units that it trained on, tuned on or calibrated on. The scorer checks this from the `training_data` field of `submission.json`. The check is version `overlap-check/1`.
 
@@ -252,7 +256,7 @@ The B2T '25 HDF5 trials to leave out are in [benchmark tracks](benchmark-tracks.
 
 ### Committed entries (checked 2026-11-21)
 
-The cards in `benchmark/results/v0.2/` were scored before P6-10, so they have no `overlap_check` block. We ran the check on them with declarations that we wrote from their `decoder.training_data` text ([P6-10 results](../experiments/2026-11-21-p6-10-overlap-check/results.md)). By id, no entry overlaps. By text, the M4-12 and M4-13 entries on `b2t25-t15` overlap: 16 of their 103 scored units have the same sentence as a trial in the HDF5 `train` partition. The cards stay as they are.
+The cards in `benchmark/results/v0.2/` were scored before the overlap check existed, so they have no `overlap_check` block. We ran the check on them with declarations that we wrote from their `decoder.training_data` text (details: [overlap check record](../experiments/2026-11-21-p6-10-overlap-check/results.md)). By id, no entry overlaps. By text, the two entries `b2t25-t15__m4-12__guard.json` and `b2t25-t15__m4-13__guard.json` on `b2t25-t15` overlap: 16 of their 103 scored units have the same sentence as a trial in the HDF5 `train` partition. The cards stay as they are.
 
 > **Our take:** the controls are the part that makes a number believable. A decoder that commits on zero input, or whose CER does not get worse on shuffled input, does not decode the signal. So the exit code is 1 until both controls are there and pass.
 

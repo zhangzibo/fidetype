@@ -1,6 +1,10 @@
 # Pretrained decoders
 
-Fidetype has a small registry of pretrained decoders for public datasets. One line loads a model. One line decodes a public data file into NeuralTextStream (NTS). An optional third line adds the trust guard that we calibrated for the model.
+Load a pretrained decoder for a public dataset in one line, decode a data file into NTS in one line, and add the calibrated trust guard in a third line.
+
+**Status:** Development: the weights are not hosted yet ([status levels](glossary.md#status-levels))
+
+A **decoder** turns recorded signal features into text. [NTS](glossary.md#nts-neuraltextstream) (NeuralTextStream) is the output format. The **trust guard** decides for each output to [commit, offer or withhold](glossary.md#commit-offer-withhold) it.
 
 ```python
 import fidetype.pretrained as ftp                 # fidetype.decoders.load is the same function
@@ -15,19 +19,19 @@ print(r.action, r.text or r.choices[:1])          # commit / offer / withhold
 
 No weights yet? `ftp.toy_model(runtime)` gives a tiny random model with the runtime of a real model (`gru-ctc` by default, the runtime of `t15-m4-13`; see [toy model](#try-the-api-without-weights-the-toy-model)).
 
-Code: [`src/fidetype/pretrained/`](../src/fidetype/pretrained/__init__.py). Roadmap task P14-01. The weights are **not** in the package and **not** in the git repository. Hosting is a separate user step (P14-02, [publishing checklist section J](publishing-checklist.md#j-pretrained-weights-optional-45-min-roadmap-p14-02)).
+Code: [`src/fidetype/pretrained/`](../src/fidetype/pretrained/__init__.py). The weights are **not** in the package and **not** in the git repository. Hosting them is a separate maintainer step ([publishing checklist](publishing-checklist.md), section J).
 
 ## Models
 
-`fidetype decoders list` prints this table from the packaged manifests.
+`fidetype decoders list` prints this table from the packaged manifests. The datasets: [B2T '25](glossary.md#b2t-25-brain-to-text-25) and [B2T '24](glossary.md#b2t-24-brain-to-text-24) (implant speech of the participants [T15 and T12](glossary.md#t12-t15)), [KT-sEMG](glossary.md#kt-semg), [emg2qwerty](glossary.md#emg2qwerty) and [Willett handwriting](glossary.md#willett-handwriting-willett-hw). The [glossary](glossary.md#model-names) explains the model names. [CER](glossary.md#cer-wer) is the character error rate.
 
 | Name | Task | Input file | Training data (licence) | `data.research_only` | Status |
 |---|---|---|---|---|---|
-| `t15-m4-13` | Implant attempted speech, phonemes (CTC), causal GRU | Brain-to-Text '25 `data_*.hdf5` (one session folder) | T15, Card et al. 2024 (CC0 1.0) | false | available; trust config packaged |
-| `t12-v2` | Implant attempted speech, phonemes (CTC), causal GRU | Brain-to-Text '24 `competitionData/test/t12.*.mat` | T12, Willett et al. 2023 (CC0 1.0) | false | available; no packaged trust config (gap) |
+| [`t15-m4-13`](glossary.md#model-names) | Implant attempted speech, phonemes (CTC), causal GRU | Brain-to-Text '25 `data_*.hdf5` (one session folder) | T15, Card et al. 2024 (CC0 1.0) | false | available; trust config packaged |
+| `t12-v2` | Implant attempted speech, phonemes (CTC), causal GRU | Brain-to-Text '24 `competitionData/test/t12.*.mat` | T12, Willett et al. 2023 (CC0 1.0) | false | available; no packaged trust config yet |
 | `kt-semg-lda` | Forearm sEMG typing, one key per press (LDA) | KT-sEMG `runN.csv` + key log | KT-sEMG, Nokia (CC BY 4.0, attribution) | false | available; guard is a release file |
 | `emg2qwerty-p11-01` | Wrist sEMG typing, characters (CTC), causal ring-TCN, generic model | emg2qwerty session `*.hdf5` | emg2qwerty, Meta (CC BY-NC-SA 4.0) | **true** | available, **research only** |
-| `willett-hw` | Implant handwriting, characters (CTC), causal TCN, our own (P15-08 run R-all-s0). **Weak**: greedy test CER 0.305, no LM | Willett handwriting 2021, one session folder `Datasets/t5.*` (`sentences.mat`) | T5, Willett et al. 2021 (CC0 1.0) | false | available; weights licence CC0 1.0 (user decision D11, 2026-11-22; not hosted yet); guard is a release file, **offer only** (never commits) |
+| `willett-hw` | Implant handwriting, characters (CTC), causal TCN, our own. **Weak**: greedy test CER 0.305, no LM | Willett handwriting 2021, one session folder `Datasets/t5.*` (`sentences.mat`) | T5, Willett et al. 2021 (CC0 1.0) | false | available; weights licence CC0 1.0 (not hosted yet); guard is a release file, **offer only** (never commits) |
 | `toronto-semg-cnn` | Forearm sEMG typing, key-press CNN | Toronto sEMG | CC BY 4.0 | false | planned (no runtime yet) |
 
 Each model card (`fidetype decoders info <name>`) gives the input spec, the architecture, the release files with SHA-256 and size, the licence of the data and the proposed licence of the weights, the training run, the metrics and the limits.
@@ -50,7 +54,7 @@ Every file must match its manifest. A wrong size or hash raises `WeightsMismatch
 
 ## The licence gate
 
-The manifest of each model carries the FEP-0010 keys `data.licence` and `data.research_only`. A model with `data.research_only = true` (today: `emg2qwerty-p11-01`) refuses to load or download:
+The manifest of each model carries the keys `data.licence` and `data.research_only`. A model with `data.research_only = true` (today: `emg2qwerty-p11-01`) refuses to load or download:
 
 ```python
 ftp.load("emg2qwerty-p11-01")                              # ResearchOnlyRefused
@@ -65,9 +69,9 @@ On the command line the opt-in is `--accept-research-only`. Use it only for non-
 |---|---|
 | `m.decode_file(path)` | Always a list of streams, one per trial (T15, T12), text prompt (emg2qwerty), typing burst (KT-sEMG) or sentence (Willett; a session folder or its `sentences.mat`; `blocks=` keeps some blocks) |
 | `m.decode(array)` (= `m.decode_array(array)`) | One stream. T15 / T12: `(T, 512)` features of one trial plus `session=` (the session name, see `m.sessions`). emg2qwerty: `(n, 32)` raw EMG at 2 kHz. KT-sEMG: `(n, 32)` EMG plus `times=` (key onsets in seconds). Willett: `(T, 192)` threshold crossings in 10 ms bins from the go cue, plus `session=` (one of the 10 `t5.*` sessions) |
-| `m.decode(path)` | **Deprecated** (P14-44). It still returns the list of `decode_file(path)`, with a `DeprecationWarning`. Use `decode_file()` for files |
+| `m.decode(path)` | **Deprecated**. It still returns the list of `decode_file(path)`, with a `DeprecationWarning`. Use `decode_file()` for files |
 
-`m.n_items(path)` counts the items of a file without decoding (`blocks=` for Willett). For T15 it reads only the HDF5 group names. For KT-sEMG it reads only `runN_keys.txt` and `runN_ts.txt`; it does not open `runN.csv`, and the CSV may be absent (P14-52). The KT-sEMG count is the `decode_file` count if the typing starts within one hour of the EMG start and no key press falls in the last 0.15 s of the recording or after it. Both are true on all 29 KT-sEMG runs (run28: 22 items in 2 ms, against 26.5 s to read the CSV). `decode_file(path, indices=[...])` (T15, T12) takes positions `0 .. n_items(path) - 1` (negative positions count from the end). A position outside this range raises `IndexError` with the item count of the file.
+`m.n_items(path)` counts the items of a file without decoding (`blocks=` for Willett). For T15 it reads only the HDF5 group names. For KT-sEMG it reads only `runN_keys.txt` and `runN_ts.txt`; it does not open `runN.csv`, and the CSV may be absent. The KT-sEMG count is the `decode_file` count if the typing starts within one hour of the EMG start and no key press falls in the last 0.15 s of the recording or after it. Both are true on all 29 KT-sEMG runs (run28: 22 items in 2 ms, against 26.5 s to read the CSV). `decode_file(path, indices=[...])` (T15, T12) takes positions `0 .. n_items(path) - 1` (negative positions count from the end). A position outside this range raises `IndexError` with the item count of the file.
 
 `decode_file(path, with_items=True)` returns `(item, stream)` pairs. `item.key` is a pseudonymous key (file name and index). `item.truth` holds the text of the file for your own evaluation. It never goes into a stream.
 
@@ -75,26 +79,32 @@ Each stream reaches the conformance level `provenance`. Its `meta` has `decoder.
 
 `m.text(stream)` gives a greedy readout without an LM: ARPAbet phonemes for T15 / T12 (`|` marks a word boundary), characters for emg2qwerty and Willett, the screen text of the argmax keys for KT-sEMG.
 
-`willett-hw` also has an **opt-in LM readout** (P14-48, P14-49, P14-50): `m.text(stream, readout="lm")`. It is the P15-25 decoder F (CTC prefix beam 8 with a Tatoeba 6-gram character LM, weight 0.5, length bonus 1; `fidetype.pretrained.lmreadout`, NumPy) after a no-signal gate (see below). `m.lm_readout()` returns the readout object (`text`, `nbest`, `decode_fn`). The LM file `eng_tatoeba_6gram_mkn_noE2Q_noWillett.npz` (P15-38: every Willett text blocked) is the only LM of the readout, so it is the default. It is local only (manifest role `text`, SHA-256 checked; model folder or `<cache>/text/`): its build blocklist holds research-only emg2qwerty texts, so we do not release the file.
+`willett-hw` also has an **opt-in LM readout**: `m.text(stream, readout="lm")`. It is a CTC prefix beam search (beam 8 with a Tatoeba 6-gram character LM, weight 0.5, length bonus 1; `fidetype.pretrained.lmreadout`, NumPy) after a no-signal gate (see below). `m.lm_readout()` returns the readout object (`text`, `nbest`, `decode_fn`). The LM file `eng_tatoeba_6gram_mkn_noE2Q_noWillett.npz` (every Willett text blocked from it) is the only LM of the readout, so it is the default. It is local only (manifest role `text`, SHA-256 checked; model folder or `<cache>/text/`): its build blocklist holds research-only emg2qwerty texts, so we do not release the file.
 
 ## The trust guard
 
-`m.guard()` loads the trust config that we committed for the model (`fidetype.trust.load`). The guard input differs per model. So use one call for every model: `m.decide(stream)` (the default guard is built at the first call and then kept; pass `guard=` to use your own, and `utterance_id=` for the audit log). `m.guard_input(stream)` gives the guard input, so `m.decide(stream)` is `m.guard().decide(m.guard_input(stream))`. The guarantee holds only for the decoder and the text decoder that the config was calibrated with:
+`m.guard()` loads the [trust configuration](glossary.md#trust-configuration) that we calibrated for the model (`fidetype.trust.load`). The guard input differs per model. So use one call for every model: `m.decide(stream)` (the default guard is built at the first call and then kept; pass `guard=` to use your own, and `utterance_id=` for the audit log). `m.guard_input(stream)` gives the guard input, so `m.decide(stream)` is `m.guard().decide(m.guard_input(stream))`. The guarantee holds only for the decoder and the text decoder that the configuration was calibrated with. `print(m.guard().sheet)` shows the guarantee sheet, with the `config_id` of the configuration.
 
-- `t15-m4-13`: the P14-05 guard (`tcfg-1016759f08a3f9a1`, alpha 0.05, delta 0.1) is in the package. Its text decoder (phoneme beam -> lexicon words -> character LM) is built automatically from three text files (CMU dictionary, Tatoeba character 6-gram LM, Tatoeba word counts). Input: `guard.decide(stream.log_probs)`.
-- `kt-semg-lda`: the guard is a release file next to the weights. Input: the key n-best list in screen text, `guard.decide(m.nbest(stream))` (this is `m.guard_input(stream)`). This decoder is weak; its guard offers and never commits (correct behaviour). For the `kt-semg` benchmark track, use `m.track_nbest(stream)`: the same n-best idea, but in the track text space (one W3C `KeyboardEvent.code` per key press, `Backspace` included). `fidetype.adapters.kt_semg.codes_from_text(text)` converts screen text to codes; it is lossy (screen text has no `Backspace`).
-- `willett-hw`: the guard is a release file next to the weights (`tcfg-39aac48688b8bd12`, alpha 0.05, delta 0.1, built-in CTC beam, no LM; [P14-41](../experiments/2026-11-20-p14-41-willett-guard/results.md)). Input: `guard.decide(stream.log_probs)`. **It never commits.** The 106 val sentences give 40 LTT items, and alpha 0.05 with delta 0.1 needs at least 45, so no commit threshold is certified. On the 80 test sentences it offers 77 and withholds 3; safe WPM v0.1 is 0 (vacuous). All null controls pass (0 commits). The offers are not certified. Without an offer gate the guard offers as often on frame-shuffled decoder frames (77 / 80) as on real input. The manifest offer gate (P14-54, `coherence >= 0.00418`, on by default) withholds those offers: test frame-shuffled 0 / 80, real 77 / 80, time-shuffled 1 / 80.
-- `willett-hw` with the LM readout: `m.guard(readout="lm")` loads a second release file (`willett-hw.lm3.guard.json`, `tcfg-f498c0637536daec`, alpha 0.05, delta 0.1; decoder = P14-49 gate with the P14-58 threshold `lo` 0.566 + LM readout with the Willett-blocked LM; [P14-59](../experiments/2026-11-22-p14-59-ship-lo/results.md), 2026-11-22; it replaces `willett-hw.lm2.guard.json`, `tcfg-26ae951a20a0cddd`). **It also never commits** (the same 40 < 45 LTT limit). Test: 0 commits, 77 offers, 3 withholds (the 3 inputs that the no-signal gate stops); safe WPM v0.1 0 (vacuous). Commit controls pass (0 commits on every null input). With the manifest offer gate (P14-59: `coherence >= 0.003486`, refitted by the P14-54 rule; on by default): offers on frame-shuffled 0 / 80, time-shuffled 0 / 80, zero 0 / 80, uniform 0 / 80, real 77 / 80 (0 real offers removed by the offer gate). `m.decide(stream)` keeps the P14-41 guard.
-- `t12-v2`, `emg2qwerty-p11-01`: no packaged trust config yet (`NoTrustConfig`). Calibrate your own with [`fidetype.trust.calibrate`](trust-quickstart.md).
+| Model | Guard | Input of `guard.decide` | Behaviour |
+|---|---|---|---|
+| `t15-m4-13` | In the package ([alpha](glossary.md#alpha-delta) 0.05, delta 0.1). Its text decoder (phoneme beam -> lexicon words -> character LM) is built automatically from three text files (CMU dictionary, Tatoeba character 6-gram LM, Tatoeba word counts) | `stream.log_probs` | Commits, offers and withholds |
+| `kt-semg-lda` | A release file next to the weights | The key n-best list in screen text, `m.nbest(stream)` (this is `m.guard_input(stream)`) | The decoder is weak. The guard offers and never commits (correct behaviour) |
+| `willett-hw` | A release file next to the weights (alpha 0.05, delta 0.1, built-in CTC beam, no LM) | `stream.log_probs` | **Never commits.** It offers or withholds. An [offer gate](glossary.md#offer-gate) is on by default |
+| `willett-hw`, LM readout | `m.guard(readout="lm")`: a second release file, `willett-hw.lm3.guard.json` (alpha 0.05, delta 0.1; the no-signal gate plus the LM readout with the Willett-blocked LM) | `stream.log_probs` | **Never commits.** Offer gate on by default. `m.decide(stream)` keeps the first `willett-hw` guard |
+| `t12-v2`, `emg2qwerty-p11-01` | None yet (`NoTrustConfig`) | - | Calibrate your own with [`fidetype.trust.calibrate`](trust-quickstart.md) |
+
+For the `kt-semg` benchmark track, use `m.track_nbest(stream)`: the same n-best idea, but in the track text space (one W3C `KeyboardEvent.code` per key press, `Backspace` included). `fidetype.adapters.kt_semg.codes_from_text(text)` converts screen text to codes; it is lossy (screen text has no `Backspace`).
+
+Why the `willett-hw` guards never commit: the 106 validation sentences give 40 [LTT](glossary.md#ltt-learn-then-test) items, and alpha 0.05 with delta 0.1 needs at least 45. So no commit threshold is certified, and [safe WPM](glossary.md#safe-wpm) v0.1 is 0 (`vacuous`). The offers are not certified. The test counts are in the collapsed section [Evidence and history](#evidence-and-history) at the end of this page.
 
 ### The offer null control in the manifest (`trust.offer_control`)
 
-The guarantee covers commits only. An OFFER is a suggestion list, and it has no bound. The offer null control (P5-31, [trust guarantee](trust-guarantee.md) section 5a) asks one question: does the guard offer less often on null input (no signal) than on real input? Each packaged guard has the result of this check in its manifest, in `trust.offer_control`. A readout guard has its own copy in `readouts.<name>.trust.offer_control` (today: `willett-hw` `readouts.lm`). `m.manifest.offer_controls` gives the blocks (key `"default"` or the readout name). `fidetype decoders info <name>` prints one `offer control` line for each guard.
+The guarantee covers commits only. An OFFER is a suggestion list, and it has no bound. The offer null control ([trust guarantee](trust-guarantee.md) section 5a) asks one question: does the guard offer less often on null input (no signal) than on real input? Each packaged guard has the result of this check in its manifest, in `trust.offer_control`. A readout guard has its own copy in `readouts.<name>.trust.offer_control` (today: `willett-hw` `readouts.lm`). `m.manifest.offer_controls` gives the blocks (key `"default"` or the readout name). `fidetype decoders info <name>` prints one `offer control` line for each guard.
 
 | Key | Meaning |
 |---|---|
 | `verdict` | `"pass"` if every control passes, else `"fail"`. The parser refuses a verdict that does not agree with the `passed` flags |
-| `mode` | The `offer_control` mode of the check. `"warn"`: a failure changes no guard, `config_id`, certified status or commit. Policy (2026-11-22): a trust block that ships an `offer_gate` must have verdict `"pass"`, or the parser refuses the manifest ("refuse" for gated guards; the `calibrate` default stays `"warn"`) |
+| `mode` | The `offer_control` mode of the check. `"warn"`: a failure changes no guard, `config_id`, certified status or commit. Rule: a trust block that ships an `offer_gate` must have verdict `"pass"`, or the parser refuses the manifest (mode `"refuse"` for gated guards). The `calibrate` default stays `"warn"` |
 | `checked` | Date of the check |
 | `rule` | The pre-stated rule: a control passes if null offer rate <= 0.5 x real offer rate, and (null offers <= floor(0.05 n) or one-sided Fisher exact p <= 0.05). Real = the LTT items |
 | `real` | `n` and `n_offer` on the real LTT items |
@@ -103,35 +113,26 @@ The guarantee covers commits only. An OFFER is a suggestion list, and it has no 
 | `effect` | What the result means for the user of the guard |
 | `source` | The re-check result file in the source tree (`recheck_offer_control` on the saved guard, no new calibration) |
 
-The values today (2026-11-21). Three guards have an offer gate (P5-33 / P14-54, [trust guarantee](trust-guarantee.md) section 5b). The gate is on by default; `m.guard(offer_gate=False)` (or `m.guard(readout="lm", offer_gate=False)`) switches it off. The manifest block then shows the gated re-check, and the counts without the gate stay in `before_gate`. All checks are in warn mode:
-
-| Guard | Offer gate | Real offers | Null offers | Verdict | Without the gate |
-|---|---|---|---|---|---|
-| `willett-hw` (`tcfg-39aac48688b8bd12`) | `coherence >= 0.00418` ([P14-54](../experiments/2026-11-21-p14-54-willett-order-gate/results.md)) | 40 / 40 | uniform 0 / 300; frame-shuffled 0 / 300; time-shuffled input 0 / 106 | PASS | FAIL: frame-shuffled 297 / 300 |
-| `willett-hw` LM readout (`tcfg-f498c0637536daec`, P14-59) | `coherence >= 0.003486` (P14-59, P14-54 rule) | 40 / 40 | uniform 0 / 300; frame-shuffled 0 / 300; time-shuffled input 0 / 106 | PASS | FAIL (previous guard `tcfg-26ae951a20a0cddd`): frame-shuffled 289 / 300 |
-| `t15-m4-13` (`tcfg-1016759f08a3f9a1`) | `coherence >= 0.187` ([P5-33](../experiments/2026-11-21-p5-33-withhold/results.md)) | 212 / 271 | uniform 0 / 300; frame-shuffled 0 / 300 | PASS | FAIL: uniform 300 / 300, frame-shuffled 300 / 300 |
-| `kt-semg-lda` (`tcfg-d8a73194fe539e72`) | none (no candidate passed, P5-33) | 65 / 65 | uniform 300 / 300 (FAIL); user nulls (random key windows) 173 / 173 (FAIL) | FAIL | - |
-
-So do not show the offer list of `kt-semg-lda` as evidence that the signal was read. The gate changes no commit, no `config_id` and no certified status. ([P5-31 re-check](../experiments/2026-11-21-p5-31-offer-control/results.md) for the counts without a gate.) `tests/test_pretrained_offer_control.py` checks that the manifest values equal the re-check files.
+Three guards have an offer gate ([trust guarantee](trust-guarantee.md) section 5b): `willett-hw`, its LM readout and `t15-m4-13`. The gate is on by default; `m.guard(offer_gate=False)` (or `m.guard(readout="lm", offer_gate=False)`) switches it off. The manifest block then shows the gated re-check, and the counts without the gate stay in `before_gate`. With the gate, the three guards pass. `kt-semg-lda` has no gate and fails the check: it offers as often on null input as on real input. So do not show the offer list of `kt-semg-lda` as evidence that the signal was read. The gate changes no commit, no `config_id` and no certified status. `tests/test_pretrained_offer_control.py` checks that the manifest values equal the re-check files. The values per guard are in [Evidence and history](#evidence-and-history).
 
 ## `willett-hw`: read this before you use it
 
-`willett-hw` is our own Willett handwriting decoder: P15-08 run `R-all-s0` (random init, all 506 minutes of the CC0 data, seed 0, final step). It is clean-track: Willett CC0 data only, no emg2qwerty-derived trunk.
+`willett-hw` is our own Willett handwriting decoder (random init, all 506 minutes of the CC0 data, seed 0, final step). It is clean-track: Willett CC0 data only, no emg2qwerty-derived trunk.
 
 | Fact | Value |
 |---|---|
 | Greedy test CER, no LM (last block of each of the 10 sessions, 80 sentences, 3,448 characters) | **0.305**, rerun with `load("willett-hw")` on CPU: 0.3051 (1,052 / 3,448), equal to the PyTorch value per sentence (80 / 80) |
 | Same recipe, seed 1 | 0.920: training failed. One good seed is not a reliable method |
-| Language model | none by default. Opt-in LM readout (P14-50, Willett-blocked LM): test CER **0.1746** with the gate (0.1743 without it, the P15-38 value, same text on 80 / 80 sentences); val 0.127 |
+| Language model | none by default. Opt-in LM readout (Willett-blocked LM): test CER **0.1746** with the gate (0.1743 without it, same text on 80 / 80 sentences); val 0.127 |
 | LM readout licence | the LM is built from Tatoeba English sentences: **CC BY 2.0 FR**, attribution "Sentences from Tatoeba (https://tatoeba.org), by the Tatoeba contributors" |
-| LM readout test overlap | none: the LM is built with every Willett text blocked (P15-38). The P14-48 LM held 13 of the 80 test sentences; it is no longer used |
-| No-signal gate | P14-49 score gate: a small logistic score of five posterior features (emission peak probability, entropy of the non-blank frames, share of non-blank frames, emissions per second, log emissions) plus `n_keys >= 1` and a rate cap; fitted and chosen on val only. Threshold `lo` = 0.566 since P14-59 (2026-11-22; P14-58 rule, was -1.170). Test: it stops 3 / 80 real sentences (was 1 / 80), all uniform and zero inputs, and 80 / 80 time-shuffled inputs (was 78 / 80); on 10 new time-shuffled draws 0 / 800 emit text (was 18 / 800). Gated test CER 0.177 (was 0.175). It cannot see the frame order: frame-shuffled decoder frames pass (78 / 80). Treat an LM-readout text as a suggestion, not as evidence that the signal was read |
-| Weights licence | CC0-1.0 (user decision D11, 2026-11-22); not hosted yet: the upload waits for a final user yes (P14-02) |
+| LM readout test overlap | none: the LM is built with every Willett text blocked. An earlier LM held 13 of the 80 test sentences; it is no longer used |
+| No-signal gate | A score gate: a small logistic score of five posterior features (emission peak probability, entropy of the non-blank frames, share of non-blank frames, emissions per second, log emissions) plus `n_keys >= 1` and a rate cap; fitted and chosen on val only. Threshold `lo` = 0.566 since 2026-11-22 (was -1.170). Test: it stops 3 / 80 real sentences (was 1 / 80), all uniform and zero inputs, and 80 / 80 time-shuffled inputs (was 78 / 80); on 10 new time-shuffled draws 0 / 800 emit text (was 18 / 800). Gated test CER 0.177 (was 0.175). It cannot see the frame order: frame-shuffled decoder frames pass (78 / 80). Treat an LM-readout text as a suggestion, not as evidence that the signal was read |
+| Weights licence | CC0-1.0; not hosted yet (the upload is a separate maintainer step) |
 
 - The decoder is **weak**. The published Willett et al. 2021 real-time decoder is much better (other recipe). Use the numbers as descriptive only. They are an offline replay of one participant (T5), not a user study.
 - Only the 10 dataset sessions have z-score statistics (`session=`).
 - Its split is not the split of the benchmark track `willett-hw` (last 3 sessions). 193 of that track's 254 test trials were in this model's training pool. Do not score this model on that track.
-- Details: [P14-33 results](../experiments/2026-11-19-p14-33-willett-hw/results.md).
+- Details: [training and evaluation record](../experiments/2026-11-19-p14-33-willett-hw/results.md).
 
 ## Command line
 
@@ -166,11 +167,11 @@ Output on the project machine (2026-11-19, CPU; aggregate lines only):
 | `kt-semg-lda`, `run28.csv --n 3` | 3 bursts, 206 keys | all `provenance`; guard 3 offers; key error 0.757 (weak decoder) |
 | `emg2qwerty-p11-01`, one test session `--n 3` | refused without the opt-in; with `--accept-research-only`: 3 prompts | all `provenance`, `data.research_only = true`; greedy CER 0.695 (82 / 118) |
 
-Full reruns of the model-card metrics ([results](../experiments/2026-11-19-p14-01-pretrained/results.md)): T15 val_eval greedy PER 0.1210 (card 0.1210), guard decisions equal to P14-05 on 701 / 701 trials; T12 test PER 0.2695 (card 0.269); emg2qwerty generic prompt CER 0.5831 (card 0.5832); KT-sEMG run28 key accuracy 0.242 (card 0.248, other timing path); Willett test greedy CER 0.3051 (card 0.3051, [P14-33](../experiments/2026-11-19-p14-33-willett-hw/results.md)).
+Full reruns of the model-card metrics ([results](../experiments/2026-11-19-p14-01-pretrained/results.md)): T15 val_eval greedy PER 0.1210 (card 0.1210), guard decisions equal to the calibration run on 701 / 701 trials; T12 test PER 0.2695 (card 0.269); emg2qwerty generic prompt CER 0.5831 (card 0.5832); KT-sEMG run28 key accuracy 0.242 (card 0.248, other timing path); Willett test greedy CER 0.3051 (card 0.3051, [record](../experiments/2026-11-19-p14-33-willett-hw/results.md)).
 
 ## Try the API without weights: the toy model
 
-The release weights are not hosted yet (P14-02). To learn the API, use a toy model. There is one toy model for each runtime (P14-51):
+The release weights are not hosted yet. To learn the API, use a toy model. There is one toy model for each runtime:
 
 ```python
 import numpy as np
@@ -219,4 +220,26 @@ m = ftp.load(str(path), weights="my-folder")                   # ... and load th
 
 - The models do not transfer to a new person, a new session or a new device without calibration. The T15 and T12 day layers and the Willett z-score statistics exist only for the sessions of the datasets.
 - All numbers are offline replays of public recordings, not user studies.
-- The weights are not hosted yet (P14-02). Until then, `pip install fidetype` gives the registry and the runtimes, but not the weights.
+- The weights are not hosted yet. Until then, `pip install fidetype` gives the registry and the runtimes, but not the weights.
+
+## Evidence and history
+
+<details>
+<summary>Evidence and history</summary>
+
+The guard counts on the test sets, and how the guards changed. The full records are linked.
+
+- `t15-m4-13`: the guard comes from the safe-WPM baseline run ([record](../experiments/2026-11-16-p14-05-safe-wpm/results.md)).
+- `willett-hw`, no LM ([record](../experiments/2026-11-20-p14-41-willett-guard/results.md)): on the 80 test sentences it offers 77 and withholds 3; safe WPM v0.1 is 0 (vacuous). All null controls pass (0 commits). Without an offer gate the guard offers as often on frame-shuffled decoder frames (77 / 80) as on real input. The manifest offer gate (`coherence >= 0.00418`, [record](../experiments/2026-11-21-p14-54-willett-order-gate/results.md)) withholds those offers: test frame-shuffled 0 / 80, real 77 / 80, time-shuffled 1 / 80.
+- `willett-hw` with the LM readout ([record](../experiments/2026-11-22-p14-59-ship-lo/results.md), 2026-11-22; the file replaces `willett-hw.lm2.guard.json`): the no-signal gate ([record](../experiments/2026-11-20-p14-49-willett-gate-blocked-lm/results.md)) uses the threshold `lo` 0.566. Test: 0 commits, 77 offers, 3 withholds (the 3 inputs that the no-signal gate stops); safe WPM v0.1 0 (vacuous). Commit controls pass (0 commits on every null input). With the manifest offer gate (`coherence >= 0.003486`, refitted by the same rule as the first `willett-hw` gate; on by default): offers on frame-shuffled 0 / 80, time-shuffled 0 / 80, zero 0 / 80, uniform 0 / 80, real 77 / 80 (0 real offers removed by the offer gate).
+
+Offer null control values (2026-11-21; all checks in warn mode). Re-check without a gate: [record](../experiments/2026-11-21-p5-31-offer-control/results.md). Gate selection for `t15-m4-13` and `kt-semg-lda`: [record](../experiments/2026-11-21-p5-33-withhold/results.md).
+
+| Guard | Offer gate | Real offers | Null offers | Verdict | Without the gate |
+|---|---|---|---|---|---|
+| `willett-hw` | `coherence >= 0.00418` | 40 / 40 | uniform 0 / 300; frame-shuffled 0 / 300; time-shuffled input 0 / 106 | PASS | FAIL: frame-shuffled 297 / 300 |
+| `willett-hw` LM readout | `coherence >= 0.003486` | 40 / 40 | uniform 0 / 300; frame-shuffled 0 / 300; time-shuffled input 0 / 106 | PASS | FAIL (previous LM guard): frame-shuffled 289 / 300 |
+| `t15-m4-13` | `coherence >= 0.187` | 212 / 271 | uniform 0 / 300; frame-shuffled 0 / 300 | PASS | FAIL: uniform 300 / 300, frame-shuffled 300 / 300 |
+| `kt-semg-lda` | none (no candidate passed) | 65 / 65 | uniform 300 / 300 (FAIL); user nulls (random key windows) 173 / 173 (FAIL) | FAIL | - |
+
+</details>

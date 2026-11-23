@@ -1,5 +1,9 @@
 # Fidetype TypeScript SDK (`@fidetype/sdk`)
 
+The TypeScript SDK reads, writes and checks NeuralTextStream (NTS) in Node and in the browser, with no runtime dependencies.
+
+**Status:** Alpha ([status levels](https://github.com/zhangzibo/fidetype/blob/main/docs/glossary.md#status-levels))
+
 > Part of [Fidetype](https://github.com/zhangzibo/fidetype/blob/main/README.md). Status: NTS 1.0 is a draft RC ([RC4](https://github.com/zhangzibo/fidetype/blob/main/spec/nts-1.0-rc4.md)); this SDK is at version 0.1.0 (from 0.1.0: `npm install @fidetype/sdk`). All three SDKs side by side: [docs/sdks.md](https://github.com/zhangzibo/fidetype/blob/main/docs/sdks.md).
 
 TypeScript SDK for **NeuralTextStream (NTS) v0.1** and the draft FEP profiles. It works in Node (>= 18) and in the browser (ESM). The core has **zero runtime dependencies** and no Node API.
@@ -16,7 +20,7 @@ TypeScript SDK for **NeuralTextStream (NTS) v0.1** and the draft FEP profiles. I
 
 ## Where it lives and why
 
-The SDK is in `sdk/typescript/`. The repo root is the Python package (`pyproject.toml`, `src/fidetype/`). A separate top-level `sdk/` folder keeps the Python packaging unchanged and gives one place for the other reference SDKs of roadmap phase P2 (for example `sdk/rust/`, M7-07). The SDK reads the spec files in place (`spec/schemas/`, `spec/conformance/`), so there is one copy of each.
+The SDK is in `sdk/typescript/`. The repo root is the Python package (`pyproject.toml`, `src/fidetype/`). A separate top-level `sdk/` folder keeps the Python packaging unchanged and gives one place for the other reference SDKs (for example `sdk/rust/`). The SDK reads the spec files in place (`spec/schemas/`, `spec/conformance/`), so there is one copy of each.
 
 ## Quick start
 
@@ -133,18 +137,18 @@ python -m fidetype.conformance consumer --profile fep-0002 --cmd "node sdk/types
 | `fep-0001` streaming trust events | 56 | 56/56 pass | 56/56 |
 | `fep-0002` NTS over LSL (scenarios) | 35 | 35/35 pass | 35/35 |
 | `fep-0003` intent events | 44 | 44/44 pass | 44/44 |
-| `fep-0004` NTS over WebSocket (scenarios) | 43 | 43/43 pass | 43/43 (Rust too, since M7-12) |
-| `fep-0005` control events (gap G-1) | 44 | 44/44 pass | 44/44 (Rust too) |
+| `fep-0004` NTS over WebSocket (scenarios) | 43 | 43/43 pass | 43/43 (Rust too) |
+| `fep-0005` control events | 44 | 44/44 pass | 44/44 (Rust too) |
 
-NTS 1.0 RC2, gap G-1 (2026-11-14): profile `fep-0005` (`fep0005.checkFile`, `fep0005.consume`; module `src/profiles/fep0005.ts`) is a port of the Python control profile and of the validators of `fidetype.trust.control`. For a decision log, `consume` returns `moving_ticks` (the "acted" list of control COMMITs, spec 6.4), `acted_intents` and `acted_texts`. Python = TypeScript = Rust on all 279 vectors; seeds 1-6 at `--n 30` give 44,196 mutants (fep-0005: 7,560), all with the Python verdict.
+NTS 1.0 RC2 (2026-11-14): profile `fep-0005` (`fep0005.checkFile`, `fep0005.consume`; module `src/profiles/fep0005.ts`) is a port of the Python control profile and of the validators of `fidetype.trust.control`. For a decision log, `consume` returns `moving_ticks` (the "acted" list of control COMMITs, spec 6.4), `acted_intents` and `acted_texts`. Python = TypeScript = Rust on all 279 vectors; seeds 1-6 at `--n 30` give 44,196 mutants (fep-0005: 7,560), all with the Python verdict.
 
-P1-10 (2026-11-14): `DecisionTracker` now tracks control decisions (`profile = "control"`). It checks CTL-T1 … T5 (format; `seq` over all profiles; ticks do not go back; one move per input tick; a HOLD may repeat a tick) and the log checks CTL-S1 … S7, with the same code as the profile `fep-0005` (`ControlSafety`). A control decision has kind commit (move) or abstain, `tick` set, `committed` null; `forward` is true on a valid control COMMIT, so the forwarded ticks are the "acted" list (6.4). An intent COMMIT while the last control decision of its session shows a control that is not engaged is invalid (CTL-S7). The tracker sees only past decisions. On every `fep-0005` decision-log vector the tracker finds an error exactly on the reject vectors and forwards exactly the expected moving ticks. CTL-S7 (P1-10, 2026-11-14): the profile `fep-0005` now refuses an intent COMMIT while the control is not engaged: before the first engage (the last control decision has `engagement` 0 or the reason `not_engaged` / `disengaged`) and after a stop until a higher `engagement`. Before, it refused it only after a stop. Python = TypeScript = Rust on 281/281 vectors (new E20 reject, E21 accept) and on 44,556 mutants (seeds 1-6, `--n 30`; fep-0005 7,920).
+Since 2026-11-14, `DecisionTracker` tracks control decisions (`profile = "control"`). It checks CTL-T1 … T5 (format; `seq` over all profiles; ticks do not go back; one move per input tick; a HOLD may repeat a tick) and the log checks CTL-S1 … S7, with the same code as the profile `fep-0005` (`ControlSafety`). A control decision has kind commit (move) or abstain, `tick` set, `committed` null; `forward` is true on a valid control COMMIT, so the forwarded ticks are the "acted" list (6.4). An intent COMMIT while the last control decision of its session shows a control that is not engaged is invalid (CTL-S7). The tracker sees only past decisions. On every `fep-0005` decision-log vector the tracker finds an error exactly on the reject vectors and forwards exactly the expected moving ticks. CTL-S7 (2026-11-14): the profile `fep-0005` now refuses an intent COMMIT while the control is not engaged: before the first engage (the last control decision has `engagement` 0 or the reason `not_engaged` / `disengaged`) and after a stop until a higher `engagement`. Before, it refused it only after a stop. Python = TypeScript = Rust on 281/281 vectors (new E20 reject, E21 accept) and on 44,556 mutants (seeds 1-6, `--n 30`; fep-0005 7,920).
 
 NTS 1.0 RC2 (2026-11-14): the reader accepts a header `spec_version` of `"0.1"`, `"1.0"` or `"1.<minor>"` (`isSupportedSpecVersion`, exported); the writer still writes `"0.1"`. Seeds 1-6 at `--n 30` (36,636 mutants) give the Python verdict in TypeScript and Rust.
 
 - `npm run cross-check` runs the Python reference consumer and the TypeScript consumer on every vector and compares the verdict (accept / reject) and the "ok" result (verdict and expected values). It needs a Python with the `fidetype` package (the repo `.venv`, or `FIDETYPE_PYTHON`).
-- `npm run fuzz -- --n 30` mutates the JSON and JSON Lines vectors (fixed seed) and compares the verdicts on the mutants. Seeds 1-6 (about 4,070 mutants each, 24,396 in total) give identical verdicts (M7-11). CI runs seeds 1-3.
-- Both scripts take `--rust BIN` (or `$FIDETYPE_RUST_BIN`): they then also run the Rust SDK CLI (`sdk/rust`, M7-07) on the same files and require its verdict to match. M7-11 fixed the 4 TypeScript gaps that this three-way fuzz found (the last three FEP-0002 rows of the table below, and the `blank_id` null fix in Python).
+- `npm run fuzz -- --n 30` mutates the JSON and JSON Lines vectors (fixed seed) and compares the verdicts on the mutants. Seeds 1-6 (about 4,070 mutants each, 24,396 in total) give identical verdicts. CI runs seeds 1-3.
+- Both scripts take `--rust BIN` (or `$FIDETYPE_RUST_BIN`): they then also run the Rust SDK CLI (`sdk/rust`) on the same files and require its verdict to match. A later fix closed the 4 TypeScript gaps that this three-way fuzz found (the last three FEP-0002 rows of the table below, and the `blank_id` null fix in Python).
 
 Rules that matter for identical verdicts:
 
@@ -176,7 +180,7 @@ FEP-0002 vectors are LSL scenarios. The Python reference plays them through its 
 - `dist/index.js` and its imports use only standard web APIs (`TextDecoder`, `ReadableStream`, `Uint8Array`). The core is compiled without Node types, and `npm run check:browser` scans the build.
 - Load it as an ES module over HTTP (`<script type="module">`). Browsers do not load ES modules from `file://` pages. A headless Edge run of all 167 vectors (NPZ included) passed.
 - Node-only helpers (file reading, profile folders) are in `@fidetype/sdk/node` (`dist/node.js`).
-- **WebSocket (FEP-0004, M6-11).** `DecisionSubscriber` subscribes to the `/decisions` path of `fidetype ws run`. It checks the `ws_seq` order, resubscribes with `from_seq` on a gap or a lost connection, and tells you per decision what to do (`forward` = act on it; only final COMMIT). `subscribeEvents` reads the `/events` tap. It uses the global `WebSocket` (browsers, Node >= 22) or the constructor you pass. Example page: `examples/ws-browser/index.html` (`fidetype ws run --serve-example`).
+- **WebSocket (FEP-0004).** `DecisionSubscriber` subscribes to the `/decisions` path of `fidetype ws run`. It checks the `ws_seq` order, resubscribes with `from_seq` on a gap or a lost connection, and tells you per decision what to do (`forward` = act on it; only final COMMIT). `subscribeEvents` reads the `/events` tap. It uses the global `WebSocket` (browsers, Node >= 22) or the constructor you pass. Example page: `examples/ws-browser/index.html` (`fidetype ws run --serve-example`).
 
 ## Dependencies and licences
 
@@ -190,7 +194,7 @@ The SDK has its own small JSON Schema validator, DEFLATE decoder, NPY reader and
 
 ## Open items
 
-- **npm publishing is a user decision.** The package is ready: `npm pack` and a clean install pass in CI (job `packaging`). The name `@fidetype/sdk` was free on 2026-11-14; the scope needs an npm organization `fidetype`. Versioning, the release checklist and trusted publishing: [docs/RELEASING.md](https://github.com/zhangzibo/fidetype/blob/main/docs/RELEASING.md).
+- **npm publishing.** Version 0.1.0 is on npm. A maintainer publishes each release. `npm pack` and a clean install pass in CI (job `packaging`). Versioning, the release checklist and trusted publishing: [docs/RELEASING.md](https://github.com/zhangzibo/fidetype/blob/main/docs/RELEASING.md).
 - Optional: an IIFE bundle for the offline demo (`demo/index.html` works from `file://`, which cannot load ES modules).
 - FEP-0002: a full TypeScript trust layer (decoding and policy) is not part of this SDK.
 - The parity fuzz mutates JSON vectors only, not NPZ files.

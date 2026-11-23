@@ -63,7 +63,7 @@
       "target": "BrainFlow boards (OpenBCI Cyton, Ganglion and others) -> LSL, and in-process in fidetype live (BrainFlowSource). CI uses the BrainFlow Synthetic board and a fake board only",
       "signal": "any",
       "status": "experimental",
-      "licence": "Code Apache-2.0. brainflow is MIT. Real boards untested (roadmap P4-06, needs hardware).",
+      "licence": "Code Apache-2.0. brainflow is MIT. Real boards untested (needs hardware).",
       "tests": [
         "tests/test_brainflow_bridge.py",
         "tests/test_live.py",
@@ -78,7 +78,7 @@
         "lsl"
       ],
       "test_covers": "CI: the BrainFlow Synthetic board (sine waves and noise, no text) and a fake board; the bridge into a real pylsl loopback.",
-      "limits": "No real board is tested (P4-06, externally blocked: needs hardware). Fixed timing only: a board gives no key-onset markers. No reconnect in fidetype live.",
+      "limits": "No real board is tested (externally blocked: needs hardware). Fixed timing only: a board gives no key-onset markers. No reconnect in fidetype live.",
       "extra": "brainflow",
       "roadmap": null,
       "module": "fidetype.adapters.brainflow_bridge"
@@ -105,7 +105,7 @@
         "file",
         "in-process"
       ],
-      "test_covers": "CI: synthetic logits, probabilities and padded batches. Real: the output of our emg2qwerty decoder (P11-01: 2,445 streams, all trust-ready, local run); the pretrained decoders call it on each decode.",
+      "test_covers": "CI: synthetic logits, probabilities and padded batches. Real: the output of our emg2qwerty decoder (2,445 streams, all trust-ready, local run); the pretrained decoders call it on each decode.",
       "limits": "The input must be CTC scores (T, V) with a known vocabulary. It cannot check that the scores come from the decoder that the header names.",
       "extra": null,
       "roadmap": null,
@@ -162,7 +162,7 @@
       "transport": [
         "dataset"
       ],
-      "test_covers": "CI: synthetic HDF5 sessions made by the test. Real: the emg2qwerty sessions in P11-01 (decoder training, 2,445 streams) and P6-02 (benchmark baselines), local runs.",
+      "test_covers": "CI: synthetic HDF5 sessions made by the test. Real: the emg2qwerty sessions in the decoder training (2,445 streams) and the benchmark baselines, local runs.",
       "limits": "Data CC BY-NC-SA 4.0: research use only. Recorded sessions only; the wristband that recorded them is not a supported device.",
       "extra": "emg2qwerty",
       "roadmap": null,
@@ -242,7 +242,7 @@
       "transport": [
         "lsl"
       ],
-      "test_covers": "CI: fake inlets (header mapping, clock correction, gaps, loss, reconnect) and a real pylsl outlet -> inlet loopback with synthetic streams. Real (P4-21, local): the 816 B2T '25 M4-06 test trials over a real pylsl loopback; hypothesis route decisions equal the in-process replay and the batch harness (816 / 816); 161,503 double64 frames bit-equal.",
+      "test_covers": "CI: fake inlets (header mapping, clock correction, gaps, loss, reconnect) and a real pylsl outlet -> inlet loopback with synthetic streams. Real (local): the 816 B2T '25 test trials over a real pylsl loopback; hypothesis route decisions equal the in-process replay and the batch harness (816 / 816); 161,503 double64 frames bit-equal.",
       "limits": "One machine only (localhost). The real replay is local (not in CI), unpaced, and does not run the frames-route trust decisions. No live device.",
       "extra": "lsl",
       "roadmap": null,
@@ -251,7 +251,7 @@
     {
       "id": "lsl-signal-source",
       "kind": "device-source",
-      "target": "Any raw-signal LSL stream and its marker stream (LSLSource of fidetype live; reconnect P4-11)",
+      "target": "Any raw-signal LSL stream and its marker stream (LSLSource of fidetype live; with reconnect)",
       "signal": "any",
       "status": "tested",
       "licence": "Code Apache-2.0. pylsl is MIT.",
@@ -269,7 +269,7 @@
         "lsl"
       ],
       "test_covers": "CI: the synthetic typist over fake inlets and a real pylsl loopback (loss and reconnect). The CI job replays the real KT-sEMG run3 over LSL into fidetype live --source lsl.",
-      "limits": "No real amplifier has sent its LSL stream to it (P4-06). Clock correction is tested on one machine only.",
+      "limits": "No real amplifier has sent its LSL stream to it (needs hardware). Clock correction is tested on one machine only.",
       "extra": "lsl",
       "roadmap": null,
       "module": "fidetype.live.sources"
@@ -297,7 +297,7 @@
         "file"
       ],
       "test_covers": "CI: synthetic GUI files and packet drops (Sample Index jumps). Real: the OpenBCI GUI v6 sample file (Cyton, millisecond time stamps) and two GUI v5 recordings (Cyton 8 ch; Cyton + Daisy 16 ch), local tests.",
-      "limits": "No real recording with non-zero markers (P4-19). The Ganglion Sample Index rule is not checked (P4-20). GUI v4 files are refused. A file, not a live board.",
+      "limits": "No real recording with non-zero markers. The Ganglion Sample Index rule is not checked. GUI v4 files are refused. A file, not a live board.",
       "extra": null,
       "roadmap": null,
       "file_patterns": [
@@ -327,7 +327,7 @@
       "transport": [
         "dataset"
       ],
-      "test_covers": "CI: synthetic log-probs (conformance helper and restamp tests). Real: the ConvCTC output on the SpanishBCBL MEG segments of the 5 M1-09 runs (1,074 streams each), rebuilt with this adapter's header by restamp_meg, reach conformance level provenance (M5-13, local).",
+      "test_covers": "CI: synthetic log-probs (conformance helper and restamp tests). Real: the ConvCTC output on the SpanishBCBL MEG segments of 5 full-dataset runs (1,074 streams each), rebuilt with this adapter's header by restamp_meg, reach conformance level provenance (local).",
       "limits": "Data CC BY-NC 4.0: research only. Recorded MEG only: MEG needs a lab system, so no live MEG source exists.",
       "extra": null,
       "roadmap": null,
@@ -403,7 +403,7 @@
         "file",
         "in-process"
       ],
-      "test_covers": "CI: synthetic CSV and JSON Lines n-best files. Real: the item check (normalise_item) on the KT-sEMG LDA n-best lists through the trust drop-in (P5-33, local); read_csv and read_jsonl on real B2T '25 decoder output (1,718 online 1-best texts, 816 M4-06 10-best lists with evidence): exact round trip, 0 conformance failures (P4-22, local).",
+      "test_covers": "CI: synthetic CSV and JSON Lines n-best files. Real: the item check (normalise_item) on the KT-sEMG LDA n-best lists through the trust drop-in (local); read_csv and read_jsonl on real B2T '25 decoder output (1,718 online 1-best texts, 816 10-best lists with evidence): exact round trip, 0 conformance failures (local).",
       "limits": "The real CSV / JSON Lines files come from our converter (no local tool writes these forms); the real texts have no CSV quoting cases. One dataset family.",
       "extra": null,
       "roadmap": null,
@@ -455,7 +455,7 @@
       "transport": [
         "dataset"
       ],
-      "test_covers": "CI: synthetic sessions. Real: sentences.mat of the public archive (SHA-256 pinned) in the P6-02 benchmark baselines (local).",
+      "test_covers": "CI: synthetic sessions. Real: sentences.mat of the public archive (SHA-256 pinned) in the benchmark baselines (local).",
       "limits": "Replays recorded real-time RNN output of one participant (T5). The RNN weights have no hash (PV-WEIGHTS fails).",
       "extra": "data",
       "roadmap": null,
@@ -481,7 +481,7 @@
       "transport": [
         "websocket"
       ],
-      "test_covers": "CI: sans-IO cores (order, gaps, resume, auth) and a real server and client on localhost with synthetic streams. Real: the 816 Brain-to-Text '25 test trials over WebSocket, same decisions as the in-process replay (M6-11, local).",
+      "test_covers": "CI: sans-IO cores (order, gaps, resume, auth) and a real server and client on localhost with synthetic streams. Real: the 816 Brain-to-Text '25 test trials over WebSocket, same decisions as the in-process replay (local).",
       "limits": "Localhost only; no test across a real network.",
       "extra": "ws",
       "roadmap": null,
@@ -669,7 +669,7 @@
       "target": "OpenBCI Cyton / Ganglion on a real board (code exists in brainflow; a real-board test does not)",
       "signal": "eeg",
       "status": "planned",
-      "licence": "BrainFlow is MIT. Needs hardware (P4-06, externally blocked).",
+      "licence": "BrainFlow is MIT. Needs hardware (externally blocked).",
       "tests": [],
       "docs": "wiki/entities/brainflow.md",
       "support": "untested",

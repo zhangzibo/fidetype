@@ -74,7 +74,7 @@ ADAPTER_INFO = {
     "real_data_evidence": ["experiments/2026-11-13-m6-11-ws/b2t_replay_ws.py"],
     "test_covers": "CI: sans-IO cores (order, gaps, resume, auth) and a real server and client on "
                    "localhost with synthetic streams. Real: the 816 Brain-to-Text '25 test trials "
-                   "over WebSocket, same decisions as the in-process replay (M6-11, local).",
+                   "over WebSocket, same decisions as the in-process replay (local).",
     "limits": "Localhost only; no test across a real network.",
 }
 
