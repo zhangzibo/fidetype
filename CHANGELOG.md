@@ -20,6 +20,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Ver
 - `fidetype.pretrained.lmreadout`: `hd_quantile` (Harrell-Davis quantile), `quantile_lo` (a `ScoreGate` lower-bound rule that does not use the smallest real score) and `ScoreGate.with_lo`. No packaged gate changes (P14-58).
 
 ### Changed
+- Pretrained manifests: a trust block that ships an `offer_gate` must carry an `offer_control` block with verdict `"pass"`, or the parser raises `ManifestError` ("refuse" policy for gated guards). The default of `fidetype.trust.calibrate(offer_control=...)` stays `"warn"`. All packaged manifests pass (user decision 2026-11-22, gap 152).
 - `TrustGuard` computes the features of a list of offer gates one gate at a time: a later gate's feature is computed only if the earlier gates pass. The decisions and reasons do not change (P5-36b).
 - Device-support matrix: the `lsl` transport is now `replay-only` (was `synthetic-only`). The 816 real B2T '25 test trials of M4-06 went over a real pylsl loopback: decisions equal the in-process replay and the batch harness (816 / 816), 161,503 `double64` frames bit-equal (P4-21, [results](experiments/2026-11-22-p4-21-lsl-replay/results.md)).
 - Device-support matrix: the `text-nbest` row cites real CSV and JSON Lines reads of B2T '25 decoder output (1,718 online 1-best texts, 816 10-best lists): exact round trip, 0 conformance failures. The files come from a converter, because no local tool writes these forms (P4-22, [results](experiments/2026-11-22-p4-22-nbest-readers/results.md)).

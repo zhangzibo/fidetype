@@ -94,7 +94,7 @@ The guarantee covers commits only. An OFFER is a suggestion list, and it has no 
 | Key | Meaning |
 |---|---|
 | `verdict` | `"pass"` if every control passes, else `"fail"`. The parser refuses a verdict that does not agree with the `passed` flags |
-| `mode` | The `offer_control` mode of the check. `"warn"`: a failure changes no guard, `config_id`, certified status or commit |
+| `mode` | The `offer_control` mode of the check. `"warn"`: a failure changes no guard, `config_id`, certified status or commit. Policy (2026-11-22): a trust block that ships an `offer_gate` must have verdict `"pass"`, or the parser refuses the manifest ("refuse" for gated guards; the `calibrate` default stays `"warn"`) |
 | `checked` | Date of the check |
 | `rule` | The pre-stated rule: a control passes if null offer rate <= 0.5 x real offer rate, and (null offers <= floor(0.05 n) or one-sided Fisher exact p <= 0.05). Real = the LTT items |
 | `real` | `n` and `n_offer` on the real LTT items |

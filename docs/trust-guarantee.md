@@ -106,6 +106,8 @@ Why a warning first:
 
 What a failure means for you: do not show the offer list as a suggestion of the user's intent. Show it as "no reliable reading", or withhold it. Use `offer_control="refuse"` if your product shows offers as suggestions.
 
+**Decision (user, 2026-11-22, gap 152):** the default stays `"warn"`. The `"refuse"` rule applies only to guards that ship an offer gate (section 5b): a packaged manifest whose trust block has an `offer_gate` must carry an `offer_control` block with verdict `"pass"`, or the manifest parser refuses it. Today this holds for `t15-m4-13` and both `willett-hw` guards. `kt-semg-lda` has no offer gate and keeps its failing block in `"warn"` mode (gap 155).
+
 **Check a saved guard.** `fidetype.trust.recheck_offer_control(guard, inputs, null_inputs=...)` runs the control on a saved guard without a new calibration. Give it the calibration inputs in the same order (and the same `null_inputs`). It makes the same split and the same control inputs from `sheet.seed`, so the commit counts must equal the sheet (`commits_match_sheet: True`).
 
 ### 5b. Offer gate (P5-33)

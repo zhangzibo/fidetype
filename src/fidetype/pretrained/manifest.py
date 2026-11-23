@@ -22,6 +22,10 @@ Manifest keys (schema ``fidetype.pretrained-manifest/0.1``)::
                   controls [{name, label, n, n_offer, p_value, passed}], ltt_commits,
                   commits_match_sheet, effect, source}; a readout guard has its own copy in
                  readouts.<name>.trust.offer_control
+                 Offer-control policy (user decision 2026-11-22, gap 152): the default of
+                 fidetype.trust.calibrate stays offer_control="warn"; a trust block that ships an
+                 offer_gate is held to "refuse": it must carry an offer_control block with verdict
+                 "pass", or the manifest is refused (ManifestError)
     hosting      {host, release, notes}   (the download URL slot; null until P14-02)
 
 ``licence["data.licence"]`` and ``licence["data.research_only"]`` use the stream keys of FEP-0010
@@ -323,6 +327,15 @@ def parse_manifest(doc: Mapping[str, Any], where: str = "<manifest>") -> Manifes
     for key, oc in _offer_blocks(doc):
         _check_offer_control(oc, f"{where}: {'trust' if key == 'default' else 'readouts.' + key + '.trust'}"
                                  f".offer_control")
+    # Offer-control policy (user decision 2026-11-22, gap 152): "warn" stays the calibrate() default, but a
+    # guard that ships an offer gate is held to "refuse": it must show a passing offer null control.
+    for key, tr in _trust_blocks(doc):
+        if "offer_gate" in tr:
+            block = "trust" if key == "default" else f"readouts.{key}.trust"
+            oc = tr.get("offer_control")
+            if not isinstance(oc, Mapping) or oc.get("verdict") != "pass":
+                raise ManifestError(f"{where}: {block} ships an offer_gate, so its offer_control must have "
+                                    "verdict 'pass' (refuse policy for gated guards, gap 152)")
     return Manifest(
         name=name, version=str(_req(doc, "version", str, where)), title=str(_req(doc, "title", str, where)),
         status=status, task=str(_req(doc, "task", str, where)), modality=str(_req(doc, "modality", str, where)),

@@ -175,3 +175,29 @@ def test_parser_refuses_bad_offer_control():
         mutate(d)
         with pytest.raises(ManifestError, match=msg):
             parse_manifest(d)
+
+
+def test_gated_guard_must_pass_offer_control():
+    """User decision 2026-11-22 (gap 152): offer_control stays "warn" by default; a guard that ships an
+    offer gate is held to "refuse", so its manifest needs a passing offer_control block."""
+    import inspect
+
+    import fidetype.trust as ft
+
+    assert inspect.signature(ft.calibrate).parameters["offer_control"].default == "warn"
+    good = json.loads((manifest_dir() / "willett-hw.json").read_text(encoding="utf-8"))
+    for block in (lambda d: d["trust"], lambda d: d["readouts"]["lm"]["trust"]):
+        d = copy.deepcopy(good)
+        oc = block(d)["offer_control"]
+        oc["verdict"] = "fail"
+        oc["controls"][1]["passed"] = False  # consistent block: only the policy refuses it
+        with pytest.raises(ManifestError, match="ships an offer_gate"):
+            parse_manifest(d)
+        d = copy.deepcopy(good)
+        block(d).pop("offer_control")
+        with pytest.raises(ManifestError, match="ships an offer_gate"):
+            parse_manifest(d)
+    # a guard without an offer gate may ship a failing block ("warn": kt-semg-lda)
+    kt = json.loads((manifest_dir() / "kt-semg-lda.json").read_text(encoding="utf-8"))
+    assert "offer_gate" not in kt["trust"] and kt["trust"]["offer_control"]["verdict"] == "fail"
+    parse_manifest(kt)
