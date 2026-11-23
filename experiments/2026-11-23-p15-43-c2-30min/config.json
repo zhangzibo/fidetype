@@ -1,0 +1,59 @@
+{
+  "_comment": "P15-43 (gap 194) pre-registered configuration (see plan.md). Frozen with plan.md before any result of this task. Recipe keys are copied unchanged from experiments/2026-11-22-p15-41-more-seeds/config.json.",
+  "p15_33_config": "experiments/2026-11-20-p15-33-low-data-recipe/config.json",
+  "base_recipe": "A",
+  "seeds": [0, 1, 2, 3, 4],
+  "arms": ["E"],
+  "budgets_min": ["3", "30"],
+  "frr20_budgets": ["3", "10", "30"],
+  "frr20": {"code": 3524, "align": "forced", "mode": "replace", "synth_frac": 0.2,
+            "steps": {"3": 1200, "10": 2000, "30": 4000}},
+  "candidate_order": ["F-R20"],
+  "stages": [
+    {"name": "S30", "budget": "30", "seeds": [2, 3, 4], "stop_at_first_fail": false},
+    {"name": "S3", "budget": "3", "seeds": [0, 1, 2, 3, 4], "stop_at_first_fail": true}
+  ],
+  "sources": {
+    "aligners": "C:/Users/zhang/bci-data/derived/p15-43/aligners",
+    "reuse_runs": [],
+    "normal_test": {
+      "E-b30-s0": "C:/Users/zhang/bci-data/derived/p15-35b/test/F-R20/E-b30-s0",
+      "E-b30-s1": "C:/Users/zhang/bci-data/derived/p15-36/test/F-R20/E-b30-s1",
+      "E-b30-s2": "C:/Users/zhang/bci-data/derived/p15-41/test/F-R20/E-b30-s2",
+      "E-b30-s3": "C:/Users/zhang/bci-data/derived/p15-41/test/F-R20/E-b30-s3",
+      "E-b30-s4": "C:/Users/zhang/bci-data/derived/p15-41/test/F-R20/E-b30-s4",
+      "E-b3-s0": "C:/Users/zhang/bci-data/derived/p15-36/test/F-R20/E-b3-s0",
+      "E-b3-s1": "C:/Users/zhang/bci-data/derived/p15-36/test/F-R20/E-b3-s1",
+      "E-b3-s2": "C:/Users/zhang/bci-data/derived/p15-41/test/F-R20/E-b3-s2",
+      "E-b3-s3": "C:/Users/zhang/bci-data/derived/p15-41/test/F-R20/E-b3-s3",
+      "E-b3-s4": "C:/Users/zhang/bci-data/derived/p15-41/test/F-R20/E-b3-s4"
+    },
+    "old_deranged_test": {
+      "E-b30-s0-labelshuf": "C:/Users/zhang/bci-data/derived/p15-35b/test/F-R20/E-b30-s0-labelshuf",
+      "E-b30-s1-labelshuf": "C:/Users/zhang/bci-data/derived/p15-36/test/F-R20/E-b30-s1-labelshuf",
+      "E-b10-s2-labelshuf": "C:/Users/zhang/bci-data/derived/p15-41/test/F-R20/E-b10-s2-labelshuf",
+      "E-b10-s3-labelshuf": "C:/Users/zhang/bci-data/derived/p15-41/test/F-R20/E-b10-s3-labelshuf",
+      "E-b10-s4-labelshuf": "C:/Users/zhang/bci-data/derived/p15-41/test/F-R20/E-b10-s4-labelshuf"
+    },
+    "old_normal_10min": {
+      "E-b10-s2": "C:/Users/zhang/bci-data/derived/p15-41/test/F-R20/E-b10-s2",
+      "E-b10-s3": "C:/Users/zhang/bci-data/derived/p15-41/test/F-R20/E-b10-s3",
+      "E-b10-s4": "C:/Users/zhang/bci-data/derived/p15-41/test/F-R20/E-b10-s4"
+    }
+  },
+  "text_pool": {
+    "path": "C:/Users/zhang/bci-data/derived/p15-35/text_pool.txt",
+    "report": "C:/Users/zhang/bci-data/derived/p15-35/text_pool_report.json",
+    "sha256": "2360dc0559fd03420efbc432de81c01694c6dd27c474047f020b4add8dba63c9"
+  },
+  "synth": {"tail_frames": 100},
+  "rules": {
+    "c2_min_cer": 0.75,
+    "c2_min_gap": 0.10,
+    "val_margin": 0.03,
+    "length_guard": 0.30,
+    "shuffle_seed": 12345,
+    "ci_level": 0.95
+  },
+  "gpu_cap_hours": 4.5
+}
