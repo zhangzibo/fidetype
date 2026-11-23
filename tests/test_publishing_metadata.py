@@ -145,9 +145,11 @@ def test_site_builds_with_no_broken_local_links(tmp_path):
                 "diagrams/index.html", "diagrams/viewer-static.min.js", "diagrams/drawio-LICENSE.txt",
                 "progress/index.html"]:
         assert (out / rel).is_file(), rel
-    # Landing page: generated from README.md (north star + quick start).
+    # Landing page: generated from README.md (intro, install, quick start, status, research status).
     landing = (out / "index.html").read_text(encoding="utf-8")
-    assert "never puts words in the user" in landing and 'id="quick-start"' in landing
+    assert "types text only when it is confident" in landing and 'id="quick-start"' in landing
+    assert 'id="status"' in landing and 'id="research-status"' in landing
+    assert (out / "research.html").is_file()
     # Markdown pages keep GitHub heading ids, so deep links work on the site.
     assert 'id="42-rules"' in (out / "docs/hub-design.html").read_text(encoding="utf-8")
     # A proposed metric is marked as proposed on its page and on the benchmark page.
