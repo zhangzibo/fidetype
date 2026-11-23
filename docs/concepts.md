@@ -1,6 +1,10 @@
 # Concepts
 
-This page explains the main ideas of NeuralTextStream (NTS) and Fidetype. It is informative. The rules are in the spec, [NTS 1.0 RC4](../spec/nts-1.0-rc4.md) (draft). Each section below links to the spec section that defines it.
+The main ideas of Fidetype and its data format NTS: streams and events, profiles, bindings, the trust layer, conformance and the Collector.
+
+**Status:** the NTS format is in Development; [NTS 1.0 RC4](../spec/nts-1.0-rc4.md) is a draft for public comment. The trust layer is Beta ([status levels](glossary.md#status-levels)).
+
+This page explains the main ideas of NeuralTextStream (NTS) and Fidetype. It is informative. Short meanings of all terms are in the [glossary](glossary.md). The rules are in the spec, [NTS 1.0 RC4](../spec/nts-1.0-rc4.md) (draft). Each section below links to the spec section that defines it.
 
 ## The problem NTS solves
 
@@ -38,7 +42,7 @@ A profile adds event kinds to the core. It never changes a core field ([spec 7](
 | Profile | Use | Proposal |
 |---|---|---|
 | Core | Frames, segments, signal quality: every stream | v0.1 |
-| Text | Typed or spoken text: hypotheses and text decisions | FEP-0001 |
+| Text | Typed or spoken text: hypotheses and text decisions | FEP-0001 ([FEP](glossary.md#fep) = enhancement proposal) |
 | Intent | Discrete commands with risk classes, confirmation and undo | FEP-0003 |
 | Control | Continuous control (cursor, gain), with safety rules: hold and stop | FEP-0005 |
 
@@ -118,4 +122,4 @@ A change to the spec needs a FEP (Fidetype Enhancement Proposal). FEPs have a li
 | eWPM | Effective words per minute: the rate of correct text, with the time for corrections included. The benchmark compares it with a no-BCI baseline |
 | FEP | Fidetype Enhancement Proposal |
 
-The full term list is in [spec 1.4](../spec/nts-1.0-rc4.md#14-terms).
+The full term list is in [spec 1.4](../spec/nts-1.0-rc4.md#14-terms). Plain-language meanings of more terms are in the [glossary](glossary.md).

@@ -1,6 +1,10 @@
 # Tutorials: Fidetype in 10 minutes each
 
-Three short tutorials take you through the main jobs of Fidetype. Each one is a script in [`tutorials/`](../tutorials/) and a page that walks through it.
+Three short, tested tutorials: decode with a pretrained decoder, add the trust guard, and score a decoder on the benchmark.
+
+**Status:** Beta ([status levels](glossary.md#status-levels))
+
+Each tutorial is a script in [`tutorials/`](../tutorials/) and a page that walks through it. Words that you may not know (safe WPM, LTT, NTS, CER) are in the [glossary](glossary.md).
 
 | # | Tutorial | You learn | Synthetic mode (CI) | Page |
 |---|---|---|---|---|
@@ -41,7 +45,7 @@ Each script ends with one line, for example `TUTORIAL 2 PASS (synthetic): safe W
 
 ## Measured wall times
 
-The smoke test [`tutorials/test_tutorials.py`](../tutorials/test_tutorials.py) runs the three scripts in synthetic mode and times each one. The CI workflow [`tutorials.yml`](../.github/workflows/tutorials.yml) runs it on Linux and Windows, in a clean virtual environment with only the package and pytest. Done criterion (roadmap P14-43, set before the runs): all three pass, and each takes less than 10 minutes.
+The smoke test [`tutorials/test_tutorials.py`](../tutorials/test_tutorials.py) runs the three scripts in synthetic mode and times each one. The CI workflow [`tutorials.yml`](../.github/workflows/tutorials.yml) runs it on Linux and Windows, in a clean virtual environment with only the package and pytest. Done criterion (set before the runs): all three pass, and each takes less than 10 minutes.
 
 | Machine | Tutorial 1 | Tutorial 2 | Tutorial 3 |
 |---|---|---|---|
@@ -59,11 +63,11 @@ Real-data modes on the project desktop (local data and weights; not in CI):
 |---|---|---|---|
 | 1 | `--model t15-m4-13 --data t15.2023.08.13/data_val.hdf5 --n 5` | 5 trials | 12.4 s |
 | 2 | `--model t15-m4-13 --data` 3 sessions (08.13, 08.18, 08.20) | 65 trials | 48.3 s |
-| 3 | `--data <kt-semg> --runs run28` | 22 units | 48.2 s (2026-11-21, after P14-46; pinned to 2 CPUs) |
+| 3 | `--data <kt-semg> --runs run28` | 22 units | 48.2 s (2026-11-21; pinned to 2 CPUs) |
 
 ## Where the weights come from
 
-The pretrained weights are **not hosted yet** (roadmap P14-02 and P14-30, open gap 98). So the real-data modes of tutorials 1, 2 and 3 need the release files on your machine (`--weights <folder>` or `FIDETYPE_PRETRAINED_DIR`). Until the weights are hosted, a newcomer can run only the synthetic modes. The real-data commands on each page are correct and were run on the project machine.
+The pretrained weights are **not hosted yet**. Hosting needs outside approval, so it has no date yet ([details](../wiki/questions/open-gaps.md)). So the real-data modes of tutorials 1, 2 and 3 need the release files on your machine (`--weights <folder>` or `FIDETYPE_PRETRAINED_DIR`). Until the weights are hosted, a newcomer can run only the synthetic modes. The real-data commands on each page are correct and were run on the project machine.
 
 ## Related pages
 

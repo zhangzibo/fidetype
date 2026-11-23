@@ -1,6 +1,10 @@
 # Add trust to your decoder in 10 minutes
 
-This page is for a team that already has a decoder (brain or muscle signals to text). At the end, your decoder output goes through the Fidetype trust layer. For each utterance you get one of three actions, with a stated wrong-commit guarantee and an audit log:
+Wrap your own decoder with the Fidetype trust layer, so that it types text only when a certified check allows it.
+
+**Status:** Beta ([status levels](glossary.md#status-levels))
+
+This page is for a team that already has a decoder (brain or muscle signals to text). At the end, your decoder output goes through the Fidetype [trust layer](glossary.md#trust-layer). For each [utterance](glossary.md#utterance) you get one of three actions, with a stated [wrong-commit](glossary.md#wrong-commit-wrong-commit-rate) guarantee and an audit log:
 
 | Action | What your app does |
 |---|---|
@@ -18,7 +22,7 @@ You do not change your decoder. You do not need to learn the NeuralTextStream (N
 
 | Your decoder gives | Input kind | Also give |
 |---|---|---|
-| A `(T, V)` matrix of CTC scores per utterance (logits, log-probabilities or probabilities; numpy or torch) | `logits` | `vocab` (the token of each column), `blank`, and a word list `lexicon` or your own `decode_fn` |
+| A `(T, V)` matrix of [CTC](glossary.md#ctc) scores per utterance (logits, log-probabilities or probabilities; numpy or torch) | `logits` | `vocab` (the token of each column), `blank`, and a word list `lexicon` or your own `decode_fn` |
 | A ranked list of texts with log scores per utterance (n-best) | `nbest` | `null_inputs`: your decoder's n-best output on null input (no signal, or a time-shuffled recording), about 100 lists |
 
 ## Step 1 (3-4 min): install
@@ -71,12 +75,13 @@ guard = ft.calibrate(
     vocab=["_", *"abcdefghijklmnopqrstuvwxyz", " "],  # column order of your logits
     blank="_",                                          # the CTC blank column (index or token)
     lexicon=my_word_list,                               # or: decode_fn=my_beam_search_with_lm
-    alpha=0.05, delta=0.1,
+    alpha=0.05, delta=0.1,                              # the guarantee: see "alpha, delta" below
     decoder_name="acme-emg-decoder", decoder_version="2.1", modality="emg",
 )
 print(guard.sheet)
 ```
 
+- `alpha` and `delta` set the guarantee ([glossary](glossary.md#alpha-delta)): with probability at least 1 − `delta` over the calibration draw, at most a share `alpha` of all utterances become wrong commits. The defaults are 0.05 and 0.1.
 - `decode_fn` is your own text decoder: `f(log_probs) -> [(text, log_score), ...]`, best first. It gets the `(T, V)` natural-log probabilities after the frame temperature of the calibration.
 - If your decoder's tokens are not the characters of your texts (for example phonemes or word pieces, with word texts), also pass `stream_texts=`: the truth of each utterance in the token space (a string with one character per token, or a list of tokens). It is used only to fit the frame temperature. Without it, a guard with your own `decode_fn` keeps the frame temperature at 1.0, and the sheet says so.
 - The logits route with the built-in decoder and a `lexicon` mostly gives `commit` or `withhold`, and almost never `offer`. Offers come mainly from n-best input (or from your own `decode_fn` with real n-best scores).
@@ -124,7 +129,7 @@ Check four lines of `print(guard.sheet)`:
 1. `guarantee`: the bound that you asked for.
 2. `null controls`: both `PASS`. If a control fails, `calibrate` raises `NullControlError` and gives no guard.
 3. `commit threshold`: a number means the guard can commit. `never commits` means it cannot certify any commit with your data; it still offers and withholds.
-4. `LTT items (in-sample)`: how many calibration items the final guard commits, and how many the commit gate blocked. If it commits on almost none (or the gate blocks more than it lets through), the guard will rarely commit on new data, even with a threshold. Read the `warnings` at the end of the sheet. (`LTT items needed >= 45` counts labelled utterances in the LTT part, not commits.)
+4. `LTT items (in-sample)`: LTT ([Learn then Test](glossary.md#ltt-learn-then-test)) is the test that sets the commit threshold on its own part of the calibration data. This line says how many calibration items the final guard commits, and how many the commit gate blocked. If it commits on almost none (or the gate blocks more than it lets through), the guard will rarely commit on new data, even with a threshold. Read the `warnings` at the end of the sheet. (`LTT items needed >= 45` counts labelled utterances in the LTT part, not commits.)
 
 What each line means, and what is not guaranteed: [guarantee sheet](trust-guarantee.md).
 
@@ -138,9 +143,9 @@ What each line means, and what is not guaranteed: [guarantee sheet](trust-guaran
 | `ValueError: n-best input needs null_inputs=` | Fidetype does not run your decoder, so it cannot make a shuffled control for text | Run your decoder on time-shuffled or no-signal recordings; pass the n-best lists |
 | Sheet says `never commits` | Too few LTT items, or the decoder is wrong too often for `alpha` | More labelled data; a larger `alpha` (state it); a better decoder |
 | Every result is `withhold` with reason `commit blocked: low acoustic evidence (guard risk 1.00 ...)`; the sheet warns `the commit gate blocked ...` | The hallucination guard sees low per-character confidence on most utterances: characters with a posterior below `low_conf_threshold` (0.5) count as no evidence. Noisy calibration data can also raise the fitted frame temperature (for example 3.1), which flattens the posteriors. The commit gate never commits at guard risk 1.00 | Calibrate on data like your real use (not only the hardest cases); check the decoder's confidence on clean utterances; for n-best input give `char_confidences`; or relax the guard with `guard_settings={"low_conf_threshold": 0.3}` (part of the config; the bound still holds) |
-| Few commits, many withholds | The guarantee is on the rate over all utterances, so a weak decoder commits rarely | Expected. The guard trades commits for safety. You can try `confidence="learned"` (P5-23): a commit score fitted from more decoder outputs, with the same guarantee ([section 10a](trust-guarantee.md#10a-optional-a-learned-commit-score-p5-23)) |
+| Few commits, many withholds | The guarantee is on the rate over all utterances, so a weak decoder commits rarely | Expected. The guard trades commits for safety. You can try `confidence="learned"`: a commit score fitted from more decoder outputs, with the same guarantee ([section 10a](trust-guarantee.md#10a-optional-a-learned-commit-score)) |
 
-## Later: update the decoder safely (P15-02)
+## Later: update the decoder safely
 
 A new decoder (or new calibration data) must not change what the user sees before it passes a check. `TrustGuardUpdater` runs the gated update loop (`GuardedUpdateLoop`) around your live guard:
 
@@ -161,12 +166,12 @@ print(out.accepted, out.reasons, guard.config_id)
 |---|---|
 | Check block | Block LTT on the check items: the session threshold. A check item that the candidate trained on raises an error (give `check_ids=` and `cal_ids=`) |
 | Null controls | Uniform and time-shuffled inputs (n-best input: your `null_inputs=`) go through the candidate and the commit gate. More than `floor(alpha x n)` commits: rejected |
-| Champion / challenger | Default deny (P15-13): the candidate must show that it is not worse than the live decoder on the check items (top-1 right / wrong, CER as tie-break; exact one-sided tests, margins 0.1). An item with unknown truth counts against the candidate, unless the user rejected both top-1 texts. Not shown: rejected. Pass `check_texts[i] = None` for unknown truth and `check_rejected=` for the lists the user rejected. `GuardedUpdateLoop(challenger_test="sign")` gives the old P15-02 sign test |
+| Champion / challenger | Default deny: the candidate must show that it is not worse than the live decoder on the check items (top-1 right / wrong, CER as tie-break; exact one-sided tests, margins 0.1). An item with unknown truth counts against the candidate, unless the user rejected both top-1 texts. Not shown: rejected. Pass `check_texts[i] = None` for unknown truth and `check_rejected=` for the lists the user rejected. `GuardedUpdateLoop(challenger_test="sign")` gives the older, simpler sign test |
 | Accepted | The candidate configuration goes into the **same** `guard` object. `commit_p` is raised to the session threshold if that is higher (this only removes commits). The audit log gets a `config_update` record |
 | Rejected | The guard does not change (same object, same `config_id`). A failed calibration (`NullControlError`) is a rejection too |
 | Ledger | Each proposal and each decision is an `update` entry (stage `proposed`, `accepted` or `rejected`) in the append-only, hash-chained ledger. Check it with `python -m fidetype.trust.provenance verify updates.jsonl` |
 
-For an `OnlineTrustPolicy`, `OnlinePolicyUpdater(online_policy, loop, {version: policy})` swaps the policy and sets `commit_floor` to the session threshold, only on an accepted update. The ACI controller keeps its state. Limits: the check block must be like the live data; the null controls are a refusal rule, not a bound; silent errors are not covered. Source: [`src/fidetype/trust/update_hooks.py`](../src/fidetype/trust/update_hooks.py).
+For an `OnlineTrustPolicy`, `OnlinePolicyUpdater(online_policy, loop, {version: policy})` swaps the policy and sets `commit_floor` to the session threshold, only on an accepted update. The ACI (adaptive conformal inference) controller keeps its state. Limits: the check block must be like the live data; the null controls are a refusal rule, not a bound; silent errors are not covered. Source: [`src/fidetype/trust/update_hooks.py`](../src/fidetype/trust/update_hooks.py).
 
 ## Reference
 

@@ -1,5 +1,9 @@
 # Tutorial 1: decode text with a pretrained decoder
 
+Load a pretrained decoder, decode neural data into NTS streams, check them and read the text.
+
+**Status:** Beta ([status levels](glossary.md#status-levels))
+
 Time: about 1 s (synthetic mode), about 15 s (real data, 5 trials). Script: [`tutorials/01_decode_pretrained.py`](../tutorials/01_decode_pretrained.py). Index: [tutorials](tutorials.md).
 
 At the end you can load a pretrained decoder, decode neural data into NeuralTextStream (NTS) streams, check each stream with the conformance suite, read the greedy text and save the streams.
@@ -14,7 +18,7 @@ The last line is `TUTORIAL 1 PASS (synthetic): 3 streams, 0.1 s`.
 
 ## What the synthetic mode does
 
-The packaged models need weights that are not hosted yet (open gap 98). So the synthetic mode makes a **tiny random model** with the same runtime as `t15-m4-13` (`gru-ctc`). The model has learned nothing. Its text is noise. The API steps are the same as for a real model.
+The packaged models need weights that are not hosted yet ([tutorials: where the weights come from](tutorials.md#where-the-weights-come-from)). So the synthetic mode makes a **tiny random model** with the same runtime as `t15-m4-13` (`gru-ctc`). `t15-m4-13` is the speech decoder for participant T15 ([model names](glossary.md#model-names)). The model has learned nothing. Its text is noise. The API steps are the same as for a real model.
 
 | Step | Code | What you see |
 |---|---|---|
@@ -45,10 +49,10 @@ model.save([stream], out / "streams")
 
 | What | Value |
 |---|---|
-| Dataset | Brain-to-Text '25, participant T15 (Card et al. 2024), CC0 1.0 |
+| Dataset | [Brain-to-Text '25](glossary.md#b2t-25-brain-to-text-25), participant [T15](glossary.md#t12-t15) (Card et al. 2024), CC0 1.0 |
 | Download | Dryad [doi:10.5061/dryad.dncjsxm85](https://doi.org/10.5061/dryad.dncjsxm85), file `t15_copyTask_neuralData.zip`; one session folder is enough, for example `t15.2023.08.13` |
 | Extra package | `pip install ".[hdf5]"` (gives `h5py`) |
-| Weights | `t15-m4-13` release files: not hosted yet (gap 98). Put them in a folder and pass `--weights`, or set `FIDETYPE_PRETRAINED_DIR` |
+| Weights | `t15-m4-13` release files: not hosted yet. Put them in a folder and pass `--weights`, or set `FIDETYPE_PRETRAINED_DIR` |
 
 ```sh
 python tutorials/01_decode_pretrained.py --model t15-m4-13 \
@@ -67,7 +71,7 @@ Output on the project machine (2026-11-20, CPU, 12.4 s): 5 streams, all at level
 
 ## API friction (found while writing this tutorial)
 
-Gap 129 (roadmap P14-44) listed these points. The API now has a fix for each one, and this tutorial uses them:
+A newcomer test of this tutorial found these points. The API now has a fix for each one, and this tutorial uses them:
 
 | Friction | Fix |
 |---|---|

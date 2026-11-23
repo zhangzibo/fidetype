@@ -1,6 +1,17 @@
 # Getting started
 
-This page takes you from a clone to your first NeuralTextStream (NTS) file and your first trust decisions. It uses the Python SDK, because the trust layer and the Collector are in Python. For TypeScript and Rust, see [sdks.md](sdks.md).
+Install Fidetype, run the offline demo, write your first NTS file and get your first trust decisions, in about 15 minutes.
+
+**Status:** Beta ([status levels](glossary.md#status-levels))
+
+Fidetype turns decoder output from brain or muscle signals into text that you can trust. Two parts matter on this page:
+
+- **NTS** ([NeuralTextStream](glossary.md#nts-neuraltextstream)) is the open file and stream format for decoder output.
+- The **trust layer** ([glossary](glossary.md#trust-layer)) decides for each utterance whether to type the text (commit), show a short list (offer) or type nothing (withhold).
+
+This page uses the Python SDK, because the trust layer and the [Collector](glossary.md#collector) are in Python. For TypeScript and Rust, see [sdks.md](sdks.md). You need no hardware and no dataset: every step uses synthetic data.
+
+**Want the shortest path?** If you already have a decoder, go to the [trust quickstart](trust-quickstart.md). If you want a pretrained decoder for a public dataset, go to [pretrained decoders](pretrained-decoders.md).
 
 ## 1. Install
 
@@ -21,7 +32,7 @@ Optional extras:
 |---|---|---|
 | `lsl` | Lab Streaming Layer input and output (`pylsl`) | `pip install ".[lsl]"` |
 | `brainflow` | BrainFlow board → LSL bridge (also needs `lsl`) | `pip install ".[lsl,brainflow]"` |
-| `ws` | WebSocket input and output, FEP-0004 (`websockets`) | `pip install ".[ws]"` |
+| `ws` | WebSocket input and output ([FEP-0004](../spec/feps/0004-nts-over-websocket.md), `websockets`) | `pip install ".[ws]"` |
 | `data` | Dataset loaders and preprocessing (`mne`, `scipy`) | `pip install ".[data]"` |
 | `dev` | `pytest` and `ws` | `pip install ".[dev]"` |
 
@@ -36,7 +47,7 @@ The demo needs no data and no network. It runs synthetic decoder streams through
 
 ## 3. Emit a stream from your decoder
 
-A CTC decoder gives one row of log-probabilities per frame over `fidetype.VOCAB` (blank first). Write the rows as an NTS file and check it:
+A [CTC](glossary.md#ctc) decoder gives one row of log-probabilities per frame over `fidetype.VOCAB` (blank first). Write the rows as an NTS file and check it:
 
 ```sh
 fidetype demo --fast --write-streams demo-streams   # gives demo-streams/trust-config-demo.json
@@ -84,13 +95,20 @@ fidetype.calibrate(streams, texts, decode_fn).save("trust.json")
 
 ## 5. Next steps
 
-| Goal | Read |
-|---|---|
-| Understand the data model and the decisions | [concepts.md](concepts.md) |
-| Run inputs, trust and outputs as one service | [collector.md](collector.md) |
-| Prove that your producer or consumer is conformant | [conformance.md](conformance.md) |
-| More examples (hypothesis-only streams, LSL bridge, streaming trust) | [examples/](../examples/) |
-| The full Python API | [sdks.md](sdks.md#python-sdk-guide) and [wiki/concepts/python-sdk.md](../wiki/concepts/python-sdk.md) |
+Pick the row that fits your role.
+
+| You are | Goal | Read |
+|---|---|---|
+| Researcher | Decode a public dataset with a pretrained decoder | [pretrained decoders](pretrained-decoders.md), [tutorial 1](tutorials-01-decode.md) |
+| Researcher | Score a decoder on the open benchmark | [benchmark](../benchmark/README.md), [tutorial 3](tutorials-03-benchmark.md) |
+| App builder | Add the trust layer to your own decoder | [trust quickstart](trust-quickstart.md), [tutorial 2](tutorials-02-trust.md) |
+| App builder | Run inputs, trust and outputs as one service | [collector.md](collector.md) |
+| App builder | Connect a live device | [live decode](live-decode.md), [device support](device-support.md) |
+| Contributor | Prove that your producer or consumer is conformant | [conformance.md](conformance.md) |
+| Contributor | Propose a change to the format | [spec and FEPs](../spec/README.md#proposals-feps), [CONTRIBUTING.md](../CONTRIBUTING.md) |
+| Anyone | Understand the data model and the decisions | [concepts.md](concepts.md), [glossary](glossary.md) |
+| Anyone | More examples (hypothesis-only streams, LSL bridge, streaming trust) | [examples/](../examples/) |
+| Anyone | The full Python API | [sdks.md](sdks.md#python-sdk-guide) |
 
 ## Command line summary
 
@@ -98,10 +116,10 @@ fidetype.calibrate(streams, texts, decode_fn).save("trust.json")
 |---|---|
 | `fidetype validate FILE [--level L]` | Conformance check of a stream (levels `core`, `trust-ready`, `provenance`) |
 | `fidetype trust --config F FILE` | Streaming trust layer; prints `trust_decision` JSON Lines |
-| `fidetype intent`, `fidetype control` | Trust layers of the intent (FEP-0003) and control (FEP-0005) profiles |
+| `fidetype intent`, `fidetype control` | Trust layers of the intent and control [profiles](glossary.md#profile) |
 | `fidetype demo` | Offline demo |
 | `fidetype conformance` | The full conformance suite (`check`, `consumer`, `vectors`, `list`) |
-| `fidetype collector --config F` | The Collector (FEP-0006) |
+| `fidetype collector --config F` | The [Collector](collector.md) |
 | `fidetype lsl ...`, `fidetype ws ...` | LSL and WebSocket input and output (extras `lsl`, `ws`) |
 | `fidetype benchmark ...` | Open benchmark v0.1 (`tracks`, `prepare`, `score`, `leaderboard`) |
 | `fidetype ledger ...` | Provenance ledger tools |

@@ -383,7 +383,7 @@ function landing(map, version) {
   const cards = [
     ['benchmark/index.html', 'Benchmark and leaderboard', 'Open tracks on public datasets, the static leaderboard, safe WPM, controls.'],
     ['hub/index.html', 'Benchmark hub registry', 'Versioned dataset registry: licence, checksums, download and verify commands, adapters.'],
-    ['docs/index.html', 'Documentation', 'Getting started, trust guarantee, Collector, live decode, conformance, SDKs.'],
+    ['docs/index.html', 'Documentation', 'Get started by role, concepts and glossary, how-to guides, tutorials and reference.'],
     ['spec/index.html', 'NTS specification', `NeuralTextStream spec versions and FEPs. Current draft: ${P.basename(currentSpec(), '.md').toUpperCase().replace('NTS-1.0-', 'NTS 1.0 ')}.`],
     ['conformance/index.html', 'Certified implementations', 'Self-certification list with the evidence report of each entry.'],
     ['demo/index.html', 'Trust demo (synthetic)', 'Synthetic decoder output with each trust decision on screen. No participant data.'],

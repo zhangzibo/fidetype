@@ -134,6 +134,13 @@ function renderBlocks(lines, ctx) {
       continue;
     }
     if (isHr(line)) { out.push('<hr>'); i++; continue; }
+    // collapsed section: only the exact lines "<details>", "<summary>text</summary>", "</details>"
+    const det = /^\s*(<details>|<\/details>|<summary>([^<]*)<\/summary>)\s*$/.exec(line);
+    if (det) {
+      out.push(det[2] !== undefined ? `<summary>${inline(det[2], ctx.opt)}</summary>` : det[1]);
+      i++;
+      continue;
+    }
     // block quote
     if (/^\s{0,3}>/.test(line)) {
       const body = [];

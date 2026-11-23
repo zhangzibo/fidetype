@@ -1,8 +1,12 @@
 # Tutorial 2: add the trust guard and read the safe WPM
 
+Calibrate a trust guard on decoder output, get commit / offer / withhold decisions and compute the safe WPM.
+
+**Status:** Beta ([status levels](glossary.md#status-levels))
+
 Time: about 80 s (synthetic mode), about 50 s (real data, 65 trials). Script: [`tutorials/02_trust_and_safe_wpm.py`](../tutorials/02_trust_and_safe_wpm.py). Index: [tutorials](tutorials.md).
 
-At the end you can calibrate a trust guard on your own decoder output, get COMMIT / OFFER / WITHHOLD for new utterances, read the guarantee sheet, and compute the safe WPM: words per minute that the system types right by itself, at a certified wrong-commit rate.
+At the end you can calibrate a trust guard on your own decoder output, get COMMIT / OFFER / WITHHOLD for new utterances, read the guarantee sheet, and compute the [safe WPM](glossary.md#safe-wpm): words per minute that the system types right by itself, at a certified wrong-commit rate.
 
 ## Run it
 
@@ -19,7 +23,7 @@ A small simulated CTC decoder (`toy_decoder`) makes noisy scores for 16 short ph
 | Step | Code | What you see |
 |---|---|---|
 | 1. Labelled output | 400 `(T, 28)` logits + the true texts | The calibration set |
-| 2. Calibrate | `ft.calibrate(logits, texts, vocab=..., blank="_", lexicon=..., alpha=0.05, delta=0.1)` | The guarantee sheet: P(wrong-commit rate <= 0.05) >= 0.9, the split 100 fit + 150 grid + 150 LTT, the commit threshold, both null controls `PASS`, assumptions, warnings |
+| 2. Calibrate | `ft.calibrate(logits, texts, vocab=..., blank="_", lexicon=..., alpha=0.05, delta=0.1)` | The guarantee sheet: P(wrong-commit rate <= 0.05) >= 0.9 ([alpha, delta](glossary.md#alpha-delta)), the split 100 fit + 150 grid + 150 [LTT](glossary.md#ltt-learn-then-test), the commit threshold, both null controls `PASS`, assumptions, warnings |
 | 3. Decide | `guard.decide(x, utterance_id=...)` | 300 new utterances. The run gave 111 commit, 0 offer, 189 withhold |
 | 4. Safe WPM | `sw.from_decisions(results, truths, neural_s, guard)` | One line: value, status, test wrong-commit rate with its Clopper-Pearson 95 % interval, number of commits, unguarded WPM, no-BCI reference |
 | 5. Keep | `guard.write_audit()`, `guard.save()`, `ft.load()` | The audit log (one record per decision) and the guard file (numbers only, no signal, no text) |
@@ -44,16 +48,16 @@ How to read the status ([safe WPM definition](safe-wpm.md)):
 | `certified` | The policy has a certified bound, and the measured wrong-commit rate is at or below alpha |
 | `above-alpha` | Certified bound, but the measured rate on these trials is above alpha. The leaderboard marks such entries |
 | `vacuous` | The policy committed nothing. Safe, but the value is 0 |
-| `not-certified` | No CRC / LTT bound. `value` is None; `unguarded_wpm` is for reference only |
+| `not-certified` | No CRC (conformal risk control) or LTT bound. `value` is None; `unguarded_wpm` is for reference only |
 
 ## Real data
 
 | What | Value |
 |---|---|
 | Dataset | Brain-to-Text '25, participant T15, CC0 1.0 ([doi:10.5061/dryad.dncjsxm85](https://doi.org/10.5061/dryad.dncjsxm85), `t15_copyTask_neuralData.zip`) |
-| Model and guard | `t15-m4-13` and its packaged guard `tcfg-1016759f08a3f9a1` (alpha 0.05, delta 0.1). The guard needs three text files (CMU dictionary, Tatoeba character 6-gram LM, Tatoeba word counts) next to the weights |
+| Model and guard | `t15-m4-13` and its packaged guard (alpha 0.05, delta 0.1; `guard.sheet` prints its `config_id`). The guard needs three text files (CMU dictionary, Tatoeba character 6-gram LM, Tatoeba word counts) next to the weights |
 | Extra package | `pip install ".[hdf5]"` (gives `h5py`) |
-| Weights | not hosted yet (gap 98): `--weights <folder>` or `FIDETYPE_PRETRAINED_DIR` |
+| Weights | not hosted yet ([details](tutorials.md#where-the-weights-come-from)): `--weights <folder>` or `FIDETYPE_PRETRAINED_DIR` |
 
 ```sh
 python tutorials/02_trust_and_safe_wpm.py --model t15-m4-13 --weights <folder> \
@@ -64,11 +68,11 @@ The script decodes the odd `val` trials (the `val_eval` half; the guard was cali
 
 Output on the project machine (2026-11-20, 48 s): 65 trials, 10 commit, 55 offer, 0 withhold; 5 wrong commits (0.0769, CP95 [0.0254, 0.1705]); safe WPM 1.49, status **`above-alpha`**; no-BCI reference 4.13.
 
-> **Read this result with care.** 65 trials from the first three sessions are a small sample. The bound is on the rate over many utterances like the calibration data, not on every subset. On all 701 `val_eval` trials the same guard gives 104 commits, 17 wrong (0.0243, CP95 [0.0142, 0.0385]), safe WPM 2.23, status `certified` ([safe WPM](safe-wpm.md), P14-05). The tutorial shows the status that your sample gives; it does not hide it.
+> **Read this result with care.** 65 trials from the first three sessions are a small sample. The bound is on the rate over many utterances like the calibration data, not on every subset. On all 701 `val_eval` trials the same guard gives 104 commits, 17 wrong (0.0243, CP95 [0.0142, 0.0385]), safe WPM 2.23, status `certified` ([safe WPM](safe-wpm.md)). The tutorial shows the status that your sample gives; it does not hide it.
 
 ## API friction (found while writing this tutorial)
 
-Gap 130 (roadmap P14-45) listed these points. `fidetype.benchmark.safe_wpm.from_decisions` fixes them, and this tutorial uses it:
+A newcomer test of this tutorial found these points. `fidetype.benchmark.safe_wpm.from_decisions` fixes them, and this tutorial uses it:
 
 | Friction | Fix |
 |---|---|

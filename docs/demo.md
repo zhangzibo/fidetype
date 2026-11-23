@@ -1,5 +1,9 @@
 # Live demo: recorded decoder output, trust decisions on screen
 
+Watch the trust layer decide, utterance by utterance, on recorded or synthetic decoder output in your browser.
+
+**Status:** Beta ([status levels](glossary.md#status-levels))
+
 `fidetype demo live` starts a small local server and opens a page in your browser. The page replays decoder output that was **recorded earlier**, at the speed it was recorded. For each utterance the trust layer decides:
 
 | On the page | Decision (engineering term) | What the user gets |
@@ -50,10 +54,10 @@ The top of the page says in three lines what you are watching, with a legend of 
 
 | Track | Data | Licence | Decoder and trust configuration |
 |---|---|---|---|
-| `t15` | Brain-to-Text '25, participant T15 (intracortical), 701 held-out `val_eval` sentences | CC0-1.0 | M4-12 GRU-CTC phoneme decoder + word decoder; recorded decisions of trust config `tcfg-e7e8c472f6d9ab33` (M2-19) |
-| `emg2qwerty` | emg2qwerty wrist sEMG, P4-01 baseline streams (8 users x 2 sessions, held-out half), 700 prompts | CC BY-NC-SA 4.0, **research use only** | P4-01 LDA key classifier; trust config fitted by `--prepare emg2qwerty` on the first half of the prompts of each session |
-| `synthetic` | simulated decoder streams (M7-01) | Apache-2.0 | packaged demo config |
-| `p11-01-emg` | template, disabled | CC BY-NC-SA 4.0 | the P11-01 EMG decoder, when it writes NTS files |
+| `t15` | [Brain-to-Text '25](glossary.md#b2t-25-brain-to-text-25), participant [T15](glossary.md#t12-t15) (intracortical), 701 held-out `val_eval` sentences | CC0-1.0 | an earlier build of our GRU-CTC phoneme decoder + word decoder; recorded decisions of one frozen trust configuration (the page shows its `config_id`) |
+| `emg2qwerty` | [emg2qwerty](glossary.md#emg2qwerty) wrist sEMG, our baseline streams (8 users x 2 sessions, held-out half), 700 prompts | CC BY-NC-SA 4.0, **research use only** | our baseline LDA key classifier; trust config fitted by `--prepare emg2qwerty` on the first half of the prompts of each session |
+| `synthetic` | simulated decoder streams | Apache-2.0 | packaged demo config |
+| `p11-01-emg` | template, disabled | CC BY-NC-SA 4.0 | our generic EMG decoder (`emg2qwerty-p11-01`), when it writes NTS files |
 
 The real tracks read data from `${DATA}` = the environment variable `FIDETYPE_DATA` (default `~/bci-data`). If a file is missing, the command names it and does not start that track. A track that you ask for by name (`--tracks t15`) and that is missing stops the command with exit code 2.
 
@@ -72,7 +76,7 @@ It writes `truth.json`, `split.json`, the trust configuration and `eval.json` to
 | `t15` | 9 of 701 | 6 / 701 = 0.86 % (0.31 % to 1.85 %) | 6 of 9 | 640 of 701 |
 | `emg2qwerty` | 3 of 700 | 3 / 700 = 0.43 % (0.09 % to 1.25 %) | 3 of 3 | 700 of 700 |
 
-Both are below the target alpha 0.05, but the commits are rare and most of them are wrong. The decoders are weak: the trust layer keeps the wrong-commit rate low mainly by offering almost everything. M2-19 also found that the T15 config needs the M2-18 commit gate before real use. The page shows these numbers next to the replay.
+Both are below the target alpha 0.05, but the commits are rare and most of them are wrong. The decoders are weak: the trust layer keeps the wrong-commit rate low mainly by offering almost everything. A later check found that this T15 configuration needs the commit gate (no empty commit, no commit at guard risk 1.0) before real use ([details](../wiki/concepts/trust-decision.md)). The page shows these numbers next to the replay.
 
 ## Add your own decoder (no code change)
 
@@ -85,11 +89,11 @@ Write your decoder output as NTS files (for CTC logits: `fidetype.adapters.ctc_l
  "truth": {"format": "json-map", "path": "${DATA}/my/truth.json", "field": "text"}}
 ```
 
-Then run `fidetype demo live --config my-demo.json --tracks my-decoder`. `decoder` is `greedy` (CTC greedy), `keys` (key-press streams) or `demo`. Without `truth`, the page says that the wrong-commit rate is unknown. The P11-01 EMG decoder plugs in the same way (template track `p11-01-emg`).
+Then run `fidetype demo live --config my-demo.json --tracks my-decoder`. `decoder` is `greedy` (CTC greedy), `keys` (key-press streams) or `demo`. Without `truth`, the page says that the wrong-commit rate is unknown. Our generic EMG decoder plugs in the same way (template track `p11-01-emg`).
 
 ## For app developers
 
-The same server also sends only the `trust_decision` events (FEP-0001) on `ws://127.0.0.1:<port>/decisions` (FEP-0004 binding `nts-ws/0.1`), as an AAC app would read them. The page itself uses `/events` (demo messages) and `/state/state.json`.
+The same server also sends only the `trust_decision` events ([FEP-0001](glossary.md#fep), the text profile) on `ws://127.0.0.1:<port>/decisions` (the WebSocket binding `nts-ws/0.1`, FEP-0004), as an AAC app would read them. The page itself uses `/events` (demo messages) and `/state/state.json`.
 
 ## Code
 - [`src/fidetype/demo/live/`](../src/fidetype/demo/live/): configuration, tracks, server, key decoder, emg2qwerty preparation, page (`web/index.html`).

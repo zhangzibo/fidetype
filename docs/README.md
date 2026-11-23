@@ -1,54 +1,104 @@
 # Fidetype documentation
 
-This folder holds the user documentation of NeuralTextStream (NTS) and Fidetype. The normative text is the spec in [`../spec/`](../spec/README.md). These pages explain how to use it.
+How to install, use and extend Fidetype: the toolkit that turns brain and muscle signals into text, with a trust layer that types a word only when it is sure.
 
-The sections follow the plan for the future documentation site ([docs site plan](../wiki/questions/docs-site-plan.md), roadmap task P8-05). That site is not built yet. Each page here is plain Markdown, so the site can use it later without changes.
+**Status:** Beta, except the NTS format (Development) ([status levels](glossary.md#status-levels))
 
-## Contents
+Fidetype is research software. **It is not a medical device.** Every page here is plain Markdown. The same pages make the [documentation site](https://zhangzibo.github.io/fidetype/docs/). Words that you may not know are in the [glossary](glossary.md).
 
-| Section | Page | What it gives you |
-|---|---|---|
-| Get started | [getting-started.md](getting-started.md) | Install from a clone, run the demo, emit your first stream, run the trust layer |
-| Tutorials | [tutorials.md](tutorials.md) | Three 10-minute tutorials (CPU, no hardware, synthetic or public data): decode with a pretrained decoder; trust guard + safe WPM; score on the benchmark. Timed in CI |
-| Live demo | [demo.md](demo.md) | One command: recorded decoder output replayed in the browser, each trust decision visible |
-| Device support | [device-support.md](device-support.md) | Which devices, recording files and public datasets work; support level (real device / replay only / synthetic only / untested), what the tests cover, known limits. Generated from the adapter metadata; CI checks it |
-| Live decode | [live-decode.md](live-decode.md) | One command: live signal from LSL, BrainFlow / OpenBCI boards or a synthetic source -> model -> trust guard -> decisions and NTS |
-| Pretrained decoders | [pretrained-decoders.md](pretrained-decoders.md) | One line loads a model for a public dataset (T15, T12 implant speech; KT-sEMG, emg2qwerty EMG), one line decodes a data file into NTS, an optional guard; SHA-256-checked weights, research-only licence gate |
-| Concepts | [concepts.md](concepts.md) | The NTS data model, profiles, bindings, the trust layer, conformance levels, terms |
-| Trust for your decoder | [trust-quickstart.md](trust-quickstart.md), [trust-guarantee.md](trust-guarantee.md) | Add the trust layer to your own decoder in 10 minutes (logits or n-best in; commit / offer / withhold out); what the guarantee covers and how to read the audit log |
-| Personalisation | [trust-personalisation.md](trust-personalisation.md) | One trust profile per user (hashed id, no text), anytime-valid drift tests, re-calibration only through the gated update path |
-| Provenance and privacy | [provenance-and-privacy.md](provenance-and-privacy.md) | Lineage of each output (data -> weights -> calibration -> decision), licence flags (NC data is research only), anchors, consent references, the Collector `privacy` processor, deletion on request |
-| SDKs | [sdks.md](sdks.md) | The three reference SDKs side by side, and the Python SDK guide |
-| SDKs (per language) | [TypeScript](../sdk/typescript/README.md), [Rust](../sdk/rust/README.md) | Full guides of the other two SDKs |
-| Collector | [collector.md](collector.md) | Run the Collector: receivers, processors, exporters, configuration |
-| Conformance | [conformance.md](conformance.md) | The conformance kit (36 example files over every wire form) and `nts-conform`: per-rule report on your files, and your validator checked against the kit; implementation levels NTS Core / Full / Trust-ready; the self-certification list and how to join it; profiles and golden vectors |
-| Semantic conventions | [semconv.md](semconv.md) | The registry of standard key names (`meta`, `trust_decision` objects): types, units, requirement levels, stability |
-| Benchmark | [../benchmark/README.md](../benchmark/README.md) | Score neural text entry on public datasets; submit a result |
-| Benchmark tracks | [benchmark-tracks.md](benchmark-tracks.md) | The seven tracks (intracortical speech and handwriting, sEMG, MEG), licence-clean fixed splits (hashes only), verify your dataset copy |
-| Benchmark submission | [benchmark-submission.md](benchmark-submission.md) | Submission format v0.2 (unit rows keyed by split hashes, required shuffled and null controls) and the one-command scorer with the full score card |
-| Safe WPM | [safe-wpm.md](safe-wpm.md) | The headline metric: words per minute that the system types right by itself, at a certified wrong-commit rate |
-| Hallucination benchmark | [hallucination-benchmark.md](hallucination-benchmark.md) | Null, scrambled and swapped-signal tracks and the fluent-wrong metric: does your decoder invent text? |
-| Language support | [language-support.md](language-support.md) | Which parts assume English (audit with file and line), the per-language config `fidetype.lang` (`en` default, `es` provisional, `zh` stub: WPM not defined) |
-| Specification | [../spec/README.md](../spec/README.md) | All spec versions; the current draft is [NTS 1.0 RC4](../spec/nts-1.0-rc4.md) |
-| Proposals (FEPs) | [../spec/README.md#proposals-feps](../spec/README.md#proposals-feps) | Enhancement proposals and how to write one |
-| Releasing | [RELEASING.md](RELEASING.md) | Versioning policy and the release checklist of each SDK (maintainers) |
-| Publishing checklist | [publishing-checklist.md](publishing-checklist.md) | First public release, step by step: accounts, commands, checks, rollback, time per step (maintainers) |
-| Project | [../GOVERNANCE.md](../GOVERNANCE.md), [../CONTRIBUTING.md](../CONTRIBUTING.md) | Governance, decision process, how to contribute |
+## Get started
 
-## Status in one table
+Pick your role. Each path needs no hardware: the first steps use synthetic or public data.
 
-| Part | State |
+| You are | You want to | Start here | Then |
+|---|---|---|---|
+| Researcher | Decode public BCI datasets, measure decoders, compare results | [Getting started](getting-started.md) | [Pretrained decoders](pretrained-decoders.md), [benchmark](../benchmark/README.md), [tutorials](tutorials.md) |
+| App builder | Put a decoder in an app and type only text that you can trust | [Trust quickstart](trust-quickstart.md) (10 minutes) | [Guarantee sheet](trust-guarantee.md), [live demo](demo.md), [live decode](live-decode.md) |
+| Contributor | Write a producer or consumer, add a device, change the format | [Getting started](getting-started.md) | [Conformance](conformance.md), [adapters](adapters.md), [CONTRIBUTING.md](../CONTRIBUTING.md) |
+
+## Concepts
+
+| Page | What it explains |
 |---|---|
-| NTS spec | 0.1 is the current release (Development). 1.0 RC4 is a **draft** for public comment |
-| Python SDK `fidetype` | Reference SDK, trust layer, Collector, adapters. Version 0.1.0 (from 0.1.0: `pip install fidetype`) |
-| TypeScript SDK `@fidetype/sdk` | Ready. Version 0.1.0 (from 0.1.0: `npm install @fidetype/sdk`) |
-| Rust SDK `fidetype` (crate) | Ready (`no_std` core). Version 0.1.0 (from 0.1.0: `cargo add fidetype`) |
-| C SDK | Planned **after** NTS 1.0 (for embedded devices and FFI). Not started |
-| Medical use | None. Fidetype is research software, not a medical device |
+| [Concepts](concepts.md) | The NTS data model, profiles, bindings, the trust layer, conformance, the Collector |
+| [Glossary](glossary.md) | Every term in plain words, and the status levels |
+| [Safe WPM](safe-wpm.md) | The headline metric: words per minute that the system types right by itself, at a certified wrong-commit rate |
+| [Trust guarantee](trust-guarantee.md) | What the trust guard promises, under which assumptions, and how to read the audit log |
+| [Provenance and privacy](provenance-and-privacy.md) | The lineage of each output, licence flags, consent references, deletion on request |
+
+## How-to guides
+
+| Task | Page |
+|---|---|
+| Add the trust layer to your own decoder | [Trust quickstart](trust-quickstart.md) |
+| Load a pretrained decoder for a public dataset | [Pretrained decoders](pretrained-decoders.md) |
+| Decode a live signal (LSL, BrainFlow / OpenBCI, a file or a synthetic source) | [Live decode](live-decode.md) |
+| Check which devices, files and datasets work | [Device support](device-support.md), [adapters](adapters.md) |
+| Show trust decisions in the browser | [Live demo](demo.md) |
+| Keep one trust profile per user and detect drift | [Trust personalisation](trust-personalisation.md) |
+| Run inputs, trust and outputs as one service | [Collector](collector.md) |
+| Use another language than English | [Language support](language-support.md) |
+| Score a decoder and submit a result | [Benchmark](../benchmark/README.md), [tracks](benchmark-tracks.md), [submission](benchmark-submission.md) |
+| Test whether a decoder invents text | [Hallucination benchmark](hallucination-benchmark.md) |
+| Use TypeScript or Rust | [SDKs](sdks.md), [TypeScript](../sdk/typescript/README.md), [Rust](../sdk/rust/README.md) |
+
+## Tutorials
+
+[Tutorials](tutorials.md): three 10-minute tutorials, each a tested script on a laptop CPU, no hardware.
+
+1. [Decode text with a pretrained decoder](tutorials-01-decode.md)
+2. [Add the trust guard and read the safe WPM](tutorials-02-trust.md)
+3. [Score a decoder on the benchmark](tutorials-03-benchmark.md)
+
+## Reference
+
+| Page | Content |
+|---|---|
+| [Specification](../spec/README.md) | All NTS spec versions; the current draft is [NTS 1.0 RC4](../spec/nts-1.0-rc4.md). The spec is normative: if a page here disagrees with it, the spec is right |
+| [Proposals (FEPs)](../spec/README.md#proposals-feps) | Enhancement proposals and how to write one |
+| [Semantic conventions](semconv.md) | The registry of standard key names: types, units, requirement levels, stability |
+| [Conformance](conformance.md) | The conformance kit, `nts-conform`, implementation levels, the self-certification list |
+| [SDKs](sdks.md) | The Python, TypeScript and Rust SDKs side by side, and the Python API guide |
+| [Command line](getting-started.md#command-line-summary) | The `fidetype` commands |
+| [Changelog](../CHANGELOG.md) | What changed in each release |
+
+## Status of the parts
+
+| Part | Status | Install |
+|---|---|---|
+| Python SDK `fidetype` (decoders, trust layer, adapters, Collector) | Beta; Collector and live decode Alpha | `pip install fidetype` |
+| TypeScript SDK `@fidetype/sdk` | Beta | `npm install @fidetype/sdk` |
+| Rust SDK `fidetype` (crate, `no_std` core) | Beta | `cargo add fidetype` |
+| Benchmark and leaderboard | Alpha | in the Python package |
+| NTS format | Development. 1.0 RC4 is a draft for public comment | [spec](../spec/README.md) |
+| C SDK | Planned after NTS 1.0 (embedded devices, FFI). Not started | — |
+| Medical use | None. Fidetype is not a medical device | — |
+
+What works and what does not, with the research evidence: [research status](../RESEARCH.md).
+
+## Design records
+
+These pages record designs and the decisions behind them. They are not user guides.
+
+| Page | Content |
+|---|---|
+| [Benchmark hub design](hub-design.md) | The versioned dataset registry and replay adapters |
+| [Safe WPM v0.2 proposal](safe-wpm-v0.2-proposal.md) | Prefix credit, speech time and reading cost (adopted 2026-11-22) |
+| [Archive](archive/) | Old records, kept for history |
+
+## For maintainers
+
+| Page | Content |
+|---|---|
+| [Releasing](RELEASING.md) | Versioning policy and the release checklist of each SDK |
+| [Publishing checklist](publishing-checklist.md) | The first public release, step by step |
+| [Governance](../GOVERNANCE.md), [Contributing](../CONTRIBUTING.md), [Security](../SECURITY.md) | Decision process, how to contribute, how to report a vulnerability |
 
 ## Writing rules for these pages
 
-- Write "80% ASD-STE100": short sentences, active voice, one idea per sentence, simple words. Keep exact technical terms.
+- Start each page with one sentence that says what it gives the reader, then a status line.
+- Write "80% ASD-STE100": short sentences, active voice, one idea per sentence, simple words. Keep exact technical terms. Define a term on first use or link it to the [glossary](glossary.md).
 - Show only commands that work today. CI runs most of them.
 - Link to the spec for rules. Do not copy rule text here, so the two cannot disagree.
+- No internal task codes, issue numbers or calibration-run ids in user pages. Link the internal record instead ("Details: ..."). CI checks this: `node tools/hygiene/wording.js`.
 - Prefer a table or a diagram to long prose.
