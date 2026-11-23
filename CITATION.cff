@@ -1,11 +1,14 @@
 cff-version: 1.2.0
 message: "If you use Fidetype, please cite it with the metadata in this file."
 type: software
-title: "Fidetype: an open trust layer for neural text entry"
+title: "Fidetype: open-source toolkit for brain and body-signal typing"
 abstract: >-
-  Fidetype is an open, decoder-agnostic trust layer for neural text entry.
-  It defines the NeuralTextStream format for the output of any neural input
-  decoder, and it calibrates, abstains and flags hallucinated text.
+  Fidetype is an open-source toolkit for turning brain and muscle signals
+  (EEG, MEG, EMG and implant recordings) into text. Its trust layer types
+  text only when it is confident, and it reports how often it is wrong.
+  It works with your own decoder, and it writes the open NeuralTextStream
+  (NTS) format for decoder output. Fidetype is research software, not a
+  medical device.
 authors:
   - given-names: Zibo
     family-names: Zhang

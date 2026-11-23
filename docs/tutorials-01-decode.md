@@ -2,7 +2,7 @@
 
 Load a pretrained decoder, decode neural data into NTS streams, check them and read the text.
 
-**Status:** Beta ([status levels](glossary.md#status-levels))
+**Status:** Development ([status levels](glossary.md#status-levels)). The tutorial runs today in synthetic mode; the real-data mode needs weights that are not hosted yet.
 
 Time: about 1 s (synthetic mode), about 15 s (real data, 5 trials). Script: [`tutorials/01_decode_pretrained.py`](../tutorials/01_decode_pretrained.py). Index: [tutorials](tutorials.md).
 

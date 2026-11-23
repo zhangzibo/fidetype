@@ -2,7 +2,7 @@
 
 Wrap your own decoder with the Fidetype trust layer, so that it types text only when a certified check allows it.
 
-**Status:** Beta ([status levels](glossary.md#status-levels))
+**Status:** Alpha ([status levels](glossary.md#status-levels))
 
 This page is for a team that already has a decoder (brain or muscle signals to text). At the end, your decoder output goes through the Fidetype [trust layer](glossary.md#trust-layer). For each [utterance](glossary.md#utterance) you get one of three actions, with a stated [wrong-commit](glossary.md#wrong-commit-wrong-commit-rate) guarantee and an audit log:
 

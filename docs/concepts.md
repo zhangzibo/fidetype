@@ -2,7 +2,7 @@
 
 The main ideas of Fidetype and its data format NTS: streams and events, profiles, bindings, the trust layer, conformance and the Collector.
 
-**Status:** the NTS format is in Development; [NTS 1.0 RC4](../spec/nts-1.0-rc4.md) is a draft for public comment. The trust layer is Beta ([status levels](glossary.md#status-levels)).
+**Status:** the NTS format is a Release Candidate: [NTS 1.0 RC4](../spec/nts-1.0-rc4.md) is a draft for public comment. The trust layer is Alpha ([status levels](glossary.md#status-levels)).
 
 This page explains the main ideas of NeuralTextStream (NTS) and Fidetype. It is informative. Short meanings of all terms are in the [glossary](glossary.md). The rules are in the spec, [NTS 1.0 RC4](../spec/nts-1.0-rc4.md) (draft). Each section below links to the spec section that defines it.
 

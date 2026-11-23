@@ -2,7 +2,7 @@
 
 Watch the trust layer decide, utterance by utterance, on recorded or synthetic decoder output in your browser.
 
-**Status:** Beta ([status levels](glossary.md#status-levels))
+**Status:** Alpha ([status levels](glossary.md#status-levels))
 
 `fidetype demo live` starts a small local server and opens a page in your browser. The page replays decoder output that was **recorded earlier**, at the speed it was recorded. For each utterance the trust layer decides:
 

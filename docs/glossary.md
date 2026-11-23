@@ -2,24 +2,24 @@
 
 The terms that the Fidetype documentation uses, in alphabetical order, each with a short meaning.
 
-**Status:** Beta ([status levels](#status-levels))
+**Status:** Alpha ([status levels](#status-levels))
 
 The normative term list of the format is in [spec section 1.4](../spec/nts-1.0-rc4.md#14-terms). This page explains the words in plain language. If the two disagree, the spec is right.
 
 ## Status levels
 
-Each documentation page has a status line under its title. It tells you how stable the part is that the page describes. Fidetype uses one ladder for all parts:
+Each documentation page has a status line under its title. It tells you how stable the part is that the page describes. Fidetype uses one ladder for all parts. This table is the one definition; the [README status table](../README.md#status) gives the level of each component.
 
-| Level | Meaning |
-|---|---|
-| Development | Work in progress. Names, files and behaviour can change at any time. Do not build on it |
-| Alpha | It works for the documented cases. The API can still change without notice. Tell us what breaks |
-| Beta | Feature complete for this release. Breaking changes are rare and the changelog records them |
-| Release Candidate | Frozen for review. Only fixes from the review change it |
-| Stable | Breaking changes only in a new major version, with a deprecation period |
-| Deprecated | Still works, but will be removed. The page names the replacement |
+| Level | Can I use it in production? | Meaning |
+|---|---|---|
+| Development | No | Parts are missing or can change at any time. Do not build on it |
+| Alpha | Not yet | It works and has tests, but the API can change in any release. Tell us what breaks |
+| Beta | Try it in pilots | It is complete for its scope, and the API changes only with notice in the changelog |
+| Release Candidate | Not yet | It is the proposed final version. Only changes from review can follow |
+| Stable | Yes, for research and products (not as a medical device) | No breaking change within a major version; a deprecation period comes first |
+| Deprecated | Move away from it | It still works, but a later release removes it. The page names the replacement |
 
-"Beta, except ..." means that the named parts have a lower level. Fidetype is research software. **It is not a medical device**, at every level.
+A page about a sub-feature can have a lower level than its component, never a higher one. "Alpha, except ..." means that the named parts have a lower level. Fidetype is research software. **It is not a medical device**, at every level.
 
 ## Terms
 

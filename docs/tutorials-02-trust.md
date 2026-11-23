@@ -2,7 +2,7 @@
 
 Calibrate a trust guard on decoder output, get commit / offer / withhold decisions and compute the safe WPM.
 
-**Status:** Beta ([status levels](glossary.md#status-levels))
+**Status:** Alpha ([status levels](glossary.md#status-levels))
 
 Time: about 80 s (synthetic mode), about 50 s (real data, 65 trials). Script: [`tutorials/02_trust_and_safe_wpm.py`](../tutorials/02_trust_and_safe_wpm.py). Index: [tutorials](tutorials.md).
 

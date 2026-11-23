@@ -2,7 +2,7 @@
 
 How to install, use and extend Fidetype: the toolkit that turns brain and muscle signals into text, with a trust layer that types a word only when it is sure.
 
-**Status:** Beta, except the NTS format (Development) ([status levels](glossary.md#status-levels))
+**Status:** Alpha. The NTS format and conformance suite: Release Candidate. Pretrained decoders: Development ([status levels](glossary.md#status-levels))
 
 Fidetype is research software. **It is not a medical device.** Every page here is plain Markdown. The same pages make the [documentation site](https://zhangzibo.github.io/fidetype/docs/). Words that you may not know are in the [glossary](glossary.md).
 
@@ -64,13 +64,18 @@ Pick your role. Each path needs no hardware: the first steps use synthetic or pu
 
 ## Status of the parts
 
+The same levels as the [README status table](../README.md#status):
+
 | Part | Status | Install |
 |---|---|---|
-| Python SDK `fidetype` (decoders, trust layer, adapters, Collector) | Beta; Collector and live decode Alpha | `pip install fidetype` |
-| TypeScript SDK `@fidetype/sdk` | Beta | `npm install @fidetype/sdk` |
-| Rust SDK `fidetype` (crate, `no_std` core) | Beta | `cargo add fidetype` |
+| Trust layer | Alpha | in the Python package |
+| Python SDK `fidetype` | Alpha | `pip install fidetype` |
+| TypeScript SDK `@fidetype/sdk` | Alpha | `npm install @fidetype/sdk` |
+| Rust SDK `fidetype` (crate, `no_std` core) | Alpha | `cargo add fidetype` |
+| Collector | Alpha | in the Python package |
 | Benchmark and leaderboard | Alpha | in the Python package |
-| NTS format | Development. 1.0 RC4 is a draft for public comment | [spec](../spec/README.md) |
+| NTS format and conformance suite | Release Candidate. 1.0 RC4 is a draft for public comment | [spec](../spec/README.md) |
+| Pretrained decoders | Development. The loader and model cards work; the weights are not downloadable yet | in the Python package |
 | C SDK | Planned after NTS 1.0 (embedded devices, FFI). Not started | — |
 | Medical use | None. Fidetype is not a medical device | — |
 

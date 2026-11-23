@@ -2,7 +2,7 @@
 
 Three short, tested tutorials: decode with a pretrained decoder, add the trust guard, and score a decoder on the benchmark.
 
-**Status:** Beta ([status levels](glossary.md#status-levels))
+**Status:** Alpha ([status levels](glossary.md#status-levels))
 
 Each tutorial is a script in [`tutorials/`](../tutorials/) and a page that walks through it. Words that you may not know (safe WPM, LTT, NTS, CER) are in the [glossary](glossary.md).
 

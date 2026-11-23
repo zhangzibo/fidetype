@@ -2,7 +2,7 @@
 
 The definition of safe WPM, the headline metric of the Fidetype benchmark, and how to compute it.
 
-**Status:** Beta ([status levels](glossary.md#status-levels)). `safe-wpm/0.1` is the metric in use. `safe-wpm/0.2` is adopted; the scorer switches to it in a later release (section 6a).
+**Status:** Alpha ([status levels](glossary.md#status-levels)). `safe-wpm/0.1` is the metric in use. `safe-wpm/0.2` is adopted; the scorer switches to it in a later release (section 6a).
 
 Code: [`src/fidetype/benchmark/safe_wpm.py`](../src/fidetype/benchmark/safe_wpm.py). Baselines: [results](../experiments/2026-11-16-p14-05-safe-wpm/results.md). Leaderboard column: "Safe WPM @ alpha" in [`benchmark/site/leaderboard.md`](../benchmark/site/leaderboard.md).
 

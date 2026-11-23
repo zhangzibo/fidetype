@@ -60,16 +60,7 @@ print(r.action, r.text)                                 # commit i need help
 | **NTS format and conformance suite** | Release Candidate | The NTS 1.0 RC4 draft, open for comment, with test vectors |
 | **Pretrained decoders** | Development | The loader and model cards work; the weights are not downloadable yet |
 
-**NTS** (NeuralTextStream) is the open file and stream format that Fidetype uses for decoder output. The levels mean:
-
-| Level | Can I use it in production? |
-|---|---|
-| Development | No. Parts are missing or can change at any time. |
-| Alpha | Not yet. It works and has tests, but the API can change in any release. |
-| Beta | Try it in pilots. It is complete for its scope, and the API changes only with notice. |
-| Release Candidate | Not yet. It is the proposed final version; only changes from review can follow. |
-| Stable | Yes, for research and products (not as a medical device). No breaking change within a major version. |
-| Deprecated | Move away from it. It still works, but a later release removes it. |
+**NTS** (NeuralTextStream) is the open file and stream format that Fidetype uses for decoder output. The six levels (Development, Alpha, Beta, Release Candidate, Stable, Deprecated) are defined in the [glossary](docs/glossary.md#status-levels).
 
 ## Who it is for
 

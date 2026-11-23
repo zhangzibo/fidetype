@@ -2,7 +2,7 @@
 
 Install Fidetype, run the offline demo, write your first NTS file and get your first trust decisions, in about 15 minutes.
 
-**Status:** Beta ([status levels](glossary.md#status-levels))
+**Status:** Alpha ([status levels](glossary.md#status-levels))
 
 Fidetype turns decoder output from brain or muscle signals into text that you can trust. Two parts matter on this page:
 
