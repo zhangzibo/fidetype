@@ -420,7 +420,8 @@ jobs:
           cargo +"$msrv" build --locked --lib --no-default-features
 
   # R-23 repository hygiene: no caches, build output, data or model files, secrets, private e-mail
-  # addresses or files over 5 MB in the tracked tree; no broken relative links in README.md and docs/.
+  # addresses or files over 5 MB in the tracked tree; no broken relative links in README.md and docs/;
+  # no roadmap codes, gap numbers, calibration-run ids or "user decision" text in public pages (wording.js).
   # Rules and the cleanup checklist: wiki/questions/repo-hygiene.md.
   hygiene:
     runs-on: ubuntu-latest
@@ -431,6 +432,7 @@ jobs:
           node-version: "24"
       - run: node tools/hygiene/check.js --ci
       - run: node tools/hygiene/links.js --ci
+      - run: node tools/hygiene/wording.js --ci   # no internal ids in README.md and user docs
 
   # P3-04: collector pipeline integration test and latency budget (p95 added < 50 ms x FIDETYPE_LATENCY_TOLERANCE,
   # default 1.0; docs/collector.md). The lsl extra makes the LSL receiver test run too. P7-05 / P7-07: the collector's
