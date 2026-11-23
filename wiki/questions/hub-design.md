@@ -3,7 +3,7 @@ title: Benchmark hub design (P13-01)
 type: question
 tags: [benchmark, hub, registry, datasets, replay, licence, governance, planning]
 sources: [brain-to-text-25-copytask]
-updated: 2026-11-18
+updated: 2026-11-22
 ---
 
 # Benchmark hub design: dataset registry and replay adapters (P13-01)
@@ -29,7 +29,7 @@ updated: 2026-11-18
 > **Our take:** the B2T '25 pkl and HDF5 forms hold the same trials ([T15 split audit](t15-split-audit.md)). The registry records this as `same_units`, so the overlap check of P6-10 has one place to read it.
 
 ## Decisions (2026-11-18)
-The user answered: "i would like to have a site but the rest you can decide". So Q6 is the user's choice, and the other six questions take our proposals. Full text: [docs/hub-design.md, Decisions](../../docs/hub-design.md#decisions-2026-11-18).
+The user answered: "i would like to have a site but the rest you can decide". So Q6 is the user's choice, and the other six questions take our proposals. **Re-confirmed by the user on 2026-11-22 ("all recommended"): Q1-Q7 stay as decided below; no question is open.** Q2 was the only design input that P13-03 needed, so P13-03 has no open user decision (its private truth store still needs an owner step when it is built). Full text: [docs/hub-design.md, Decisions](../../docs/hub-design.md#decisions-2026-11-18).
 
 | # | Question | Decision |
 |---|---|---|

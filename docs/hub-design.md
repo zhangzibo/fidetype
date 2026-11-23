@@ -243,7 +243,7 @@ The score card v0.2 already holds the guarantee block (`method`, `alpha`, `delta
 
 ## 10. Questions for the user (all decided 2026-11-18)
 
-The user decided all seven questions on 2026-11-18. The decisions are in the next section.
+The user decided all seven questions on 2026-11-18 and re-confirmed them on 2026-11-22 ("all recommended"). The decisions are in the next section.
 
 | # | Question | Our proposal | State |
 |---|---|---|---|

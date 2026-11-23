@@ -253,7 +253,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P2-11 Required status check on main
 - **Gap:** 65 of the [open-gap list](open-gaps.md) (added 2026-11-18 by P2-09). Follow-up of P2-09.
-- **Status:** `todo` (owner action).
+- **Status:** `done` (2026-11-22, user decision "all recommended"; set with `gh api` by an agent): ruleset id 27878244 "main: require CI (P2-11)" (enforcement `active`, target the default branch `main`), rule `required_status_checks` with the contexts `all-green`, `tutorials (ubuntu-latest, py3.12)` and `tutorials (windows-latest, py3.12)` (integration GitHub Actions, id 15368), strict policy off; bypass actor = repository role Admin (id 5), mode `always`, so the owner's (and the agents') direct pushes to `main` still work (git reports "Bypassed rule violations"); no review rule; no classic branch protection; no other setting changed. Decision for direct pushes: they stay allowed for the owner through the admin bypass; pull requests need the three checks green before merge. Gap 65 closed.
 - **Depends on:** the repository owner (GitHub settings).
 - **Source:** P2-09: the `all-green` job of `tests.yml` fails when any job fails, but `main` has no branch rule (`gh api .../branches/main/protection`: 404), so a red platform does not block a merge.
 - **Done when:** a ruleset on `main` requires the `all-green` check for pull requests, and the decision for direct pushes (agents push to `main`) is written down.
