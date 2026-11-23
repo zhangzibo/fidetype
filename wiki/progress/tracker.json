@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-22T22:10:00-08:00",
+  "updated": "2026-11-22T22:25:00-08:00",
   "target_note": "Targets set by the user on 2026-11-08: M0 done by 2026-11-09; M1-M7 done by 2026-11-15. Items that depend on outside people are externally_blocked. They are tracked, but they never count as late. Times are local (UTC-8). 2026-11-13 (user decision): paper writing and publishing are decoupled from the research project. They form the PUB track, which has no deadline, never counts as late and is not part of the M1-M7 target. M3 and M4 are research milestones; the roadmap never waits on a paper.",
   "start_date": "2026-11-07",
   "final_target": "2026-11-15",
@@ -139,6 +139,10 @@
      "started_at": "2026-11-17T02:00:00-08:00", "finished_at": "2026-11-17T03:00:00-08:00", "approx_times": true,
      "agent_runs": [{"label": "T15 split audit agent", "duration_s": 866.709, "tokens": 219000, "tool_uses": 83}],
      "orchestrator_only": false, "notes": "Page wiki/questions/t15-split-audit.md; scripts experiments/2026-11-17-t15-split-audit (match.py, audit.py; counts only in results/). pkl track test (816) vs M4 partitions: train 366 (<=368), val_select 102 (<=106), val_eval 98 (<=103). No committed result scores an M4-x decoder on its own training trials (all val_eval; 0/701 keys on train or val_select). P6-08 partial entry clean (103 units). M4-13 reruns not affected. Indirect: Paper 1 re-splits put 179-224 of the 400 word-decoder tune trials in each 818-trial test set; 16 tune trials are val_eval. New gaps 32-35: P6-09, P6-10, P15-20, P14-15."},
+    {"id": "R-27", "milestone": "R", "title": "EMG headline wording: decided by the user (2026-11-22); public pages and HANDOFF updated", "status": "done",
+     "started_at": "2026-11-22T22:05:00-08:00", "finished_at": "2026-11-22T22:25:00-08:00", "approx_times": true,
+     "agent_runs": [{"label": "EMG headline wording agent (README, overview, north star, index, safe WPM write-up, docs/safe-wpm.md 6b, HANDOFF, log)", "duration_s": null, "tokens": null, "tool_uses": null}],
+     "orchestrator_only": false, "notes": "User decision 2026-11-22. Adopted text: 'EMG typing with the trust layer is above the no-BCI baseline after calibration uncertainty, narrowly, for one sentence guard (BX3, safe-WPM v0.1: 5.90 [3.45, 8.89] vs 3.09; replicated 5.99 [3.52, 8.96] with safety headroom 0.0107 in P11-28), on 8 users and one test set.' Short form: 'EMG: above no-BCI, narrowly, for one sentence guard (8 users, one test set).' Replaces 'above on average, not reliably' for EMG (T15 wording unchanged). The prefix-guard result 5.67 [3.43, 8.26] (P11-21) is labelled proposed safe-WPM v0.2 only. HANDOFF: the npm / crates token expiry (2026-11-28) is no longer a user decision item; the user handles renewal. No roadmap item moved."},
 
     {"id": "M0-01", "milestone": "M0", "title": "Test PyTorch on the GPU. Choose ROCm, WSL2 + ROCm, DirectML or cloud. Record the result", "status": "done",
      "started_at": "2026-11-08T00:05:00-08:00", "finished_at": "2026-11-08T00:35:00-08:00", "approx_times": true,
