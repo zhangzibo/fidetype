@@ -1904,7 +1904,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P14-59 Ship the P14-58 C5 threshold in the willett-hw manifest
 - **Gap:** 182 of the [open-gap list](open-gaps.md) (added 2026-11-22 by P14-58). Follow-up of P14-58, P14-56.
-- **Status:** `todo`. User decision.
+- **Status:** `done`. Done 2026-11-22, shipped (user decision "all recommended"; pre-registration `dedf60c`, results `75404c0`, [results](../../experiments/2026-11-22-p14-59-ship-lo/results.md); CPU only, 22:16-22:25): all three re-checks pass. RC1: the LM guard calibrated again with `lo_new` 0.5659 (decoder_version 3) = `tcfg-f498c0637536daec` (was `tcfg-26ae951a20a0cddd`); commit controls 0 / 300, 0 / 300, 0 / 106; 0 LTT commits; 0 test commits; real test gated 3 / 80; time-shuffled, zero, uniform emit 0 / 80. RC2: `coherence` offer gate refitted by the P14-54 rule = 0.003486 (was 0.002821); S rule pass; LTT offers 40 / 40; test nulls 0 / 80; frame-shuffled 0 / 80 vs real 77 / 80; 0 real offers removed. RC3: `recheck_offer_control` pass (0 / 300, 0 / 300, 0 / 106 vs real 40 / 40), commits match the sheet. Manifest `willett-hw` (new guard file `willett-hw.lm3.guard.json`), model card, tests, docs, changelog updated. Gap 182 closed.
 - **Serves:** research labs.
 - **Depends on:** P14-58 (done); the user decision (the real cost goes up); CPU.
 - **Source:** P14-58 (2026-11-21, results `71f954e`, [results](../../experiments/2026-11-21-p14-57-direction-aware-offer/results.md)): `lo_new` 0.5659 gives 0 / 800 time-shuffled emits (CP95 0.0037) but gates 3 / 80 real test inputs (shipped `lo` -1.1697: 1 / 80). Shipping it changes the LM readout, the LM guard decoder, its `coherence` offer gate (fitted with the shipped C5) and the P14-56 offer-control block.
