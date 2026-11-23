@@ -1,0 +1,12 @@
+[2026-11-22 22:16:28] (rss 398 MB, peak 398 MB) cal: calibrate the LM guard with lo_new on 106 val sentences
+[2026-11-22 22:18:53] (rss 488 MB, peak 717 MB) cal: tcfg-f498c0637536daec (145.1 s)
+[2026-11-22 22:19:10] (rss 482 MB, peak 717 MB) select: S real offers 65 / 66; tau 0.00348573 (17 s)
+[2026-11-22 22:20:56] (rss 515 MB, peak 717 MB) select: S rule passed True (122.3 s)
+[2026-11-22 22:23:29] (rss 512 MB, peak 717 MB) eval: V passed True: [('uniform', 0, 300), ('shuffled', 0, 300), ('user', 0, 106)], real {'n': 40, 'n_offer': 40, 'offer_rate': 1.0} (153.4 s)
+[2026-11-22 22:23:56] (rss 577 MB, peak 717 MB) eval: test real: {'n': 80, 'commit': 0, 'offer': 77, 'withhold': 3, 'gated_by_offer_gate': 0, 'readout_gated': 3, 'readout_emits': 77, 'decided': 80, 'emit': 77} (27 s)
+[2026-11-22 22:24:12] (rss 579 MB, peak 717 MB) eval: test timeshuf: {'n': 80, 'commit': 0, 'offer': 0, 'withhold': 80, 'gated_by_offer_gate': 0, 'readout_gated': 80, 'readout_emits': 0, 'decided': 80, 'emit': 0} (43 s)
+[2026-11-22 22:24:27] (rss 579 MB, peak 717 MB) eval: test zero: {'n': 80, 'commit': 0, 'offer': 0, 'withhold': 80, 'gated_by_offer_gate': 0, 'readout_gated': 80, 'readout_emits': 0, 'decided': 80, 'emit': 0} (58 s)
+[2026-11-22 22:24:54] (rss 583 MB, peak 717 MB) eval: test frameshuf: {'n': 80, 'commit': 0, 'offer': 0, 'withhold': 80, 'gated_by_offer_gate': 77, 'readout_gated': 2, 'readout_emits': 78, 'decided': 80, 'emit': 0} (85 s)
+[2026-11-22 22:25:00] (rss 583 MB, peak 717 MB) eval: test uniform: {'n': 80, 'commit': 0, 'offer': 0, 'withhold': 80, 'gated_by_offer_gate': 0, 'readout_gated': 80, 'readout_emits': 0, 'decided': 5, 'emit': 0} (91 s)
+[2026-11-22 22:25:00] (rss 182 MB, peak 717 MB) score: RC1 True RC2 True RC3 True; ship True
+[2026-11-22 22:25:00] (rss 182 MB, peak 717 MB) end of all; peak 717 MB

@@ -1,0 +1,128 @@
+{
+ "alpha": 0.05,
+ "delta": 0.1,
+ "n_cal": 106,
+ "n_null": 106,
+ "seed": 0,
+ "gate": {
+  "kind": "score",
+  "feature": "logit",
+  "lo": 0.5659314232741417,
+  "hi": null,
+  "k_min": 1,
+  "r_max": 2.8341205890525143,
+  "frame_s": 0.01,
+  "blank": 0,
+  "inputs": [
+   "peak",
+   "neg_entropy",
+   "nb_share",
+   "kps",
+   "log_n_keys"
+  ],
+  "mean": [
+   0.721229490905637,
+   -0.7751456804416097,
+   0.009525419203591607,
+   0.6451203821970972,
+   2.8780015208328
+  ],
+  "scale": [
+   0.14949540773784878,
+   0.45883367758945126,
+   0.007011353248192092,
+   0.40557320589063134,
+   0.9289044543950082
+  ],
+  "coef": [
+   1.7726535510820793,
+   1.0447799596569138,
+   1.2517341377270468,
+   1.1445503008919289,
+   0.9197467575876155
+  ],
+  "intercept": 0.5441830430410218
+ },
+ "decoder_version": "3",
+ "status": "guard",
+ "config_id": "tcfg-f498c0637536daec",
+ "guard_sha256": "9d87fc6046e91b918b6e82fd2a24a3983e1ba0156a752bf5464b8c79cbd6e9f9",
+ "guard_size": 8613,
+ "feasible": false,
+ "ltt_commits": 0,
+ "n_ltt": 40,
+ "controls": [
+  {
+   "name": "uniform",
+   "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+   "n": 300,
+   "n_commit": 0,
+   "allowed": 15,
+   "passed": true,
+   "n_offer": 0
+  },
+  {
+   "name": "shuffled",
+   "description": "calibration frames in a random time order",
+   "n": 300,
+   "n_commit": 0,
+   "allowed": 15,
+   "passed": true,
+   "n_offer": 289
+  },
+  {
+   "name": "user",
+   "description": "your decoder output on null input (null_inputs)",
+   "n": 106,
+   "n_commit": 0,
+   "allowed": 5,
+   "passed": true,
+   "n_offer": 0
+  }
+ ],
+ "offers": {
+  "rule": "pass if null offer rate <= 0.5 x real offer rate, and (null offers <= floor(0.05 x n) or one-sided Fisher exact p <= 0.05); real = the LTT items",
+  "mode": "warn",
+  "max_ratio": 0.5,
+  "p_max": 0.05,
+  "real": {
+   "n": 40,
+   "n_offer": 40,
+   "offer_rate": 1.0
+  },
+  "controls": [
+   {
+    "name": "uniform",
+    "n": 300,
+    "n_offer": 0,
+    "offer_rate": 0.0,
+    "ratio_to_real": 0.0,
+    "allowed_without_test": 15,
+    "p_value": 4.89558e-53,
+    "passed": true
+   },
+   {
+    "name": "shuffled",
+    "n": 300,
+    "n_offer": 289,
+    "offer_rate": 0.963333,
+    "ratio_to_real": 0.963333,
+    "allowed_without_test": 15,
+    "p_value": 0.246881,
+    "passed": false
+   },
+   {
+    "name": "user",
+    "n": 106,
+    "n_offer": 0,
+    "offer_rate": 0.0,
+    "ratio_to_real": 0.0,
+    "allowed_without_test": 5,
+    "p_value": 7.95975e-37,
+    "passed": true
+   }
+  ],
+  "passed": false
+ },
+ "seconds": 145.1
+}

@@ -209,7 +209,8 @@ def test_manifest_default_gate_is_the_p14_49_score_gate():
     g = LR.gate_from_dict(cfg["gate"])
     assert isinstance(g, LR.ScoreGate) and g.feature == "logit" and not g.needs_lm
     assert g.k_min == 1 and len(g.coef) == len(LR.LOGIT_INPUTS) == len(g.mean) == len(g.scale)
-    assert cfg["trust"]["config"] == "file:willett-hw.lm2.guard.json"
+    assert cfg["trust"]["config"] == "file:willett-hw.lm3.guard.json"
+    assert g.lo == pytest.approx(0.5659314232741417)  # P14-58 quantile_lo, shipped by P14-59
     blank = np.full((300, len(VOCAB)), -20.0)
     blank[:, 0] = 0.0
     assert not g.passes(blank) and not g.passes(np.full((300, len(VOCAB)), -np.log(len(VOCAB))))

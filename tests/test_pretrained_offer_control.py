@@ -22,7 +22,7 @@ RESULTS_P1454 = REPO / "experiments" / "2026-11-21-p14-54-willett-order-gate" / 
 # (model, guard key in Manifest.offer_controls, recheck file, the trust block that holds the guard)
 CASES = [
     ("willett-hw", "default", "../../2026-11-21-p14-54-willett-order-gate/results/recheck-builtin-gated.json"),
-    ("willett-hw", "lm", "../../2026-11-21-p14-54-willett-order-gate/results/recheck-lm-gated.json"),
+    ("willett-hw", "lm", "../../2026-11-22-p14-59-ship-lo/results/recheck-lm-gated.json"),
     ("t15-m4-13", "default", "../../2026-11-21-p5-33-withhold/results/recheck-t15-gated.json"),
     ("kt-semg-lda", "default", "recheck-kt.json"),
 ]
@@ -128,7 +128,8 @@ def test_willett_manifest_offer_gates():
     for key, which in (("default", "builtin"), ("lm", "lm")):
         g = blocks[key]["offer_gate"]
         assert OfferGate.from_dict(g).feature == "coherence"
-        rc = RESULTS_P1454 / f"recheck-{which}-gated.json"
+        rc = (RESULTS_P1454 / "recheck-builtin-gated.json" if which == "builtin"
+              else REPO / "experiments" / "2026-11-22-p14-59-ship-lo" / "results" / "recheck-lm-gated.json")
         if rc.is_file():
             want = json.loads(rc.read_text(encoding="utf-8"))["offer_gate"][0]
             assert (g["feature"], g["threshold"]) == (want["feature"], want["threshold"])
@@ -137,7 +138,7 @@ def test_willett_manifest_offer_gates():
     assert "offer gate (readout lm): withhold an offer if coherence <" in card
     # the guard files are local only (not in the wheel): check the default on/off switch if they are here
     base = Path(os.environ.get("FIDETYPE_PRETRAINED_DIR", "C:/Users/zhang/bci-data/pretrained")) / "willett-hw"
-    paths = {"default": base / "willett-hw.guard.json", "lm": base / "willett-hw.lm2.guard.json"}
+    paths = {"default": base / "willett-hw.guard.json", "lm": base / "willett-hw.lm3.guard.json"}
     if not all(p.is_file() for p in paths.values()):
         pytest.skip("willett-hw guard files are local only")
     stub = SimpleNamespace(manifest=m, guard_path=lambda: paths["default"],

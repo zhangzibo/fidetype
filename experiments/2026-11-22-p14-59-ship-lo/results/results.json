@@ -1,0 +1,448 @@
+{
+ "lo_new": 0.5659314232741417,
+ "shipped_lo": -1.1697116125105564,
+ "shipped_lm_config_id": "tcfg-26ae951a20a0cddd",
+ "calibration": {
+  "alpha": 0.05,
+  "delta": 0.1,
+  "n_cal": 106,
+  "n_null": 106,
+  "seed": 0,
+  "gate": {
+   "kind": "score",
+   "feature": "logit",
+   "lo": 0.5659314232741417,
+   "hi": null,
+   "k_min": 1,
+   "r_max": 2.8341205890525143,
+   "frame_s": 0.01,
+   "blank": 0,
+   "inputs": [
+    "peak",
+    "neg_entropy",
+    "nb_share",
+    "kps",
+    "log_n_keys"
+   ],
+   "mean": [
+    0.721229490905637,
+    -0.7751456804416097,
+    0.009525419203591607,
+    0.6451203821970972,
+    2.8780015208328
+   ],
+   "scale": [
+    0.14949540773784878,
+    0.45883367758945126,
+    0.007011353248192092,
+    0.40557320589063134,
+    0.9289044543950082
+   ],
+   "coef": [
+    1.7726535510820793,
+    1.0447799596569138,
+    1.2517341377270468,
+    1.1445503008919289,
+    0.9197467575876155
+   ],
+   "intercept": 0.5441830430410218
+  },
+  "decoder_version": "3",
+  "status": "guard",
+  "config_id": "tcfg-f498c0637536daec",
+  "guard_sha256": "9d87fc6046e91b918b6e82fd2a24a3983e1ba0156a752bf5464b8c79cbd6e9f9",
+  "guard_size": 8613,
+  "feasible": false,
+  "ltt_commits": 0,
+  "n_ltt": 40,
+  "controls": [
+   {
+    "name": "uniform",
+    "description": "near-uniform frames (log 1/V + 0.05 N(0,1)), same lengths",
+    "n": 300,
+    "n_commit": 0,
+    "allowed": 15,
+    "passed": true,
+    "n_offer": 0
+   },
+   {
+    "name": "shuffled",
+    "description": "calibration frames in a random time order",
+    "n": 300,
+    "n_commit": 0,
+    "allowed": 15,
+    "passed": true,
+    "n_offer": 289
+   },
+   {
+    "name": "user",
+    "description": "your decoder output on null input (null_inputs)",
+    "n": 106,
+    "n_commit": 0,
+    "allowed": 5,
+    "passed": true,
+    "n_offer": 0
+   }
+  ],
+  "offers": {
+   "rule": "pass if null offer rate <= 0.5 x real offer rate, and (null offers <= floor(0.05 x n) or one-sided Fisher exact p <= 0.05); real = the LTT items",
+   "mode": "warn",
+   "max_ratio": 0.5,
+   "p_max": 0.05,
+   "real": {
+    "n": 40,
+    "n_offer": 40,
+    "offer_rate": 1.0
+   },
+   "controls": [
+    {
+     "name": "uniform",
+     "n": 300,
+     "n_offer": 0,
+     "offer_rate": 0.0,
+     "ratio_to_real": 0.0,
+     "allowed_without_test": 15,
+     "p_value": 4.89558e-53,
+     "passed": true
+    },
+    {
+     "name": "shuffled",
+     "n": 300,
+     "n_offer": 289,
+     "offer_rate": 0.963333,
+     "ratio_to_real": 0.963333,
+     "allowed_without_test": 15,
+     "p_value": 0.246881,
+     "passed": false
+    },
+    {
+     "name": "user",
+     "n": 106,
+     "n_offer": 0,
+     "offer_rate": 0.0,
+     "ratio_to_real": 0.0,
+     "allowed_without_test": 5,
+     "p_value": 7.95975e-37,
+     "passed": true
+    }
+   ],
+   "passed": false
+  },
+  "seconds": 145.1
+ },
+ "rechecks": {
+  "RC1": {
+   "rules": {
+    "G1": {
+     "pass": true,
+     "value": {
+      "controls": [
+       [
+        "uniform",
+        0,
+        300,
+        true
+       ],
+       [
+        "shuffled",
+        0,
+        300,
+        true
+       ],
+       [
+        "user",
+        0,
+        106,
+        true
+       ]
+      ],
+      "ltt_commits": 0,
+      "feasible": false
+     }
+    },
+    "G2": {
+     "pass": true,
+     "value": {
+      "real": 0,
+      "timeshuf": 0,
+      "zero": 0,
+      "frameshuf": 0,
+      "uniform": 0
+     }
+    },
+    "G3": {
+     "pass": true,
+     "value": {
+      "real_gated": 3,
+      "timeshuf_emits": 0,
+      "zero_emits": 0,
+      "uniform_emits": 0
+     }
+    }
+   },
+   "pass": true
+  },
+  "RC2": {
+   "rules": {
+    "S": {
+     "pass": true,
+     "value": [
+      [
+       "uniform",
+       0,
+       300,
+       true
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       true
+      ],
+      [
+       "user",
+       0,
+       66,
+       true
+      ]
+     ]
+    },
+    "R3": {
+     "pass": true,
+     "value": "40 / 40"
+    },
+    "R4": {
+     "pass": true,
+     "value": {
+      "timeshuf": 0,
+      "zero": 0,
+      "uniform": 0
+     }
+    },
+    "R5": {
+     "pass": true,
+     "value": 0
+    },
+    "R6": {
+     "pass": true,
+     "value": {
+      "frameshuf_offers": 0,
+      "real_offers": 77,
+      "p_value": 9.98217e-43
+     }
+    }
+   },
+   "tau": 0.003485725778021531,
+   "shipped_tau": 0.002820748898623049,
+   "pass": true
+  },
+  "RC3": {
+   "rules": {
+    "V1": {
+     "pass": true,
+     "value": [
+      [
+       "uniform",
+       0,
+       300,
+       true
+      ],
+      [
+       "shuffled",
+       0,
+       300,
+       true
+      ],
+      [
+       "user",
+       0,
+       106,
+       true
+      ]
+     ]
+    },
+    "V2": {
+     "pass": true,
+     "value": {
+      "commits_match_sheet": true,
+      "ltt_commits": 0
+     }
+    }
+   },
+   "pass": true
+  }
+ },
+ "select": {
+  "config_id": "tcfg-f498c0637536daec",
+  "S_n": 66,
+  "S_real_offers": 65,
+  "tau": 0.003485725778021531,
+  "shipped_tau": 0.002820748898623049,
+  "uniform_fast_path": {
+   "checked": 5,
+   "check_equal": true,
+   "n": 300
+  },
+  "ungated_null_offers": {
+   "uniform": 0,
+   "shuffled": 291,
+   "user": 0
+  },
+  "coherence_min_median_max": {
+   "real_offers": [
+    0.003485725778021531,
+    0.011966654399253374,
+    0.018011204285020788
+   ],
+   "uniform": [
+    -1.9805517190683852e-07,
+    4.7336243145720824e-09,
+    1.823005999265076e-07
+   ],
+   "shuffled": [
+    -0.0005617497420941087,
+    -6.22304292716147e-05,
+    0.0028289784527760764
+   ],
+   "user": [
+    0.0002134278934159406,
+    0.0011714415696182368,
+    0.0036767080813422393
+   ]
+  },
+  "seconds": 122.3
+ },
+ "recheck": {
+  "rule": "pass if null offer rate <= 0.5 x real offer rate, and (null offers <= floor(0.05 x n) or one-sided Fisher exact p <= 0.05); real = the LTT items",
+  "mode": "warn",
+  "max_ratio": 0.5,
+  "p_max": 0.05,
+  "real": {
+   "n": 40,
+   "n_offer": 40,
+   "offer_rate": 1.0
+  },
+  "controls": [
+   {
+    "name": "uniform",
+    "n": 300,
+    "n_offer": 0,
+    "offer_rate": 0.0,
+    "ratio_to_real": 0.0,
+    "allowed_without_test": 15,
+    "p_value": 4.89558e-53,
+    "passed": true
+   },
+   {
+    "name": "shuffled",
+    "n": 300,
+    "n_offer": 0,
+    "offer_rate": 0.0,
+    "ratio_to_real": 0.0,
+    "allowed_without_test": 15,
+    "p_value": 4.89558e-53,
+    "passed": true
+   },
+   {
+    "name": "user",
+    "n": 106,
+    "n_offer": 0,
+    "offer_rate": 0.0,
+    "ratio_to_real": 0.0,
+    "allowed_without_test": 5,
+    "p_value": 7.95975e-37,
+    "passed": true
+   }
+  ],
+  "passed": true,
+  "commits_match_sheet": true,
+  "ltt_commits": 0,
+  "control_commits": {
+   "uniform": "0/300",
+   "shuffled": "0/300",
+   "user": "0/106"
+  },
+  "config_id": "tcfg-f498c0637536daec",
+  "offer_gate": [
+   {
+    "schema": "fidetype.offer-gate/0.1",
+    "feature": "coherence",
+    "threshold": 0.003485725778021531,
+    "note": "P14-59: P14-54 tier-1 rule on S, new guard"
+   }
+  ],
+  "seconds": 153.4
+ },
+ "eval": {
+  "config_id": "tcfg-f498c0637536daec",
+  "test": {
+   "real": {
+    "n": 80,
+    "commit": 0,
+    "offer": 77,
+    "withhold": 3,
+    "gated_by_offer_gate": 0,
+    "readout_gated": 3,
+    "readout_emits": 77,
+    "decided": 80,
+    "emit": 77
+   },
+   "timeshuf": {
+    "n": 80,
+    "commit": 0,
+    "offer": 0,
+    "withhold": 80,
+    "gated_by_offer_gate": 0,
+    "readout_gated": 80,
+    "readout_emits": 0,
+    "decided": 80,
+    "emit": 0
+   },
+   "zero": {
+    "n": 80,
+    "commit": 0,
+    "offer": 0,
+    "withhold": 80,
+    "gated_by_offer_gate": 0,
+    "readout_gated": 80,
+    "readout_emits": 0,
+    "decided": 80,
+    "emit": 0
+   },
+   "frameshuf": {
+    "n": 80,
+    "commit": 0,
+    "offer": 0,
+    "withhold": 80,
+    "gated_by_offer_gate": 77,
+    "readout_gated": 2,
+    "readout_emits": 78,
+    "decided": 80,
+    "emit": 0
+   },
+   "uniform": {
+    "n": 80,
+    "commit": 0,
+    "offer": 0,
+    "withhold": 80,
+    "gated_by_offer_gate": 0,
+    "readout_gated": 80,
+    "readout_emits": 0,
+    "decided": 5,
+    "emit": 0
+   }
+  },
+  "uniform_fast_path": {
+   "checked": 5,
+   "check_equal": true,
+   "n": 80
+  },
+  "real_readout_cer_gated": 0.1769,
+  "real_readout_exact": 9,
+  "real_chars": 3448,
+  "seconds_test": 91.0
+ },
+ "new_config_id": "tcfg-f498c0637536daec",
+ "config_id_changed": true,
+ "ship": true
+}
