@@ -556,9 +556,10 @@ class ScoreGate:
 def hd_quantile(values: Sequence[float], q: float) -> float:
     """The Harrell-Davis estimate of the ``q`` quantile (P14-58): a weighted mean of all order statistics,
     with the weights of a Beta((n + 1) q, (n + 1)(1 - q)) distribution. Unlike one order statistic (for
-    example the minimum), it moves little when one value changes."""
-    from scipy.stats import beta
+    example the minimum), it moves little when one value changes.
 
+    The Beta CDF is :func:`_beta_cdf` (numpy and ``math`` only), so the core package does not need scipy.
+    It agrees with ``scipy.stats.beta.cdf`` to about 1e-12 (n up to 2000)."""
     x = np.sort(np.asarray([float(v) for v in values], np.float64))
     n = len(x)
     if n == 0:
@@ -567,8 +568,49 @@ def hd_quantile(values: Sequence[float], q: float) -> float:
         raise ValueError("q must be in (0, 1)")
     if n == 1:
         return float(x[0])
-    cdf = beta.cdf(np.arange(n + 1) / n, (n + 1) * q, (n + 1) * (1.0 - q))
+    a, b = (n + 1) * q, (n + 1) * (1.0 - q)
+    cdf = np.array([_beta_cdf(i / n, a, b) for i in range(n + 1)], np.float64)
     return float(np.dot(np.diff(cdf), x))
+
+
+def _betacf(x: float, a: float, b: float) -> float:
+    """The continued fraction of the incomplete beta function (modified Lentz method)."""
+    tiny, eps = 1e-300, 1e-16
+    qab, qap, qam = a + b, a + 1.0, a - 1.0
+    c, d = 1.0, 1.0 - qab * x / qap
+    d = 1.0 / (d if abs(d) > tiny else tiny)
+    h = d
+    for m in range(1, 10001):
+        m2 = 2 * m
+        aa = m * (b - m) * x / ((qam + m2) * (a + m2))
+        d = 1.0 + aa * d
+        d = 1.0 / (d if abs(d) > tiny else tiny)
+        c = 1.0 + aa / c
+        c = c if abs(c) > tiny else tiny
+        h *= d * c
+        aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2))
+        d = 1.0 + aa * d
+        d = 1.0 / (d if abs(d) > tiny else tiny)
+        c = 1.0 + aa / c
+        c = c if abs(c) > tiny else tiny
+        delta = d * c
+        h *= delta
+        if abs(delta - 1.0) < eps:
+            return h
+    raise ArithmeticError("the incomplete beta continued fraction did not converge")
+
+
+def _beta_cdf(x: float, a: float, b: float) -> float:
+    """The CDF of Beta(a, b) at ``x`` (the regularized incomplete beta function I_x(a, b)), a, b > 0."""
+    if x <= 0.0:
+        return 0.0
+    if x >= 1.0:
+        return 1.0
+    ln_front = (math.lgamma(a + b) - math.lgamma(a) - math.lgamma(b)
+                + a * math.log(x) + b * math.log1p(-x))
+    if x < (a + 1.0) / (a + b + 2.0):
+        return math.exp(ln_front) * _betacf(x, a, b) / a
+    return 1.0 - math.exp(ln_front) * _betacf(1.0 - x, b, a) / b
 
 
 def quantile_lo(real_scores: Sequence[float], null_scores: Sequence[float] = (), q: float = 0.03,

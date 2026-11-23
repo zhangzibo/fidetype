@@ -216,6 +216,31 @@ def test_manifest_default_gate_is_the_p14_49_score_gate():
     assert not g.passes(blank) and not g.passes(np.full((300, len(VOCAB)), -np.log(len(VOCAB))))
 
 
+def test_beta_cdf_without_scipy():
+    """The numpy-only Beta CDF of hd_quantile matches closed forms (the core package has no scipy)."""
+    for x in (0.0, 0.03, 0.2, 0.5, 0.77, 0.999, 1.0):
+        assert LR._beta_cdf(x, 1.0, 1.0) == pytest.approx(x, abs=1e-13)
+        assert LR._beta_cdf(x, 3.5, 1.0) == pytest.approx(x ** 3.5, abs=1e-13)
+        assert LR._beta_cdf(x, 1.0, 2.5) == pytest.approx(1.0 - (1.0 - x) ** 2.5, abs=1e-13)
+        # Beta(2, 3): I_x = 6x^2 - 8x^3 + 3x^4
+        assert LR._beta_cdf(x, 2.0, 3.0) == pytest.approx(6 * x**2 - 8 * x**3 + 3 * x**4, abs=1e-13)
+    # symmetry I_x(a, b) = 1 - I_{1-x}(b, a), with HD weights of a large sample (n = 781, q = 0.03)
+    a, b = 782 * 0.03, 782 * 0.97
+    for x in (0.01, 0.02, 0.03, 0.05):
+        assert LR._beta_cdf(x, a, b) == pytest.approx(1.0 - LR._beta_cdf(1.0 - x, b, a), abs=1e-12)
+
+
+def test_beta_cdf_matches_scipy_when_present():
+    """Where scipy is installed (the ``data`` extra), the numpy-only CDF agrees with it."""
+    stats = pytest.importorskip("scipy.stats")
+    for n in (2, 10, 80, 106, 781):
+        for q in (0.01, 0.03, 0.5, 0.97):
+            xs = np.arange(n + 1) / n
+            a, b = (n + 1) * q, (n + 1) * (1 - q)
+            mine = np.array([LR._beta_cdf(v, a, b) for v in xs])
+            assert np.abs(mine - stats.beta.cdf(xs, a, b)).max() < 1e-10
+
+
 def test_hd_quantile_and_quantile_lo():
     """P14-58: the Harrell-Davis quantile moves little when the smallest value moves; quantile_lo."""
     rng = np.random.default_rng(0)

@@ -26,6 +26,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Ver
 - Device-support matrix: the `lsl` transport is now `replay-only` (was `synthetic-only`). The 816 real B2T '25 test trials of M4-06 went over a real pylsl loopback: decisions equal the in-process replay and the batch harness (816 / 816), 161,503 `double64` frames bit-equal (P4-21, [results](experiments/2026-11-22-p4-21-lsl-replay/results.md)).
 - Device-support matrix: the `text-nbest` row cites real CSV and JSON Lines reads of B2T '25 decoder output (1,718 online 1-best texts, 816 10-best lists): exact round trip, 0 conformance failures. The files come from a converter, because no local tool writes these forms (P4-22, [results](experiments/2026-11-22-p4-22-nbest-readers/results.md)).
 
+### Fixed
+- `fidetype.pretrained.lmreadout.hd_quantile` no longer imports scipy (scipy is only in the optional `data` extra, so a core install raised `ModuleNotFoundError`). It now uses a numpy-only Beta CDF; this agrees with `scipy.stats.beta.cdf` to about 1e-12, so the shipped `lo` 0.566 and `tcfg-f498c0637536daec` do not change. This also makes the `tests` CI workflow green again (it was red from commit e1f8573).
+
 ## [0.1.0] - 2026-11-21
 
 First public release (PyPI). Version 0.0.1 was a development version and was never published.
