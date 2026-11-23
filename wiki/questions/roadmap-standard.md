@@ -814,7 +814,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P5-37 Fixed-threshold-0 rule for the lm_beam_direction offer gate
 - **Gap:** 189 of the [open-gap list](open-gaps.md) (added 2026-11-22 by P5-36b). Follow-up of P5-36.
-- **Status:** `todo`.
+- **Status:** `blocked` (2026-11-22) on a user decision between options A-E. Evidence 2026-11-22 (P5-37 data audit, commit `5d74a8e`, [results](../../experiments/2026-11-22-p5-37-fixed-threshold/results.md)): no clean unused `willett-hw` data. The 1,000 Willett sentences are test 80 and val 106 (both used by P14-57 / P5-36 / P5-36b), pool 781 (decoder training, P15-08) and 33 excluded by the authors (incomplete trials). No pre-registration and no number. Options A-E in the results. A decision is needed. Gap 181 (P5-36) stays `in_progress`; gap 190 (P14-60) must not start.
 - **Serves:** research labs, small teams.
 - **Depends on:** P5-36 (P5-36b code: offer-gate feature `lm_beam_direction`); new time-reversed (`rev_out`) draws and real inputs that no earlier step used (another Willett split or another dataset); CPU.
 - **Source:** P5-36b (2026-11-22, results `a7bfbc8`, [results](../../experiments/2026-11-22-p5-36b-two-direction-lm/results.md)): the LM guard passes (`rev_out` 0 / 80, real offers removed 4 / 80), the built-in guard fails B2 (real removed 6 / 80) because its fitted `tau` (0.326) comes from a thin val tail. Post hoc, for information only: a fixed threshold 0 would give 1 and 2 real removed and 1 and 2 `rev_out` offers. The P14-57 test set is now used for that choice, so it cannot test it.
@@ -2312,7 +2312,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P15-43 C2 budget range of the F-R20 recipe
 - **Gap:** 194 of the [open-gap list](open-gaps.md) (added 2026-11-22 by P15-41). Follow-up of P15-41, P15-36.
-- **Status:** `todo`.
+- **Status:** `in_progress` (2026-11-22). Started 2026-11-22: pre-registration `bd673ae`, code `6235d69`; GPU job launched 22:13:42 (pid 52960), expected finish about 01:20 on 2026-11-23 (cap 02:45).
 - **Serves:** research labs.
 - **Depends on:** P15-41 (done; local weights and libraries); GPU.
 - **Source:** P15-41 (2026-11-22, results `02aa679`, [results](../../experiments/2026-11-22-p15-41-more-seeds/results.md)): C2 (arm E, deranged labels) at 10 min fails on seeds 2, 3 and 4 (seed 4: deranged 0.787 = normal 0.789). P15-36 checked C2 at 30 min on seeds 0 and 1 only (pass). No new seed has a 30-min C2, and no seed has a 3-min C2.
