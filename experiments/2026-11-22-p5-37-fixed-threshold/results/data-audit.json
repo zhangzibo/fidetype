@@ -1,0 +1,132 @@
+{
+ "sessions_with_sentences": 10,
+ "sessions_without_sentences": [
+  "t5.2019.06.03"
+ ],
+ "p14_41_n_test": 80,
+ "p14_41_n_val": 106,
+ "single_letters_files": 10,
+ "total": {
+  "test_ok": 80,
+  "val_ok": 106,
+  "pool_ok": 781,
+  "excluded_test": 2,
+  "excluded_val": 1,
+  "excluded_pool": 30,
+  "empty_not_excluded": 0,
+  "out_of_vocab_not_excluded": 0,
+  "n": 1000
+ },
+ "per_session": {
+  "t5.2019.05.08": {
+   "test_ok": 10,
+   "val_ok": 12,
+   "pool_ok": 77,
+   "excluded_test": 0,
+   "excluded_val": 0,
+   "excluded_pool": 3,
+   "empty_not_excluded": 0,
+   "out_of_vocab_not_excluded": 0,
+   "n": 102
+  },
+  "t5.2019.11.25": {
+   "test_ok": 7,
+   "val_ok": 10,
+   "pool_ok": 63,
+   "excluded_test": 0,
+   "excluded_val": 0,
+   "excluded_pool": 4,
+   "empty_not_excluded": 0,
+   "out_of_vocab_not_excluded": 0,
+   "n": 84
+  },
+  "t5.2019.12.09": {
+   "test_ok": 10,
+   "val_ok": 10,
+   "pool_ok": 63,
+   "excluded_test": 0,
+   "excluded_val": 0,
+   "excluded_pool": 1,
+   "empty_not_excluded": 0,
+   "out_of_vocab_not_excluded": 0,
+   "n": 84
+  },
+  "t5.2019.12.11": {
+   "test_ok": 6,
+   "val_ok": 10,
+   "pool_ok": 66,
+   "excluded_test": 1,
+   "excluded_val": 0,
+   "excluded_pool": 1,
+   "empty_not_excluded": 0,
+   "out_of_vocab_not_excluded": 0,
+   "n": 84
+  },
+  "t5.2019.12.18": {
+   "test_ok": 7,
+   "val_ok": 10,
+   "pool_ok": 67,
+   "excluded_test": 0,
+   "excluded_val": 0,
+   "excluded_pool": 0,
+   "empty_not_excluded": 0,
+   "out_of_vocab_not_excluded": 0,
+   "n": 84
+  },
+  "t5.2019.12.20": {
+   "test_ok": 7,
+   "val_ok": 10,
+   "pool_ok": 67,
+   "excluded_test": 0,
+   "excluded_val": 0,
+   "excluded_pool": 0,
+   "empty_not_excluded": 0,
+   "out_of_vocab_not_excluded": 0,
+   "n": 84
+  },
+  "t5.2020.01.06": {
+   "test_ok": 6,
+   "val_ok": 10,
+   "pool_ok": 61,
+   "excluded_test": 1,
+   "excluded_val": 0,
+   "excluded_pool": 6,
+   "empty_not_excluded": 0,
+   "out_of_vocab_not_excluded": 0,
+   "n": 84
+  },
+  "t5.2020.01.08": {
+   "test_ok": 7,
+   "val_ok": 10,
+   "pool_ok": 66,
+   "excluded_test": 0,
+   "excluded_val": 0,
+   "excluded_pool": 1,
+   "empty_not_excluded": 0,
+   "out_of_vocab_not_excluded": 0,
+   "n": 84
+  },
+  "t5.2020.01.13": {
+   "test_ok": 10,
+   "val_ok": 19,
+   "pool_ok": 117,
+   "excluded_test": 0,
+   "excluded_val": 1,
+   "excluded_pool": 8,
+   "empty_not_excluded": 0,
+   "out_of_vocab_not_excluded": 0,
+   "n": 155
+  },
+  "t5.2020.01.15": {
+   "test_ok": 10,
+   "val_ok": 5,
+   "pool_ok": 134,
+   "excluded_test": 0,
+   "excluded_val": 0,
+   "excluded_pool": 6,
+   "empty_not_excluded": 0,
+   "out_of_vocab_not_excluded": 0,
+   "n": 155
+  }
+ }
+}
