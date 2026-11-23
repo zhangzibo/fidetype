@@ -27,7 +27,7 @@ Code: [`src/fidetype/pretrained/`](../src/fidetype/pretrained/__init__.py). Road
 | `t12-v2` | Implant attempted speech, phonemes (CTC), causal GRU | Brain-to-Text '24 `competitionData/test/t12.*.mat` | T12, Willett et al. 2023 (CC0 1.0) | false | available; no packaged trust config (gap) |
 | `kt-semg-lda` | Forearm sEMG typing, one key per press (LDA) | KT-sEMG `runN.csv` + key log | KT-sEMG, Nokia (CC BY 4.0, attribution) | false | available; guard is a release file |
 | `emg2qwerty-p11-01` | Wrist sEMG typing, characters (CTC), causal ring-TCN, generic model | emg2qwerty session `*.hdf5` | emg2qwerty, Meta (CC BY-NC-SA 4.0) | **true** | available, **research only** |
-| `willett-hw` | Implant handwriting, characters (CTC), causal TCN, our own (P15-08 run R-all-s0). **Weak**: greedy test CER 0.305, no LM | Willett handwriting 2021, one session folder `Datasets/t5.*` (`sentences.mat`) | T5, Willett et al. 2021 (CC0 1.0) | false | available; weights licence CC0 1.0 **provisional** (user decision D11); guard is a release file, **offer only** (never commits) |
+| `willett-hw` | Implant handwriting, characters (CTC), causal TCN, our own (P15-08 run R-all-s0). **Weak**: greedy test CER 0.305, no LM | Willett handwriting 2021, one session folder `Datasets/t5.*` (`sentences.mat`) | T5, Willett et al. 2021 (CC0 1.0) | false | available; weights licence CC0 1.0 (user decision D11, 2026-11-22; not hosted yet); guard is a release file, **offer only** (never commits) |
 | `toronto-semg-cnn` | Forearm sEMG typing, key-press CNN | Toronto sEMG | CC BY 4.0 | false | planned (no runtime yet) |
 
 Each model card (`fidetype decoders info <name>`) gives the input spec, the architecture, the release files with SHA-256 and size, the licence of the data and the proposed licence of the weights, the training run, the metrics and the limits.
@@ -126,7 +126,7 @@ So do not show the offer list of `kt-semg-lda` as evidence that the signal was r
 | LM readout licence | the LM is built from Tatoeba English sentences: **CC BY 2.0 FR**, attribution "Sentences from Tatoeba (https://tatoeba.org), by the Tatoeba contributors" |
 | LM readout test overlap | none: the LM is built with every Willett text blocked (P15-38). The P14-48 LM held 13 of the 80 test sentences; it is no longer used |
 | No-signal gate | P14-49 score gate: a small logistic score of five posterior features (emission peak probability, entropy of the non-blank frames, share of non-blank frames, emissions per second, log emissions) plus `n_keys >= 1` and a rate cap; fitted and chosen on val only. Test: it stops 1 / 80 real sentences, all uniform and zero inputs, and 78 / 80 time-shuffled inputs (2 emit text; limit 4). It cannot see the frame order: frame-shuffled decoder frames pass (79 / 80). Treat an LM-readout text as a suggestion, not as evidence that the signal was read |
-| Weights licence | CC0-1.0, provisional (user decision D11); not hosted |
+| Weights licence | CC0-1.0 (user decision D11, 2026-11-22); not hosted yet: the upload waits for a final user yes (P14-02) |
 
 - The decoder is **weak**. The published Willett et al. 2021 real-time decoder is much better (other recipe). Use the numbers as descriptive only. They are an offline replay of one participant (T5), not a user study.
 - Only the 10 dataset sessions have z-score statistics (`session=`).

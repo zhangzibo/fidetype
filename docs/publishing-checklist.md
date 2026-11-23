@@ -162,6 +162,8 @@ Optional: attach the Python files (`gh release upload py-v0.1.0 dist/*`). Mark t
 ## J. Pretrained weights (optional, 45 min; roadmap P14-02)
 The package has a registry of pretrained decoders (`fidetype decoders list`, [pretrained-decoders.md](pretrained-decoders.md)). Each model has a manifest with a SHA-256, a size and an empty `url` slot. The weights are **not** in the wheel or the repository, and no file is hosted yet. This section is the hosting step. You can skip it this weekend: the package works without it (users then pass `weights=<folder>`).
 
+**Decided 2026-11-22 (user: "all recommended"): D10-D12 as recommended below.** D10: GitHub release assets for the clean models. D11: CC0-1.0 for `t15-m4-13`, `t12-v2` and `willett-hw`; CC-BY-4.0 for `kt-semg-lda`. D12: the research-only `emg2qwerty-p11-01` weights are never hosted. Only the decision is recorded: no file is uploaded and no release exists yet. Steps J-2 to J-5 (the upload) wait for a final user yes (roadmap P14-02).
+
 | # | Decision | Options | Recommendation |
 |---|---|---|---|
 | D10 | Host of the weights | GitHub release assets (tag `weights-v1`, 2 GB limit per file); Hugging Face Hub model repositories; both | GitHub release assets for the clean models: no new account, and the files stay next to the code. A model hub later if users ask. |
@@ -181,9 +183,9 @@ Licence check per model (do this before any upload):
 
 | Step | Do this | Check |
 |---|---|---|
-| J-1 (5 min) | Decide D10-D12. Tell Claude the decisions. Claude records them on the roadmap (P14-02) and changes DATA.md rule 1. | The decisions are in the wiki. |
+| J-1 (5 min) | Decide D10-D12. Tell Claude the decisions. Claude records them on the roadmap (P14-02) and changes DATA.md rule 1. **Done 2026-11-22.** | The decisions are in the wiki. |
 | J-2 (10 min) | `.venv\Scripts\python.exe -I tools/pretrained/export_weights.py --list` prints the SHA-256 and the size of each local file. Compare them with `fidetype decoders info <model> --json`. | Every file matches its manifest. |
-| J-3 (15 min) | GitHub → Releases → Draft a new release: tag `weights-v1`, title "Pretrained decoders v1 (weights only)". Attach the files of the clean models only (table above), plus a `LICENSE-WEIGHTS.md` with the licence and the attribution of each file. Publish. | The release page lists the files with their sizes. No `emg2qwerty` file. |
+| J-3 (15 min) | **Only after a final user yes (P14-02).** GitHub → Releases → Draft a new release: tag `weights-v1`, title "Pretrained decoders v1 (weights only)". Attach the files of the clean models only (table above), plus a `LICENSE-WEIGHTS.md` with the licence and the attribution of each file. Publish. | The release page lists the files with their sizes. No `emg2qwerty` file. |
 | J-4 (10 min) | Ask Claude to put the asset URLs into the `url` fields of the manifests (`src/fidetype/pretrained/manifests/*.json`) and to run the download test. | `fidetype decoders verify <model>` passes after a `download=True` load into an empty cache. |
 | J-5 (5 min) | Test from a clean folder: `pip install fidetype`, then in Python: `import fidetype.pretrained as p; m = p.load("t15-m4-13", download=True)`. | The SHA-256 check passes; `print(m.card())` prints the card. |
 

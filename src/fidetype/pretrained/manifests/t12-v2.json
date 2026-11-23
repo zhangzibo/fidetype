@@ -41,7 +41,7 @@
   "data.licence": "CC0-1.0",
   "data.research_only": false,
   "weights": "CC0-1.0",
-  "weights_status": "proposed, not released: the user decides the weights licence and the host at P14-02 (DATA.md rule 1 changes only then)",
+  "weights_status": "CC0 1.0 (user decision D11, 2026-11-22). Not released yet: the upload as a GitHub release asset (D10) waits for a final user yes (P14-02, gap 98). Never in the wheel or the git repository",
   "attribution": "Data: Willett et al., Nature 2023, Brain-to-Text '24 competitionData, Dryad doi:10.5061/dryad.x69p8czpq (CC0 1.0)"
  },
  "training": {

@@ -4,7 +4,7 @@ The Fidetype code is Apache-2.0 ([`LICENSE`](../LICENSE)). This note says what t
 
 ## Rules
 
-1. The repository ships **no dataset files, no raw recordings, no participant data and no trained weights**.
+1. The repository ships **no dataset files, no raw recordings, no participant data and no trained weights**. Trained weights of our clean models may be published only as separate GitHub release assets, never in the repository or the wheel (user decisions D10 and D11, 2026-11-22; licences: CC0-1.0 for `t15-m4-13`, `t12-v2`, `willett-hw`; CC-BY-4.0 for `kt-semg-lda`). Research-only weights (`emg2qwerty-p11-01`) are never hosted (D12). No weights are released yet: the upload waits for a final user yes (roadmap P14-02).
 2. Every dataset is **download-only**: the user fetches it from the original source. No loader mirrors, vendors or redistributes data.
 3. No third-party code under a non-commercial or copyleft licence is copied into `src/`. Third-party repositories live only in the git-ignored `references/repos/`.
 4. Anything derived from non-commercial data (caches, streams, weights, results) is for **non-commercial research only**.

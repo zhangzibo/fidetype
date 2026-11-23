@@ -34,7 +34,7 @@
   "data.licence": "CC-BY-4.0",
   "data.research_only": false,
   "weights": "CC-BY-4.0",
-  "weights_status": "proposed, not released: the user decides at P14-02; the model card must keep the attribution",
+  "weights_status": "CC BY 4.0 (user decision D11, 2026-11-22); the model card must keep the attribution. Not released yet: the upload as a GitHub release asset (D10) waits for a final user yes (P14-02, gap 98). Never in the wheel or the git repository",
   "attribution": "KT-sEMG dataset, copyright 2021 Nokia, CC BY 4.0 (KT-sEMG v1.1, doi:10.7910/DVN/AV6XIR)"
  },
  "training": {

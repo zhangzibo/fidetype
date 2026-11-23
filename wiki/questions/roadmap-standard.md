@@ -1452,6 +1452,8 @@ Follow-ups of P13-01. Full list: [open gaps](open-gaps.md). No existing item mov
 - **Deliverable:** the decision in the wiki. Agents prepare the model cards and the upload script. The user creates the accounts and does the upload.
 - **Depends on:** P14-01, P2-07 (registry accounts), M7-09 (PyPI release).
 - **Done when:** clean weights download from the chosen host with matching SHA-256. **`externally_blocked`** (user decision and accounts).
+- **Decision (user, 2026-11-22, "all recommended"; [publishing checklist](../../docs/publishing-checklist.md) section J):** D10 host = GitHub release assets for the clean models; D11 licence = CC0-1.0 for `t15-m4-13`, `t12-v2`, `willett-hw` and CC-BY-4.0 for `kt-semg-lda`; D12 = the research-only `emg2qwerty-p11-01` weights are never hosted. DATA.md rule 1 and the manifest `weights_status` fields say so. Only the decision is recorded: no weights are uploaded and no release exists.
+- **Next step (needs a final user yes before the upload):** checklist steps J-2 to J-5: check the SHA-256 of each local file, create the release `weights-v1` with the clean files and `LICENSE-WEIGHTS.md`, fill the manifest `url` fields, test the download. Status stays `externally_blocked` until the user says yes to the upload.
 
 #### P14-03 Trust layer as a drop-in wrapper
 - **Serves:** BCI companies, research labs, small teams ([who uses Fidetype](who-uses-fidetype.md)).

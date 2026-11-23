@@ -38,7 +38,7 @@
   "data.licence": "CC-BY-NC-SA-4.0",
   "data.research_only": true,
   "weights": "CC-BY-NC-SA-4.0",
-  "weights_status": "research only; never in the wheel; a separate opt-in download after P14-02; the weights keep the share-alike terms",
+  "weights_status": "research only; never hosted (user decision D12, 2026-11-22); never in the wheel or the git repository; the weights keep the share-alike terms",
   "attribution": "Data: emg2qwerty (Sivakumar et al., Meta, 2024), CC BY-NC-SA 4.0 (repository LICENSE file; the README says CC BY-NC 4.0; we follow the stricter one)",
   "share_alike": true
  },
