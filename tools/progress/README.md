@@ -1,3 +1,5 @@
+> **Project internals: tools for the task-tracking dashboard. Not needed to use Fidetype.**
+
 # Progress dashboard tools
 
 - `build.js`: merges tracker fragments, then builds `wiki/progress/index.html` from `wiki/progress/tracker.json`. Run `node tools/progress/build.js`. Never edit `index.html` by hand.

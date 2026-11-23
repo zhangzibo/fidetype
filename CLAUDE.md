@@ -1,3 +1,5 @@
+> **Internal working notes for the AI-assisted workflow. Not user documentation.** To use Fidetype, start at the [README](README.md).
+
 # Fidetype (repo: stealth-project, to be renamed)
 
 A long-term, public project exploring non-invasive brain-computer interfaces (BCI), starting from Meta FAIR's Brain2Qwerty. Its direction is still open: it might produce research papers, real-world tools, or both. The research knowledge base is an **LLM wiki** (pattern: https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f). The human curates sources and asks questions. Claude writes and maintains the wiki.

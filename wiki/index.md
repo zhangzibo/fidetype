@@ -1,3 +1,5 @@
+> **Internal research notebook, written and kept by an AI assistant. Not needed to use Fidetype.** User documentation: [docs/](../docs/README.md). Plain research summary: [RESEARCH.md](../RESEARCH.md).
+
 # Wiki index
 
 Claude maintains this wiki. The conventions are in [`../CLAUDE.md`](../CLAUDE.md), the history is in [log.md](log.md), and the big picture is in [overview.md](overview.md).

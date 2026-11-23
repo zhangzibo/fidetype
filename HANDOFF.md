@@ -1,3 +1,5 @@
+> **Internal working notes for the AI-assisted workflow. Not user documentation.** To use Fidetype, start at the [README](README.md).
+
 # HANDOFF: where are we
 
 This file tells a new Claude Code session where the last session stopped. The orchestrator updates it after each finished task.
