@@ -1,19 +1,104 @@
 ---
-title: P5-37 fixed-threshold-0 rule for lm_beam_direction - stopped at the data audit
+title: P5-37 fixed threshold 0 for lm_beam_direction on the willett-hw pool - results
 type: experiment
 task: P5-37
-updated: 2026-11-22
+updated: 2026-11-23
 ---
 
-# P5-37: fixed threshold 0 for `lm_beam_direction` - stopped before any number (2026-11-22)
+# P5-37: fixed threshold 0 for `lm_beam_direction` on the 781 pool sentences (results, 2026-11-23)
 
-Roadmap: [P5-37](../../wiki/questions/roadmap-standard.md#p5-37-fixed-threshold-0-rule-for-the-lm_beam_direction-offer-gate) (gap 189). Earlier work: [P5-36b](../2026-11-22-p5-36b-two-direction-lm/results.md) (pre-registration `dab694f`, results `a7bfbc8`).
+Roadmap: [P5-37](../../wiki/questions/roadmap-standard.md#p5-37-fixed-threshold-0-rule-for-the-lm_beam_direction-offer-gate) (gap 189). Earlier work: [P5-36b](../2026-11-22-p5-36b-two-direction-lm/results.md) (`dab694f`, `a7bfbc8`).
 
-Audit code: [data_audit.py](data_audit.py). Counts: [results/data-audit.json](results/data-audit.json). The audit reads only sentence metadata (block number, excluded flag, intended-text length check). It computes no log-prob, no guard decision and no gate value.
+History: the data audit (`5d74a8e`, 2026-11-22 22:12) found no clean unused `willett-hw` data (section "Data audit" below). The user chose **option A** (the decoder's training pool, bias stated in advance). Pre-registration: [plan.md](plan.md) with [run.py](run.py) and [launch.py](launch.py), commit `d8231f8` (2026-11-22 23:30:42), before any gate number on the pool. Numbers: [results/results.json](results/results.json); log: [results/run.log](results/run.log); audit counts: [results/data-audit.json](results/data-audit.json). Per-item records (actions, coherence, feature values, times; no text) stay in `C:\Users\zhang\bci-data\derived\p5-37\` only.
 
-## Outcome
+## Verdict
 
-**Stopped at step 1. No clean unused `willett-hw` data exists.** There is no pre-registration commit and no run. No number of the gate was computed on any new data. The gap 189 done-when is **not met**, and it is not tested.
+| Guard | P1 `rev_out` offers (<= 39 / 781) | P2 real offers removed (<= 39 / 781) | Checks C0-C2 | Secondary S0, S1 |
+|---|---|---|---|---|
+| Built-in (`tcfg-39aac48688b8bd12`) | **pass: 1 / 781** (coherence only: 767) | **pass: 1 / 781** (767 -> 766) | hold | all pass |
+| LM (`tcfg-f498c0637536daec`) | **pass: 0 / 781** (coherence only: 764) | **pass: 0 / 781** (767 -> 767) | hold | all pass |
+
+**Pass for both guards, as pre-registered weak evidence.** The fixed-threshold-0 rule meets the gap 189 done-when (as amended by option A) on the pool. The plan stated in advance that this data is decoder-seen: a pass is **weak** evidence, it does not show that the rule holds on new data, gap 181 stays open, and gap 190 does not start on this pass alone. A fail would have been final; there is no fail.
+
+No library code, packaged gate, guard file or manifest changed. `config_id` values unchanged.
+
+## Primary rules and checks (781 pool sentences per guard)
+
+| | Built-in | LM |
+|---|---|---|
+| Real offers, coherence only -> both gates | 767 -> 766 | 767 -> 767 |
+| **P2** real offers removed | **1** (`D` = -0.025) | **0** |
+| `rev_out` offers, coherence only -> both gates | 767 -> **1** | 764 -> **0** |
+| S0 `rev_out` emits (offer or commit) with both gates | 1 | 0 |
+| Commits (real, `rev_out`) | 0, 0 | 0, 0 |
+| Real offers with `D < 0` / `D = 0` | 1 / 0 | 0 / 0 |
+| C0 decoder path = stored P14-41 val log-probs (5 sentences) | max abs difference 0.0 | (same check) |
+| C1 antisymmetry (1e-9); `coherence` equal (1e-9) | 781 / 781; 781 / 781 | 781 / 781; 781 / 781 |
+| C2 equivalence (both gates vs "coherence, then `D < 0`") | 1,562 / 1,562 | 1,562 / 1,562 |
+
+For the LM guard, `rev_out` has 3 fewer coherence-only offers than real input (764 vs 767), with equal `coherence`. The difference comes from other steps of the LM-guard decision (for example the readout's no-signal gate), not from an offer gate.
+
+## Secondary S1: null inputs (781 each; emits with coherence only -> both gates)
+
+| Null | Built-in | LM | Rule (<= 39, not more than before, `offer_control`) |
+|---|---|---|---|
+| time-shuffled raw input (d = 0) | 1 -> **0** (CP95 0.0038) | 1 -> **1** (CP95 0.0061) | pass, pass |
+| zero raw input | 0 -> 0 | 0 -> 0 | pass, pass |
+| `rev_in` (raw input reversed before the decoder) | 6 -> **4** (CP95 0.0117) | 0 -> 0 | pass, pass |
+| frame-shuffled log-probs | 0 -> 0 | 0 -> 0 | pass, pass |
+| near-uniform log-probs | 0 -> 0 | 0 -> 0 | pass, pass |
+
+No null input was committed.
+
+## Descriptive (no rule)
+
+| | Built-in | LM |
+|---|---|---|
+| `D` of the real offers (min / 5 % / median / 95 % / max) | -0.025 / 0.510 / 0.969 / 1.400 / 2.545 | 0.208 / 0.540 / 0.989 / 1.479 / 2.172 |
+| **P5-36b fitted `tau`** (val S) | 0.3259 | 0.1344 (fitted with the earlier LM guard `tcfg-26ae951a20a0cddd`) |
+| at that `tau`: real offers removed / `rev_out` offers | **8 / 781** / 0 | 0 / 781 / 0 |
+| two beam searches, median (5 % / 95 %) | 0.193 s (0.040 / 0.444) | 0.080 s (0.017 / 0.177) |
+| median ratio extra / coherence-only decision | 0.70 | 0.44 |
+
+Bias check: the greedy CER of the pool is **0.2177** (7,401 / 33,993 characters). The P14-33 references are val 0.2603 and test 0.3051. So the pool frames are cleaner than the held-out frames, as expected, but the decoder does not fit its training text exactly.
+
+> **Our take:**
+> - On 781 sentences the threshold-0 rule loses almost nothing: 1 real offer (built-in) and 0 (LM), and it stops all but 1 `rev_out` offer. On the P14-57 test set the post-hoc look gave 1-2 of 80. The two sets agree in direction, but the pool is decoder-seen, so the pool rate (about 0.1 %) is probably lower than the rate on new data.
+> - The `D` distribution on the pool is shifted up against the test set (median 0.97-0.99 against 0.82-0.88 in P5-36b). This matches the cleaner frames (CER 0.218 against 0.305). We cannot separate "the rule works" from "the decoder knows these sentences" with this data. That is why the pass is weak.
+> - On the same pool records the P5-36b fitted `tau` of the built-in guard removes 8 real offers against 1 at threshold 0, with the same `rev_out` result (0 against 1). This repeats the P5-36b finding that its fitted `tau` was too high, now on 781 sentences. It is descriptive only.
+> - The `rev_in` null (reversal before the decoder) gives 4 / 781 offers for the built-in guard with both gates. That is in the limit, and it is a different fault from `rev_out`.
+
+## Deviations from the plan
+
+None. The run used the pre-registered objects, inputs, seeds and rules. Run time 16,945 s (4.7 h; plan estimate 4.5-5.5 h, cap 8 h).
+
+## Run record
+
+CPU only (`HIP_VISIBLE_DEVICES`, `CUDA_VISIBLE_DEVICES` = -1), isolation class `background`, 1 thread, keep-awake; the GPU job P15-43 ran at the same time. 2026-11-22 23:30:50 to 2026-11-23 04:13:15: C0 7 s; pass 1 (real, `rev_out`) 3,297 s; pass 2 (nulls) 13,624 s; score 10 s. Peak working set 818 MB (limit 2,500 MB). `DONE` written.
+
+## Limits
+
+- **Decoder-seen data** (section "Data audit"): the main limit. It was stated in advance.
+- One participant (T5), one decoder checkpoint, one LM, one beam setting.
+- `rev_out` is one synthetic fault form (rows reversed after the decoder). A partial reversal or a reorder of chunks is not tested.
+- Times come from a shared machine with a GPU job running; they are indicative only.
+
+## Records to apply
+
+- **Gap 189 (P5-37): `done`**, as weak evidence. Evidence line: "2026-11-23 (P5-37 option A, data audit `5d74a8e`, pre-registration `d8231f8`, results `<this commit>`, [results](../../experiments/2026-11-22-p5-37-fixed-threshold/results.md)): fixed `tau` 0 for `lm_beam_direction` on the 781 decoder-seen pool sentences passes for both guards: built-in `tcfg-39aac48688b8bd12` `rev_out` offers 1 / 781, real offers removed 1 / 781; LM `tcfg-f498c0637536daec` 0 / 781 and 0 / 781 (limits 39). C0-C2 hold; nulls S0/S1 pass. Pre-stated: a pass is weak evidence (decoder trained on the pool; pool greedy CER 0.218 vs test 0.305). Descriptive: the P5-36b fitted `tau` (0.326) removes 8 / 781 on the same records."
+- **Gap 181 (P5-36): stays `in_progress`.** Per the pre-registration, this pass alone does not close it. It now has: LM guard pass on the P14-57 test set with a val-only fit (P5-36b), and both guards pass with the fixed threshold 0 on decoder-seen data (P5-37). The open part: a built-in-guard result on clean new data. Closing it still needs a user decision (P5-37 audit options C or D) or new data (option B or E).
+- **Gap 190 (P14-60): does not start** on this pass alone (pre-stated). If the user later closes gap 181 by decision, gap 190 can start with the fixed threshold 0 as the rule.
+- No change to the library, packaged gates, guard files, manifests or `config_id` values.
+
+## Options from the data audit (for reference)
+
+| Option | Status |
+|---|---|
+| A. Pool with a stated bias | **done here** (weak pass) |
+| B. Held-out retrain (new decoder, new `config_id`) | open; GPU, days |
+| C. Accept the LM-guard evidence only for gap 181 | open; user decision |
+| D. Close the `rev_out` route by design (P5-36 route 1 + gap 192 = P4-26) | open; user decision |
+| E. Wait for new public T5 data | external |
 
 ## Data audit: where every Willett sentence goes
 
@@ -42,27 +127,3 @@ The decoder saw every pool sentence in training. On its own training data a deco
 
 The dataset readme says why they are excluded. In most of them a false head-turn detection started the next trial before T5 finished, so the sentence is incomplete. Other causes: T5 skipped a free-write question; the intended spelling was unknown; a decoder software bug at the start of 4 blocks (2020.01.06); T5 forgot the phrase in copy-from-memory trials. These are not normal use. The set is also small: 5 % of 33 gives an integer limit of 1, so the test has almost no power.
 
-## Options (for the orchestrator and the user)
-
-| Option | What it needs | What a pass would show | Cost |
-|---|---|---|---|
-| **A. Pool with a stated bias** | Pre-register fixed `tau` 0 on the 781 pool sentences (all 781, no sampling), both guards, limits 39 / 781 (5 %). State in advance that a pass is optimistic and a fail is final. Add a descriptive bias check: greedy CER of the pool against the val CER | a weak pass only (decoder-seen data); a fail would close gap 189 as negative | CPU, about 1-2 h (decoder on 781 sentences plus 4 beam searches per sentence) |
-| **B. Held-out retrain** | Retrain the decoder with one more held-out block per session (about 80-100 new held-out sentences), then build both guards again on it | the rule on truly new data, but for a **new** decoder and new `config_id` values, not the shipped `willett-hw` guards | GPU training (P15-08 recipe; seed 1 failed there), plus guard calibration; days |
-| **C. Accept the LM-guard evidence only** | Change the gap 181 done-when to need one guard (the LM guard passed with a val-only fit in P5-36b) and record the built-in guard as a limit | nothing new; a scope decision | none |
-| **D. Close the `rev_out` route by design** | `rev_out` comes only from a software fault after the decoder. Record the residual risk, and rely on P5-36 route 1 plus gap 192 (P4-26, producer frame times through the adapters) | nothing new on `rev_out` values; it moves the fix to the producer side | P4-26 work (CPU) |
-| **E. Wait for new T5 data** | A new public release of T5 handwriting sentences | the clean test as planned | external; not known if it will happen |
-
-A second dataset does not help this gap directly: both guards belong to the `willett-hw` decoder, which reads only T5 Utah-array data from these 10 sessions.
-
-> **Our take:** option A is the cheapest useful step, if it is pre-registered as "fail is final, pass is weak". Its pass alone should not close gap 181. Option C or D is the honest way to close gap 181 without new data. Option B tests a different object and is expensive.
-
-## Records to apply
-
-- **Gap 189 (P5-37):** stays `todo` (or `blocked` on a data decision). Evidence line: "2026-11-22 (P5-37 data audit, [results](../../experiments/2026-11-22-p5-37-fixed-threshold/results.md)): no clean unused `willett-hw` data. The 1,000 Willett sentences are test 80 and val 106 (both used by P14-57 / P5-36 / P5-36b), pool 781 (decoder training, P15-08) and 33 excluded by the authors (incomplete trials). No pre-registration and no number. Options A-E in the results. A decision is needed."
-- **Gap 181 (P5-36):** cannot close. It stays `in_progress`. The built-in guard has no valid pass. Closing it needs a decision (option C or D) or new evidence (option A as weak evidence, B or E).
-- **Gap 190 (P14-60):** must **not** start. It needs gap 189 to pass first.
-- No change to the library, packaged gates, guard files, manifests or `config_id` values.
-
-## Run record
-
-Data audit only: 2026-11-22 22:11, CPU, a few seconds, metadata reads only. No detached job. Nothing written to `C:\Users\zhang\bci-data\derived\`.

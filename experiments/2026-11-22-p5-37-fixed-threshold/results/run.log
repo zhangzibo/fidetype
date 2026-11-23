@@ -1,0 +1,54 @@
+[2026-11-22 23:30:50] (rss 30 MB, peak 30 MB) keep_awake: on (SetThreadExecutionState)
+[2026-11-22 23:30:50] (rss 101 MB, peak 103 MB) start ['check', 'pool', 'score']; config {'builtin': 'tcfg-39aac48688b8bd12', 'lm': 'tcfg-f498c0637536daec'}; coherence {'builtin': 0.004183090472992479, 'lm': 0.003485725778021531}; tau 0.0; readout settings {'lm_weight': 0.5, 'bonus': 1.0, 'beam': 8, 'prune_logp': -8.0, 'n_best': 8}
+[2026-11-22 23:30:57] (rss 229 MB, peak 432 MB) check C0: max abs diff 0.00e+00 over 5 val sentences
+[2026-11-22 23:39:26] (rss 260 MB, peak 542 MB) pool primary: t5.2019.05.08 done (77 sentences so far, 509 s)
+[2026-11-22 23:40:51] (rss 340 MB, peak 561 MB) heartbeat
+[2026-11-22 23:46:56] (rss 310 MB, peak 572 MB) pool primary: t5.2019.11.25 done (140 sentences so far, 958 s)
+[2026-11-22 23:50:51] (rss 372 MB, peak 593 MB) heartbeat
+[2026-11-22 23:53:04] (rss 307 MB, peak 593 MB) pool primary: t5.2019.12.09 done (203 sentences so far, 1327 s)
+[2026-11-22 23:58:53] (rss 312 MB, peak 593 MB) pool primary: t5.2019.12.11 done (269 sentences so far, 1676 s)
+[2026-11-23 00:00:52] (rss 378 MB, peak 593 MB) heartbeat
+[2026-11-23 00:04:10] (rss 337 MB, peak 595 MB) pool primary: t5.2019.12.18 done (336 sentences so far, 1993 s)
+[2026-11-23 00:09:04] (rss 321 MB, peak 603 MB) pool primary: t5.2019.12.20 done (403 sentences so far, 2286 s)
+[2026-11-23 00:10:52] (rss 378 MB, peak 603 MB) heartbeat
+[2026-11-23 00:13:05] (rss 322 MB, peak 603 MB) pool primary: t5.2020.01.06 done (464 sentences so far, 2528 s)
+[2026-11-23 00:17:32] (rss 331 MB, peak 603 MB) pool primary: t5.2020.01.08 done (530 sentences so far, 2795 s)
+[2026-11-23 00:20:53] (rss 404 MB, peak 603 MB) heartbeat
+[2026-11-23 00:21:23] (rss 336 MB, peak 603 MB) pool primary: t5.2020.01.13 done (647 sentences so far, 3026 s)
+[2026-11-23 00:26:01] (rss 364 MB, peak 617 MB) pool primary: t5.2020.01.15 done (781 sentences so far, 3304 s)
+[2026-11-23 00:30:54] (rss 491 MB, peak 707 MB) heartbeat
+[2026-11-23 00:40:55] (rss 589 MB, peak 723 MB) heartbeat
+[2026-11-23 00:50:56] (rss 503 MB, peak 744 MB) heartbeat
+[2026-11-23 00:56:46] (rss 467 MB, peak 747 MB) pool nulls: t5.2019.05.08 done (77 sentences so far, 5149 s)
+[2026-11-23 01:00:57] (rss 524 MB, peak 789 MB) heartbeat
+[2026-11-23 01:10:59] (rss 632 MB, peak 789 MB) heartbeat
+[2026-11-23 01:20:59] (rss 680 MB, peak 793 MB) heartbeat
+[2026-11-23 01:26:47] (rss 487 MB, peak 818 MB) pool nulls: t5.2019.11.25 done (140 sentences so far, 6949 s)
+[2026-11-23 01:30:59] (rss 602 MB, peak 818 MB) heartbeat
+[2026-11-23 01:41:00] (rss 594 MB, peak 818 MB) heartbeat
+[2026-11-23 01:51:01] (rss 590 MB, peak 818 MB) heartbeat
+[2026-11-23 01:54:53] (rss 491 MB, peak 818 MB) pool nulls: t5.2019.12.09 done (203 sentences so far, 8635 s)
+[2026-11-23 02:01:01] (rss 552 MB, peak 818 MB) heartbeat
+[2026-11-23 02:11:02] (rss 530 MB, peak 818 MB) heartbeat
+[2026-11-23 02:20:56] (rss 468 MB, peak 818 MB) pool nulls: t5.2019.12.11 done (269 sentences so far, 10199 s)
+[2026-11-23 02:21:02] (rss 715 MB, peak 818 MB) heartbeat
+[2026-11-23 02:31:02] (rss 552 MB, peak 818 MB) heartbeat
+[2026-11-23 02:41:03] (rss 536 MB, peak 818 MB) heartbeat
+[2026-11-23 02:43:21] (rss 525 MB, peak 818 MB) pool nulls: t5.2019.12.18 done (336 sentences so far, 11544 s)
+[2026-11-23 02:51:04] (rss 663 MB, peak 818 MB) heartbeat
+[2026-11-23 03:01:05] (rss 567 MB, peak 818 MB) heartbeat
+[2026-11-23 03:04:06] (rss 459 MB, peak 818 MB) pool nulls: t5.2019.12.20 done (403 sentences so far, 12789 s)
+[2026-11-23 03:11:06] (rss 532 MB, peak 818 MB) heartbeat
+[2026-11-23 03:20:23] (rss 464 MB, peak 818 MB) pool nulls: t5.2020.01.06 done (464 sentences so far, 13766 s)
+[2026-11-23 03:21:07] (rss 550 MB, peak 818 MB) heartbeat
+[2026-11-23 03:31:07] (rss 559 MB, peak 818 MB) heartbeat
+[2026-11-23 03:39:05] (rss 464 MB, peak 818 MB) pool nulls: t5.2020.01.08 done (530 sentences so far, 14888 s)
+[2026-11-23 03:41:08] (rss 609 MB, peak 818 MB) heartbeat
+[2026-11-23 03:51:08] (rss 582 MB, peak 818 MB) heartbeat
+[2026-11-23 03:54:17] (rss 469 MB, peak 818 MB) pool nulls: t5.2020.01.13 done (647 sentences so far, 15800 s)
+[2026-11-23 04:01:09] (rss 559 MB, peak 818 MB) heartbeat
+[2026-11-23 04:11:10] (rss 586 MB, peak 818 MB) heartbeat
+[2026-11-23 04:13:05] (rss 504 MB, peak 818 MB) pool nulls: t5.2020.01.15 done (781 sentences so far, 16928 s)
+[2026-11-23 04:13:15] (rss 525 MB, peak 818 MB) score: {"builtin": {"P1": true, "P2": true, "valid": true, "pass": true, "S1": true}, "lm": {"P1": true, "P2": true, "valid": true, "pass": true, "S1": true}}
+[2026-11-23 04:13:15] (rss 525 MB, peak 818 MB) keep_awake: cleared
+[2026-11-23 04:13:15] (rss 525 MB, peak 818 MB) end of ['check', 'pool', 'score'] (16945 s); peak 818 MB

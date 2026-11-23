@@ -1,0 +1,271 @@
+{
+ "objects": {
+  "config_id": {
+   "builtin": "tcfg-39aac48688b8bd12",
+   "lm": "tcfg-f498c0637536daec"
+  },
+  "coherence": {
+   "builtin": 0.004183090472992479,
+   "lm": 0.003485725778021531
+  },
+  "lm": "eng_tatoeba_6gram_mkn_noE2Q_noWillett",
+  "feature": "lm_beam_direction",
+  "tau": 0.0,
+  "n": 781,
+  "limit": 39
+ },
+ "check_C0": {
+  "n": 5,
+  "max_abs_diff": 0.0,
+  "pass": true
+ },
+ "greedy_cer_pool": {
+  "cer": 0.2177,
+  "edits": 7401,
+  "chars": 33993,
+  "n": 781,
+  "reference_p14_33": {
+   "val": 0.2603,
+   "test": 0.3051
+  }
+ },
+ "builtin": {
+  "P1": {
+   "rev_out_offers": 1,
+   "coherence_only": 767,
+   "n": 781,
+   "limit": 39,
+   "pass": true
+  },
+  "P2": {
+   "real_offers_removed": 1,
+   "real_offers_coherence": 767,
+   "real_offers_both": 766,
+   "n": 781,
+   "limit": 39,
+   "pass": true
+  },
+  "commits": {
+   "real": 0,
+   "rev_out": 0
+  },
+  "S0_rev_out_emits": {
+   "emits_both": 1,
+   "limit": 39,
+   "pass": true
+  },
+  "C1_antisym_1e-9": {
+   "equal": 781,
+   "n": 781
+  },
+  "C1_coherence_equal_1e-9": 781,
+  "C2_equivalence": {
+   "equal": 1562,
+   "n": 1562
+  },
+  "valid": true,
+  "pass": true,
+  "S1_nulls": {
+   "pass": true,
+   "sets": {
+    "timeshuf": {
+     "emit_coherence_only": 1,
+     "emit_both": 0,
+     "offer_both": 0,
+     "commit": 0,
+     "cp95_upper": 0.0038,
+     "offer_control_pass": true,
+     "pass": true
+    },
+    "zero": {
+     "emit_coherence_only": 0,
+     "emit_both": 0,
+     "offer_both": 0,
+     "commit": 0,
+     "cp95_upper": 0.0038,
+     "offer_control_pass": true,
+     "pass": true
+    },
+    "rev_in": {
+     "emit_coherence_only": 6,
+     "emit_both": 4,
+     "offer_both": 4,
+     "commit": 0,
+     "cp95_upper": 0.0117,
+     "offer_control_pass": true,
+     "pass": true
+    },
+    "frameshuf": {
+     "emit_coherence_only": 0,
+     "emit_both": 0,
+     "offer_both": 0,
+     "commit": 0,
+     "cp95_upper": 0.0038,
+     "offer_control_pass": true,
+     "pass": true
+    },
+    "uniform": {
+     "emit_coherence_only": 0,
+     "emit_both": 0,
+     "offer_both": 0,
+     "commit": 0,
+     "cp95_upper": 0.0038,
+     "offer_control_pass": true,
+     "pass": true
+    }
+   }
+  },
+  "D_real_offers": [
+   -0.024859,
+   0.510484,
+   0.968514,
+   1.39971,
+   2.545037
+  ],
+  "real_offers_D_below_0": 1,
+  "real_offers_D_equal_0": 0,
+  "descriptive_p5_36b_tau": {
+   "tau": 0.3258946546027608,
+   "note": "P5-36b val-S fit; for the LM guard it was fitted with the earlier LM guard (tcfg-26ae951a20a0cddd)",
+   "real_offers_removed": 8,
+   "rev_out_offers": 0
+  },
+  "cost_s": {
+   "t_beam2_real": [
+    0.023317,
+    0.040089,
+    0.193083,
+    0.443618,
+    0.827122
+   ],
+   "t_decide_real": [
+    0.024699,
+    0.049243,
+    0.278306,
+    0.623439,
+    1.224363
+   ],
+   "median_ratio_beam2_to_decide": 0.701
+  }
+ },
+ "lm": {
+  "P1": {
+   "rev_out_offers": 0,
+   "coherence_only": 764,
+   "n": 781,
+   "limit": 39,
+   "pass": true
+  },
+  "P2": {
+   "real_offers_removed": 0,
+   "real_offers_coherence": 767,
+   "real_offers_both": 767,
+   "n": 781,
+   "limit": 39,
+   "pass": true
+  },
+  "commits": {
+   "real": 0,
+   "rev_out": 0
+  },
+  "S0_rev_out_emits": {
+   "emits_both": 0,
+   "limit": 39,
+   "pass": true
+  },
+  "C1_antisym_1e-9": {
+   "equal": 781,
+   "n": 781
+  },
+  "C1_coherence_equal_1e-9": 781,
+  "C2_equivalence": {
+   "equal": 1562,
+   "n": 1562
+  },
+  "valid": true,
+  "pass": true,
+  "S1_nulls": {
+   "pass": true,
+   "sets": {
+    "timeshuf": {
+     "emit_coherence_only": 1,
+     "emit_both": 1,
+     "offer_both": 1,
+     "commit": 0,
+     "cp95_upper": 0.0061,
+     "offer_control_pass": true,
+     "pass": true
+    },
+    "zero": {
+     "emit_coherence_only": 0,
+     "emit_both": 0,
+     "offer_both": 0,
+     "commit": 0,
+     "cp95_upper": 0.0038,
+     "offer_control_pass": true,
+     "pass": true
+    },
+    "rev_in": {
+     "emit_coherence_only": 0,
+     "emit_both": 0,
+     "offer_both": 0,
+     "commit": 0,
+     "cp95_upper": 0.0038,
+     "offer_control_pass": true,
+     "pass": true
+    },
+    "frameshuf": {
+     "emit_coherence_only": 0,
+     "emit_both": 0,
+     "offer_both": 0,
+     "commit": 0,
+     "cp95_upper": 0.0038,
+     "offer_control_pass": true,
+     "pass": true
+    },
+    "uniform": {
+     "emit_coherence_only": 0,
+     "emit_both": 0,
+     "offer_both": 0,
+     "commit": 0,
+     "cp95_upper": 0.0038,
+     "offer_control_pass": true,
+     "pass": true
+    }
+   }
+  },
+  "D_real_offers": [
+   0.208375,
+   0.539855,
+   0.989091,
+   1.479253,
+   2.171527
+  ],
+  "real_offers_D_below_0": 0,
+  "real_offers_D_equal_0": 0,
+  "descriptive_p5_36b_tau": {
+   "tau": 0.1344378685883178,
+   "note": "P5-36b val-S fit; for the LM guard it was fitted with the earlier LM guard (tcfg-26ae951a20a0cddd)",
+   "real_offers_removed": 0,
+   "rev_out_offers": 0
+  },
+  "cost_s": {
+   "t_beam2_real": [
+    0.007581,
+    0.017332,
+    0.080313,
+    0.177085,
+    0.518047
+   ],
+   "t_decide_real": [
+    0.013872,
+    0.03397,
+    0.186271,
+    0.40929,
+    0.80699
+   ],
+   "median_ratio_beam2_to_decide": 0.436
+  }
+ },
+ "pass_both_guards": true
+}
