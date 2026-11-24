@@ -1,0 +1,28 @@
+{
+  "_comment": "P15-45 (gap 197) pre-registered configuration (see plan.md). Frozen with plan.md before any result. The training recipe is read unchanged from the P15-08 E1a config.json (budget 'all', 3,000 steps).",
+  "recipe_config": "experiments/2026-11-19-p15-08-e1-cross-body/config.json",
+  "recipe": "E1a",
+  "arm": "E",
+  "budget": "all",
+  "steps": 3000,
+  "seeds": [0, 1, 2, 3, 4],
+  "min_seeds_done_when": 3,
+  "derangement_rng": "[seed, 77] (P15-08 run.py train_run, unchanged)",
+  "sources": {
+    "normal_test_reused": {
+      "E-ball-s0": "C:/Users/zhang/bci-data/derived/p15-08/runs/E-ball-s0",
+      "E-ball-s1": "C:/Users/zhang/bci-data/derived/p15-08/runs/E-ball-s1"
+    },
+    "willett_cache": "C:/Users/zhang/bci-data/derived/p15-08/willett"
+  },
+  "new_runs_in_order": [
+    "E-ball-s0-labelshuf", "E-ball-s1-labelshuf",
+    "E-ball-s2", "E-ball-s2-labelshuf",
+    "E-ball-s3", "E-ball-s3-labelshuf",
+    "E-ball-s4", "E-ball-s4-labelshuf"
+  ],
+  "rules": {"c2_min_cer": 0.75, "c2_min_gap": 0.10},
+  "gpu_cap_hours": 4.0,
+  "cap_check": "before the start of each run (a started run finishes)",
+  "out": "C:/Users/zhang/bci-data/derived/p15-45"
+}
