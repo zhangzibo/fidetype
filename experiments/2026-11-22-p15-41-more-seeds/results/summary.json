@@ -312,9 +312,9 @@
   "pass": true
  },
  "control_flags": [
-  "C2 done on seed 2",
-  "C2 done on seed 3",
-  "C2 done on seed 4"
+  "C2 fail on seed 2",
+  "C2 fail on seed 3",
+  "C2 fail on seed 4"
  ],
  "H1_valid": false,
  "runs": [
@@ -1039,5 +1039,6 @@
    "test_cer_bestval": 0.7804524361948956
   }
  ],
- "time": "2026-11-22T17:24:15"
+ "time": "2026-11-22T17:24:15",
+ "control_flags_note": "relabelled on 2026-11-24 from the stored C2 / C1 rows of this file (no rerun); the first version printed the run status, for example 'C2 done on seed 2'"
 }

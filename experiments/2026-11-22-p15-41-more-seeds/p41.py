@@ -241,6 +241,38 @@ def c1_rows(results: list[dict], rules33: dict) -> dict:
     return {"runs": rows, "n_applicable": len(rows), "pass": bool(all(x["pass"] for x in rows))}
 
 
+def control_flags(c2: dict, c1: dict, new_seeds: list[int]) -> list[str]:
+    """One "pass" / "fail" label per control and seed (C2 per new seed, C1 per applicable run).
+
+    A missing C2 row counts as a fail. Gap 195: the old label printed the run status ("C2 done on seed k").
+    """
+    flags = []
+    for s in new_seeds:
+        row = c2.get(str(s), {"status": "missing", "pass": False})
+        word = "pass" if row.get("pass") else "fail"
+        flags.append(f"C2 {word} on seed {s}" + (" (missing)" if row.get("status") == "missing" else ""))
+    flags += [f"C1 {'pass' if x['pass'] else 'fail'} on {x['run']}" for x in c1.get("runs", [])]
+    return flags
+
+
+def controls_ok(flags: list[str]) -> bool:
+    """True if no control label says "fail"."""
+    return not any(" fail on " in f for f in flags)
+
+
+def relabel_summary(path: Path) -> dict:
+    """Rewrite ``control_flags`` of a saved summary.json from its stored C2 / C1 rows (no rerun, no GPU)."""
+    agg = read_json(path)
+    flags = control_flags(agg.get("C2", {}), agg.get("C1", {}), list(agg.get("new_complete_seeds", [])))
+    if controls_ok(flags) != bool(agg.get("H1_valid")):
+        raise ValueError(f"{path}: relabel would change H1_valid; stop")
+    agg["control_flags"] = flags
+    agg["control_flags_note"] = ("relabelled on 2026-11-24 from the stored C2 / C1 rows of this file (no rerun); "
+                                 "the first version printed the run status, for example 'C2 done on seed 2'")
+    e1.save_json(agg, path)
+    return agg
+
+
 # --- summary -------------------------------------------------------------------------------------------------------
 
 
@@ -291,10 +323,9 @@ def stage_summary(ctx: L.Ctx35, status: str, repo_results: Path | None = HERE / 
     agg["C2"] = c2
     newres = [r for (_, _, s), r in res.items() if s in new_seeds]
     agg["C1"] = c1_rows(newres, rules33)
-    flags = [f"C2 {c2[str(s)]['status']} on seed {s}" for s in new_seeds if not c2[str(s)]["pass"]]
-    flags += [f"C1 fails on {x['run']}" for x in agg["C1"]["runs"] if not x["pass"]]
+    flags = control_flags(c2, agg["C1"], new_seeds)
     agg["control_flags"] = flags
-    agg["H1_valid"] = not flags
+    agg["H1_valid"] = controls_ok(flags)
     agg["runs"] = run_rows(ctx)
     agg["time"] = time.strftime("%Y-%m-%dT%H:%M:%S")
     agg = json.loads(json.dumps(agg, default=float))
@@ -320,11 +351,14 @@ def check_out(out: Path) -> bool:
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="P15-41 runner")
-    ap.add_argument("stage", choices=("all", "summary"))
+    ap.add_argument("stage", choices=("all", "summary", "relabel"))
     ap.add_argument("--out", default=str(OUT))
     ap.add_argument("--config", default=str(HERE / "config.json"))
     ap.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
     a = ap.parse_args(argv)
+    if a.stage == "relabel":  # CPU only: rewrite the label of the committed summary.json from its stored rows
+        relabel_summary(HERE / "results" / "summary.json")
+        return 0
     out = Path(a.out).resolve()
     if not check_out(out):
         print(f"never write into {out}", file=sys.stderr)

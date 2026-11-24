@@ -86,7 +86,7 @@ Each deranged run used its own deranged recipe-A aligner (val CER 0.926 / 0.866 
 | No re-selection on test | the recipe was fixed by P15-36 `selection.json`; no choice in this task read a test number | yes |
 | Synthetic texts | usable texts per library: 3 min 45,806-57,533; 10 min 68,494-95,316; 30 min 88,188-100,000 | yes |
 | Aligner lags | 19-88 frames; none at the 99-frame clip | yes |
-| Deviations | none from the plan. Cosmetic: the `control_flags` strings in `summary.json` read "C2 done on seed k". The code prints the run status ("done"), not "fail". `C2.<k>.pass` = false is the correct value | - |
+| Deviations | none from the plan. Cosmetic: the `control_flags` strings in `summary.json` read "C2 done on seed k". The code prints the run status ("done"), not "fail". `C2.<k>.pass` = false is the correct value. Fixed on 2026-11-24: the labels now read "C2 fail on seed k" (or "pass"), and `summary.json` was relabelled from its stored C2 / C1 rows with `p41.py relabel` (no rerun, no number changed; key `control_flags_note`) | - |
 
 ## Limits
 - All seeds share one T trunk and one E trunk. A seed changes only the stem init, the budget subset and the batch order.

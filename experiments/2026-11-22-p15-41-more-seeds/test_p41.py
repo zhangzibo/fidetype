@@ -182,3 +182,36 @@ def test_old_result_paths(tmp_path):
         (root / name).mkdir(parents=True)
         (root / name / "result.json").write_text(json.dumps({"budget": 30, "src": root.name}), encoding="utf-8")
     assert P.old_result(cfg, "E", "30", 0)["src"] == "b" and P.old_result(cfg, "T", "30", 0)["budget"] == "30"
+
+
+def test_control_flags_show_pass_or_fail():
+    c2 = {"2": {"status": "done", "pass": False}, "3": {"status": "done", "pass": True}}
+    c1 = {"runs": [{"run": "E-10-s2", "pass": True}, {"run": "E-30-s3", "pass": False}]}
+    flags = P.control_flags(c2, c1, [2, 3, 4])
+    assert flags == ["C2 fail on seed 2", "C2 pass on seed 3", "C2 fail on seed 4 (missing)",
+                     "C1 pass on E-10-s2", "C1 fail on E-30-s3"]
+    assert not any("done" in f for f in flags)
+    assert P.controls_ok(flags) is False
+    assert P.controls_ok(P.control_flags({"2": {"status": "done", "pass": True}}, {"runs": []}, [2])) is True
+
+
+def test_committed_summary_flags_match_stored_rows():
+    s = json.loads((HERE / "results" / "summary.json").read_text(encoding="utf-8"))
+    assert s["control_flags"] == P.control_flags(s["C2"], s["C1"], s["new_complete_seeds"])
+    assert P.controls_ok(s["control_flags"]) == s["H1_valid"]
+
+
+def test_relabel_summary_keeps_numbers(tmp_path):
+    src = json.loads((HERE / "results" / "summary.json").read_text(encoding="utf-8"))
+    old = dict(src, control_flags=["C2 done on seed 2"])
+    old.pop("control_flags_note", None)
+    p = tmp_path / "summary.json"
+    p.write_text(json.dumps(old), encoding="utf-8")
+    new = P.relabel_summary(p)
+    assert new["control_flags"] == P.control_flags(src["C2"], src["C1"], src["new_complete_seeds"])
+    for k in ("C2", "C1", "verdict", "runs", "H1_valid", "gpu_hours", "time"):
+        assert new[k] == old[k], k
+    bad = dict(old, H1_valid=True)
+    p.write_text(json.dumps(bad), encoding="utf-8")
+    with pytest.raises(ValueError):
+        P.relabel_summary(p)
