@@ -762,6 +762,23 @@ class TrustGuard:
         return self.config.config_id
 
     @property
+    def offer_gate_id(self) -> str | None:
+        """The content id of the offer-gate list (``ogate-...``), or None without a gate.
+
+        ``config_id`` does not cover the offer gates (they act on OFFER decisions only). This id does: the
+        ordered gates with their features, thresholds and LM names.
+        """
+        from fidetype.trust.offer_gate import offer_gate_id
+
+        return offer_gate_id(self.offer_gates)
+
+    @property
+    def guard_id(self) -> str:
+        """The identity of the whole guard: ``config_id`` without a gate, else ``config_id + "+" + offer_gate_id``."""
+        gid = self.offer_gate_id
+        return self.config_id if gid is None else f"{self.config_id}+{gid}"
+
+    @property
     def alpha(self) -> float:
         return float(self.config.risk_control.get("alpha", math.nan))
 
@@ -1110,6 +1127,8 @@ class TrustGuard:
         rec["input_sha256"] = _input_sha(events) if input_sha is None else input_sha
         if utterance_id is not None:
             rec["utterance_id"] = str(utterance_id)
+        if self.offer_gates:
+            rec["offer_gate_id"] = self.offer_gate_id
         if extra:
             rec.update(extra)
         self.audit_log.append(rec)
@@ -1163,13 +1182,17 @@ class TrustGuard:
     # --- audit log ------------------------------------------------------
 
     def audit_header(self) -> dict[str, Any]:
-        """The first record of the audit log file: configuration id and guarantee sheet."""
+        """The first record of the audit log file: configuration id and guarantee sheet.
+
+        With offer gates it also holds the gate list, ``offer_gate_id`` and ``guard_id``.
+        """
         from fidetype import __version__
 
         return {"type": "audit_header", "schema": "fidetype.trust-audit/0.1", "fidetype_version": __version__,
                 "config_id": self.config_id, "input_kind": self.input_kind,
                 "guarantee": self.sheet.to_dict() if self.sheet is not None else None,
-                **({"offer_gate": [g.to_dict() for g in self.offer_gates]} if self.offer_gates else {})}
+                **({"offer_gate": [g.to_dict() for g in self.offer_gates], "offer_gate_id": self.offer_gate_id,
+                    "guard_id": self.guard_id} if self.offer_gates else {})}
 
     def write_audit(self, path: str | PathLike[str]) -> Path:
         """Write the audit log as JSON Lines: :meth:`audit_header`, then one record per decision."""
@@ -1204,8 +1227,10 @@ class TrustGuard:
         return p
 
     def __repr__(self) -> str:
+        gid = self.offer_gate_id
         return (f"TrustGuard(input_kind={self.input_kind!r}, config_id={self.config_id!r}, "
-                f"alpha={self.alpha:g}, delta={self.delta:g})")
+                + (f"offer_gate_id={gid!r}, " if gid is not None else "")
+                + f"alpha={self.alpha:g}, delta={self.delta:g})")
 
 
 _GATE_RISK_REASON = "commit blocked: low acoustic evidence"

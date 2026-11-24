@@ -129,6 +129,7 @@ guard.set_offer_gate(OfferGate("coherence", 0.187))   # or ft.load(path, offer_g
 - `OfferGate.fit(feature, values, keep=0.95)` sets the threshold from the feature values of the real calibration OFFERs. Fit it on items that the offer null control does not use as real items.
 - A guard file stores the gate under `offer_gate`, but only when a gate is set. Old files keep their bytes. `ft.load(path, offer_gate=False)` switches a stored gate off.
 - `recheck_offer_control` sees the gate.
+- **Gate identity.** `config_id` does not cover the offer gates. So two guards with the same frozen configuration and different gate lists have the same `config_id`. `guard.offer_gate_id` names the gate list: `ogate-` and 16 hex digits of the SHA-256 of the ordered gates (schema, feature, threshold and LM name of each gate; the `note` text is not part of it). `guard.guard_id` names the whole guard: `config_id` without a gate, else `config_id+offer_gate_id`. Two guards that differ only in their gate lists get different `guard_id` values. `fidetype.trust.offer_gate_id(gates)` computes the id from gate objects or their file form. For a packaged model, `info(name).offer_gate_id(readout)` and `info(name).guard_id(readout)` give the ids of its manifest gates, and the model card shows a `guard id` line.
 
 Packaged guards: `t15-m4-13` has the gate `coherence >= 0.187` in its manifest (`trust.offer_gate`). It is on by default, and `model.guard(offer_gate=False)` switches it off. With the gate, the guard passes the offer null control (uniform 0 / 300, frame-shuffled 0 / 300, real 212 / 271). The 54 LTT commits do not change. Details: [record](../experiments/2026-11-21-p5-33-withhold/results.md).
 
@@ -173,7 +174,7 @@ OfferGate("lm_beam_direction", 0.0, lm_name="eng_tatoeba_6gram_mkn_noE2Q_noWille
 
 `guard.write_audit("audit.jsonl")` writes JSON Lines (UTF-8, one object per line):
 
-1. **First line** `{"type": "audit_header", ...}`: `schema` (`fidetype.trust-audit/0.1`), `fidetype_version`, `config_id`, `input_kind` and the full `guarantee` sheet.
+1. **First line** `{"type": "audit_header", ...}`: `schema` (`fidetype.trust-audit/0.1`), `fidetype_version`, `config_id`, `input_kind` and the full `guarantee` sheet. A guard with offer gates also writes `offer_gate` (the gate list), `offer_gate_id` and `guard_id` (section 5b).
 2. **One line per decision** `{"type": "trust_decision", ...}` (the NTS `trust_decision` event of FEP-0001, plus audit fields):
 
 | Field | Meaning |
@@ -189,6 +190,7 @@ OfferGate("lm_beam_direction", 0.0, lm_name="eng_tatoeba_6gram_mkn_noE2Q_noWille
 | `guard_risk` | Hallucination-guard risk of the top text, in [0, 1] |
 | `set_size` | Size of the conformal set |
 | `config_id` | The configuration that made the decision; must match the header |
+| `offer_gate_id` | Only with offer gates: the gate list that acted on the decision; must match the header |
 | `input_sha256` | SHA-256 of the NTS events of the input: proves which input gave the decision, without the input |
 | `input` | Input reference; for logits also `stream_sha256` (fingerprint of the stream) and the frame range |
 | `latency_s` | Decision time in seconds |

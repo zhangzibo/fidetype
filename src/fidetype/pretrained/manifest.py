@@ -161,6 +161,28 @@ class Manifest:
         """The FEP-0010 ``meta`` keys of every stream this model writes."""
         return {META_LICENCE: self.data_licence, META_RESEARCH_ONLY: self.research_only}
 
+    def _trust_block(self, readout: str = "default") -> Mapping[str, Any]:
+        blocks = dict(_trust_blocks(self.raw))
+        if readout not in blocks:
+            raise KeyError(f"{self.name}: no trust block for readout {readout!r}")
+        return blocks[readout]
+
+    def offer_gate_id(self, readout: str = "default") -> str | None:
+        """The content id of the manifest offer-gate list of one trust block (``ogate-...``), or None.
+
+        ``readout``: ``"default"`` (``trust``) or a readout name (``readouts.<name>.trust``). It equals
+        ``guard.offer_gate_id`` of the guard that ``model.guard()`` builds with the default gates.
+        """
+        from fidetype.trust.offer_gate import offer_gate_id
+
+        return offer_gate_id(self._trust_block(readout).get("offer_gate"))
+
+    def guard_id(self, readout: str = "default") -> str | None:
+        """``config_id`` of one trust block, plus ``"+" + offer_gate_id`` if the block ships an offer gate."""
+        cid = self._trust_block(readout).get("config_id")
+        gid = self.offer_gate_id(readout)
+        return cid if gid is None or cid is None else f"{cid}+{gid}"
+
     def card(self) -> str:
         """A short, human-readable model card."""
         r = self.raw
@@ -186,6 +208,8 @@ class Manifest:
             raw_g = t.get("offer_gate")
             gs = raw_g if isinstance(raw_g, list) else [raw_g]
             where = "" if key == "default" else f" (readout {key})"
+            if raw_g and t.get("config_id"):
+                lines.append(f"  guard id{where}: {self.guard_id(key)} (config_id + offer-gate list id)")
             for g in gs:
                 if not isinstance(g, Mapping):
                     continue

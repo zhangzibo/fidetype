@@ -190,6 +190,7 @@ _P5_02 = {
     "load_sheets": "fidetype.trust.guarantee_sheet",
     "OnlineGuard": "fidetype.trust.online_guard",
     "OfferGate": "fidetype.trust.offer_gate",
+    "offer_gate_id": "fidetype.trust.offer_gate",
     "check_frame_times": "fidetype.trust.integrity",
     "IntegrityReport": "fidetype.trust.integrity",
     "FrozenPrefixScore": "fidetype.trust.external_score",

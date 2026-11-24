@@ -10,6 +10,13 @@ the commit threshold, the commit null controls and ``config_id`` do not change. 
 the frozen configuration; a guard file stores it under the key ``offer_gate`` (only if it is set, so old
 guard files keep their bytes).
 
+Identity: :func:`offer_gate_id` is the content id of an ordered gate list (``"ogate-"`` + 16 hex digits of
+the SHA-256 of the canonical JSON of each gate's schema, feature, threshold and LM name, in order; the
+``note`` and a manifest ``card`` are text only and are not part of it). ``TrustGuard.offer_gate_id`` gives
+it for the guard's gates, and ``TrustGuard.guard_id`` is ``config_id`` alone (no gate) or
+``config_id + "+" + offer_gate_id``. So two guards with the same frozen config and different gate lists have
+the same ``config_id`` and different ``guard_id`` values.
+
 Features (higher = more evidence that the signal was read):
 
 =================  ======  ===========================================================================
@@ -63,6 +70,8 @@ import numpy as np
 
 #: Schema tag of a saved gate.
 OFFER_GATE_SCHEMA = "fidetype.offer-gate/0.1"
+#: Prefix of :func:`offer_gate_id`.
+OFFER_GATE_ID_PREFIX = "ogate-"
 
 LOGIT_FEATURES = ("coherence", "coherence_ratio", "nb_coherence", "peak", "neg_entropy", "nb_share", "time_asym",
                   "nb_time_asym", "nb_decay_asym", "lm_direction", "lm_beam_direction", "p_top1", "safety")
@@ -313,6 +322,13 @@ class OfferGate:
             d["note"] = self.note
         return d
 
+    def identity(self) -> dict[str, Any]:
+        """The fields that make the gate's identity (for :func:`offer_gate_id`): no note, no LM object."""
+        d: dict[str, Any] = {"schema": OFFER_GATE_SCHEMA, "feature": self.feature, "threshold": self.threshold}
+        if self.lm_name is not None:
+            d["lm_name"] = self.lm_name
+        return d
+
     @classmethod
     def from_dict(cls, d: Mapping[str, Any], lm: Any = None, readout: Any = None) -> "OfferGate":
         if d.get("schema", OFFER_GATE_SCHEMA) != OFFER_GATE_SCHEMA:
@@ -329,3 +345,23 @@ class OfferGate:
             raise ValueError("the offer gate needs at least one finite real offer value")
         i = int(math.floor((1.0 - keep) * len(v) + 1e-9))
         return cls(feature, v[min(i, len(v) - 1)], **kw)
+
+def offer_gate_id(gates: Any) -> str | None:
+    """The content id of an ordered offer-gate list: ``"ogate-"`` + 16 hex digits, or None for no gate.
+
+    ``gates``: one :class:`OfferGate`, a sequence of them, their file dicts (``to_dict`` or a manifest
+    ``offer_gate`` block), or None. The id covers schema, feature (with its sign), threshold and LM name of
+    each gate, in order. It does not cover ``note`` or a manifest ``card`` (text only). It never changes
+    ``config_id``.
+    """
+    import hashlib
+    import json
+
+    if gates is None or gates is False:
+        return None
+    items = list(gates) if isinstance(gates, (list, tuple)) else [gates]
+    if not items:
+        return None
+    ids = [(g if isinstance(g, OfferGate) else OfferGate.from_dict(g)).identity() for g in items]
+    text = json.dumps(ids, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False)
+    return OFFER_GATE_ID_PREFIX + hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
