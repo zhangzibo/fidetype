@@ -1,6 +1,6 @@
 # P15-49 E2 self-teaching on T15: how to run it
 
-The pre-registration is [plan.md](plan.md) (commit `29c1dc9`, frozen). This folder adds the run wrapper (roadmap P15-52, gap 212, E2 part). No result exists yet.
+The pre-registration is [plan.md](plan.md) (commit `29c1dc9`, frozen). [amendment-1.md](amendment-1.md) (2026-11-24, before any GPU run) records the six points where the plan is ambiguous or defective and the wrapper's choices. This folder adds the run wrapper (roadmap P15-52, gap 212, E2 part). No result exists yet.
 
 | file | what it does |
 |---|---|
@@ -74,7 +74,7 @@ The dry run proves that a run stopped after one session and resumed gives the sa
 | grid | each LR runs once on S8; both step cells get its result | the nightly fit comes after phase C, so it cannot change the S8 phase-C WER (see below) |
 | GPU clock | wall time of the job | the job blocks the GPU while it runs, also while the CPU decodes |
 
-## Points in the plan to note (not changed)
+## Points in the plan to note (not changed; on record in [amendment-1.md](amendment-1.md))
 1. **The grid cannot choose the nightly steps.** The rule uses the S8 phase-C WER, and the nightly fit runs after phase C. The two step values always tie, and the tie rule picks 150 steps. The plan's default of 300 steps is therefore never used.
 2. **The nightly LR is not given.** The wrapper uses the update-1 LR.
 3. **"From the champion" vs "the nightly version becomes the challenger".** See the first row of the table above.
