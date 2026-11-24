@@ -4,3 +4,6 @@ spec/conformance/**/*.npz binary
 # Built-in live model assets: the model card pins the SHA-256 of the weights file, so keep LF bytes (P2-09;
 # a Windows checkout with core.autocrlf=true changed the hash).
 src/fidetype/live/assets/** text eol=lf
+# Shell scripts run with bash on Linux (for example the GPU rental setup script): keep LF bytes on every
+# platform, also in a Windows checkout with core.autocrlf=true (CRLF line ends break bash).
+*.sh text eol=lf
