@@ -298,6 +298,14 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Ideas:** the beam push, `_align_group`.
 - **Done when:** `hybrid_setup` stays under 25 s on windows py3.12 CI in 3 runs, with all assertions unchanged.
 
+#### P2-17 LF line endings for shell scripts
+- **Gap:** 213 of the [open-gap list](open-gaps.md) (added 2026-11-23 by the rental kit). Follow-up of P2-09.
+- **Status:** `todo`. Low priority.
+- **Serves:** research labs, small teams.
+- **Depends on:** rental kit `aa91210` (done); `.gitattributes` is a shared file; CPU. Low priority.
+- **Source:** plan agent report (2026-11-23, commit `aa91210`): `tools/rental/setup_cuda.sh` runs with bash on a Linux machine. A Windows checkout with `core.autocrlf=true` can write CRLF line ends, and bash then fails. `.gitattributes` has no rule for `*.sh`.
+- **Done when:** `.gitattributes` has `*.sh text eol=lf`, the script is renormalised, and a check shows LF bytes in a fresh checkout.
+
 ## P3. Collector (pipeline)
 **Goal:** a vendor-neutral process, like the OpenTelemetry Collector, that takes NTS from any source, applies processors, and sends results to any target. Configuration is a TOML/JSON file (FEP-0006; [decision 2026-11-17](collector-decisions-2026-11.md)).
 
@@ -805,7 +813,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P5-36 Frame-order integrity check in the trust layer
 - **Gap:** 181 of the [open-gap list](open-gaps.md) (added 2026-11-22 by P14-57). Follow-up of P14-57, P5-31.
-- **Status:** `in_progress` (2026-11-22). Gap 181 stays open: the done-when is not met for the built-in guard. Evidence 2026-11-22 (P5-36, pre-registration `a705a75`, results `6f45faf`, [results](../../experiments/2026-11-22-p5-36-frame-order/results.md)): the stream-integrity check (opt-in `frame_times=`, ABSTAIN with a reason code, no `config_id` change) passes I1-I3: transport faults flagged 240 / 240, real streams flagged 0 / 160. It cannot see `rev_out` as P14-57 built it (0 / 80; a value fault). The `lm_direction` offer gate is a negative result: `rev_out` offers 10 / 80 and 10 / 80, real offers removed 10 / 80 and 10 / 80 (limits 4). Evidence 2026-11-22 (P5-36b, pre-registration `dab694f`, results `a7bfbc8`, [results](../../experiments/2026-11-22-p5-36b-two-direction-lm/results.md)): the two-direction LM-beam score (`lm_beam_direction`, threshold fit on val S only). LM guard `tcfg-26ae951a20a0cddd` passes (`rev_out` 0 / 80, real removed 4 / 80). Built-in guard `tcfg-39aac48688b8bd12` fails B2 (`rev_out` 1 / 80, real removed 6 / 80; `tau` 0.326). B3-B5 pass. Extra cost 0.1-0.25 s per sentence (median). The done-when needs both guards, so this gap stays open (`in_progress`). Scope question (b) is moot: the user chose route 3. Evidence 2026-11-23 (P5-37, results `2451892`, [results](../../experiments/2026-11-22-p5-37-fixed-threshold/results.md)): with the fixed threshold 0, both guards pass on the 781 decoder-seen pool sentences (built-in `rev_out` offers 1 / 781, real offers removed 1 / 781; LM 0 / 781 and 0 / 781; limits 39). This is weak evidence, as pre-stated, so the gap stays open. Open part: a built-in-guard result on clean new data. To close the gap: a user decision (option C: accept the LM-guard evidence; option D: close the `rev_out` route by design) or new data (option B or E).
+- **Status:** `done` (2026-11-23, closed by user decision, option C). Gap 181 closed. The LM guard passes on clean data (P5-36b: `rev_out` 0 / 80, real removed 4 / 80). The built-in guard passed only on the 781 decoder-seen pool sentences (P5-37: `rev_out` 1 / 781, real removed 1 / 781). The built-in guard on clean new data is accepted as weakly tested; the model card says "tested on training data only". Follow-ups: gap 190 = [P14-60](#p14-60-ship-the-lm_beam_direction-offer-gate-in-the-willett-hw-manifests) (done), gap 201 = [P5-40](#p5-40-built-in-direction-gate-on-clean-held-out-data). Earlier: `in_progress` (2026-11-22). Gap 181 stayed open: the done-when was not met for the built-in guard. Evidence 2026-11-22 (P5-36, pre-registration `a705a75`, results `6f45faf`, [results](../../experiments/2026-11-22-p5-36-frame-order/results.md)): the stream-integrity check (opt-in `frame_times=`, ABSTAIN with a reason code, no `config_id` change) passes I1-I3: transport faults flagged 240 / 240, real streams flagged 0 / 160. It cannot see `rev_out` as P14-57 built it (0 / 80; a value fault). The `lm_direction` offer gate is a negative result: `rev_out` offers 10 / 80 and 10 / 80, real offers removed 10 / 80 and 10 / 80 (limits 4). Evidence 2026-11-22 (P5-36b, pre-registration `dab694f`, results `a7bfbc8`, [results](../../experiments/2026-11-22-p5-36b-two-direction-lm/results.md)): the two-direction LM-beam score (`lm_beam_direction`, threshold fit on val S only). LM guard `tcfg-26ae951a20a0cddd` passes (`rev_out` 0 / 80, real removed 4 / 80). Built-in guard `tcfg-39aac48688b8bd12` fails B2 (`rev_out` 1 / 80, real removed 6 / 80; `tau` 0.326). B3-B5 pass. Extra cost 0.1-0.25 s per sentence (median). The done-when needs both guards, so this gap stays open (`in_progress`). Scope question (b) is moot: the user chose route 3. Evidence 2026-11-23 (P5-37, results `2451892`, [results](../../experiments/2026-11-22-p5-37-fixed-threshold/results.md)): with the fixed threshold 0, both guards pass on the 781 decoder-seen pool sentences (built-in `rev_out` offers 1 / 781, real offers removed 1 / 781; LM 0 / 781 and 0 / 781; limits 39). This is weak evidence, as pre-stated, so the gap stays open. Open part: a built-in-guard result on clean new data. To close the gap: a user decision (option C: accept the LM-guard evidence; option D: close the `rev_out` route by design) or new data (option B or E).
 - **Follow-ups:** gap 189 = [P5-37](#p5-37-fixed-threshold-0-rule-for-the-lm_beam_direction-offer-gate); gap 190 = [P14-60](#p14-60-ship-the-lm_beam_direction-offer-gate-in-the-willett-hw-manifests); gap 191 = [P5-38](#p5-38-faster-direction-gate-reuse-the-forward-decode); gap 192 = [P4-26](#p4-26-producer-frame-times-from-the-device-adapters-to-the-trust-layer).
 - **Serves:** research labs, small teams.
 - **Depends on:** P14-57 (done); the P14-57 `rev_out` test set; CPU.
@@ -822,11 +830,27 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P5-38 Faster direction gate: reuse the forward decode
 - **Gap:** 191 of the [open-gap list](open-gaps.md) (added 2026-11-22 by P5-36b). Follow-up of P5-36.
-- **Status:** `todo`. Low priority.
+- **Status:** `in_progress` (2026-11-23; an agent runs it). Low priority.
 - **Serves:** research labs, small teams.
 - **Depends on:** P5-36 (P5-36b code); CPU. Low priority.
 - **Source:** P5-36b (2026-11-22, results `a7bfbc8`, [results](../../experiments/2026-11-22-p5-36b-two-direction-lm/results.md)): the gate runs two new beam searches per offer. Extra cost median 0.25 s (built-in) and 0.11 s (LM) per sentence, about 0.43-0.75 of a guard decision. The gate is lazy, so a withhold costs nothing extra.
 - **Done when:** the gate reuses the forward beam of the guard decode, so only the reverse beam is new; decisions are equal on the P5-36b val and test sets, and the new median extra time per sentence is measured and reported.
+
+#### P5-39 Offer-gate identity in the guard identity
+- **Gap:** 200 of the [open-gap list](open-gaps.md) (added 2026-11-23 by P14-60). Follow-up of P14-60, P14-54.
+- **Status:** `todo`.
+- **Serves:** research labs, small teams.
+- **Depends on:** P14-60 (done); CPU.
+- **Source:** P14-60 (2026-11-23, commit `212da07`): `config_id` is computed from the frozen trust config only. By documented design an offer gate never changes it (as in P14-54). So two guards with different offer-gate lists can have the same `config_id`.
+- **Done when:** the guard identity includes a digest of the offer-gate list (features, rules, thresholds, order), for example a gate digest in the audit record and in the manifest identity. Two guards that differ only in their gate lists get different identities. Existing `config_id` values do not change, or a change is documented with its reason. Tests cover both cases.
+
+#### P5-40 Built-in direction gate on clean held-out data
+- **Gap:** 201 of the [open-gap list](open-gaps.md) (added 2026-11-23 by the gap 181 decision). Follow-up of P5-36, P5-37.
+- **Status:** `todo`. Low priority.
+- **Serves:** research labs, small teams.
+- **Depends on:** a held-out block (retrain the built-in `willett-hw` decoder with a held-out block; GPU, days) or new public T5 handwriting data. Low priority.
+- **Source:** user decision 2026-11-23 (option C, gap 181 closed): the built-in guard passed the fixed threshold 0 only on the 781 decoder-seen pool sentences (P5-37, results `2451892`: `rev_out` offers 1 / 781, real offers removed 1 / 781). This is accepted as weakly tested. The model card says "tested on training data only".
+- **Done when:** a pre-registered run with the fixed threshold 0 on clean held-out data gives for the built-in guard at most 5 % `rev_out` offers and at most 5 % real offers removed, or numbers say why not. The model card then states the new result.
 
 ## P6. Public benchmark + leaderboard
 **Goal:** one public place to compare neural text entry across modalities and datasets, with honest metrics.
@@ -1282,6 +1306,16 @@ Added 2026-11-13 (user decision). Review and publishing run on outside timelines
 - One discrete-intent replay and one cursor replay emit valid streams. The actuation policy passes its simulator safety tests.
 - Tests with real assistive devices (wheelchair, robot arm) and users: **externally blocked** (hardware, ethics approval, volunteers).
 
+### Open-gap items (added 2026-11-23)
+#### P12-08 Certified accidental-click rate
+- **Gap:** 211 of the [open-gap list](open-gaps.md) (added 2026-11-23 by the frontier plan). Follow-up of P12-02, P12-06.
+- **Status:** `externally_blocked`.
+- **Serves:** research labs.
+- **Depends on:** pre-registration `29c1dc9`; the user downloads the BrainGate drag-and-drop data by hand (Dryad doi:10.5061/dryad.98sf7m0v1, CC0, about 8.2 GB; a login is needed) into `C:\Users\zhang\bci-data\raw\braingate-dragdrop\`; CPU.
+- **Source:** frontier plan (user "go", 2026-11-23), direction 5. Pre-registration `29c1dc9` ([plan](../../experiments/2026-11-23-certified-click-rate/plan.md); the plan says "proposed P12-07", but P12-07 is already "tests with real assistive devices", so this item is P12-08). Public click decoders give no false-click rate and no bound.
+- **Done when:** the pre-registered run reports H1 (the false-click rate stays at or below the stated alpha on held-out blocks) and H2 (bits per second at the same false-click rate against a fixed-threshold and a smoothing baseline), or numbers say why not.
+
+
 **Effort:** 20–35 agent-days; about 8 h user review. **Depends on:** P1 1.0 RC, P2, P3, P5.
 
 ## P13. Public benchmark hub (added 2026-11-11)
@@ -1363,6 +1397,14 @@ Follow-ups of P13-01. Full list: [open gaps](open-gaps.md). No existing item mov
 - **Depends on:** P13-11 (done); the local decoder outputs of the build steps (CPU only).
 - **Source:** P13-11 (2026-11-19, code `a7f0b6b`): 30 trust cards (CRC, LTT and plug-in policies on `b2t25-t15`, `b2t25-t15-copytask`, `spanishbcbl-meg`, `spanishbcbl-meg-async`, `toronto-semg`, `toronto-semg-composed`) record `config_id_reason`: the build steps (`experiments/2026-11-17-p6-02b-v02-entries/run.py` stages `b2t`, `meg`, `toronto`, and the v0.1 source experiments) fitted a TrustPipeline in memory and kept only the decisions.
 - **Done when:** for each of the 30 cards, a refit with the build-step settings gives the same decisions as the card, `FrozenTrustConfig.from_pipeline` freezes it (numbers only, committed), and the recipe records its `config_id` and `config_id_source`; a card whose refit does not reproduce keeps a reason that says so.
+
+#### P13-14 Rescore the tracks-v0.1 benchmark cards under safe-WPM v0.2
+- **Gap:** 204 of the [open-gap list](open-gaps.md) (added 2026-11-23 by P14-61). Follow-up of P14-61, P13-13.
+- **Status:** `todo`. Optional.
+- **Serves:** research labs.
+- **Depends on:** P14-61 (done); the per-trial sources of the tracks-v0.1 cards (local derived data); CPU. Optional.
+- **Source:** P14-61 (2026-11-23, commit `38f1e50`): the leaderboard headline column is v0.2. The tracks-v0.1 cards keep their v0.1 numbers, because their per-trial sources are not all at hand.
+- **Done when:** each tracks-v0.1 card has a v0.2 score next to its v0.1 score (the v0.1 number keeps its value and its label), or a recorded reason why its per-trial source cannot be rebuilt.
 
 ## P14. Value first: a useful toolkit (added 2026-11-15)
 **Goal:** people install `fidetype` because it is useful today, not only because it is a format. The format spreads as a side effect, as with LangChain ([LangChain case study](../sources/case-study-langchain.md)). P14 adds user value and credibility. It does not change the scope, order or priority of P1–P13.
@@ -1912,19 +1954,46 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P14-60 Ship the lm_beam_direction offer gate in the willett-hw manifests
 - **Gap:** 190 of the [open-gap list](open-gaps.md) (added 2026-11-22 by P5-36b). Follow-up of P5-36, P14-56.
-- **Status:** `todo`. Note 2026-11-23: gap 189 passed only as weak evidence (decoder-seen pool), so this item does not start yet. If the user closes gap 181 by decision, it can start with the fixed threshold 0 as the rule.
+- **Status:** `done` (2026-11-23, commit `212da07`). Gap 190 closed. Both `willett-hw` guards ship `coherence`, then `lm_beam_direction >= 0` (fixed threshold 0, not fitted). P14-56 re-checks pass for both: uniform 0 / 300, frame-shuffled 0 / 300, time-shuffled 0 / 106, real 40 / 40, commits match the sheet. Wiring on the 80 test sentences (information only): built-in real offers 77 -> 76, `rev_out` 77 -> 1; LM real 77 -> 75, `rev_out` 77 -> 2. pytest 1922 passed, 45 skipped; wording check 0. `config_id` values unchanged: built-in `tcfg-39aac48688b8bd12`, LM `tcfg-f498c0637536daec`. Behaviour change: both guards now need the local LM file. Started after the user closed gap 181 by decision (option C). Earlier note (2026-11-23): gap 189 passed only as weak evidence, so this item waited for that decision.
+- **Follow-up:** gap 200 = [P5-39](#p5-39-offer-gate-identity-in-the-guard-identity) (an identity for the offer-gate list).
 - **Serves:** research labs.
 - **Depends on:** gap 189 = P5-37 (must pass first); P14-56 (done); CPU.
 - **Source:** P5-36b (2026-11-22, results `a7bfbc8`, [results](../../experiments/2026-11-22-p5-36b-two-direction-lm/results.md)): the direction gate is in the library but not in any packaged gate list, guard file or manifest. `config_id` values unchanged.
-- **Done when:** if gap 189 passes: the gate is in the manifest gate list of both `willett-hw` guards (new `config_id`), the `readout=` wiring passes it to the LM readout, the model cards state the gate, its rule and its cost, and the P14-56 offer-control blocks are re-checked and pass. If gap 189 fails: record the reason and close without a change.
+- **Done when:** if gap 189 passes: the gate is in the manifest gate list of both `willett-hw` guards ~~(new `config_id`)~~, the `readout=` wiring passes it to the LM readout, the model cards state the gate, its rule and its cost, and the P14-56 offer-control blocks are re-checked and pass. If gap 189 fails: record the reason and close without a change.
+- **Done-when amendment (user decision 2026-11-23, option A):** the clause "(new `config_id`)" is removed (struck through above). Reason: `config_id` is computed from the frozen trust config only, and by documented design an offer gate never changes it (as in P14-54). So the clause could not be met by any correct change. The gap that this leaves (two guards with different gate lists can share a `config_id`) is gap 200 = [P5-39](#p5-39-offer-gate-identity-in-the-guard-identity).
 
 #### P14-61 Switch the scorer and the leaderboard to the adopted safe-WPM v0.2
 - **Gap:** 196 of the [open-gap list](open-gaps.md) (added 2026-11-22 by the user decision on safe-WPM v0.2). Follow-up of P14-26, P14-28, P15-29.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-23, commit `38f1e50`; CI `tests` run 45325134496 green). Gap 196 closed. `safe-wpm/0.2` is the code default (with the `aac-gaze-v1` reading cost); v0.1 stays selectable and gives byte-identical numbers; the leaderboard headline column is v0.2; 25 old experiment scripts pin their metric version; no v0.1 number is re-labelled. Full suite 1931 passed, 46 skipped.
+- **Follow-ups:** gap 202 = [P14-62](#p14-62-safe-wpm-wording-in-the-drop-in-module), gap 203 = [P14-63](#p14-63-several-commits-per-trial-extension-of-safe-wpm-v02), gap 204 = [P13-14](#p13-14-rescore-the-tracks-v01-benchmark-cards-under-safe-wpm-v02), gap 205 = [P14-64](#p14-64-headline-callers-of-calibration_draw_interval-use-partition-draws-and-k--80).
 - **Serves:** research labs, small teams.
 - **Depends on:** P14-26, P14-28, P15-29 (done); CPU.
 - **Source:** user decision 2026-11-22 ("all recommended"): adopt `safe-wpm/0.2` with the reading cost (`aac-gaze-v1`, 0.5 s + 0.3 s per word per commit), calibration-inclusive intervals with K >= 80 draws, and partition-only draws. The docs say so ([docs/safe-wpm.md](../../docs/safe-wpm.md) sections 6a, 6b; [proposal](../../docs/safe-wpm-v0.2-proposal.md)). The code still says "proposed, not adopted": `V02_STATUS`, `CALIBRATION_INTERVAL`, the default `metric_version="0.1"`, the CLI help, the leaderboard banner and column, the site test (`tests/test_publishing_metadata.py`) and the track-page test.
 - **Done when:** the scorer default is v0.2 with the adopted reading cost, the status strings say "adopted 2026-11-22", the leaderboard shows v0.2 as the headline column with a dated note and v0.1 as a second column, every v0.1 number keeps its value and its v0.1 label (no re-label), `calibration_draw_interval` warns when K < 80 or the draws are not partition-only, the tests and the generated pages are updated, and CI is green.
+
+#### P14-62 safe-WPM wording in the drop-in module
+- **Gap:** 202 of the [open-gap list](open-gaps.md) (added 2026-11-23 by P14-61). Follow-up of P14-61.
+- **Status:** `todo`. Low priority.
+- **Serves:** research labs, small teams.
+- **Depends on:** P14-61 (done); the gap 191 (P5-38) agent commits first, because it edits the same file; CPU. Low priority.
+- **Source:** P14-61 (2026-11-23, commit `38f1e50`): `src/fidetype/trust/dropin.py` (about line 1703) still says "safe-wpm/0.2 (proposed)". safe-WPM v0.2 was adopted on 2026-11-22.
+- **Done when:** the text says that v0.2 is adopted (2026-11-22), no behaviour changes, and the tests pass.
+
+#### P14-63 Several-commits-per-trial extension of safe-WPM v0.2
+- **Gap:** 203 of the [open-gap list](open-gaps.md) (added 2026-11-23 by P14-61). Follow-up of P14-61.
+- **Status:** `todo`.
+- **Serves:** research labs, small teams.
+- **Depends on:** P14-61 (done); a user decision on an agent recommendation; CPU.
+- **Source:** P14-61 (2026-11-23, commit `38f1e50`): the adopted v0.2 scorer covers one commit per trial. An extension for trials with several commits exists as an idea, but nobody decided to adopt it.
+- **Done when:** a decision (adopt or not) is recorded in docs/safe-wpm.md with its reason. If adopted: the scorer and the tests implement it, and no earlier number is re-labelled.
+
+#### P14-64 Headline callers of calibration_draw_interval use partition draws and K >= 80
+- **Gap:** 205 of the [open-gap list](open-gaps.md) (added 2026-11-23 by P14-61). Follow-up of P14-61, P15-29.
+- **Status:** `todo`.
+- **Serves:** research labs, small teams.
+- **Depends on:** P14-61 (done); CPU.
+- **Source:** P14-61 (2026-11-23, commit `38f1e50`): `calibration_draw_interval` warns when K < 80 or when the draws are not partition-only, but it does not refuse. The adopted v0.2 rule (user decision 2026-11-22) needs K >= 80 and partition-only draws for a headline result.
+- **Done when:** every caller that makes a headline result (experiment scripts, the leaderboard build, docs examples) passes `draw_scheme="partition"` and K >= 80, or its result is labelled "not a headline". A test or a check finds no headline caller that breaks the rule.
 
 ## P15. Frontier (added 2026-11-15, leads)
 **Goal:** move toward the [north star](north-star.md): a BCI that reads language from any body signal, teaches itself from daily use, and provably never puts words in the user's mouth. P15 runs the first experiments of the three frontier pillars and their follow-ups.
@@ -2015,6 +2084,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** P15-02; the GPU after M4-13 and P11-01 (about 2026-11-19).
 - **Progress (2026-11-18):** CPU part P15-03a done ([results](../../experiments/2026-11-17-p15-03-f1-m4-13/results.md)): champion / challenger replay on T15 with M4-12, M4-13 and a reversed decoder, 4 runs. H1, H4, H5, H6 pass; H2 and H3 fail with the feedback-r0.3 user (see P15-13). The GPU part stays open.
 - **Done when:** the pre-registered criteria of the plan are evaluated on both datasets, including the self-training negative control and the silent-error rates. Cost about 3–8 GPU-h for T12.
+- **GPU part (2026-11-23):** pre-registered as [P15-49](#p15-49-gpu-part-of-e2-self-teaching-on-t15) (gap 209, pre-registration `29c1dc9`).
 
 #### P15-04 Bandit-feedback online risk control and guarantee statement
 - **Goal:** a bound that uses only the feedback that the user actually gives (the truth is seen only for what was shown or corrected).
@@ -2054,6 +2124,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Note (2026-11-22, P15-36, results `01ee3b9`):** E1 is now valid under the budget-matched rule (F-R20 at 3 / 10 / 30 min, E1a at 100 min and all): V1 pass, C2 pass on 2 seeds. H1-H4 are each partial (1 win of 3 budgets; H1 wins at 3 min only). P15-08 stays `in_progress` (the KT-sEMG arm is missing).
 - **Note (2026-11-22, P15-41, results `02aa679`):** H1 fails on 5 seeds at 10 and 30 min (d = 0.038 [−0.004, 0.081] and −0.002 [−0.034, 0.031]); the 3-min win has no valid control; C2 at 10 min fails on seeds 2-4. So at minutes scale there is no valid evidence that EMG pretraining beats text pretraining. P15-08 stays `in_progress` (the KT-sEMG arm is missing). Follow-up: gap 194 = [P15-43](#p15-43-c2-budget-range-of-the-f-r20-recipe).
 - **Note (2026-11-23, P15-43, results `a98964c`):** C2 passes on every seed at none of 3 / 10 / 30 min (100 min not tested). So minutes-scale E1 is "no valid test" with F-R20: the P15-41 30-min null and the 3-min win are both invalid. F3 rests on the full-data result only (E 0.395, V1). P15-08 stays `in_progress` (the KT-sEMG arm is missing). Follow-ups: gaps 197-199 = [P15-45](#p15-45-c2-at-the-full-data-budget-of-e1), [P15-46](#p15-46-stronger-c2-readout-with-repeated-deranged-runs), [P15-47](#p15-47-100-min-c2-with-an-f-r20-recipe).
+- **Full-data follow-up (2026-11-23):** [P15-50](#p15-50-f3-at-full-data-with-tuned-arms-and-repeated-deranged-controls) (gap 210, pre-registration `29c1dc9`): tuned R+ / E+ arms, K and I trunk arms, 3 deranged runs per seed.
 
 #### P15-09 New-modality benchmark and reverse transfer
 - **Goal:** a public test of "new sensor or new user with minutes of data".
@@ -2282,6 +2353,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Source:** P15-37 ([results](../../experiments/2026-11-21-p15-37-multi-split/results.md)): with the 722 `val_select` items no guarantee-keeping guard lifts the T15 calibration-inclusive lower end above 4.0153 (primary BMED-3 4.73 [2.60, 6.24]; R120 5.26 [2.94, 6.91]). The pre-registered projection needs about 2,760 calibration items (3.8 x 722); the exploratory certified-only figure is about 1,580.
 - **Done when:** a pre-registered calibration-inclusive run on that data (P15-29 credit rule, K stated in advance) reports a lower end above 4.0153, or numbers say why not. The run also tests the projection.
 - **Evidence (2026-11-21, P15-40, results `23ae9bd`):** the 1/sqrt(n) check gives b_D2 = 0.48 [0.12, 0.83] and a revised n* about 2,520 [1,080, 460,000] (P15-37: 2,764). A tighter exponent needs new data, so that part folds into this item.
+- **Route (2026-11-23):** [P15-48](#p15-48-t15-calibration-hold-out-retrain) (gap 208) makes the labelled calibration data ourselves: it holds out 2,216 training trials by sentence group (pre-registration `29c1dc9`).
 
 #### P15-40 Check the 1/n assumption of the calibration-size projection
 - **Gap:** 161 of the [open-gap list](open-gaps.md) (added 2026-11-21 by P15-37). Follow-up of P15-37.
@@ -2331,7 +2403,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P15-45 C2 at the full-data budget of E1
 - **Gap:** 197 of the [open-gap list](open-gaps.md) (added 2026-11-23 by P15-43). Follow-up of P15-43, P15-36.
-- **Status:** `todo`. Medium priority.
+- **Status:** `in_progress` (2026-11-23). Medium priority. Pre-registration `20f9f5b`, code `d4f5990`; GPU job launched 18:10:12 (pid 19364). C2 passes on seeds 0-3 (deranged 0.9794, 0.8657, 0.9530, 0.8959; needed 0.75); seed 4 runs. Not done.
 - **Serves:** research labs.
 - **Depends on:** P15-43 (done); the E1a full-data recipe (or F-R20 at the full budget); GPU, long (estimate the cost in the plan). Medium priority.
 - **Source:** P15-43 (2026-11-23, results `a98964c`, [results](../../experiments/2026-11-23-p15-43-c2-30min/results.md)): C2 fails at 3, 10 and 30 min on at least one seed, so F3 rests on the full-data result only (E 0.395, V1). That result has no label-deranged control on more than one budget-matched seed set.
@@ -2344,6 +2416,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** P15-43 (done; local per-sentence outputs in `C:/Users/zhang/bci-data/derived/p15-43/`); GPU for the extra deranged runs; CPU for the bootstrap. Medium priority.
 - **Source:** P15-43 (2026-11-23, results `a98964c`, [results](../../experiments/2026-11-23-p15-43-c2-30min/results.md)): the C2 margins are near the threshold on every seed (fails −0.011 to −0.033; passes +0.030 and +0.067). One deranged run per seed cannot separate a true gap of about 0.08-0.10 from a gap of 0.10 or more.
 - **Done when:** a pre-registered C2 rule uses several deranged runs per seed (the number fixed in the plan) and a paired sentence bootstrap CI of the deranged − normal test CER gap, with a pass rule stated before any number. It is applied to at least one E1 budget and reports pass or fail per seed with the CI. Later E1 checks use this rule.
+- **Full-data follow-up (2026-11-23):** [P15-50](#p15-50-f3-at-full-data-with-tuned-arms-and-repeated-deranged-controls) (gap 210, pre-registration `29c1dc9`): tuned R+ / E+ arms, K and I trunk arms, 3 deranged runs per seed.
 
 #### P15-47 100-min C2 with an F-R20 recipe
 - **Gap:** 199 of the [open-gap list](open-gaps.md) (added 2026-11-23 by P15-43). Follow-up of P15-43, P15-36.
@@ -2352,6 +2425,45 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** P15-43 (done); a new, pre-registered F-R20 recipe choice at 100 min; about 12 GPU h. Low priority.
 - **Source:** P15-43 (2026-11-23, results `a98964c`, [results](../../experiments/2026-11-23-p15-43-c2-30min/results.md)): 100 min was not tested, because no F-R20 100-min recipe exists. E1a already reported C2 failing at <= 100 min with its own recipe. Gaps 197 and 198 give more information per GPU hour.
 - **Done when:** a pre-registered F-R20 recipe at 100 min reports C2 on all 5 seeds (pass or fail per seed), or numbers say why not (for example the GPU cost). The result says whether 100 min is the smallest budget where C2 passes on every seed.
+- **Full-data follow-up (2026-11-23):** [P15-50](#p15-50-f3-at-full-data-with-tuned-arms-and-repeated-deranged-controls) (gap 210, pre-registration `29c1dc9`): tuned R+ / E+ arms, K and I trunk arms, 3 deranged runs per seed.
+
+#### P15-48 T15 calibration hold-out retrain
+- **Gap:** 208 of the [open-gap list](open-gaps.md) (added 2026-11-23 by the frontier plan). Follow-up of P15-39, P15-37.
+- **Status:** `todo`.
+- **Serves:** research labs.
+- **Depends on:** pre-registration `29c1dc9`; a free GPU (local, or rented once the user approves); CPU for the hold-out rule.
+- **Source:** frontier plan (user "go", 2026-11-23), direction 2. Pre-registration `29c1dc9` ([plan](../../experiments/2026-11-23-t15-calibration-holdout/plan.md); `holdout.py` + 7 CPU tests): 2,216 trials held out by sentence group; calibration pool 2,688; safe-WPM v0.2 with K = 120; pass = lower end > 4.0153. It is the route for gap 160 = P15-39 with our own hold-out (no new outside data).
+- **Done when:** the pre-registered run reports the calibration-inclusive safe-WPM v0.2 interval (K = 120) and whether its lower end is above 4.0153, or numbers say why not.
+
+#### P15-49 GPU part of E2 self-teaching on T15
+- **Gap:** 209 of the [open-gap list](open-gaps.md) (added 2026-11-23 by the frontier plan). Follow-up of P15-03.
+- **Status:** `todo`.
+- **Serves:** research labs.
+- **Depends on:** pre-registration `29c1dc9`; the run wrapper (gap 212 = P15-52); GPU (local or rented).
+- **Source:** frontier plan (user "go", 2026-11-23), direction 1. Pre-registration `29c1dc9` ([plan](../../experiments/2026-11-23-e2-self-teaching-t15/plan.md)): T15, then T12 as stage 2; primary P1: FB-F WER change <= -0.02 on 2 / 2 seeds; the bound must hold through every accepted update. It is the open GPU part of P15-03.
+- **Done when:** the pre-registered criteria are evaluated on T15 (and on T12 at stage 2), with the self-training and shuffled-label controls, and the wrong-commit bound is reported for every accepted update.
+
+#### P15-50 F3 at full data with tuned arms and repeated deranged controls
+- **Gap:** 210 of the [open-gap list](open-gaps.md) (added 2026-11-23 by the frontier plan). Follow-up of P15-08, P15-45, P15-46, P15-47.
+- **Status:** `todo`.
+- **Serves:** research labs.
+- **Depends on:** pre-registration `29c1dc9`; the run wrapper (gap 212 = P15-52); the local GPU after P15-45; the K arm needs P11-06 (gap 86).
+- **Source:** frontier plan (user "go", 2026-11-23), direction 3. Pre-registration `29c1dc9` ([plan](../../experiments/2026-11-23-f3-full-data-controls/plan.md)): tuned R+ / E+ arms (same val-only rule), K (KT-sEMG trunk) and I (T15 trunk) arms, 3 deranged runs per seed. It applies the repeated-deranged rule of P15-46 (gap 198). The packaged `willett-hw` decoder is R seed 0 (CER 0.305), so "E beats R" at full data may only show an unstable R recipe.
+- **Done when:** the pre-registered run reports H1-H4 (E+ vs R+, E+ vs T, K vs R+, I vs R+) per seed with the repeated deranged controls, and the F3 row of the north star states the result.
+
+#### P15-51 GPU rental kit
+- **Status:** `done` (2026-11-23, commit `aa91210`). Tooling only: no rental, no spend. `tools/rental/`: README with a step-by-step machine choice, CUDA setup script, a one-hour speed test of the T15 recipe (it imports the trainer unchanged and projects the GPU hours of the P15-48 hold-out retrain and the P15-49 E2 replay), an upload list with licences, and a ROCm-to-CUDA change list; 8 CPU tests.
+- **User step:** the one-hour speed test on a rented machine needs the user's approval of a rental (not started).
+- **Serves:** the project (GPU capacity for P15-48, P15-49).
+- **Open:** gap 213 = [P2-17](#p2-17-lf-line-endings-for-shell-scripts) (LF rule for `*.sh`).
+
+#### P15-52 Run wrappers for E2 and F3
+- **Gap:** 212 of the [open-gap list](open-gaps.md) (added 2026-11-23 by the frontier plan). Follow-up of P15-49, P15-50.
+- **Status:** `todo`.
+- **Serves:** research labs.
+- **Depends on:** pre-registration `29c1dc9`; CPU (a short GPU smoke into a scratch folder only).
+- **Source:** plan agent report (2026-11-23, commits `29c1dc9`, `aa91210`): the E2 and F3 plans are committed, but their run wrappers are not written yet.
+- **Done when:** each wrapper exists, calls the frozen trainers unchanged, has CPU tests, and passes a dry run (no result files), before any GPU launch.
 
 ## P16. Write side: emotion and memory (exploration) (added 2026-11-15, later)
 **Goal:** find out, with evidence, whether a BCI can stimulate or replicate emotion or memory, and what part of that Fidetype could do safely. All Fidetype work so far is **read side** (signal → text). P16 looks at the **write side** (stimulation → brain state).
@@ -2375,6 +2487,8 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 | **P16-03** | Ethics and safety page for write-side BCI | P16-01 | todo |
 | **P16-04** | Design study: closed loop "detect state → stimulate → verify" (offline / simulation only) | P16-01, P16-02, P16-03 | todo |
 | **P16-05** | Any real stimulation work | P16-03, P16-04, partners, ethics approval, hardware | **externally blocked** |
+| **P16-06** | Beyond words: affect and memory-state decoding with the trust layer's signal checks (added 2026-11-23, user request) | research scope (agent runs 2026-11-23), P16-02, trust layer | todo |
+| **P16-07** | Beyond words: image reconstruction decoding with signal checks (added 2026-11-23, user request) | P16-06 | todo |
 
 #### P15-29 Safe WPM interval that includes the calibration draw
 - **Gap:** 103 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P15-26). Follow-up of P15-26.
@@ -2416,6 +2530,24 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Deliverable:** none in this project alone. It needs clinical partners, ethics approval and approved hardware.
 - **Depends on:** P16-03, P16-04; partners, ethics approval, hardware (the user owns these).
 - **Done when:** a partner study exists with ethics approval. **`externally_blocked`**; it never counts as late.
+
+#### P16-06 Beyond words: affect and memory-state decoding with signal checks
+- **Gap:** 206 of the [open-gap list](open-gaps.md) (added 2026-11-23 by the user request "beyond words"). Follow-up of P16-01, P16-02.
+- **Status:** `todo`.
+- **Serves:** research labs.
+- **Depends on:** the research scope (a research agent runs 2026-11-23); public datasets (licence check first); trust layer (P5, P14-03).
+- **Source:** user request 2026-11-23: decode more than words (emotion / affect, memory state, images), and the user wants to build it. The existing P16 phase (emotion and memory) covers the write side and one read-side affect item (P16-02). A research agent scopes the track now.
+- **Done when:** a wiki page scopes the track: public datasets with licences, tasks, and which trust-layer signal checks and null controls carry over. At least one pre-registered read-side run on a public dataset (affect or memory state) reports accuracy, abstention rate and wrong-label rate with intervals, and null controls (uniform, shuffled signal).
+
+#### P16-07 Image reconstruction decoding with signal checks
+- **Gap:** 207 of the [open-gap list](open-gaps.md) (added 2026-11-23 by the user request "beyond words"). Follow-up of P16-06.
+- **Status:** `todo`.
+- **Serves:** research labs.
+- **Depends on:** P16-06 (scope); public datasets (licence check first); GPU (cost in the plan).
+- **Source:** user request 2026-11-23 ("beyond words", images). No roadmap item covered image decoding before.
+- **Done when:** the P16-06 page names public image datasets (with licences) and methods. A pre-registered run reports reconstruction quality against null controls (shuffled signal) and states when the system must abstain; or numbers say why it is not feasible now (for example hardware or GPU cost).
+
+**Note (2026-11-23):** the user wants to build the "beyond words" read side (P16-06, P16-07). The P16 window (2027-07) and the rule "starts after the P15 core work" were set on 2026-11-15; any change of the order is a separate decision. No existing item moved.
 
 ### Exit criteria
 - The literature review gives a verdict for each line of work (P16-01).

@@ -59,8 +59,14 @@ const shortDate = s => s.slice(5, 10);
 
 // ---------- aggregate ----------
 const runs = t => t.agent_runs || [];
+// A row with "time_only": true records the wall time of a detached GPU / CPU job (no tokens, no tool uses).
+// It is not a subagent run, so it is not in the agent-time sum or the run count (R-34, 2026-11-23). Before R-34
+// these rows were added to "Agent time", so a period that an agent waited through was counted twice.
+const agentRuns = t => runs(t).filter(r => !r.time_only);
+const jobRuns = t => runs(t).filter(r => r.time_only);
 const sum = (arr, f) => arr.reduce((a, x) => a + (f(x) || 0), 0);
-const taskAgentS = t => sum(runs(t), r => r.duration_s);
+const taskAgentS = t => sum(agentRuns(t), r => r.duration_s);
+const taskJobS = t => sum(jobRuns(t), r => r.duration_s);
 const taskTokens = t => sum(runs(t), r => r.tokens);
 const taskTools = t => sum(runs(t), r => r.tool_uses);
 
@@ -69,8 +75,10 @@ const ext = t => t.status === 'externally_blocked';
 const countable = tasks.filter(t => !ext(t));
 const doneCount = countable.filter(t => t.status === 'done').length;
 const extCount = tasks.length - countable.length;
-const allRuns = tasks.flatMap(runs);
+const allRuns = tasks.flatMap(agentRuns);
+const allJobRuns = tasks.flatMap(jobRuns);
 const totalAgentS = sum(allRuns, r => r.duration_s);
+const totalJobS = sum(allJobRuns, r => r.duration_s);
 const totalTokens = sum(allRuns, r => r.tokens);
 const totalTools = sum(allRuns, r => r.tool_uses);
 const daysSince = dayNum(TODAY) - dayNum(START_DATE);
@@ -99,7 +107,7 @@ const msInfo = data.milestones.map(m => {
     lastAny: fins[fins.length - 1] || null,
     open, badge,
     started: starts.length > 0,
-    agentS: sum(mt, taskAgentS), tokens: sum(mt, taskTokens), runs: sum(mt, t => runs(t).length),
+    agentS: sum(mt, taskAgentS), tokens: sum(mt, taskTokens), runs: sum(mt, t => agentRuns(t).length),
   };
 });
 
@@ -115,7 +123,7 @@ const cards = [
   ['Days since start', String(daysSince), `Start: ${START_DATE}`],
   ['Days left to target', String(daysLeft), `Target: ${FINAL_TARGET} (M1–M7)`],
   ['Tasks done', `${doneCount} / ${countable.length}`, `${extCount} externally blocked (not counted)`],
-  ['Agent time', fmtHMS(totalAgentS), 'Sum of subagent run durations'],
+  ['Agent time', fmtHMS(totalAgentS), `Sum of subagent run durations. Detached job wall time (${allJobRuns.length} rows, ${fmtHMS(totalJobS)}) is not added`],
   ['Tokens', fmtNum(totalTokens), 'Sum of subagent tokens'],
   ['Agent runs', String(allRuns.length), `${fmtNum(totalTools)} tool uses`],
 ].map(([k, v, s]) => `<div class="card"><div class="k">${esc(k)}</div><div class="v">${esc(v)}</div><div class="s">${esc(s)}</div></div>`).join('');
@@ -197,8 +205,10 @@ const taskRows = msInfo.map(i => {
       const endMs = t.finished_at ? Date.parse(t.finished_at) : nowDate.getTime();
       elapsed = fmtDur(endMs - Date.parse(t.started_at)) + (t.finished_at ? '' : ' (open)');
     }
-    const nr = runs(t).length;
-    const agent = t.orchestrator_only ? '<span class="muted">Orchestrator only</span>' : nr ? fmtHMS(taskAgentS(t)) + (nr > 1 ? ` <span class="muted">(${nr} runs)</span>` : '') : '—';
+    const nr = agentRuns(t).length;
+    const nj = jobRuns(t).length;
+    const jobNote = nj ? ` <span class="muted" title="Detached job wall time; not in the agent-time sum">+ job ${fmtHMS(taskJobS(t))}</span>` : '';
+    const agent = t.orchestrator_only ? '<span class="muted">Orchestrator only</span>' : nr ? fmtHMS(taskAgentS(t)) + (nr > 1 ? ` <span class="muted">(${nr} runs)</span>` : '') + jobNote : nj ? '—' + jobNote : '—';
     const runLabels = runs(t).map(r => r.label).filter(Boolean).join('; ');
     const notes = [t.notes, runLabels ? `Runs: ${runLabels}` : ''].filter(Boolean).join(' ');
     return `<tr class="${ext(t) ? 'is-ext' : ''}">
@@ -334,7 +344,7 @@ ${msRows}
   <div class="legend"><span><i class="lg-t"></i>Target window</span><span><i class="lg-a"></i>Actual window (lighter = still open)</span><span><i class="lg-n"></i>Today</span><span><i class="lg-g"></i>Target end (${esc(FINAL_TARGET)})</span></div>
 
   <h2>Tasks</h2>
-  <p class="note">≈ = approximate time. Elapsed = wall-clock time from start to finish. Agent time = sum of subagent run durations. Externally blocked tasks depend on outside people. They do not count as late and are not in the "done" total. Milestones marked "No deadline" (for example PUB, publications) have no due date, never count as late and are not part of the ${esc(FINAL_TARGET)} target.</p>
+  <p class="note">≈ = approximate time. Elapsed = wall-clock time from start to finish. Agent time = sum of subagent run durations. "+ job" = wall time of a detached GPU / CPU job; it is shown apart and not added, because an agent may have waited through the same period. Externally blocked tasks depend on outside people. They do not count as late and are not in the "done" total. Milestones marked "No deadline" (for example PUB, publications) have no due date, never count as late and are not part of the ${esc(FINAL_TARGET)} target.</p>
   <table>
     <thead><tr><th>ID</th><th>Task</th><th>Status</th><th>Start</th><th>Finish</th><th>Elapsed</th><th>Agent time</th><th>Tokens</th><th>Tools</th><th>Notes</th></tr></thead>
     <tbody>
@@ -349,4 +359,4 @@ ${taskRows}
 `;
 
 fs.writeFileSync(path.join(DIR, 'index.html'), html);
-console.log(`Built wiki/progress/index.html: ${doneCount}/${countable.length} tasks done, ${extCount} externally blocked, ${allRuns.length} agent runs, ${fmtHMS(totalAgentS)} agent time, ${fmtNum(totalTokens)} tokens, ${totalTools} tool uses.`);
+console.log(`Built wiki/progress/index.html: ${doneCount}/${countable.length} tasks done, ${extCount} externally blocked, ${allRuns.length} agent runs, ${fmtHMS(totalAgentS)} agent time (+ ${allJobRuns.length} job rows, ${fmtHMS(totalJobS)} job wall time, not added), ${fmtNum(totalTokens)} tokens, ${totalTools} tool uses.`);
