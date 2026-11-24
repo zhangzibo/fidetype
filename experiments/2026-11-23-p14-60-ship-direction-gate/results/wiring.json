@@ -1,0 +1,35 @@
+{
+ "note": "information only: the 80 test sentences were used before (P5-36b post hoc), so these counts are not evidence for the rule; they show that the packaged guards apply the gate",
+ "builtin": {
+  "config_id": "tcfg-39aac48688b8bd12",
+  "real": {
+   "n": 80,
+   "offers_coherence_only": 77,
+   "offers_shipped_gates": 76,
+   "removed_by_direction_gate": 1
+  },
+  "rev_out": {
+   "n": 80,
+   "offers_coherence_only": 77,
+   "offers_shipped_gates": 1,
+   "removed_by_direction_gate": 76
+  },
+  "seconds": 166.7
+ },
+ "lm": {
+  "config_id": "tcfg-f498c0637536daec",
+  "real": {
+   "n": 80,
+   "offers_coherence_only": 77,
+   "offers_shipped_gates": 75,
+   "removed_by_direction_gate": 2
+  },
+  "rev_out": {
+   "n": 80,
+   "offers_coherence_only": 77,
+   "offers_shipped_gates": 2,
+   "removed_by_direction_gate": 75
+  },
+  "seconds": 97.8
+ }
+}

@@ -132,7 +132,22 @@ guard.set_offer_gate(OfferGate("coherence", 0.187))   # or ft.load(path, offer_g
 
 Packaged guards: `t15-m4-13` has the gate `coherence >= 0.187` in its manifest (`trust.offer_gate`). It is on by default, and `model.guard(offer_gate=False)` switches it off. With the gate, the guard passes the offer null control (uniform 0 / 300, frame-shuffled 0 / 300, real 212 / 271). The 54 LTT commits do not change. Details: [record](../experiments/2026-11-21-p5-33-withhold/results.md).
 
-Both `willett-hw` guards have the gate too: `coherence >= 0.00418` in `trust.offer_gate` (built-in readout) and `coherence >= 0.00282` in `readouts.lm.trust.offer_gate` (LM readout). With the gate, both pass the offer null control (uniform, frame-shuffled and time-shuffled input 0 offers each; real 40 / 40); without it, they offered on 297 / 300 and 289 / 300 frame-shuffled inputs. The thresholds differ because the built-in guard applies its frame temperature (1.49) before the feature is computed. Details: [record](../experiments/2026-11-21-p14-54-willett-order-gate/results.md).
+Both `willett-hw` guards have the gate too: `coherence >= 0.00418` in `trust.offer_gate` (built-in readout) and `coherence >= 0.00349` in `readouts.lm.trust.offer_gate` (LM readout; it was 0.00282 before the LM guard was calibrated again). With the gate, both pass the offer null control (uniform, frame-shuffled and time-shuffled input 0 offers each; real 40 / 40); without it, they offered on 297 / 300 and 289 / 300 frame-shuffled inputs. The thresholds differ because the built-in guard applies its frame temperature (1.49) before the feature is computed. Details: [record](../experiments/2026-11-21-p14-54-willett-order-gate/results.md).
+
+**Gate lists.** `set_offer_gate` and `ft.load(path, offer_gate=...)` also take a list of gates. All must pass, in order. A later gate is computed only when the earlier gates pass, so a costly gate runs only on offers that the cheap gates keep. In a manifest, `offer_gate` can hold one gate or a list.
+
+**Direction gate (`willett-hw`).** `coherence` is the same for a stream and for the same stream in reverse time order. So a stream whose frames were reversed by a software fault after the decoder still gets offers. Both `willett-hw` guards therefore have a second gate, `lm_beam_direction >= 0`, after the `coherence` gate:
+
+```python
+OfferGate("lm_beam_direction", 0.0, lm_name="eng_tatoeba_6gram_mkn_noE2Q_noWillett", readout=model.lm_readout())
+```
+
+- The gate decodes the frames twice with the LM readout (a CTC beam with a character language model): forward and in reverse time order. The value is `D = (S(x) - S(rev x)) / ((n(x) + n(rev x)) / 2 + 1)`: `S` is the score of the best beam and `n` its number of characters. `D` changes sign exactly when the frame order is reversed. The offer stays only if `D >= 0`: the frames read better forward than backward.
+- The threshold is fixed at 0. It is not fitted to data.
+- `model.guard()` and `model.guard(readout="lm")` pass the LM readout of the model to the gate (`readout=`). So both guards need the local LM file. `offer_gate=False` switches off all gates.
+- Cost: two extra beam searches per offer that passes the `coherence` gate (median 0.08 to 0.25 s per offer on one CPU core). A withhold costs nothing extra.
+- **The built-in guard was tested on training data only.** The fixed threshold 0 was checked on the 781 sentences that trained the decoder: reversed frames got 1 offer in 781, and 1 real offer in 781 was removed (LM guard: 0 and 0). A test on new data was not possible, because this dataset has no unused sentences. For an earlier version of the LM guard there is also a test-set result, with a threshold fitted on validation data instead of 0 (reversed frames 0 offers in 80, real offers removed 4 in 80). Treat the direction gate of the built-in guard as weakly tested.
+- Details: [record](../experiments/2026-11-22-p5-37-fixed-threshold/results.md), [earlier record](../experiments/2026-11-22-p5-36b-two-direction-lm/results.md), [shipping re-check](../experiments/2026-11-23-p14-60-ship-direction-gate/results.md).
 
 ## 6. Reading the sheet
 

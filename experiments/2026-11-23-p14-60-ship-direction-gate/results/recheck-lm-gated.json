@@ -1,0 +1,71 @@
+{
+ "rule": "pass if null offer rate <= 0.5 x real offer rate, and (null offers <= floor(0.05 x n) or one-sided Fisher exact p <= 0.05); real = the LTT items",
+ "mode": "warn",
+ "max_ratio": 0.5,
+ "p_max": 0.05,
+ "real": {
+  "n": 40,
+  "n_offer": 40,
+  "offer_rate": 1.0
+ },
+ "controls": [
+  {
+   "name": "uniform",
+   "n": 300,
+   "n_offer": 0,
+   "offer_rate": 0.0,
+   "ratio_to_real": 0.0,
+   "allowed_without_test": 15,
+   "p_value": 4.89558e-53,
+   "passed": true
+  },
+  {
+   "name": "shuffled",
+   "n": 300,
+   "n_offer": 0,
+   "offer_rate": 0.0,
+   "ratio_to_real": 0.0,
+   "allowed_without_test": 15,
+   "p_value": 4.89558e-53,
+   "passed": true
+  },
+  {
+   "name": "user",
+   "n": 106,
+   "n_offer": 0,
+   "offer_rate": 0.0,
+   "ratio_to_real": 0.0,
+   "allowed_without_test": 5,
+   "p_value": 7.95975e-37,
+   "passed": true
+  }
+ ],
+ "passed": true,
+ "commits_match_sheet": true,
+ "ltt_commits": 0,
+ "control_commits": {
+  "uniform": "0/300",
+  "shuffled": "0/300",
+  "user": "0/106"
+ },
+ "guard": "lm",
+ "config_id": "tcfg-f498c0637536daec",
+ "offer_gate": [
+  {
+   "schema": "fidetype.offer-gate/0.1",
+   "feature": "coherence",
+   "threshold": 0.003485725778021531,
+   "note": "P14-59 (plan dedf60c): the P14-54 rule on the 66 non-LTT val sentences of the new LM guard (threshold = the smallest real offer value; 65 / 66 offers); withholds an OFFER when the frame-order coherence is below the threshold; never changes a COMMIT. P14-54 value with the old C5: 0.002821"
+  },
+  {
+   "schema": "fidetype.offer-gate/0.1",
+   "feature": "lm_beam_direction",
+   "threshold": 0.0,
+   "lm_name": "eng_tatoeba_6gram_mkn_noE2Q_noWillett",
+   "note": "P14-60 (gap 190; user decision 2026-11-23, option C for gap 181): the P5-36b two-direction LM-beam score with the P5-37 fixed threshold 0 (no fit); withholds an OFFER when the frames decode better time-reversed than forward; never changes a COMMIT. Evidence: P5-37 (results 2451892, decoder-seen pool, weak), P5-36b (results a7bfbc8)"
+  }
+ ],
+ "built_from": "fidetype.pretrained.load('willett-hw').guard(readout='lm') with the packaged manifest gate list",
+ "previous_recheck": "experiments/2026-11-22-p14-59-ship-lo/results/recheck-lm-gated.json",
+ "seconds": 113.0
+}

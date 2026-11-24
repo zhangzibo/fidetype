@@ -57,7 +57,8 @@ from fidetype.pretrained.manifest import FileEntry, Manifest, ManifestError, all
 
 __all__ = ["PretrainedError", "ModelNotAvailable", "WeightsNotFound", "WeightsMismatch", "ResearchOnlyRefused",
            "NoTrustConfig", "Manifest", "ManifestError", "PretrainedDecoder", "default_cache_dir", "list_models",
-           "info", "load", "resolve_files", "download", "sha256_file", "toy_model", "make_toy_manifest"]
+           "info", "load", "resolve_files", "download", "sha256_file", "toy_model", "make_toy_manifest",
+           "manifest_offer_gates"]
 
 ENV_DIR = "FIDETYPE_PRETRAINED_DIR"
 ENV_CACHE = "FIDETYPE_CACHE"
@@ -233,6 +234,38 @@ def _npz(path: Path, keys: Sequence[str]) -> dict[str, np.ndarray]:
 # ---------------------------------------------------------------------------------------------------
 
 
+def manifest_offer_gates(raw: Any, readout: Any = None) -> list[Any]:
+    """The offer gates of one manifest trust block (``trust.offer_gate`` or ``readouts.<r>.trust.offer_gate``).
+
+    The block holds one gate (a dict) or a list of gates (all must pass, in order; P14-60). ``readout``: a
+    callable that returns the LM-beam readout; it is called only if a gate needs one (``lm_beam_direction``),
+    and its result goes to each such gate (``OfferGate(..., readout=...)``).
+    """
+    from fidetype.trust.offer_gate import BEAM_FEATURES, OfferGate
+
+    if not raw:
+        return []
+    items = list(raw) if isinstance(raw, (list, tuple)) else [raw]
+    ro = None
+    out = []
+    for d in items:
+        g = OfferGate.from_dict(d)
+        if g.base in BEAM_FEATURES:
+            if ro is None:
+                if readout is None:
+                    raise NoTrustConfig(f"offer-gate feature {g.feature!r} needs an LM-beam readout, and this "
+                                        "model has none")
+                try:
+                    ro = readout()
+                except PretrainedError as e:
+                    raise NoTrustConfig(f"the offer gate {g.label()} needs the LM readout of this model, and it "
+                                        f"cannot load ({e}). Get the LM file, or pass offer_gate=False (no offer "
+                                        "gate at all) or your own offer_gate=") from None
+            g = OfferGate.from_dict(d, readout=ro)
+        out.append(g)
+    return out
+
+
 class PretrainedDecoder:
     """A loaded pretrained decoder. Use :func:`load`; do not build it directly.
 
@@ -347,16 +380,15 @@ class PretrainedDecoder:
 
         ``offer_gate`` (P5-33): None (default) uses the manifest gate ``trust.offer_gate`` if there is one
         (it withholds offers on no-evidence input; commits do not change); ``False`` switches it off; an
-        :class:`~fidetype.trust.OfferGate` replaces it.
+        :class:`~fidetype.trust.OfferGate` (or a list) replaces it. A manifest gate list may hold a gate that
+        needs the LM readout (``lm_beam_direction``, P14-60); it then gets ``self.lm_readout()``.
         """
         import fidetype.trust as ft
 
         if offer_gate is None:
             og = (self.manifest.trust or {}).get("offer_gate")
             if og:
-                from fidetype.trust.offer_gate import OfferGate
-
-                offer_gate = OfferGate.from_dict(og)
+                offer_gate = manifest_offer_gates(og, getattr(self, "lm_readout", None))
         return ft.load(self.guard_path(), decode_fn=decode_fn, offer_gate=offer_gate, **kwargs)
 
     def guard_input(self, stream: Any) -> Any:
@@ -661,7 +693,10 @@ class XBodyCtcDecoder(PretrainedDecoder):
 
         ``offer_gate`` (P5-33 / P14-54): None (default) uses the manifest gate of that readout's trust block
         (``trust.offer_gate`` or ``readouts.lm.trust.offer_gate``); ``False`` switches it off; an
-        :class:`~fidetype.trust.OfferGate` replaces it. Commits and ``config_id`` do not change.
+        :class:`~fidetype.trust.OfferGate` (or a list) replaces it. Commits and ``config_id`` do not change.
+        The manifest gate lists hold the direction gate ``lm_beam_direction >= 0`` (P14-60): it gets the LM
+        readout of :meth:`lm_readout` (``readout=`` wiring; for ``readout="lm"`` the same object as the
+        ``decode_fn``), so both guards need the local LM file.
         """
         if readout == "greedy":
             return super().guard(decode_fn=decode_fn, offer_gate=offer_gate, **kwargs)
@@ -672,12 +707,17 @@ class XBodyCtcDecoder(PretrainedDecoder):
         t = ((self.manifest.raw.get("readouts") or {}).get("lm") or {}).get("trust")
         if not t:
             raise NoTrustConfig(f"{self.name}: no trust config for the LM readout")
-        if offer_gate is None and t.get("offer_gate"):
-            from fidetype.trust.offer_gate import OfferGate
+        ro: list[Any] = []
 
-            offer_gate = OfferGate.from_dict(t["offer_gate"])
+        def shared_readout() -> Any:  # one LM readout for decode_fn and the direction gate (P14-60)
+            if not ro:
+                ro.append(self.lm_readout())
+            return ro[0]
+
+        if offer_gate is None and t.get("offer_gate"):
+            offer_gate = manifest_offer_gates(t["offer_gate"], shared_readout)
         return ft.load(self.files[str(t["config"]).removeprefix("file:")],
-                       decode_fn=decode_fn or self.lm_readout().decode_fn(), offer_gate=offer_gate, **kwargs)
+                       decode_fn=decode_fn or shared_readout().decode_fn(), offer_gate=offer_gate, **kwargs)
 
 
 class KeyLdaDecoder(PretrainedDecoder):

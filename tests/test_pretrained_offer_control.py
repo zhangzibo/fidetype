@@ -17,12 +17,12 @@ from fidetype.pretrained.manifest import ManifestError, all_manifests, manifest_
 REPO = Path(__file__).resolve().parents[1]
 RESULTS = REPO / "experiments" / "2026-11-21-p5-31-offer-control" / "results"
 RESULTS_P533 = REPO / "experiments" / "2026-11-21-p5-33-withhold" / "results"
-RESULTS_P1454 = REPO / "experiments" / "2026-11-21-p14-54-willett-order-gate" / "results"
+RESULTS_P1460 = REPO / "experiments" / "2026-11-23-p14-60-ship-direction-gate" / "results"
 
 # (model, guard key in Manifest.offer_controls, recheck file, the trust block that holds the guard)
 CASES = [
-    ("willett-hw", "default", "../../2026-11-21-p14-54-willett-order-gate/results/recheck-builtin-gated.json"),
-    ("willett-hw", "lm", "../../2026-11-22-p14-59-ship-lo/results/recheck-lm-gated.json"),
+    ("willett-hw", "default", "../../2026-11-23-p14-60-ship-direction-gate/results/recheck-builtin-gated.json"),
+    ("willett-hw", "lm", "../../2026-11-23-p14-60-ship-direction-gate/results/recheck-lm-gated.json"),
     ("t15-m4-13", "default", "../../2026-11-21-p5-33-withhold/results/recheck-t15-gated.json"),
     ("kt-semg-lda", "default", "recheck-kt.json"),
 ]
@@ -115,7 +115,8 @@ def test_t15_manifest_offer_gate():
 
 
 def test_willett_manifest_offer_gates():
-    """P14-54: both willett-hw guards carry the gate of their gated re-check; guard() applies it by default."""
+    """P14-54 / P14-60: both willett-hw guards carry the gate list of their gated re-check (coherence, then
+    lm_beam_direction >= 0); guard() applies it by default and passes the LM readout to the direction gate."""
     import os
     from types import SimpleNamespace
 
@@ -126,35 +127,70 @@ def test_willett_manifest_offer_gates():
     m = {x.name: x for x in all_manifests()}["willett-hw"]
     blocks = {"default": m.trust, "lm": m.raw["readouts"]["lm"]["trust"]}
     for key, which in (("default", "builtin"), ("lm", "lm")):
-        g = blocks[key]["offer_gate"]
-        assert OfferGate.from_dict(g).feature == "coherence"
-        rc = (RESULTS_P1454 / "recheck-builtin-gated.json" if which == "builtin"
-              else REPO / "experiments" / "2026-11-22-p14-59-ship-lo" / "results" / "recheck-lm-gated.json")
+        gl = blocks[key]["offer_gate"]
+        assert isinstance(gl, list) and [OfferGate.from_dict(g).feature for g in gl] == ["coherence",
+                                                                                         "lm_beam_direction"]
+        assert gl[1]["threshold"] == 0.0 and gl[1]["lm_name"] == "eng_tatoeba_6gram_mkn_noE2Q_noWillett"
+        rc = RESULTS_P1460 / f"recheck-{which}-gated.json"
         if rc.is_file():
-            want = json.loads(rc.read_text(encoding="utf-8"))["offer_gate"][0]
-            assert (g["feature"], g["threshold"]) == (want["feature"], want["threshold"])
+            want = json.loads(rc.read_text(encoding="utf-8"))["offer_gate"]
+            assert [(g["feature"], g["threshold"]) for g in gl] == [(w["feature"], w["threshold"]) for w in want]
     card = m.card()
     assert "offer gate: withhold an offer if coherence <" in card
     assert "offer gate (readout lm): withhold an offer if coherence <" in card
+    assert "offer gate: withhold an offer if lm_beam_direction < 0 " in card
+    assert "offer gate (readout lm): withhold an offer if lm_beam_direction < 0 " in card
+    # the model card states the rule, the cost, and that the built-in guard was tested on training data only
+    line = next(x for x in card.splitlines() if x.startswith("  offer gate: direction gate:"))
+    assert "Fixed threshold 0, not fitted" in line and "Cost:" in line and "Tested on training data only" in line
+    assert any(x.startswith("  offer gate (readout lm): direction gate:") for x in card.splitlines())
     # the guard files are local only (not in the wheel): check the default on/off switch if they are here
     base = Path(os.environ.get("FIDETYPE_PRETRAINED_DIR", "C:/Users/zhang/bci-data/pretrained")) / "willett-hw"
     paths = {"default": base / "willett-hw.guard.json", "lm": base / "willett-hw.lm3.guard.json"}
     if not all(p.is_file() for p in paths.values()):
         pytest.skip("willett-hw guard files are local only")
-    stub = SimpleNamespace(manifest=m, guard_path=lambda: paths["default"],
+    ro = SimpleNamespace(hyps=lambda lp, n, use_gate=False: [], decode_fn=lambda: (lambda lp: []))  # LM readout stub
+    calls = []
+
+    def lm_readout():
+        calls.append(1)
+        return ro
+
+    stub = SimpleNamespace(manifest=m, guard_path=lambda: paths["default"], lm_readout=lm_readout,
                            files={p.name: p for p in paths.values()})
     for key in ("default", "lm"):
+        calls.clear()
         if key == "default":
             on = PretrainedDecoder.guard(stub, decode_fn=lambda lp: [])
             off = PretrainedDecoder.guard(stub, decode_fn=lambda lp: [], offer_gate=False)
         else:
-            on = XBodyCtcDecoder.guard(stub, decode_fn=lambda lp: [], readout="lm")
+            on = XBodyCtcDecoder.guard(stub, readout="lm")  # decode_fn and the direction gate share one readout
             off = XBodyCtcDecoder.guard(stub, decode_fn=lambda lp: [], readout="lm", offer_gate=False)
-        assert [x.to_dict() for x in on.offer_gates] == [OfferGate.from_dict(blocks[key]["offer_gate"]).to_dict()]
+        assert [x.to_dict() for x in on.offer_gates] == [OfferGate.from_dict(g).to_dict()
+                                                         for g in blocks[key]["offer_gate"]]
+        assert on.offer_gates[0].readout is None and on.offer_gates[1].readout is ro
+        assert len(calls) == 1  # one readout object, built once
         assert off.offer_gates == ()
         assert on.config_id == off.config_id == blocks[key]["config_id"]
         assert "offer_gate" not in json.loads(paths[key].read_text(encoding="utf-8"))
         assert ft.load(paths[key], decode_fn=lambda lp: []).config_id == blocks[key]["config_id"]
+
+
+def test_manifest_offer_gates_needs_a_readout():
+    """P14-60: a direction gate in a manifest gate list needs the LM readout; a missing one is a clear error."""
+    from fidetype.pretrained import NoTrustConfig, PretrainedError, manifest_offer_gates
+
+    m = {x.name: x for x in all_manifests()}["willett-hw"]
+    gl = m.trust["offer_gate"]
+    assert manifest_offer_gates(gl[:1]) and manifest_offer_gates(None) == []
+    with pytest.raises(NoTrustConfig, match="needs an LM-beam readout"):
+        manifest_offer_gates(gl)
+
+    def missing():
+        raise PretrainedError("LM file not found")
+
+    with pytest.raises(NoTrustConfig, match="offer_gate=False"):
+        manifest_offer_gates(gl, missing)
 
 
 def test_parser_refuses_bad_offer_control():
@@ -171,6 +207,10 @@ def test_parser_refuses_bad_offer_control():
         (lambda d: d["trust"]["offer_control"].update(controls=[]), "must not be empty"),
         (lambda d: d["readouts"]["lm"]["trust"]["offer_control"].update(verdict="fail"), "readouts.lm.trust"),
         (lambda d: d["trust"].update(offer_control="fail"), "an object is needed"),
+        (lambda d: d["trust"]["offer_gate"][1].update(feature="nope"), r"trust\.offer_gate\[1\]"),
+        (lambda d: d["trust"].update(offer_gate=[]), "empty list"),
+        (lambda d: d["trust"]["offer_gate"].append("x"), "an object is needed"),
+        (lambda d: d["readouts"]["lm"]["trust"]["offer_gate"][1].pop("lm_name"), "lm_name"),
     ]:
         d = copy.deepcopy(good)
         mutate(d)

@@ -26,6 +26,9 @@ Manifest keys (schema ``fidetype.pretrained-manifest/0.1``)::
                  fidetype.trust.calibrate stays offer_control="warn"; a trust block that ships an
                  offer_gate is held to "refuse": it must carry an offer_control block with verdict
                  "pass", or the manifest is refused (ManifestError)
+                 offer_gate: one gate {schema, feature, threshold, lm_name?, note?, card?} or a list of
+                 them (all must pass, in order; P14-60). ``card``: an optional plain-words line for the
+                 model card (rule, cost, what it was tested on)
     hosting      {host, release, notes}   (the download URL slot; null until P14-02)
 
 ``licence["data.licence"]`` and ``licence["data.research_only"]`` use the stream keys of FEP-0010
@@ -180,12 +183,17 @@ class Manifest:
         else:
             lines.append("  trust:    no committed trust config")
         for key, t in _trust_blocks(r):
-            g = t.get("offer_gate")
-            if isinstance(g, Mapping):
-                where = "" if key == "default" else f" (readout {key})"
+            raw_g = t.get("offer_gate")
+            gs = raw_g if isinstance(raw_g, list) else [raw_g]
+            where = "" if key == "default" else f" (readout {key})"
+            for g in gs:
+                if not isinstance(g, Mapping):
+                    continue
                 lines.append(f"  offer gate{where}: withhold an offer if {g.get('feature')} < "
                              f"{g.get('threshold'):.6g} (P5-33; on by default, guard(offer_gate=False) switches it "
                              "off; commits unchanged)")
+                if g.get("card"):
+                    lines.append(f"  offer gate{where}: {g['card']}")
         for key, oc in self.offer_controls.items():
             where = "" if key == "default" else f" (readout {key})"
             parts = [f"{c.get('label') or c['name']} {c['n_offer']}/{c['n']} {'pass' if c['passed'] else 'FAIL'}"
@@ -319,11 +327,21 @@ def parse_manifest(doc: Mapping[str, Any], where: str = "<manifest>") -> Manifes
         if "offer_gate" in tr:
             from fidetype.trust.offer_gate import OfferGate
 
-            try:
-                OfferGate.from_dict(tr["offer_gate"])
-            except (KeyError, TypeError, ValueError) as e:
-                block = "trust" if key == "default" else f"readouts.{key}.trust"
-                raise ManifestError(f"{where}: {block}.offer_gate: {e}") from None
+            block = "trust" if key == "default" else f"readouts.{key}.trust"
+            raw_g = tr["offer_gate"]
+            gs = raw_g if isinstance(raw_g, list) else [raw_g]
+            if not gs:
+                raise ManifestError(f"{where}: {block}.offer_gate: an empty list (leave the key out instead)")
+            for i, g in enumerate(gs):
+                at = f"{block}.offer_gate" + (f"[{i}]" if isinstance(raw_g, list) else "")
+                try:
+                    if not isinstance(g, Mapping):
+                        raise TypeError("an object is needed")
+                    if "card" in g and not isinstance(g["card"], str):
+                        raise TypeError("card must be a string")
+                    OfferGate.from_dict(g)
+                except (KeyError, TypeError, ValueError) as e:
+                    raise ManifestError(f"{where}: {at}: {e}") from None
     for key, oc in _offer_blocks(doc):
         _check_offer_control(oc, f"{where}: {'trust' if key == 'default' else 'readouts.' + key + '.trust'}"
                                  f".offer_control")
