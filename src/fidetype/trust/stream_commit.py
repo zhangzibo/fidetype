@@ -34,8 +34,8 @@ hash chain (``prev_id`` -> ``id``), so a log reader can check that no commit
 was removed or changed.
 
 Metric: ``safe_wpm(..., metric_version="0.2", n_commits=...)`` (the proposed
-"several commits per trial" extension of the proposed safe-wpm/0.2; not
-adopted). Licence: our own code, Apache-2.0.
+"several commits per trial" extension of safe-wpm/0.2 (v0.2 adopted
+2026-11-22); the extension is not adopted). Licence: our own code, Apache-2.0.
 """
 
 from __future__ import annotations

@@ -21,7 +21,7 @@ passes, the guard never commits (``lam_mid`` is set to inf as well).
 
 Each commit gives one decision event; the events of an utterance form a hash chain (``prev_id`` -> ``id``).
 Metric: ``safe_wpm(..., metric_version="0.2", n_commits=...)`` with ``risk = "wrong-stream-commit"`` (the
-proposed several-commits extension of the proposed safe-wpm/0.2; not adopted). Licence: our own code,
+proposed several-commits extension of safe-wpm/0.2 (v0.2 adopted 2026-11-22); the extension is not adopted). Licence: our own code,
 Apache-2.0.
 """
 

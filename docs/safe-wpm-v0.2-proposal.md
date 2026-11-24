@@ -81,7 +81,7 @@ All v0.1 fields, plus:
 
 | Field | Content |
 |---|---|
-| `definition`, `definition_status` | `safe-wpm/0.2` and "proposed, not adopted" (until the user adopts it) |
+| `definition`, `definition_status` | `safe-wpm/0.2` and its status (since 2026-11-22: "adopted 2026-11-22: the headline metric ..."; before that date: "proposed, not adopted") |
 | `risk` | The loss of the declared bound |
 | `n_prefix_commits`, `n_complete_commits`, `n_right_complete_commits` | Commit counts by kind |
 | `committed_correct_words` | Words of right prefixes and right complete commits |
@@ -185,7 +185,7 @@ Until the user decides, the scorer default stays c = 0, w = 0, m = 1. Adoption o
 
 ## 7. Several commits per trial (P5-27; PROPOSED EXTENSION, NOT ADOPTED)
 
-> **Status: proposed extension of the proposed v0.2.** It is not part of v0.2 as committed (rule 3 of section 2.1 allows one commit per trial). v0.1 does not change. The scorer applies it only when the caller passes `n_commits`. Roadmap item: P5-27 (gap 76). Pre-registration: [plan](../experiments/2026-11-18-p5-27-streaming-prefix/plan.md). Code: `safe_wpm(..., metric_version="0.2", n_commits=...)`, `fidetype.trust.stream_commit`.
+> **Status: proposed extension of v0.2 (v0.2 adopted 2026-11-22; this extension is not adopted).** It is not part of v0.2 as committed (rule 3 of section 2.1 allows one commit per trial). v0.1 does not change. The scorer applies it only when the caller passes `n_commits`. Roadmap item: P5-27 (gap 76). Pre-registration: [plan](../experiments/2026-11-18-p5-27-streaming-prefix/plan.md). Code: `safe_wpm(..., metric_version="0.2", n_commits=...)`, `fidetype.trust.stream_commit`.
 
 **Why.** A streaming guard decides while the trial goes on. It can commit "i need" after 2 s and "some water" after 4 s. v0.2 as committed has no rule for the second commit.
 

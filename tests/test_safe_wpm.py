@@ -427,7 +427,7 @@ def test_v02_cli_reading_cost(tmp_path) -> None:
     assert r["value"] == pytest.approx(60 * 1 / (5.0 + 1.0 + 0.3)) and r["adopted_headline"] is False
 
 
-# --- P15-29: interval over calibration draws (proposed reporting addition) -------------------------------------
+# --- P15-29: interval over calibration draws (reporting addition, adopted 2026-11-22 with v0.2) -------------------------------------
 
 
 def _toy_draw(rng: np.random.Generator, n: int, p_commit: float, p_right: float) -> dict:

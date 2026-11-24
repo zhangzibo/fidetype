@@ -10,7 +10,7 @@ The hub **extends** the P6 leaderboard. It does not replace it. Everything below
 |---|---|---|
 | Benchmark tracks v0.2: 7 tracks, hash-only split files, `verify` / `select` | [benchmark-tracks.md](benchmark-tracks.md), `src/fidetype/benchmark/tracks.py` | A dataset registry above the tracks: one entry per dataset version |
 | Submission format and scorer v0.2, required controls | [benchmark-submission.md](benchmark-submission.md), `scorecard.py` | A rerun recipe per entry; a training-data overlap flag (P6-10) |
-| Safe WPM `safe-wpm/0.1` (v0.2 proposed) | [safe-wpm.md](safe-wpm.md) | Shown with its guarantee fields (P13-02) |
+| Safe WPM `safe-wpm/0.2` (adopted 2026-11-22; `safe-wpm/0.1` stays selectable for old numbers) | [safe-wpm.md](safe-wpm.md) | Shown with its guarantee fields (P13-02) |
 | Hallucination benchmark, protocol 0.2 | [hallucination-benchmark.md](hallucination-benchmark.md) | Optional control columns per entry |
 | Static leaderboard | `benchmark/site/`, `python -m fidetype.benchmark leaderboard`, `tools/site/build.js` | Per-track pages, history, a rerun command per entry |
 | Licence flags `data.licence` / `data.research_only` | FEP-0010, `src/fidetype/trust/licence.py` | Licence fields in the registry; the same flags in every replayed stream |

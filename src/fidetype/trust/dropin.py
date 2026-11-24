@@ -1701,7 +1701,7 @@ def calibrate(
         :class:`TrustResult` and the decision event give the number of
         committed words (``n_words_committed``) and ``complete``. The null
         controls count every prefix commit. Score prefix guards with
-        ``safe-wpm/0.2`` (proposed), not v0.1.
+        ``safe-wpm/0.2`` (adopted 2026-11-22), not v0.1.
     prefix_score
         Optional frozen external per-prefix score (P5-35): a
         :class:`~fidetype.trust.external_score.FrozenPrefixScore` (your
