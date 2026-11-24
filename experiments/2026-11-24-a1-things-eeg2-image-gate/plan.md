@@ -29,11 +29,11 @@ Why the Hugging Face EEG and not the OSF EEG: ATM-S and NICE use 63 channels at 
 **Data safety.** The `.npy` files are Python pickles (the ATM code writes them with `pickle.dump`). We read them with a restricted unpickler that allows only NumPy array classes, in an isolated Python (`-I`). We then store plain float32 `.npy` arrays (no pickle) in `C:/Users/zhang/bci-data/derived/a1-things-eeg2/`. The `.pt` feature files are read with `torch.load(weights_only=True)`. Pre-check done (no EEG, no decoder): image-to-text top-1 over the HF features is 0.920 (test, 200-way) and 0.777 (train, 1654-way), and 0.005 / 0.009 when shifted by one. So the image and concept orders agree.
 
 ## Splits (fixed now)
-- **Concepts.** The 1654 training concepts are ranked by `sha256("fidetype-a1-2026-11-24/" + concept)`. The first 100 are **val**, the next 300 are **cal**, the remaining 1254 are **fit**. The 200 test concepts are disjoint from all of them (the loader asserts this). The same split is used for both subjects.
+- **Concepts.** The 1654 training concepts are ranked by `sha256("fidetype-a1-2026-11-24/" + concept)`. The first 200 are **val**, the next 300 are **cal**, the remaining 1154 are **fit** (amended, see "Amendments"). The 200 test concepts are disjoint from all of them (the loader asserts this). The same split is used for both subjects.
 - **Units.** One unit is the mean of 4 EEG repetitions of one image.
-  - fit / val / cal: one unit per image (its 4 repetitions). cal = 3000 units, val = 1000 units.
+  - fit / val / cal: one unit per image (its 4 repetitions). cal = 3000 units, val = 2000 units.
   - test: 20 units per image. Unit g = file repetitions 4g .. 4g+3 (the file order of repetitions is a seeded shuffle across the 4 sessions, so each unit mixes sessions as a training image does). 4000 test units.
-  - decoder training uses single trials (fit: 12,540 images x 4 = 50,160 trials), as ATM does.
+  - decoder training uses single trials (fit: 11,540 images x 4 = 46,160 trials), as ATM does.
 - **cal sub-splits** (by concept, same hash order): the first 100 cal concepts are **order** (1000 units), the other 200 are **certify** (2000 units).
 - **Galleries (200-way, as on test).** A test unit is scored against the 200 test images. A val or cal unit is scored against its own image plus 199 other concepts of its split, each with one image (seeded: `[subject, 2026, unit index]`). So every score is a 200-way identification over new concepts.
 
@@ -93,6 +93,10 @@ The draft rule (ii) said "wrong-commit <= alpha". We fix it to the precision for
 
 R1 or R2 failing adds the qualifier "with drift caveat" / "with category caveat". V2 failing is reported next to the outcome.
 
+## Amendments (before any run or result)
+- 2026-11-24, while writing the code, before any decoder run: **val grows from 100 to 200 concepts** (fit from 1254 to 1154). Reason: the plan scores val units in a 200-way gallery of "other concepts of its split", which needs at least 200 val concepts. No data had been scored; no other rule changes.
+- 2026-11-24, rule detail: if the gate makes **no** commit, the error part of (ii) (and of R1 / R2) passes, because there is no wrong commit; the commit part then fails, so the outcome is B ("safe but too conservative"), not C.
+
 ## Order and stop rules
 1. Commit this plan (this commit, alone). 2. Commit the code and CPU tests (synthetic data). 3. CPU: convert the pickles to float32 arrays; S0 check. 4. GPU (after P15-50 frees the GPU): train subject 1, then subject 2. 5. Score val and cal, fit the gate, write `gate.json` (committed to `results/` before step 6). 6. Score test and nulls, apply the rules, write `results/summary.json` (aggregates only) and `results.md`.
 - No change of splits, alpha, rules or recipe after this commit. No early stop on a test value. Test units are scored only after `gate.json` is committed.
@@ -104,13 +108,13 @@ R1 or R2 failing adds the qualifier "with drift caveat" / "with category caveat"
 |---|---|---|
 | download (subjects 1-2 at 250 Hz, features, OSF reference files) | network | 23.6 GB, about 30 min |
 | pickle -> float32 conversion, S0 check | CPU | about 10 min per subject, peak RAM about 13 GB |
-| training, 40 epochs x 50,160 trials, small model (about 3 M parameters) | local RX 7800 XT | 0.5-1.5 h per subject |
-| scoring val / cal / test / nulls (about 25,000 units) | GPU or CPU | minutes |
+| training, 40 epochs x 46,160 trials, small model (about 3 M parameters) | local RX 7800 XT | 0.5-1.5 h per subject |
+| scoring val / cal / test / nulls (about 26,000 units) | GPU or CPU | minutes |
 | **total GPU** | | **about 1-3 GPU-h** for 2 subjects (cap 6 h); no rented GPU needed |
 
 ## Where it may honestly fail
 - 4-trial units are much noisier than the 80-trial averages of the published number; top-1 can be near 5-10 %. Then the gate may certify no threshold (outcome B).
 - cal concepts come from the training partition. If test images differ in kind (they were recorded with 80 repetitions and chosen separately), the error bound can break (outcome C). This is the main point of A1.
-- Removing 400 concepts from decoder training (val + cal) lowers accuracy against ATM's all-concept training.
+- Removing 500 concepts from decoder training (val + cal) lowers accuracy against ATM's all-concept training.
 - One seed per subject; two subjects. The session reconstruction (R1) relies on the seed in the ATM code.
 - The 63-channel 250 Hz files are a third-party re-preprocessing (CC BY 4.0), not the official OSF release.
