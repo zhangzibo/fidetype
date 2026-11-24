@@ -191,7 +191,7 @@ def stage_toronto() -> dict:
         res = json.loads((RESULTS_V01 / f"{stem}.json").read_text(encoding="utf-8"))
         blk = safe_wpm(committed, correct, nw, nc, ns, guarantee=res.get("guarantee"), timing=out["timing"],
                        clusters=[{"participant": p} for p, _ in test_meta], ci_unit="participant",
-                       controls=res.get("controls"), gaze_chars_per_min=track.user_model.gaze_chars_per_min, B=2000, seed=0)
+                       controls=res.get("controls"), gaze_chars_per_min=track.user_model.gaze_chars_per_min, B=2000, seed=0, metric_version="0.1")
         blk["basis"] = ("exact per-trial CRC decisions (P6-01 rerun of the M6-07 pipeline; commit and wrong-commit rates "
                         "equal the committed aggregates)" if same else "per-trial rerun; DIFFERS from committed aggregates")
         with open(DER / f"toronto-{cond}-crc-trials.jsonl", "w", encoding="utf-8") as f:

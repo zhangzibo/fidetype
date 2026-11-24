@@ -366,7 +366,7 @@ def run_draw(jb: dict, R, an, W, cal0: list[dict], ev0: list[dict], ab: list[dic
     gu["ltt_alpha"] = jb["ltt_alpha"]
     sw = SW.safe_wpm(oc["committed"], oc["correct"], E["nw"], E["nch"], E["ns"], guarantee=gu,
                      controls=SW.controls_from_sheet(sh), gaze_chars_per_min=None, metric_version="0.2",
-                     committed_words=oc["committed_words"], complete=oc["complete"], penalty_chars=oc["penalty_chars"])
+                     committed_words=oc["committed_words"], complete=oc["complete"], penalty_chars=oc["penalty_chars"], read_s_per_commit=0.0, read_s_per_word=0.0)
     ectl = {k: int(sum(x["action"] == "commit" for x in dec[k])) for k in ("shuffled", "zeros")}
     v6 = all(ectl[k] / len(ev) <= CTL_MAX for k in ectl)
     credited = bool(cal_ok and sw["status"] == "certified" and sw["value"] is not None and v6)

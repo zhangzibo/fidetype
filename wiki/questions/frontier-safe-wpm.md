@@ -3,7 +3,7 @@ title: "Frontier write-up: the path to safe WPM above gaze typing (P14-05 to P15
 type: question
 tags: [frontier, safe-wpm, trust, t15, t12, learned-confidence, prefix-commit, streaming, llm, metric, write-up, negative-result, pre-registration]
 sources: []
-updated: 2026-11-22
+updated: 2026-11-23
 ---
 
 # Safe WPM: can a certified guard beat gaze typing (4.02 WPM) on T15?
@@ -15,7 +15,7 @@ With our causal M4-13 decoder and a certified guard, can safe WPM on T15 `val_ev
 
 ## Short answer
 
-> **Decision (user, 2026-11-22): `safe-wpm/0.2` is ADOPTED** ([docs/safe-wpm.md](../../docs/safe-wpm.md) sections 6a and 6b), with the reading cost (0.5 s + 0.3 s per word per commit), calibration-inclusive intervals with K >= 80 calibration draws, and partition-only draws. The numbers below were computed before the adoption and keep their labels: "adopted v0.1" and "proposed v0.2" describe the status at the time of each result. No old number is re-labelled. The code switch (scorer default, leaderboard column) is roadmap item [P14-61](roadmap-standard.md#p14-61-switch-the-scorer-and-the-leaderboard-to-the-adopted-safe-wpm-v02) (gap 196).
+> **Decision (user, 2026-11-22): `safe-wpm/0.2` is ADOPTED** ([docs/safe-wpm.md](../../docs/safe-wpm.md) sections 6a and 6b), with the reading cost (0.5 s + 0.3 s per word per commit), calibration-inclusive intervals with K >= 80 calibration draws, and partition-only draws. The numbers below were computed before the adoption and keep their labels: "adopted v0.1" and "proposed v0.2" describe the status at the time of each result. No old number is re-labelled. The code switch (scorer default, leaderboard column) was roadmap item [P14-61](roadmap-standard.md#p14-61-switch-the-scorer-and-the-leaderboard-to-the-adopted-safe-wpm-v02) (gap 196). Done 2026-11-23: the default is `metric_version="0.2"` with the reading cost; the leaderboard shows v0.2 as the headline column and v0.1 as a second column; `calibration_draw_interval` warns when K < 80 or the draws are not stated as partition-only. For a sentence-level entry the v0.2 value is a little lower than its v0.1 value (reading time), for example the T15 M4-13 guard card 4.07 -> 3.94.
 
 - **Under the adopted metric `safe-wpm/0.1`: on average yes, but not reliably (P15-29, 2026-11-20).** LLM rescoring with grounding (P15-05 B1) plus the learned commit score (P5-23) gives **4.91 [4.25, 5.57]** for one calibration draw (P15-22), certified, 13 / 701 wrong commits, both controls pass. This interval resamples only the test trials; it does not include the calibration-draw variation. **Gap 53 (P14-23) is closed.**
 - **With the calibration variation (P15-29, pre-registered, K = 40 draws):** **5.18 [0.00, 6.99]**. The mean is above 4.02; the lower end is **not**. 2 of the 40 draws are above alpha on the test set and earn 0 by the pre-registered rule. The 38 certified draws give 3.50–6.82; 36 of 40 draws are above 4.02. Variants that were not pre-registered also have lower ends below 4.02: 5.52 [3.61, 7.11] and 5.45 [3.60, 7.01] ([P15-29 results](../../experiments/2026-11-20-p15-29-calibration-ci/results.md)). Next: gap 132 ([P15-34](roadmap-standard.md#p15-34-calibration-inclusive-t15-safe-wpm-lower-end-above-gaze-typing)).

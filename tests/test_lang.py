@@ -64,7 +64,8 @@ def test_en_safe_wpm_is_bit_identical_on_the_committed_fixture():
     for n_words, n_chars in ((cols["n_words"], cols["n_chars"]), (wc["n_words"], wc["n_chars"])):
         r = W.safe_wpm(cols["committed"], cols["correct"], n_words, n_chars, cols["neural_s"],
                        guarantee=exp["guarantee"], clusters=[{"session": x} for x in cols["cluster"]],
-                       ci_unit=exp["ci_unit"], B=exp["B"], seed=exp["seed"], timing="measured")
+                       ci_unit=exp["ci_unit"], B=exp["B"], seed=exp["seed"], timing="measured",
+                       metric_version="0.1")  # the committed fixture is a safe-wpm/0.1 result
         for k, v in exp["result"].items():
             assert r[k] == v, k  # exact equality, not approximate
 

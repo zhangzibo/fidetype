@@ -310,7 +310,7 @@ def run_draw(jb: dict, M, R, an, cal, ev, E: dict) -> dict:
     com = [x["action"] == "commit" for x in dec["real"]]
     cor = [cm and bool(R.same(x["text"], t)) for cm, x, t in zip(com, dec["real"], E["truths"])]
     sw = SW.safe_wpm(com, cor, E["nw"], E["nch"], E["ns"], guarantee=SW.guarantee_from_sheet(sh),
-                     controls=SW.controls_from_sheet(sh), gaze_chars_per_min=None)
+                     controls=SW.controls_from_sheet(sh), gaze_chars_per_min=None, metric_version="0.1")
     ctl = {k: int(sum(x["action"] == "commit" for x in dec[k])) for k in ("shuffled", "zeros")}
     v6 = all(ctl[k] / len(ev) <= CTL_MAX for k in ctl)
     credited = sw["status"] == "certified" and sw["value"] is not None and v6
@@ -410,7 +410,7 @@ def analyse() -> int:
         else:
             lib_draws.append({"committed": d["committed"], "correct": d["correct"], "guarantee": d["guarantee"]})
     lib = SW.calibration_draw_interval(lib_draws, E["nw"], E["nch"], E["ns"], B=B, seed=0, level=LEVEL,
-                                       reference=NO_BCI)
+                                       reference=NO_BCI, metric_version="0.1")
     lib.pop("draws", None)
     per = [{k: d.get(k) for k in ("name", "k", "status", "safe_status", "credited", "value", "raw_value",
                                   "n_commits", "n_wrong", "threshold", "eval_controls", "v6_eval", "seconds")}

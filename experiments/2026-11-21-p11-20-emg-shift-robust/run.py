@@ -459,7 +459,7 @@ def run_draw(jb: dict, M, R, an, W, cal0: list[dict], ev0: list[dict], ab: list[
     gu["alpha"] = ALPHA  # the claim (plan: the margin is part of the method)
     gu["ltt_alpha"] = jb["ltt_alpha"]
     sw = SW.safe_wpm(com, cor, E["nw"], E["nch"], E["ns"], guarantee=gu, controls=SW.controls_from_sheet(sh),
-                     gaze_chars_per_min=None)
+                     gaze_chars_per_min=None, metric_version="0.1")
     ctl = {k: int(sum(x["action"] == "commit" for x in dec[k])) for k in ("shuffled", "zeros")}
     v6 = all(ctl[k] / len(ev) <= CTL_MAX for k in ctl)
     credited = bool(sw["status"] == "certified" and sw["value"] is not None and v6)
@@ -587,7 +587,7 @@ def analyse() -> int:
         lib_draws = [{"refused": True} if d.get("status") != "guard" or not d.get("v6_eval") else
                      {"committed": d["committed"], "correct": d["correct"], "guarantee": d["guarantee"]} for d in dd]
         lib = SW.calibration_draw_interval(lib_draws, E["nw"], E["nch"], E["ns"], B=2000, seed=0, level=0.95,
-                                           reference=NO_BCI)
+                                           reference=NO_BCI, metric_version="0.1")
         lib.pop("draws", None)
         return {"primary": prim, "variant_a_keep_above_alpha": va, "variant_b_credited_only": vb,
                 "secondary_library": lib}

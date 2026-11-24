@@ -231,7 +231,7 @@ def arm_metrics(res: dict, durs: list[float]) -> dict:
     correct = [c and norm(r["text"]) == t for c, r, t in zip(committed, rows, truths)]
     blk = safe_wpm(committed, correct, [len(t.split()) for t in truths], [len(t) for t in truths], durs,
                    guarantee=guarantee_from_sheet(sheet), controls=controls_from_sheet(sheet), B=B, seed=SEED,
-                   timing="measured trial duration (20 ms neural bins)")
+                   timing="measured trial duration (20 ms neural bins)", metric_version="0.1")
     exact = np.array([r["top1"] == r["truth"] for r in rows])
     score = np.array([r["score"] if r["score"] is not None else r["p_top1"] for r in rows], float)
     ptop = np.array([r["p_top1"] for r in rows], float)

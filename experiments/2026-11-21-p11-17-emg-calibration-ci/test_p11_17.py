@@ -65,7 +65,7 @@ def test_k1_equals_safe_wpm_cluster_ci(run):
     com, cor, nw, nch, ns, cl = _toy()
     g = {"alpha": 0.5, "delta": 0.1, "method": "ltt", "n_cal": 100}
     r = SW.safe_wpm(com.tolist(), cor.tolist(), nw, nch, ns, guarantee=g, clusters=cl, ci_unit="group",
-                    B=500, seed=0)
+                    B=500, seed=0, metric_version="0.1")
     W = run.cluster_weights(cl, B_=500, seed=0)
     out = run.combined_interval([{"committed": com, "correct": cor, "value": r["unguarded_wpm"], "credited": True}],
                                 nw, nch, ns, W, reference=None)

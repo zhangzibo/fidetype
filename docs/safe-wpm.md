@@ -2,9 +2,9 @@
 
 The definition of safe WPM, the headline metric of the Fidetype benchmark, and how to compute it.
 
-**Status:** Alpha ([status levels](glossary.md#status-levels)). `safe-wpm/0.1` is the metric in use. `safe-wpm/0.2` is adopted; the scorer switches to it in a later release (section 6a).
+**Status:** Alpha ([status levels](glossary.md#status-levels)). `safe-wpm/0.2` is the metric in use (adopted 2026-11-22, section 6a). The scorer, the command line and the leaderboard use it by default. `safe-wpm/0.1` (sections 1 to 5) stays selectable (`metric_version="0.1"`, CLI `--metric-version 0.1`), so you can reproduce every earlier number. A v0.1 number keeps its value and its v0.1 label.
 
-Code: [`src/fidetype/benchmark/safe_wpm.py`](../src/fidetype/benchmark/safe_wpm.py). Baselines: [results](../experiments/2026-11-16-p14-05-safe-wpm/results.md). Leaderboard column: "Safe WPM @ alpha" in [`benchmark/site/leaderboard.md`](../benchmark/site/leaderboard.md).
+Code: [`src/fidetype/benchmark/safe_wpm.py`](../src/fidetype/benchmark/safe_wpm.py). Baselines: [results](../experiments/2026-11-16-p14-05-safe-wpm/results.md). Leaderboard columns in [`benchmark/site/leaderboard.md`](../benchmark/site/leaderboard.md): "Safe WPM v0.2 @ alpha" (the headline) and "Safe WPM v0.1 @ alpha" (the earlier values).
 
 Safe WPM is one number that tells a user what the system gives them. It counts the words that the system types by itself and gets exactly right. It counts these words only when the trust layer has a certified limit on the wrong-commit rate.
 
@@ -62,6 +62,8 @@ safe WPM  = 60 * sum_i credit_i / sum_i time_i
 | `no_bci_wpm` | Gaze typing of every sentence at 20 chars/min (the eWPM no-BCI reference) |
 | `controls` | Status of the required shuffled, zeros and null-commit controls |
 | `timing`, `correction_rule` | How the time was measured and the penalty formula |
+| `definition` | The version label: `safe-wpm/0.2` (default) or `safe-wpm/0.1` |
+| `definition_status`, `adopted_headline`, `not_headline_because`, `reading_cost` | v0.2 only: the adoption status, whether the value is an adopted-v0.2 headline (and why not), and the reading cost used |
 
 ## 4. How to compute it
 
@@ -74,7 +76,7 @@ r = safe_wpm(committed, correct, n_words, n_chars, neural_s,
              guarantee=guarantee_from_sheet(guard.sheet.to_dict()),   # drop-in TrustGuard
              controls=controls_from_sheet(guard.sheet.to_dict()),
              timing="measured trial durations")
-print(r["value"], r["status"])
+print(r["definition"], r["value"], r["status"])   # safe-wpm/0.2 (default); metric_version="0.1" for v0.1
 ```
 
 From the decisions of a drop-in `TrustGuard`, one call builds the five lists, the guarantee and the controls:
@@ -95,7 +97,7 @@ fidetype benchmark safe-wpm --trials trials.jsonl --guard guard.json --out safe.
 fidetype benchmark safe-wpm --trials trials.jsonl --method ltt --alpha 0.05 --delta 0.1 --n-cal 271 --chars-per-min 159.27
 ```
 
-The benchmark scorer (`fidetype benchmark score`) adds a `safe_wpm` block to every result. It uses the submission's `guarantee`. It uses measured times if every scored trial in the truth file has a `neural_s` field; otherwise it uses the track rate model.
+The benchmark scorer (`fidetype benchmark score`) adds two blocks to every result: `safe_wpm_v02` (the headline, `safe-wpm/0.2`) and `safe_wpm` (`safe-wpm/0.1`). It uses the submission's `guarantee`. It uses measured times if every scored trial in the truth file has a `neural_s` field; otherwise it uses the track rate model.
 
 ## 5. Baselines (2026-11-16)
 
@@ -132,7 +134,9 @@ All numbers use alpha 0.05. LTT entries use delta 0.1. Details and the rerun com
 
 ## 6a. v0.2 (ADOPTED 2026-11-22; proposed 2026-11-18)
 
-> **Adopted on 2026-11-22, with three conditions.** (1) The reading cost of the proposal (section 6 there) is part of the definition (`aac-gaze-v1`: 0.5 s + 0.3 s per word per commit, minimum prefix 1 word). (2) A headline interval includes the calibration draw (section 6b below) with K >= 80 calibration draws. (3) The draws are partition-only (a new split of the calibration set, no resample with replacement inside a part). Numbers computed before this date keep their labels: a v0.1 number stays a v0.1 number, and a number labelled "proposed v0.2" is not re-labelled. A v0.2 value without the reading cost, or with fewer than 80 draws, is not an adopted-v0.2 headline. The scorer default (`metric_version="0.1"`), the leaderboard column and the status strings in the code change in a later release. Until then, v0.1 stays the headline metric. Full text and history: [safe-wpm-v0.2-proposal.md](safe-wpm-v0.2-proposal.md).
+> **Adopted on 2026-11-22, with three conditions.** (1) The reading cost of the proposal (section 6 there) is part of the definition (`aac-gaze-v1`: 0.5 s + 0.3 s per word per commit, minimum prefix 1 word). (2) A headline interval includes the calibration draw (section 6b below) with K >= 80 calibration draws. (3) The draws are partition-only (a new split of the calibration set, no resample with replacement inside a part). Numbers computed before this date keep their labels: a v0.1 number stays a v0.1 number, and a number labelled "proposed v0.2" is not re-labelled. A v0.2 value without the reading cost, or with fewer than 80 draws, is not an adopted-v0.2 headline. Full text and history: [safe-wpm-v0.2-proposal.md](safe-wpm-v0.2-proposal.md).
+
+> **Code switch (2026-11-23).** The default is now `metric_version="0.2"` with the adopted reading cost, in `safe_wpm`, `from_decisions`, `from_trial_scores`, `calibration_draw_interval` and the CLI. Each report names its version in `definition`. A v0.2 report also has `definition_status` and `adopted_headline` (False, with `not_headline_because`, for a sensitivity variant, for example a reading cost of 0). The benchmark scorer writes both blocks: `safe_wpm` (v0.1, the key and label of the first cards) and `safe_wpm_v02` (the headline; `safe_wpm_headline` names it). The leaderboard shows v0.2 as the headline column and v0.1 as a second column. The committed cards of tracks v0.2 got their v0.2 block by a new scoring of their submissions; their v0.1 blocks did not change. Cards of tracks v0.1 have no v0.2 value. For an entry that commits whole sentences, v0.2 = the v0.1 credit and penalty plus the reading time, so the v0.2 value is a little lower (T15 M4-13 guard: 4.07 → 3.94).
 
 - **Prefix credit.** A commit can claim only its first k words (a prefix commit). If these are the first k words of the truth, the trial earns k words. A complete commit (every sentence-level commit) earns words(y) only if it is exactly right, as in v0.1.
 - **Wrong prefix.** It earns 0 words and costs 2.0 s + 0.79 s per character of the k true words that it replaces. A wrong complete commit costs the v0.1 penalty.
@@ -140,13 +144,13 @@ All numbers use alpha 0.05. LTT entries use delta 0.1. Details and the rerun com
 - **Risk unit: the trial.** A wrong commit is a wrong prefix or a wrong complete commit; the rate is over all trials. A policy with prefix commits is certified only by a bound on this loss (`risk = "wrong-prefix-commit"`).
 - **Speech time.** An optional per-trial `speech_s` adds a secondary `speech_time` value. The headline v0.2 value still uses `neural_s`.
 - **Same as v0.1 for sentence-level policies.** Every number in section 5 is also its v0.2 value.
-- **Code:** `safe_wpm(..., metric_version="0.2")`; CLI `--metric-version 0.2`. Default: `"0.1"`.
+- **Code:** `safe_wpm(...)` (default `metric_version="0.2"`); CLI `safe-wpm` (default `--metric-version 0.2`). For v0.1: `metric_version="0.1"`, `--metric-version 0.1`.
 - **First use (pre-registered, [results](../experiments/2026-11-18-p5-24-prefix-commits/results.md)):** T15 `t15-m4-13` `val_eval` 701 with certified prefix commits: v0.2 4.87 [4.43, 5.30] (465 commits, 13 wrong); the same decisions under v0.1: 0.53 (literal, above alpha) or 1.03 (complete commits only). T12: v0.2 4.76, v0.1 0.00.
-- **Reading cost (sensitivity, [proposal section 6](safe-wpm-v0.2-proposal.md#6-reading-cost-p14-28)):** optional `read_s_per_commit`, `read_s_per_word`, `min_prefix_words` (v0.2 only; defaults change nothing). With 0.5 s + 0.3 s/word per commit (`aac-gaze-v1`) the T15 prefix value is 4.67 [4.26, 5.07]; it falls to 4.02 at 5.99 s per commit. The adopted v0.2 includes this reading cost.
+- **Reading cost ([proposal section 6](safe-wpm-v0.2-proposal.md#6-reading-cost-p14-28)):** `read_s_per_commit`, `read_s_per_word`, `min_prefix_words` (v0.2 only). The defaults are the adopted values 0.5 s, 0.3 s and 1 word. Other values give a sensitivity variant (`adopted_headline` False). With 0.5 s + 0.3 s/word per commit (`aac-gaze-v1`) the T15 prefix value is 4.67 [4.26, 5.07]; it falls to 4.02 at 5.99 s per commit. The adopted v0.2 includes this reading cost.
 
 ## 6b. Reporting addition: an interval over calibration draws (ADOPTED 2026-11-22 with v0.2; proposed 2026-11-19)
 
-> **Adopted on 2026-11-22, with two rules:** use K >= 80 calibration draws (better 120), and partition-only draws (a new split per draw, no resample with replacement inside a part). Report the count of non-credited (above-alpha or not-certified) draws and the certified-only between-draw SD next to the interval. Intervals computed before this date (for example K = 40, or draws with resampling) keep their numbers and labels. It changes no `safe-wpm/0.1` rule, value or status. Until the scorer switches, a leaderboard entry reports the trial-bootstrap `ci` of section 3, and that CI is conditional on one calibration. Pre-registration and first use: [plan](../experiments/2026-11-20-p15-29-calibration-ci/plan.md), [results](../experiments/2026-11-20-p15-29-calibration-ci/results.md).
+> **Adopted on 2026-11-22, with two rules:** use K >= 80 calibration draws (better 120), and partition-only draws (a new split per draw, no resample with replacement inside a part). Report the count of non-credited (above-alpha or not-certified) draws and the certified-only between-draw SD next to the interval. Intervals computed before this date (for example K = 40, or draws with resampling) keep their numbers and labels. It changes no `safe-wpm/0.1` rule, value or status. A leaderboard entry reports the trial-bootstrap `ci` of section 3 (the scorer sees one calibration), and that CI is conditional on one calibration. `calibration_draw_interval` gives a `CalibrationIntervalWarning` and `adopted_headline: false` when K < 80 or when the caller does not state `draw_scheme="partition"`; the numbers do not change. It also reports `n_not_credited` and `sd_between_credited_draws`. Default `metric_version="0.2"` (with the reading cost); `metric_version="0.1"` reproduces the earlier intervals. Pre-registration and first use: [plan](../experiments/2026-11-20-p15-29-calibration-ci/plan.md), [results](../experiments/2026-11-20-p15-29-calibration-ci/results.md).
 
 **Problem.** The `ci` of section 3 resamples the evaluation trials with the decisions fixed. A new calibration set gives a new guard and new decisions. On T15 the spread between calibration draws was about 2/3 of the trial-bootstrap half-width. So the usual CI is too narrow for the question "what does this system give a new user?".
 
@@ -173,7 +177,8 @@ from fidetype.benchmark.safe_wpm import calibration_draw_interval
 r = calibration_draw_interval(
     [{"committed": c_k, "correct": ok_k, "guarantee": guarantee_from_sheet(sheet_k)} for ...]  # one per draw
     + [{"refused": True}],                                  # a draw whose calibration was refused
-    n_words, n_chars, neural_s, B=2000, seed=0, level=0.95, reference=no_bci_wpm)
+    n_words, n_chars, neural_s, B=2000, seed=0, level=0.95, reference=no_bci_wpm,
+    draw_scheme="partition")                                # K >= 80 partition-only draws: an adopted headline
 print(r["value"], r["interval"], r["sd_between_draws"], r["lower_above_reference"])
 ```
 

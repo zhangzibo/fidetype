@@ -84,9 +84,13 @@
      "trust gate (plug-in fit): commit threshold on calibrated p_top1 0.5000 (fitted on the 437 val trials)."
     ],
     "file": "spanishbcbl-meg-async__convctc-m-async__trust.json",
+    "safe_wpm_definition": null,
     "safe_wpm": null,
-    "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)",
+    "safe_wpm_status": null,
+    "safe_wpm_s": "v0.1 only (not rescored)",
+    "safe_wpm_v01": null,
+    "safe_wpm_v01_status": "not-certified",
+    "safe_wpm_v01_s": "n/a (no certified bound)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -203,9 +207,13 @@
      "trust gate + LTT: commit threshold on calibrated p_top1 0.0000 (fitted on the 437 val trials)."
     ],
     "file": "spanishbcbl-meg-async__convctc-m-async__ltt.json",
-    "safe_wpm": 0.029166901195842948,
-    "safe_wpm_status": "certified",
-    "safe_wpm_s": "0.03 [0.00, 0.17] (LTT a=0.05 d=0.1)",
+    "safe_wpm_definition": null,
+    "safe_wpm": null,
+    "safe_wpm_status": null,
+    "safe_wpm_s": "v0.1 only (not rescored)",
+    "safe_wpm_v01": 0.029166901195842948,
+    "safe_wpm_v01_status": "certified",
+    "safe_wpm_v01_s": "0.03 [0.00, 0.17] (LTT a=0.05 d=0.1)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -322,9 +330,13 @@
      "trust gate + CRC: commit threshold on calibrated p_top1 0.1024 (fitted on the 437 val trials)."
     ],
     "file": "spanishbcbl-meg-async__convctc-m-async__crc.json",
-    "safe_wpm": 0.029275959301280442,
-    "safe_wpm_status": "certified",
-    "safe_wpm_s": "0.03 [0.00, 0.17] (CRC a=0.05)",
+    "safe_wpm_definition": null,
+    "safe_wpm": null,
+    "safe_wpm_status": null,
+    "safe_wpm_s": "v0.1 only (not rescored)",
+    "safe_wpm_v01": 0.029275959301280442,
+    "safe_wpm_v01_status": "certified",
+    "safe_wpm_v01_s": "0.03 [0.00, 0.17] (CRC a=0.05)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -440,9 +452,13 @@
      "Decoder CER: greedy 0.508, beam + LM val-tuned 0.477 (pooled over trials). The trust pipeline decodes with its own beam (RETUNED, lm_weight 0.5, frame temperature): CER 0.522."
     ],
     "file": "spanishbcbl-meg-async__convctc-m-async__always-commit.json",
+    "safe_wpm_definition": null,
     "safe_wpm": null,
-    "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)",
+    "safe_wpm_status": null,
+    "safe_wpm_s": "v0.1 only (not rescored)",
+    "safe_wpm_v01": null,
+    "safe_wpm_v01_status": "not-certified",
+    "safe_wpm_v01_s": "n/a (no certified bound)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -561,9 +577,13 @@
      "Text-only result: the published decoder cannot be rerun on shuffled or zero input, so the controls are missing."
     ],
     "file": "b2t25-t15-copytask__published__always-commit.json",
+    "safe_wpm_definition": null,
     "safe_wpm": null,
-    "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)",
+    "safe_wpm_status": null,
+    "safe_wpm_s": "v0.1 only (not rescored)",
+    "safe_wpm_v01": null,
+    "safe_wpm_v01_status": "not-certified",
+    "safe_wpm_v01_s": "n/a (no certified bound)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -673,9 +693,13 @@
      "cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable (drift; see M2-13/M2-16)."
     ],
     "file": "b2t25-t15-copytask__published__crc.json",
-    "safe_wpm": 13.422448647918946,
-    "safe_wpm_status": "certified",
-    "safe_wpm_s": "13.42 [11.72, 15.08] (CRC a=0.05)",
+    "safe_wpm_definition": null,
+    "safe_wpm": null,
+    "safe_wpm_status": null,
+    "safe_wpm_s": "v0.1 only (not rescored)",
+    "safe_wpm_v01": 13.422448647918946,
+    "safe_wpm_v01_status": "certified",
+    "safe_wpm_v01_s": "13.42 [11.72, 15.08] (CRC a=0.05)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -785,9 +809,13 @@
      "cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable (drift; see M2-13/M2-16)."
     ],
     "file": "b2t25-t15-copytask__published__trust.json",
+    "safe_wpm_definition": null,
     "safe_wpm": null,
-    "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)",
+    "safe_wpm_status": null,
+    "safe_wpm_s": "v0.1 only (not rescored)",
+    "safe_wpm_v01": null,
+    "safe_wpm_v01_status": "not-certified",
+    "safe_wpm_v01_s": "n/a (no certified bound)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -897,9 +925,13 @@
      "cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable (drift; see M2-13/M2-16)."
     ],
     "file": "b2t25-t15-copytask__published__ltt.json",
-    "safe_wpm": 12.241472849274949,
-    "safe_wpm_status": "certified",
-    "safe_wpm_s": "12.24 [10.98, 13.45] (LTT a=0.05 d=0.1)",
+    "safe_wpm_definition": null,
+    "safe_wpm": null,
+    "safe_wpm_status": null,
+    "safe_wpm_s": "v0.1 only (not rescored)",
+    "safe_wpm_v01": 12.241472849274949,
+    "safe_wpm_v01_status": "certified",
+    "safe_wpm_v01_s": "12.24 [10.98, 13.45] (LTT a=0.05 d=0.1)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -1009,9 +1041,13 @@
      "cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable (drift; see M2-13/M2-16)."
     ],
     "file": "b2t25-t15-copytask__ours__crc.json",
-    "safe_wpm": 4.900806083076966,
-    "safe_wpm_status": "above-alpha",
-    "safe_wpm_s": "4.90 [4.10, 5.62] ! ABOVE alpha (test 0.062; CRC a=0.05)",
+    "safe_wpm_definition": null,
+    "safe_wpm": null,
+    "safe_wpm_status": null,
+    "safe_wpm_s": "v0.1 only (not rescored)",
+    "safe_wpm_v01": 4.900806083076966,
+    "safe_wpm_v01_status": "above-alpha",
+    "safe_wpm_v01_s": "4.90 [4.10, 5.62] ! ABOVE alpha (test 0.062; CRC a=0.05)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -1121,9 +1157,13 @@
      "cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable (drift; see M2-13/M2-16)."
     ],
     "file": "b2t25-t15-copytask__ours__trust.json",
+    "safe_wpm_definition": null,
     "safe_wpm": null,
-    "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)",
+    "safe_wpm_status": null,
+    "safe_wpm_s": "v0.1 only (not rescored)",
+    "safe_wpm_v01": null,
+    "safe_wpm_v01_status": "not-certified",
+    "safe_wpm_v01_s": "n/a (no certified bound)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -1233,9 +1273,13 @@
      "cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable (drift; see M2-13/M2-16)."
     ],
     "file": "b2t25-t15-copytask__ours__ltt.json",
-    "safe_wpm": 4.047852720654133,
-    "safe_wpm_status": "certified",
-    "safe_wpm_s": "4.05 [3.22, 4.77] (LTT a=0.05 d=0.1)",
+    "safe_wpm_definition": null,
+    "safe_wpm": null,
+    "safe_wpm_status": null,
+    "safe_wpm_s": "v0.1 only (not rescored)",
+    "safe_wpm_v01": 4.047852720654133,
+    "safe_wpm_v01_status": "certified",
+    "safe_wpm_v01_s": "4.05 [3.22, 4.77] (LTT a=0.05 d=0.1)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -1343,9 +1387,13 @@
     "ci_unit": "day",
     "notes": [],
     "file": "b2t25-t15-copytask__ours__always-commit.json",
+    "safe_wpm_definition": null,
     "safe_wpm": null,
-    "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)",
+    "safe_wpm_status": null,
+    "safe_wpm_s": "v0.1 only (not rescored)",
+    "safe_wpm_v01": null,
+    "safe_wpm_v01_status": "not-certified",
+    "safe_wpm_v01_s": "n/a (no certified bound)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -1457,9 +1505,13 @@
      "Composed sentences from isolated key presses: not natural typing."
     ],
     "file": "toronto-semg-composed__cnn-calib__trust.json",
+    "safe_wpm_definition": null,
     "safe_wpm": null,
-    "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)",
+    "safe_wpm_status": null,
+    "safe_wpm_s": "v0.1 only (not rescored)",
+    "safe_wpm_v01": null,
+    "safe_wpm_v01_status": "not-certified",
+    "safe_wpm_v01_s": "n/a (no certified bound)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -1580,9 +1632,13 @@
      "Composed sentences from isolated key presses: not natural typing."
     ],
     "file": "toronto-semg-composed__cnn-calib__crc.json",
-    "safe_wpm": 0.5473422892202503,
-    "safe_wpm_status": "certified",
-    "safe_wpm_s": "0.55 [0.28, 0.86] (CRC a=0.05)",
+    "safe_wpm_definition": null,
+    "safe_wpm": null,
+    "safe_wpm_status": null,
+    "safe_wpm_s": "v0.1 only (not rescored)",
+    "safe_wpm_v01": 0.5473422892202503,
+    "safe_wpm_v01_status": "certified",
+    "safe_wpm_v01_s": "0.55 [0.28, 0.86] (CRC a=0.05)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -1703,9 +1759,13 @@
      "Composed sentences from isolated key presses: not natural typing."
     ],
     "file": "toronto-semg-composed__cnn-calib__commit.json",
+    "safe_wpm_definition": null,
     "safe_wpm": null,
-    "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)",
+    "safe_wpm_status": null,
+    "safe_wpm_s": "v0.1 only (not rescored)",
+    "safe_wpm_v01": null,
+    "safe_wpm_v01_status": "not-certified",
+    "safe_wpm_v01_s": "n/a (no certified bound)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -1826,9 +1886,13 @@
      "Composed sentences from isolated key presses: not natural typing."
     ],
     "file": "toronto-semg-composed__cnn-xsession__crc.json",
-    "safe_wpm": 0.25189348854789406,
-    "safe_wpm_status": "certified",
-    "safe_wpm_s": "0.25 [0.06, 0.46] (CRC a=0.05)",
+    "safe_wpm_definition": null,
+    "safe_wpm": null,
+    "safe_wpm_status": null,
+    "safe_wpm_s": "v0.1 only (not rescored)",
+    "safe_wpm_v01": 0.25189348854789406,
+    "safe_wpm_v01_status": "certified",
+    "safe_wpm_v01_s": "0.25 [0.06, 0.46] (CRC a=0.05)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -1944,9 +2008,13 @@
      "Composed sentences from isolated key presses: not natural typing."
     ],
     "file": "toronto-semg-composed__cnn-xsession__trust.json",
+    "safe_wpm_definition": null,
     "safe_wpm": null,
-    "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)",
+    "safe_wpm_status": null,
+    "safe_wpm_s": "v0.1 only (not rescored)",
+    "safe_wpm_v01": null,
+    "safe_wpm_v01_status": "not-certified",
+    "safe_wpm_v01_s": "n/a (no certified bound)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -2062,9 +2130,13 @@
      "Composed sentences from isolated key presses: not natural typing."
     ],
     "file": "toronto-semg-composed__cnn-xsession__commit.json",
+    "safe_wpm_definition": null,
     "safe_wpm": null,
-    "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)",
+    "safe_wpm_status": null,
+    "safe_wpm_s": "v0.1 only (not rescored)",
+    "safe_wpm_v01": null,
+    "safe_wpm_v01_status": "not-certified",
+    "safe_wpm_v01_s": "n/a (no certified bound)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -2180,9 +2252,13 @@
      "Composed sentences from isolated key presses: not natural typing."
     ],
     "file": "toronto-semg-composed__cnn-xsubject__crc.json",
-    "safe_wpm": 0.0,
-    "safe_wpm_status": "vacuous",
-    "safe_wpm_s": "0.00 (vacuous: no commits; CRC a=0.05)",
+    "safe_wpm_definition": null,
+    "safe_wpm": null,
+    "safe_wpm_status": null,
+    "safe_wpm_s": "v0.1 only (not rescored)",
+    "safe_wpm_v01": 0.0,
+    "safe_wpm_v01_status": "vacuous",
+    "safe_wpm_v01_s": "0.00 (vacuous: no commits; CRC a=0.05)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -2311,9 +2387,13 @@
      "Composed sentences from isolated key presses: not natural typing."
     ],
     "file": "toronto-semg-composed__cnn-xsubject__trust.json",
+    "safe_wpm_definition": null,
     "safe_wpm": null,
-    "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)",
+    "safe_wpm_status": null,
+    "safe_wpm_s": "v0.1 only (not rescored)",
+    "safe_wpm_v01": null,
+    "safe_wpm_v01_status": "not-certified",
+    "safe_wpm_v01_s": "n/a (no certified bound)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -2442,9 +2522,13 @@
      "Composed sentences from isolated key presses: not natural typing."
     ],
     "file": "toronto-semg-composed__cnn-xsubject__commit.json",
+    "safe_wpm_definition": null,
     "safe_wpm": null,
-    "safe_wpm_status": "not-certified",
-    "safe_wpm_s": "n/a (no certified bound)",
+    "safe_wpm_status": null,
+    "safe_wpm_s": "v0.1 only (not rescored)",
+    "safe_wpm_v01": null,
+    "safe_wpm_v01_status": "not-certified",
+    "safe_wpm_v01_s": "n/a (no certified bound)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -2575,9 +2659,13 @@
      "Same pipeline, fit and thresholds as the v0.1 entry (experiments/2026-11-10-b2t25-trust, M2-13 items, tools/benchmark/import_baselines.py). cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable."
     ],
     "file": "b2t25-t15__published__always-commit.json",
+    "safe_wpm_definition": "safe-wpm/0.2",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
     "safe_wpm_s": "n/a (no certified bound)",
+    "safe_wpm_v01": null,
+    "safe_wpm_v01_status": "not-certified",
+    "safe_wpm_v01_s": "n/a (no certified bound)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -2617,7 +2705,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0
@@ -2684,9 +2773,13 @@
      "Same pipeline, fit and thresholds as the v0.1 entry (experiments/2026-11-10-b2t25-trust, M2-13 items, tools/benchmark/import_baselines.py). cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable."
     ],
     "file": "b2t25-t15__published__crc.json",
-    "safe_wpm": 13.422448647918946,
+    "safe_wpm_definition": "safe-wpm/0.2",
+    "safe_wpm": 12.270211634993974,
     "safe_wpm_status": "certified",
-    "safe_wpm_s": "13.42 [11.77, 15.17] (CRC a=0.05)",
+    "safe_wpm_s": "12.27 [10.83, 13.77] (CRC a=0.05)",
+    "safe_wpm_v01": 13.422448647918946,
+    "safe_wpm_v01_status": "certified",
+    "safe_wpm_v01_s": "13.42 [11.77, 15.17] (CRC a=0.05)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -2726,7 +2819,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0
@@ -2793,9 +2887,13 @@
      "Same pipeline, fit and thresholds as the v0.1 entry (experiments/2026-11-10-b2t25-trust, M2-13 items, tools/benchmark/import_baselines.py). cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable."
     ],
     "file": "b2t25-t15__published__trust.json",
+    "safe_wpm_definition": "safe-wpm/0.2",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
     "safe_wpm_s": "n/a (no certified bound)",
+    "safe_wpm_v01": null,
+    "safe_wpm_v01_status": "not-certified",
+    "safe_wpm_v01_s": "n/a (no certified bound)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -2835,7 +2933,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0
@@ -2902,9 +3001,13 @@
      "Same pipeline, fit and thresholds as the v0.1 entry (experiments/2026-11-10-b2t25-trust, M2-13 items, tools/benchmark/import_baselines.py). cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable."
     ],
     "file": "b2t25-t15__published__ltt.json",
-    "safe_wpm": 12.241472849274949,
+    "safe_wpm_definition": "safe-wpm/0.2",
+    "safe_wpm": 11.281864847191072,
     "safe_wpm_status": "certified",
-    "safe_wpm_s": "12.24 [11.05, 13.51] (LTT a=0.05 d=0.1)",
+    "safe_wpm_s": "11.28 [10.22, 12.38] (LTT a=0.05 d=0.1)",
+    "safe_wpm_v01": 12.241472849274949,
+    "safe_wpm_v01_status": "certified",
+    "safe_wpm_v01_s": "12.24 [11.05, 13.51] (LTT a=0.05 d=0.1)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -2944,7 +3047,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0
@@ -3011,9 +3115,13 @@
      "Drop-in guard (P14-03 recipe, as P14-05) calibrated on 616 val_select trials (the 106 val_select trials that are track test units are removed). Checkpoint chosen on val_select PER. Not comparable with full-coverage entries."
     ],
     "file": "b2t25-t15__m4-13__guard.json",
-    "safe_wpm": 4.065168084942968,
+    "safe_wpm_definition": "safe-wpm/0.2",
+    "safe_wpm": 3.936219135170083,
     "safe_wpm_status": "certified",
-    "safe_wpm_s": "4.07 [2.51, 5.74] (LTT a=0.05 d=0.1)",
+    "safe_wpm_s": "3.94 [2.46, 5.51] (LTT a=0.05 d=0.1)",
+    "safe_wpm_v01": 4.065168084942968,
+    "safe_wpm_v01_status": "certified",
+    "safe_wpm_v01_s": "4.07 [2.51, 5.74] (LTT a=0.05 d=0.1)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -3058,7 +3166,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0
@@ -3125,9 +3234,13 @@
      "Same pipeline, fit and thresholds as the v0.1 entry (experiments/2026-11-10-b2t25-trust, M2-13 items, tools/benchmark/import_baselines.py). cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable."
     ],
     "file": "b2t25-t15__ours__always-commit.json",
+    "safe_wpm_definition": "safe-wpm/0.2",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
     "safe_wpm_s": "n/a (no certified bound)",
+    "safe_wpm_v01": null,
+    "safe_wpm_v01_status": "not-certified",
+    "safe_wpm_v01_s": "n/a (no certified bound)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -3167,7 +3280,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0
@@ -3234,9 +3348,13 @@
      "Same pipeline, fit and thresholds as the v0.1 entry (experiments/2026-11-10-b2t25-trust, M2-13 items, tools/benchmark/import_baselines.py). cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable."
     ],
     "file": "b2t25-t15__ours__crc.json",
-    "safe_wpm": 4.900806083076966,
+    "safe_wpm_definition": "safe-wpm/0.2",
+    "safe_wpm": 4.698450683722811,
     "safe_wpm_status": "above-alpha",
-    "safe_wpm_s": "4.90 [4.12, 5.67] ! ABOVE alpha (test 0.062; CRC a=0.05)",
+    "safe_wpm_s": "4.70 [3.97, 5.42] ! ABOVE alpha (test 0.062; CRC a=0.05)",
+    "safe_wpm_v01": 4.900806083076966,
+    "safe_wpm_v01_status": "above-alpha",
+    "safe_wpm_v01_s": "4.90 [4.12, 5.67] ! ABOVE alpha (test 0.062; CRC a=0.05)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -3276,7 +3394,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0
@@ -3343,9 +3462,13 @@
      "Same pipeline, fit and thresholds as the v0.1 entry (experiments/2026-11-10-b2t25-trust, M2-13 items, tools/benchmark/import_baselines.py). cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable."
     ],
     "file": "b2t25-t15__ours__trust.json",
+    "safe_wpm_definition": "safe-wpm/0.2",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
     "safe_wpm_s": "n/a (no certified bound)",
+    "safe_wpm_v01": null,
+    "safe_wpm_v01_status": "not-certified",
+    "safe_wpm_v01_s": "n/a (no certified bound)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -3385,7 +3508,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0
@@ -3452,9 +3576,13 @@
      "Same pipeline, fit and thresholds as the v0.1 entry (experiments/2026-11-10-b2t25-trust, M2-13 items, tools/benchmark/import_baselines.py). cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable."
     ],
     "file": "b2t25-t15__ours__ltt.json",
-    "safe_wpm": 4.047852720654133,
+    "safe_wpm_definition": "safe-wpm/0.2",
+    "safe_wpm": 3.910806941594107,
     "safe_wpm_status": "certified",
-    "safe_wpm_s": "4.05 [3.25, 4.77] (LTT a=0.05 d=0.1)",
+    "safe_wpm_s": "3.91 [3.15, 4.59] (LTT a=0.05 d=0.1)",
+    "safe_wpm_v01": 4.047852720654133,
+    "safe_wpm_v01_status": "certified",
+    "safe_wpm_v01_s": "4.05 [3.25, 4.77] (LTT a=0.05 d=0.1)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -3494,7 +3622,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0
@@ -3561,9 +3690,13 @@
      "Drop-in guard (P14-03 recipe, as P14-05) calibrated on 616 val_select trials (the 106 val_select trials that are track test units are removed). Checkpoint chosen on val_select PER. Not comparable with full-coverage entries."
     ],
     "file": "b2t25-t15__m4-12__guard.json",
+    "safe_wpm_definition": "safe-wpm/0.2",
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
     "safe_wpm_s": "0.00 (vacuous: no commits; LTT a=0.05 d=0.1)",
+    "safe_wpm_v01": 0.0,
+    "safe_wpm_v01_status": "vacuous",
+    "safe_wpm_v01_s": "0.00 (vacuous: no commits; LTT a=0.05 d=0.1)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -3608,7 +3741,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0
@@ -3677,9 +3811,13 @@
      "Checkpoint chosen by early stopping on the decoder val part = this track's cal split (open). Decisions use the same guard as P14-03 but calibrated on the track cal split, not on test-partition trials."
     ],
     "file": "b2t24-t12__t12v2__guard.json",
-    "safe_wpm": 0.475882726405761,
+    "safe_wpm_definition": "safe-wpm/0.2",
+    "safe_wpm": 0.47239992156805133,
     "safe_wpm_status": "certified",
-    "safe_wpm_s": "0.48 [0.20, 0.78] (LTT a=0.05 d=0.1)",
+    "safe_wpm_s": "0.47 [0.19, 0.77] (LTT a=0.05 d=0.1)",
+    "safe_wpm_v01": 0.475882726405761,
+    "safe_wpm_v01_status": "certified",
+    "safe_wpm_v01_s": "0.48 [0.20, 0.78] (LTT a=0.05 d=0.1)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -3721,7 +3859,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0
@@ -3788,9 +3927,13 @@
      "Checkpoint chosen by early stopping on the decoder val part = this track's cal split (open). Decisions use the same guard as P14-03 but calibrated on the track cal split, not on test-partition trials."
     ],
     "file": "b2t24-t12__t12v2__always-commit.json",
+    "safe_wpm_definition": "safe-wpm/0.2",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
     "safe_wpm_s": "n/a (no certified bound)",
+    "safe_wpm_v01": null,
+    "safe_wpm_v01_status": "not-certified",
+    "safe_wpm_v01_s": "n/a (no certified bound)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -3832,7 +3975,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0
@@ -3901,9 +4045,13 @@
      "Calibration on the closed-loop trials of the train + val splits of the 7 earlier sessions (the docs name the val trials; train trials are open as well and the RNN output is fixed)."
     ],
     "file": "willett-hw__rnn-published__always-commit.json",
+    "safe_wpm_definition": "safe-wpm/0.2",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
     "safe_wpm_s": "n/a (no certified bound)",
+    "safe_wpm_v01": null,
+    "safe_wpm_v01_status": "not-certified",
+    "safe_wpm_v01_s": "n/a (no certified bound)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -3940,7 +4088,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0
@@ -4007,9 +4156,13 @@
      "Calibration on the closed-loop trials of the train + val splits of the 7 earlier sessions (the docs name the val trials; train trials are open as well and the RNN output is fixed)."
     ],
     "file": "willett-hw__rnn-published__guard.json",
+    "safe_wpm_definition": "safe-wpm/0.2",
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
     "safe_wpm_s": "0.00 (vacuous: no commits; LTT a=0.05 d=0.1)",
+    "safe_wpm_v01": 0.0,
+    "safe_wpm_v01_status": "vacuous",
+    "safe_wpm_v01_s": "0.00 (vacuous: no commits; LTT a=0.05 d=0.1)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -4046,7 +4199,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0
@@ -4115,9 +4269,13 @@
      "day 1 + half of day 2 (cross-fitted: the other half is predicted). Composed sentences from isolated key presses: not natural typing. Same plan, decoder, LM weight and fits as the v0.1 entry (experiments/2026-11-11-emg-toronto/trust.py)."
     ],
     "file": "toronto-semg__cnn-calib__crc.json",
-    "safe_wpm": 0.5473422892202501,
+    "safe_wpm_definition": "safe-wpm/0.2",
+    "safe_wpm": 0.5452604011083013,
     "safe_wpm_status": "certified",
-    "safe_wpm_s": "0.55 [0.29, 0.86] (CRC a=0.05)",
+    "safe_wpm_s": "0.55 [0.29, 0.85] (CRC a=0.05)",
+    "safe_wpm_v01": 0.5473422892202501,
+    "safe_wpm_v01_status": "certified",
+    "safe_wpm_v01_s": "0.55 [0.29, 0.86] (CRC a=0.05)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -4168,7 +4326,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0
@@ -4235,9 +4394,13 @@
      "day 1 + half of day 2 (cross-fitted: the other half is predicted). Composed sentences from isolated key presses: not natural typing. Same plan, decoder, LM weight and fits as the v0.1 entry (experiments/2026-11-11-emg-toronto/trust.py)."
     ],
     "file": "toronto-semg__cnn-calib__trust.json",
+    "safe_wpm_definition": "safe-wpm/0.2",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
     "safe_wpm_s": "n/a (no certified bound)",
+    "safe_wpm_v01": null,
+    "safe_wpm_v01_status": "not-certified",
+    "safe_wpm_v01_s": "n/a (no certified bound)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -4288,7 +4451,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0
@@ -4355,9 +4519,13 @@
      "day 1 + half of day 2 (cross-fitted: the other half is predicted). Composed sentences from isolated key presses: not natural typing. Same plan, decoder, LM weight and fits as the v0.1 entry (experiments/2026-11-11-emg-toronto/trust.py)."
     ],
     "file": "toronto-semg__cnn-calib__always-commit.json",
+    "safe_wpm_definition": "safe-wpm/0.2",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
     "safe_wpm_s": "n/a (no certified bound)",
+    "safe_wpm_v01": null,
+    "safe_wpm_v01_status": "not-certified",
+    "safe_wpm_v01_s": "n/a (no certified bound)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -4408,7 +4576,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0
@@ -4475,9 +4644,13 @@
      "decoder trained on day 1 of all 19 participants; day-2 presses. Composed sentences from isolated key presses: not natural typing. Same plan, decoder, LM weight and fits as the v0.1 entry (experiments/2026-11-11-emg-toronto/trust.py)."
     ],
     "file": "toronto-semg__cnn-xsession__crc.json",
-    "safe_wpm": 0.251893488547894,
+    "safe_wpm_definition": "safe-wpm/0.2",
+    "safe_wpm": 0.2514286743747006,
     "safe_wpm_status": "certified",
     "safe_wpm_s": "0.25 [0.07, 0.47] (CRC a=0.05)",
+    "safe_wpm_v01": 0.251893488547894,
+    "safe_wpm_v01_status": "certified",
+    "safe_wpm_v01_s": "0.25 [0.07, 0.47] (CRC a=0.05)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -4523,7 +4696,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0
@@ -4590,9 +4764,13 @@
      "decoder trained on day 1 of all 19 participants; day-2 presses. Composed sentences from isolated key presses: not natural typing. Same plan, decoder, LM weight and fits as the v0.1 entry (experiments/2026-11-11-emg-toronto/trust.py)."
     ],
     "file": "toronto-semg__cnn-xsession__trust.json",
+    "safe_wpm_definition": "safe-wpm/0.2",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
     "safe_wpm_s": "n/a (no certified bound)",
+    "safe_wpm_v01": null,
+    "safe_wpm_v01_status": "not-certified",
+    "safe_wpm_v01_s": "n/a (no certified bound)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -4638,7 +4816,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0
@@ -4705,9 +4884,13 @@
      "decoder trained on day 1 of all 19 participants; day-2 presses. Composed sentences from isolated key presses: not natural typing. Same plan, decoder, LM weight and fits as the v0.1 entry (experiments/2026-11-11-emg-toronto/trust.py)."
     ],
     "file": "toronto-semg__cnn-xsession__always-commit.json",
+    "safe_wpm_definition": "safe-wpm/0.2",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
     "safe_wpm_s": "n/a (no certified bound)",
+    "safe_wpm_v01": null,
+    "safe_wpm_v01_status": "not-certified",
+    "safe_wpm_v01_s": "n/a (no certified bound)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -4753,7 +4936,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0
@@ -4820,9 +5004,13 @@
      "4-fold leave-participants-out; no data of the user. Composed sentences from isolated key presses: not natural typing. Same plan, decoder, LM weight and fits as the v0.1 entry (experiments/2026-11-11-emg-toronto/trust.py)."
     ],
     "file": "toronto-semg__cnn-xsubject__crc.json",
+    "safe_wpm_definition": "safe-wpm/0.2",
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
     "safe_wpm_s": "0.00 (vacuous: no commits; CRC a=0.05)",
+    "safe_wpm_v01": 0.0,
+    "safe_wpm_v01_status": "vacuous",
+    "safe_wpm_v01_s": "0.00 (vacuous: no commits; CRC a=0.05)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -4881,7 +5069,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0
@@ -4948,9 +5137,13 @@
      "4-fold leave-participants-out; no data of the user. Composed sentences from isolated key presses: not natural typing. Same plan, decoder, LM weight and fits as the v0.1 entry (experiments/2026-11-11-emg-toronto/trust.py)."
     ],
     "file": "toronto-semg__cnn-xsubject__trust.json",
+    "safe_wpm_definition": "safe-wpm/0.2",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
     "safe_wpm_s": "n/a (no certified bound)",
+    "safe_wpm_v01": null,
+    "safe_wpm_v01_status": "not-certified",
+    "safe_wpm_v01_s": "n/a (no certified bound)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -5009,7 +5202,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0
@@ -5076,9 +5270,13 @@
      "4-fold leave-participants-out; no data of the user. Composed sentences from isolated key presses: not natural typing. Same plan, decoder, LM weight and fits as the v0.1 entry (experiments/2026-11-11-emg-toronto/trust.py)."
     ],
     "file": "toronto-semg__cnn-xsubject__always-commit.json",
+    "safe_wpm_definition": "safe-wpm/0.2",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
     "safe_wpm_s": "n/a (no certified bound)",
+    "safe_wpm_v01": null,
+    "safe_wpm_v01_status": "not-certified",
+    "safe_wpm_v01_s": "n/a (no certified bound)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -5137,7 +5335,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0
@@ -5207,9 +5406,13 @@
      "Key track: one character per key, so CER = key error rate."
     ],
     "file": "kt-semg__lda-oracle__guard.json",
+    "safe_wpm_definition": "safe-wpm/0.2",
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
     "safe_wpm_s": "0.00 (vacuous: no commits; LTT a=0.05 d=0.1)",
+    "safe_wpm_v01": 0.0,
+    "safe_wpm_v01_status": "vacuous",
+    "safe_wpm_v01_s": "0.00 (vacuous: no commits; LTT a=0.05 d=0.1)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -5246,7 +5449,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0
@@ -5314,9 +5518,13 @@
      "Key track: one character per key, so CER = key error rate."
     ],
     "file": "kt-semg__lda-oracle__always-commit.json",
+    "safe_wpm_definition": "safe-wpm/0.2",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
     "safe_wpm_s": "n/a (no certified bound)",
+    "safe_wpm_v01": null,
+    "safe_wpm_v01_status": "not-certified",
+    "safe_wpm_v01_s": "n/a (no certified bound)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -5353,7 +5561,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0
@@ -5423,9 +5632,13 @@
      "RESEARCH ONLY: CC BY-NC 4.0 data. Results and weights are non-commercial."
     ],
     "file": "spanishbcbl-meg__convctc-m-async__trust.json",
+    "safe_wpm_definition": "safe-wpm/0.2",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
     "safe_wpm_s": "n/a (no certified bound)",
+    "safe_wpm_v01": null,
+    "safe_wpm_v01_status": "not-certified",
+    "safe_wpm_v01_s": "n/a (no certified bound)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -5471,7 +5684,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0
@@ -5539,9 +5753,13 @@
      "RESEARCH ONLY: CC BY-NC 4.0 data. Results and weights are non-commercial."
     ],
     "file": "spanishbcbl-meg__convctc-m-async__ltt.json",
-    "safe_wpm": 0.029166901195842945,
+    "safe_wpm_definition": "safe-wpm/0.2",
+    "safe_wpm": 0.029072777322417608,
     "safe_wpm_status": "certified",
     "safe_wpm_s": "0.03 [0.00, 0.17] (LTT a=0.05 d=0.1)",
+    "safe_wpm_v01": 0.029166901195842945,
+    "safe_wpm_v01_status": "certified",
+    "safe_wpm_v01_s": "0.03 [0.00, 0.17] (LTT a=0.05 d=0.1)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -5587,7 +5805,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0
@@ -5655,9 +5874,13 @@
      "RESEARCH ONLY: CC BY-NC 4.0 data. Results and weights are non-commercial."
     ],
     "file": "spanishbcbl-meg__convctc-m-async__crc.json",
-    "safe_wpm": 0.029275959301280435,
+    "safe_wpm_definition": "safe-wpm/0.2",
+    "safe_wpm": 0.029188513244671938,
     "safe_wpm_status": "certified",
     "safe_wpm_s": "0.03 [0.00, 0.17] (CRC a=0.05)",
+    "safe_wpm_v01": 0.029275959301280435,
+    "safe_wpm_v01_status": "certified",
+    "safe_wpm_v01_s": "0.03 [0.00, 0.17] (CRC a=0.05)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -5703,7 +5926,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0
@@ -5771,9 +5995,13 @@
      "RESEARCH ONLY: CC BY-NC 4.0 data. Results and weights are non-commercial."
     ],
     "file": "spanishbcbl-meg__convctc-m-async__always-commit.json",
+    "safe_wpm_definition": "safe-wpm/0.2",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
     "safe_wpm_s": "n/a (no certified bound)",
+    "safe_wpm_v01": null,
+    "safe_wpm_v01_status": "not-certified",
+    "safe_wpm_v01_s": "n/a (no certified bound)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -5819,7 +6047,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0
@@ -5891,9 +6120,13 @@
      "FEP-0010: data.research_only = true (CC BY-NC-SA 4.0)."
     ],
     "file": "emg2qwerty__p11-12-intended-sl-subset8__guard.json",
-    "safe_wpm": 5.084473094135909,
+    "safe_wpm_definition": "safe-wpm/0.2",
+    "safe_wpm": 4.876791868567496,
     "safe_wpm_status": "certified",
-    "safe_wpm_s": "5.08 [2.54, 7.95] (LTT a=0.05 d=0.1)",
+    "safe_wpm_s": "4.88 [2.49, 7.45] (LTT a=0.05 d=0.1)",
+    "safe_wpm_v01": 5.084473094135909,
+    "safe_wpm_v01_status": "certified",
+    "safe_wpm_v01_s": "5.08 [2.54, 7.95] (LTT a=0.05 d=0.1)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -5978,7 +6211,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0,
@@ -6048,9 +6282,13 @@
      "FEP-0010: data.research_only = true (CC BY-NC-SA 4.0)."
     ],
     "file": "emg2qwerty__p11-12-intended-s-subset8__guard.json",
-    "safe_wpm": 4.095207259181112,
+    "safe_wpm_definition": "safe-wpm/0.2",
+    "safe_wpm": 3.9517816939663177,
     "safe_wpm_status": "certified",
-    "safe_wpm_s": "4.10 [1.99, 6.56] (LTT a=0.05 d=0.1)",
+    "safe_wpm_s": "3.95 [1.95, 6.21] (LTT a=0.05 d=0.1)",
+    "safe_wpm_v01": 4.095207259181112,
+    "safe_wpm_v01_status": "certified",
+    "safe_wpm_v01_s": "4.10 [1.99, 6.56] (LTT a=0.05 d=0.1)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -6135,7 +6373,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0,
@@ -6205,9 +6444,13 @@
      "FEP-0010: data.research_only = true (CC BY-NC-SA 4.0)."
     ],
     "file": "emg2qwerty__p11-14-intended-lfl-subset8__guard.json",
-    "safe_wpm": 6.8030849745214,
+    "safe_wpm_definition": "safe-wpm/0.2",
+    "safe_wpm": 6.42613060738056,
     "safe_wpm_status": "certified",
-    "safe_wpm_s": "6.80 [4.36, 9.65] (LTT a=0.05 d=0.1)",
+    "safe_wpm_s": "6.43 [4.19, 8.93] (LTT a=0.05 d=0.1)",
+    "safe_wpm_v01": 6.8030849745214,
+    "safe_wpm_v01_status": "certified",
+    "safe_wpm_v01_s": "6.80 [4.36, 9.65] (LTT a=0.05 d=0.1)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -6292,7 +6535,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0,
@@ -6362,9 +6606,13 @@
      "FEP-0010: data.research_only = true (CC BY-NC-SA 4.0)."
     ],
     "file": "emg2qwerty__p11-01-crt-subset8__guard.json",
+    "safe_wpm_definition": "safe-wpm/0.2",
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
     "safe_wpm_s": "0.00 (vacuous: no commits; LTT a=0.05 d=0.1)",
+    "safe_wpm_v01": 0.0,
+    "safe_wpm_v01_status": "vacuous",
+    "safe_wpm_v01_s": "0.00 (vacuous: no commits; LTT a=0.05 d=0.1)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -6434,7 +6682,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0
@@ -6503,9 +6752,13 @@
      "FEP-0010: data.research_only = true (CC BY-NC-SA 4.0)."
     ],
     "file": "emg2qwerty__p11-01-crt-subset8__always-commit.json",
+    "safe_wpm_definition": "safe-wpm/0.2",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
     "safe_wpm_s": "n/a (no certified bound)",
+    "safe_wpm_v01": null,
+    "safe_wpm_v01_status": "not-certified",
+    "safe_wpm_v01_s": "n/a (no certified bound)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -6575,7 +6828,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0
@@ -6643,9 +6897,13 @@
      "RESEARCH ONLY: CC BY-NC-SA 4.0 data. Results and weights are non-commercial."
     ],
     "file": "emg2qwerty__lda-oracle__guard.json",
+    "safe_wpm_definition": "safe-wpm/0.2",
     "safe_wpm": 0.0,
     "safe_wpm_status": "vacuous",
     "safe_wpm_s": "0.00 (vacuous: no commits; LTT a=0.05 d=0.1)",
+    "safe_wpm_v01": 0.0,
+    "safe_wpm_v01_status": "vacuous",
+    "safe_wpm_v01_s": "0.00 (vacuous: no commits; LTT a=0.05 d=0.1)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -6682,7 +6940,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0
@@ -6751,9 +7010,13 @@
      "RESEARCH ONLY: CC BY-NC-SA 4.0 data. Results and weights are non-commercial."
     ],
     "file": "emg2qwerty__lda-oracle__always-commit.json",
+    "safe_wpm_definition": "safe-wpm/0.2",
     "safe_wpm": null,
     "safe_wpm_status": "not-certified",
     "safe_wpm_s": "n/a (no certified bound)",
+    "safe_wpm_v01": null,
+    "safe_wpm_v01_status": "not-certified",
+    "safe_wpm_v01_s": "n/a (no certified bound)",
     "rerun_level": "rescore",
     "rerun": {
      "schema": "fidetype.hub.recipe/0.1",
@@ -6790,7 +7053,8 @@
      "scorer": {
       "scorer_version": "0.2",
       "metrics": {
-       "safe_wpm": "safe-wpm/0.1"
+       "safe_wpm": "safe-wpm/0.1",
+       "safe_wpm_v02": "safe-wpm/0.2"
       },
       "B": 2000,
       "seed": 0

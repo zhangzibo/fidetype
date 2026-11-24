@@ -726,7 +726,7 @@ def score(track: str, folder: str | PathLike[str], truth: dict[str, dict[str, An
     missing = [k for k in ("shuffled", "zeros", "null_commit") if ctl[k]["status"] in ("missing", "incomplete")]
     res["status"] = ("scored" if ctl["passed"] else
                      "scored: controls missing" if missing else "scored: controls failed")
-    res["certification"] = (res.get("safe_wpm") or {}).get("status")
+    res["certification"] = (res.get("safe_wpm_v02") or res.get("safe_wpm") or {}).get("status")
     if tdef.research_only:
         res["notes"].append(f"RESEARCH ONLY: {tdef.licence} data. Results and weights are non-commercial.")
     # Rerun recipe (P13-06, docs/hub-design.md section 5): every versioned input and the exact command.
@@ -755,7 +755,8 @@ def score_card_text(res: dict[str, Any]) -> str:
         return s
 
     ti = res.get("track_info", {})
-    sw = res.get("safe_wpm") or {}
+    sw = res.get("safe_wpm_v02") or {}
+    sw1 = res.get("safe_wpm") or {}
     c = res["controls"]
     keys = ti.get("key_track") and "key_error_rate" in m
     err = "key error" if keys else "CER"
@@ -765,8 +766,9 @@ def score_card_text(res: dict[str, Any]) -> str:
         + ("  RESEARCH ONLY" if ti.get("research_only") else "") + (f"  target {tg['name']}" if tg else ""),
         f"  {err} {v('cer')}" + ("" if keys else f"   WER {v('wer')}"),
         f"  eWPM {v('ewpm', 2)}   no-BCI {v('gaze_ewpm', 2)}   difference {v('ewpm_minus_gaze', 2)}",
-        (f"  safe WPM @ {sw.get('alpha')}: " if sw.get("alpha") is not None else "  safe WPM: ")
-        + f"{('n/a' if sw.get('value') is None else format(sw['value'], '.2f'))} ({sw.get('status')})",
+        (f"  safe WPM v0.2 @ {sw.get('alpha')}: " if sw.get("alpha") is not None else "  safe WPM v0.2: ")
+        + f"{('n/a' if sw.get('value') is None else format(sw['value'], '.2f'))} ({sw.get('status')})"
+        + f"   v0.1: {('n/a' if sw1.get('value') is None else format(sw1['value'], '.2f'))}",
         f"  wrong-commit {v('wrong_commit_rate')}   error among commits {v('error_among_commits')}   "
         f"commit rate {v('commit_rate')}",
         f"  controls: shuffled {c['shuffled']['status']}, zeros {c['zeros']['status']}, "

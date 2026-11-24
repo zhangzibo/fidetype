@@ -110,7 +110,7 @@ def test_v02_values_equal_safe_wpm(run):
     ns = list(rng.uniform(2, 8, size=200))
     g = {"method": "ltt", "alpha": 0.5, "delta": 0.1, "n_cal": 100, "risk": SW.RISK_PREFIX}
     sw = SW.safe_wpm(oc["committed"], oc["correct"], nw, nch, ns, guarantee=g, metric_version="0.2",
-                     committed_words=oc["committed_words"], complete=oc["complete"], penalty_chars=oc["penalty_chars"])
+                     committed_words=oc["committed_words"], complete=oc["complete"], penalty_chars=oc["penalty_chars"], read_s_per_commit=0.0, read_s_per_word=0.0)
     v = run.v02_values(oc["committed"], oc["correct"], oc["credit_words"], oc["penalty_chars"], ns, np.ones((1, 200)))
     assert sw["unguarded_wpm"] == pytest.approx(float(v[0]), abs=1e-9)
     # with weights: two rows, the second doubles the first half

@@ -121,6 +121,14 @@ def test_certified_guarantee_and_failed_null_control(kt, tmp_path):
                               {"shuffled": _null_rows(rows), "zeros": _null_rows(rows, action="commit")})
     res = SC.score("kt-semg", sub, truth, B=100, split=split)
     assert res["safe_wpm"]["status"] == "certified" and res["safe_wpm"]["value"] > 0
+    # The headline block is the adopted safe-wpm/0.2 (with the reading cost); v0.1 keeps its key and label.
+    v1, v2 = res["safe_wpm"], res["safe_wpm_v02"]
+    assert v1["definition"] == "safe-wpm/0.1" and v2["definition"] == "safe-wpm/0.2"
+    assert v2["adopted_headline"] is True and res["safe_wpm_headline"] == "safe_wpm_v02"
+    assert v2["status"] == v1["status"] == res["certification"] and 0 < v2["value"] < v1["value"]
+    assert v2["reading_cost"]["minutes_reading"] > 0
+    assert res["rerun"]["scorer"]["metrics"] == {"safe_wpm": "safe-wpm/0.1", "safe_wpm_v02": "safe-wpm/0.2"}
+    assert "safe WPM v0.2" in SC.score_card_text(res)
     assert res["controls"]["null_commit"]["status"] == "fail"
     assert res["status"] == "scored: controls failed"
 

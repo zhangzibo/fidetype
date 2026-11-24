@@ -299,7 +299,7 @@ def run_guard(jb: dict, M, R, an, W, cal: list[dict], ev: list[dict], E: dict, E
     gu = SW.guarantee_from_sheet(sh)
     gu.update(alpha=ALPHA, delta=DELTA, ltt_alpha=jb["ltt_alpha"], split_delta=jb["delta"])  # the claim
     sw = SW.safe_wpm(com, cor, E["nw"], E["nch"], E["ns"], guarantee=gu, controls=SW.controls_from_sheet(sh),
-                     gaze_chars_per_min=None)
+                     gaze_chars_per_min=None, metric_version="0.1")
     ctl = {k: int(sum(x["action"] == "commit" for x in dec[k])) for k in ("shuffled", "zeros")}
     v6 = all(ctl[k] / len(ev) <= CTL_MAX for k in ctl)
     credited = bool(sw["status"] == "certified" and sw["value"] is not None and v6)
@@ -421,7 +421,7 @@ def score_actions(dec: dict, sheets: list[dict], E: dict, R, rule: str) -> dict:
     gu.update(alpha=ALPHA, delta=DELTA, ltt_alpha=ALPHA_PP, split_delta=SPLIT_DELTA, rule=rule, J=J,
               feasible=all(s.get("feasible", True) for s in sheets))
     sw = SW.safe_wpm(com, cor, E["nw"], E["nch"], E["ns"], guarantee=gu, controls=SW.controls_from_sheet(sheets[0]),
-                     gaze_chars_per_min=None)
+                     gaze_chars_per_min=None, metric_version="0.1")
     ctl = {k: int(sum(x["action"] == "commit" for x in dec[k])) for k in ("shuffled", "zeros")}
     v6 = all(ctl[k] / len(com) <= CTL_MAX for k in ctl)
     credited = bool(sw["status"] == "certified" and sw["value"] is not None and v6)
@@ -542,7 +542,7 @@ def analyse() -> int:
         lib_draws = [{"refused": True} if d.get("status") != "guard" or not d.get("v6_eval") else
                      {"committed": d["committed"], "correct": d["correct"], "guarantee": d["guarantee"]} for d in dd]
         lib = SW.calibration_draw_interval(lib_draws, E["nw"], E["nch"], E["ns"], B=2000, seed=0, level=0.95,
-                                           reference=NO_BCI)
+                                           reference=NO_BCI, metric_version="0.1")
         lib.pop("draws", None)
         va = np.asarray([d["value"] for d in dd])
         low = sorted(range(len(dd)), key=lambda i: va[i])[:3]

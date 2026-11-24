@@ -283,7 +283,7 @@ def run_draw(jb: dict, M, R, an, cal0: list[dict], ev0: list[dict]) -> dict:
     com = [x["action"] == "commit" for x in dec["real"]]
     cor = [cm and bool(R.same(x["text"], t)) for cm, x, t in zip(com, dec["real"], E["truths"])]
     sw = SW.safe_wpm(com, cor, E["nw"], E["nch"], E["ns"], guarantee=SW.guarantee_from_sheet(sh),
-                     controls=SW.controls_from_sheet(sh), gaze_chars_per_min=None)
+                     controls=SW.controls_from_sheet(sh), gaze_chars_per_min=None, metric_version="0.1")
     if jb["arm"] == "P":
         ctl = {k: int(sum(x["action"] == "commit" for x in dec[k])) for k in ("shuffled", "zeros")}
         v6 = all(ctl[k] / len(ev) <= CTL_MAX for k in ctl)
@@ -409,7 +409,7 @@ def analyse() -> int:
     lib_draws = [{"refused": True} if d.get("status") != "guard" or not d.get("v6_eval") else
                  {"committed": d["committed"], "correct": d["correct"], "guarantee": d["guarantee"]} for d in dp]
     lib = SW.calibration_draw_interval(lib_draws, E["nw"], E["nch"], E["ns"], B=2000, seed=0, level=0.95,
-                                       reference=NO_BCI)
+                                       reference=NO_BCI, metric_version="0.1")
     lib.pop("draws", None)
     per = [{k: d.get(k) for k in ("name", "arm", "k", "status", "safe_status", "credited", "value", "raw_value",
                                   "n_eval", "n_commits", "n_wrong", "test_rate", "above_alpha", "ltt_commits",

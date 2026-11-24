@@ -1,5 +1,21 @@
 """Safe WPM: words per minute of committed, correct text at a certified wrong-commit rate (P14-05).
 
+Versions
+--------
+- ``safe-wpm/0.2`` (ADOPTED 2026-11-22; the default since P14-61):
+  ``safe_wpm(...)`` with no ``metric_version``. It adds prefix credit and
+  the ``aac-gaze-v1`` reading cost (0.5 s + 0.3 s per committed word, per
+  commit) to v0.1. For a sentence-level policy it gives the v0.1 credit
+  and penalty plus the reading time. See "safe-wpm/0.2" below.
+- ``safe-wpm/0.1`` (the headline until 2026-11-22): ``metric_version="0.1"``.
+  It stays selectable, so every old number can be reproduced. A v0.1
+  number keeps its value and its v0.1 label.
+
+Every report carries ``definition`` (the version label). A v0.2 report
+also carries ``definition_status`` and ``adopted_headline`` (False for a
+sensitivity variant, for example without the reading cost). The v0.1
+report is unchanged, so an old v0.1 block is reproduced byte for byte.
+
 Definition (``safe-wpm/0.1``; full text: ``docs/safe-wpm.md``)
 --------------------------------------------------------------
 A session has N trials (intended sentences) y_1 .. y_N. Per trial i:
@@ -48,11 +64,11 @@ The report always carries alpha, delta, the method, the calibration size,
 the measured wrong-commit rate with its Clopper-Pearson 95 % interval, the
 controls and the no-BCI reference.
 
-Proposed ``safe-wpm/0.2`` (P14-26; PROPOSED, NOT ADOPTED)
---------------------------------------------------------
-``safe_wpm(..., metric_version="0.2")`` scores word-prefix commits. The
-default stays ``"0.1"``; v0.1 numbers do not change. Full text:
-``docs/safe-wpm-v0.2-proposal.md``. Per trial, a commit has k_i words and
+``safe-wpm/0.2`` (P14-26; ADOPTED 2026-11-22, the default)
+---------------------------------------------------------
+``safe_wpm(..., metric_version="0.2")`` (the default) scores word-prefix
+commits; ``metric_version="0.1"`` gives the v0.1 value. Full text:
+``docs/safe-wpm.md`` section 6a and ``docs/safe-wpm-v0.2-proposal.md``. Per trial, a commit has k_i words and
 a flag ``complete_i`` (the commit claims the whole sentence; every
 sentence-level commit is complete)::
 
@@ -67,18 +83,22 @@ trial). The risk unit is the trial: a wrong commit is a commit that is not
 right_i. A policy with prefix commits is certified only by a bound on that
 loss (guarantee ``risk = "wrong-prefix-commit"``). An optional per-trial
 ``speech_s`` adds a ``speech_time`` block (the same credit over speech
-time); the headline time stays ``neural_s``. For a policy with only
-complete commits, v0.2 gives the same value as v0.1.
+time); the headline time stays ``neural_s``.
 
-Optional v0.2 sensitivity options (P14-28; the defaults keep every
-published value): ``read_s_per_commit`` + ``read_s_per_word`` add a
-reading / checking time to every commit, right or wrong
-(``read_s_per_commit + read_s_per_word * k_i``, k_i = words of the
-committed text), and ``min_prefix_words`` m turns a prefix commit
-(not complete) with fewer than m words into no commit (0 words, no time).
+Reading cost (P14-28; part of the adopted v0.2): ``read_s_per_commit`` +
+``read_s_per_word`` add a reading / checking time to every commit, right
+or wrong (``read_s_per_commit + read_s_per_word * k_i``, k_i = words of
+the committed text). The defaults are the adopted ``aac-gaze-v1`` values
+:data:`READ_S_PER_COMMIT` = 0.5 s and :data:`READ_S_PER_WORD` = 0.3 s.
+``min_prefix_words`` m (adopted: 1) turns a prefix commit (not complete)
+with fewer than m words into no commit (0 words, no time). Other values
+(for example ``read_s_per_commit=0, read_s_per_word=0``, the proposal as
+first committed) give a sensitivity variant: ``adopted_headline`` is then
+False. For a policy with only complete commits and no reading cost, v0.2
+gives the same value as v0.1.
 
-Proposed extension "several commits per trial" (P5-27; part of the v0.2
-proposal, not adopted): ``n_commits`` gives the number of append-only
+Proposed extension "several commits per trial" (P5-27; an extension of
+v0.2, NOT adopted): ``n_commits`` gives the number of append-only
 commit events of each trial (a streaming guard commits more words of the
 same sentence as evidence arrives; committed words are never retracted).
 The per-trial commit arrays then describe the union of the trial's
@@ -104,14 +124,26 @@ import numpy as np
 from fidetype.utils.binomial import clopper_pearson
 
 DEFINITION = "safe-wpm/0.1"
-#: The proposed prefix-credit version (P14-26). Not adopted: the default stays v0.1.
+#: The prefix-credit version (P14-26), adopted 2026-11-22 with the reading cost; the default since P14-61.
 DEFINITION_V02 = "safe-wpm/0.2"
 METRIC_VERSIONS = ("0.1", "0.2")
-V02_STATUS = "proposed, not adopted (P14-26): v0.1 stays the headline metric until the user accepts v0.2"
+#: The ``metric_version`` of :func:`safe_wpm` when the caller gives none (P14-61).
+DEFAULT_METRIC_VERSION = "0.2"
+#: The date the maintainer adopted ``safe-wpm/0.2`` (docs/safe-wpm.md section 6a).
+V02_ADOPTED = "2026-11-22"
+V02_STATUS = ("adopted 2026-11-22: the headline metric (prefix credit + the aac-gaze-v1 reading cost); "
+              "safe-wpm/0.1 stays selectable with metric_version='0.1' for old numbers")
+V02_VARIANT_STATUS = ("safe-wpm/0.2 sensitivity variant (v0.2 adopted 2026-11-22): this value is not an "
+                      "adopted-v0.2 headline")
+#: The adopted v0.2 reading cost (aac-gaze-v1, P14-28): seconds per commit and per committed word.
+READ_S_PER_COMMIT = 0.5
+READ_S_PER_WORD = 0.3
+#: The adopted minimum prefix length in words (v0.2).
+MIN_PREFIX_WORDS = 1
 #: Loss names of a guarantee (``guarantee["risk"]``). Absent = ``RISK_SENTENCE``.
 RISK_SENTENCE = "wrong-commit"
 RISK_PREFIX = "wrong-prefix-commit"
-#: P5-27 (proposed extension of v0.2): the trial is wrong if any of its append-only commits is wrong.
+#: P5-27 (proposed extension of v0.2, not adopted): the trial is wrong if any of its append-only commits is wrong.
 RISK_STREAM = "wrong-stream-commit"
 CERTIFIED_METHODS = ("ltt", "crc")
 #: aac-gaze-v1 correction constants (``fidetype.interact.simulated_user.UserConfig`` defaults).
@@ -237,11 +269,12 @@ def safe_wpm(committed: Sequence[bool], correct: Sequence[bool], n_words: Sequen
              rule: CorrectionRule = CorrectionRule(), timing: str = "unspecified",
              clusters: Sequence[Mapping[str, str]] | None = None, ci_unit: str | None = None,
              controls: Mapping[str, Any] | None = None, gaze_chars_per_min: float | None = GAZE_CHARS_PER_MIN,
-             B: int = 2000, seed: int = 0, metric_version: str = "0.1",
+             B: int = 2000, seed: int = 0, metric_version: str = DEFAULT_METRIC_VERSION,
              committed_words: Sequence[float] | None = None, complete: Sequence[bool] | None = None,
              penalty_chars: Sequence[float] | None = None, speech_s: Sequence[float] | None = None,
-             speech_timing: str = "unspecified", read_s_per_commit: float = 0.0, read_s_per_word: float = 0.0,
-             min_prefix_words: int = 1, n_commits: Sequence[int] | None = None) -> dict[str, Any]:
+             speech_timing: str = "unspecified", read_s_per_commit: float | None = None,
+             read_s_per_word: float | None = None, min_prefix_words: int = MIN_PREFIX_WORDS,
+             n_commits: Sequence[int] | None = None) -> dict[str, Any]:
     """Compute safe WPM for one entry (see the module docstring for the definition).
 
     Per-trial inputs: ``committed`` (the policy committed), ``correct`` (the
@@ -251,22 +284,26 @@ def safe_wpm(committed: Sequence[bool], correct: Sequence[bool], n_words: Sequen
     ``n_cal``, ...). ``clusters`` + ``ci_unit``: a percentile cluster
     bootstrap CI (as the benchmark scorer); omit for no CI.
 
-    ``metric_version="0.2"`` (P14-26, proposed, not adopted) scores prefix
+    ``metric_version`` (P14-61): ``"0.2"`` (the default, adopted 2026-11-22)
+    or ``"0.1"`` (the earlier headline; use it to reproduce old numbers).
+
+    ``metric_version="0.2"`` (P14-26) scores prefix
     commits: ``correct`` is then right_i (:func:`prefix_outcome`),
     ``complete`` marks commits that claim the whole sentence (default: all),
     ``committed_words`` (k_i) and ``penalty_chars`` are needed for the
     commits that are not complete, and ``speech_s`` (optional) adds a
     ``speech_time`` block. The v0.2 arguments are refused with v0.1.
 
-    v0.2 sensitivity options (P14-28, all off by default):
-    ``read_s_per_commit`` and ``read_s_per_word`` (seconds, >= 0) add
-    ``read_s_per_commit + read_s_per_word * k_i`` to the time of every
-    commit (k_i from ``committed_words``; for a complete commit without
-    it, the truth length). ``min_prefix_words`` (>= 1) drops prefix
-    commits with fewer words (they become no commit). A ``reading_cost``
-    block reports them when one is not at its default.
+    v0.2 reading cost (P14-28; adopted): ``read_s_per_commit`` and
+    ``read_s_per_word`` (seconds, >= 0; ``None`` = the adopted 0.5 s and
+    0.3 s) add ``read_s_per_commit + read_s_per_word * k_i`` to the time
+    of every commit (k_i from ``committed_words``; for a complete commit
+    without it, the truth length). ``min_prefix_words`` (>= 1; adopted 1)
+    drops prefix commits with fewer words (they become no commit). The
+    ``reading_cost`` block of every v0.2 report gives them. v0.1 has no
+    reading cost: there these arguments must stay ``None`` (or 0 / 1).
 
-    ``n_commits`` (P5-27, proposed extension of v0.2): the number of
+    ``n_commits`` (P5-27, proposed extension of v0.2, not adopted): the number of
     append-only commits of each trial (default: 1 per committed trial).
     The other per-trial commit arrays then describe the union of the
     trial's commits. Each commit pays ``read_s_per_commit``. A trial with
@@ -287,9 +324,9 @@ def safe_wpm(committed: Sequence[bool], correct: Sequence[bool], n_words: Sequen
                             ("n_commits", n_commits)) if v is not None]
     extra += [k for k, v, d in (("read_s_per_commit", read_s_per_commit, 0.0),
                                 ("read_s_per_word", read_s_per_word, 0.0),
-                                ("min_prefix_words", min_prefix_words, 1)) if v != d]
+                                ("min_prefix_words", min_prefix_words, 1)) if v is not None and v != d]
     if extra:
-        raise ValueError(f"{extra} are safe-wpm/0.2 fields; pass metric_version='0.2' (proposed, not adopted)")
+        raise ValueError(f"{extra} are safe-wpm/0.2 fields; pass metric_version='0.2' (the default)")
     a = _arrays(committed, correct, n_words, n_chars, neural_s)
     n = len(a["cm"])
     pen = rule.penalty(a["nc"])
@@ -346,10 +383,11 @@ def safe_wpm(committed: Sequence[bool], correct: Sequence[bool], n_words: Sequen
 
 def _safe_wpm_v02(committed, correct, n_words, n_chars, neural_s, *, guarantee, rule, timing, clusters, ci_unit,
                   controls, gaze_chars_per_min, B, seed, committed_words, complete, penalty_chars, speech_s,
-                  speech_timing, read_s_per_commit=0.0, read_s_per_word=0.0,
-                  min_prefix_words=1, n_commits=None) -> dict[str, Any]:
-    """``safe-wpm/0.2`` (proposed): prefix credit, prefix penalty, optional speech time (module docstring)."""
-    rsc, rsw = float(read_s_per_commit), float(read_s_per_word)
+                  speech_timing, read_s_per_commit=None, read_s_per_word=None,
+                  min_prefix_words=MIN_PREFIX_WORDS, n_commits=None) -> dict[str, Any]:
+    """``safe-wpm/0.2`` (adopted 2026-11-22): prefix credit, prefix penalty, reading cost, optional speech time."""
+    rsc = READ_S_PER_COMMIT if read_s_per_commit is None else float(read_s_per_commit)
+    rsw = READ_S_PER_WORD if read_s_per_word is None else float(read_s_per_word)
     if not (math.isfinite(rsc) and rsc >= 0 and math.isfinite(rsw) and rsw >= 0):
         raise ValueError("read_s_per_commit and read_s_per_word must be finite and >= 0")
     if isinstance(min_prefix_words, bool) or int(min_prefix_words) != min_prefix_words or min_prefix_words < 1:
@@ -429,9 +467,17 @@ def _safe_wpm_v02(committed, correct, n_words, n_chars, neural_s, *, guarantee, 
         status, value = "certified", pt["wpm"]
     t_neural = float(a["ns"].sum())
     t_pen = float(np.where(a["wrong"], pen, 0.0).sum())
+    variant = [f"{k} = {v:g} (adopted: {d:g})" for k, v, d in
+               (("read_s_per_commit", rsc, READ_S_PER_COMMIT), ("read_s_per_word", rsw, READ_S_PER_WORD),
+                ("min_prefix_words", min_prefix_words, MIN_PREFIX_WORDS)) if v != d]
+    if rule.to_dict() != CorrectionRule().to_dict():
+        variant.append(f"correction rule {rule.name!r} is not the aac-gaze-v1 rewrite rule")
+    if multi.any():
+        variant.append("several commits per trial (a proposed extension, not adopted)")
     out: dict[str, Any] = {
         "definition": DEFINITION_V02,
-        "definition_status": V02_STATUS,
+        "definition_status": V02_VARIANT_STATUS if variant else V02_STATUS,
+        "adopted_headline": not variant,
         "value": value,
         "ci": (ci if value is not None and status != "vacuous" else None),
         "status": status,
@@ -453,18 +499,23 @@ def _safe_wpm_v02(committed, correct, n_words, n_chars, neural_s, *, guarantee, 
         "correction_rule": dict(rule.to_dict(), prefix=("a wrong prefix of k words costs the penalty of the first k "
                                                         "words of the truth")),
     }
-    if read_on or min_prefix_words != 1:
-        t_read = float(np.where(a["cm"], a["rd"], 0.0).sum()) if read_on else 0.0
-        b = {k: v for k, v in a.items() if k != "rd"}
-        out["reading_cost"] = {
-            "read_s_per_commit": rsc, "read_s_per_word": rsw, "min_prefix_words": min_prefix_words,
-            "formula": (f"{rsc:g} s + {rsw:g} s/word * k per commit (right or wrong); prefix commits with fewer "
-                        f"than {min_prefix_words} word(s) count as no commit"),
-            "minutes_reading": t_read / 60.0, "n_prefix_commits_dropped": int(dropped.sum()),
-            "wpm_without_reading": _point(b, pen)["wpm"],
-            "note": ("P14-28 sensitivity option of the proposed safe-wpm/0.2; the default (0 s, 1 word) is the "
-                     "proposal as committed"),
-        }
+    if variant:
+        out["not_headline_because"] = variant
+    # Every v0.2 report has the reading cost block (part of the adopted definition, 2026-11-22).
+    t_read = float(np.where(a["cm"], a["rd"], 0.0).sum()) if read_on else 0.0
+    b = {k: v for k, v in a.items() if k != "rd"}
+    out["reading_cost"] = {
+        "read_s_per_commit": rsc, "read_s_per_word": rsw, "min_prefix_words": min_prefix_words,
+        "formula": (f"{rsc:g} s + {rsw:g} s/word * k per commit (right or wrong); prefix commits with fewer "
+                    f"than {min_prefix_words} word(s) count as no commit"),
+        "minutes_reading": t_read / 60.0, "n_prefix_commits_dropped": int(dropped.sum()),
+        "wpm_without_reading": _point(b, pen)["wpm"],
+        "model": "aac-gaze-v1",
+        "adopted": {"read_s_per_commit": READ_S_PER_COMMIT, "read_s_per_word": READ_S_PER_WORD,
+                    "min_prefix_words": MIN_PREFIX_WORDS},
+        "note": ("the adopted safe-wpm/0.2 reading cost (2026-11-22) is 0.5 s + 0.3 s/word per commit, "
+                 "minimum prefix 1 word; other values give a sensitivity variant"),
+    }
     if n_commits is not None:
         out["multi_commit"] = {
             "n_commit_events": int(nci.sum()), "n_trials_with_several_commits": int(multi.sum()),
@@ -472,7 +523,7 @@ def _safe_wpm_v02(committed, correct, n_words, n_chars, neural_s, *, guarantee, 
             "rule": ("P5-27 proposed extension: append-only commits; the trial is right only if every commit is "
                      "right (= its final committed text is right); credit and penalty of that text; every commit "
                      "pays read_s_per_commit, every committed word read_s_per_word once"),
-            "status": "proposed extension of the proposed safe-wpm/0.2 (not adopted)"}
+            "status": "proposed extension of safe-wpm/0.2 (not adopted)"}
     if ci is not None:
         out["ci_unit"] = ci_unit
     if speech_s is not None:
@@ -573,13 +624,17 @@ def controls_from_sheet(sheet: Any) -> dict[str, Any]:
 def from_trial_scores(scores: Sequence[Any], *, guarantee: Mapping[str, Any] | None, timing: str,
                       ci_unit: str | None = None, controls: Mapping[str, Any] | None = None,
                       gaze_chars_per_min: float | None = GAZE_CHARS_PER_MIN, rule: CorrectionRule = CorrectionRule(),
-                      B: int = 2000, seed: int = 0) -> dict[str, Any]:
-    """Safe WPM from benchmark :class:`~fidetype.benchmark.scoring.TrialScore` objects (needs ``neural_s``)."""
+                      B: int = 2000, seed: int = 0, metric_version: str = DEFAULT_METRIC_VERSION) -> dict[str, Any]:
+    """Safe WPM from benchmark :class:`~fidetype.benchmark.scoring.TrialScore` objects (needs ``neural_s``).
+
+    Sentence-level commits. ``metric_version``: ``"0.2"`` (default, with the adopted reading cost) or ``"0.1"``.
+    """
     return safe_wpm([s.committed for s in scores], [s.committed and not s.wrong_commit for s in scores],
                     [s.n_w for s in scores], [s.n_c for s in scores], [s.neural_s for s in scores],
                     guarantee=guarantee, rule=rule, timing=timing,
                     clusters=[s.clusters for s in scores] if ci_unit else None, ci_unit=ci_unit,
-                    controls=controls, gaze_chars_per_min=gaze_chars_per_min, B=B, seed=seed)
+                    controls=controls, gaze_chars_per_min=gaze_chars_per_min, B=B, seed=seed,
+                    metric_version=metric_version)
 
 
 def _normalizer(normalizer: Any) -> Any:
@@ -611,8 +666,9 @@ def from_decisions(results: Sequence[Any], truths: Sequence[str], neural_s: Sequ
       :func:`fidetype.benchmark.registry.normalize` (for example ``"words"``); or a callable.
 
     A commit is right when ``normalizer(result.text) == normalizer(truth)``. Other keyword
-    arguments go to :func:`safe_wpm` (for example ``B``, ``seed``, ``rule``). The result is the
-    same report as :func:`safe_wpm` with the five lists built by hand.
+    arguments go to :func:`safe_wpm` (for example ``B``, ``seed``, ``rule``, ``metric_version``).
+    The result is the same report as :func:`safe_wpm` with the five lists built by hand: by
+    default ``safe-wpm/0.2`` with the adopted reading cost; ``metric_version="0.1"`` for v0.1.
     """
     results, truths, neural_s = list(results), list(truths), list(neural_s)
     if not len(results) == len(truths) == len(neural_s):
@@ -635,7 +691,7 @@ def load_trials_jsonl(path: str, language: str | None = None) -> dict[str, list]
     either ``truth`` (text; lengths taken from it) or ``n_words`` +
     ``n_chars``; ``neural_s`` (seconds; optional if ``--chars-per-min``
     is given); optional ``cluster`` (string) for the bootstrap.
-    ``safe-wpm/0.2`` (proposed) fields, ignored by v0.1: ``complete``
+    ``safe-wpm/0.2`` fields (ignored by v0.1): ``complete``
     (default true), ``committed_text`` (with ``truth``: sets ``correct``,
     ``committed_words`` and ``penalty_chars`` by :func:`prefix_outcome`, in
     ``correct_v02``; ``correct`` then means the exact sentence, as in v0.1)
@@ -674,7 +730,7 @@ def load_trials_jsonl(path: str, language: str | None = None) -> dict[str, list]
             cols["n_chars"].append(float(nc))
             cols["neural_s"].append(float(d["neural_s"]) if d.get("neural_s") is not None else math.nan)
             cols["cluster"].append(str(d["cluster"]) if d.get("cluster") is not None else "")
-            # safe-wpm/0.2 (proposed) fields; v0.1 ignores them
+            # safe-wpm/0.2 fields; v0.1 ignores them
             comp = bool(d.get("complete", True))
             kw, pch = d.get("committed_words"), d.get("penalty_chars")
             ok2 = cols["correct"][-1]
@@ -709,21 +765,36 @@ def format_line(r: Mapping[str, Any]) -> str:
     if r.get("n_cal") is not None:
         g += f" n_cal={r['n_cal']}"
     if r.get("definition") == DEFINITION_V02:
-        vs += f" [{DEFINITION_V02}, proposed; {r.get('n_prefix_commits', 0)} prefix commits]"
+        kind = "adopted" if r.get("adopted_headline", True) else "sensitivity variant"
+        vs += f" [{DEFINITION_V02}, {kind}; {r.get('n_prefix_commits', 0)} prefix commits]"
+    else:
+        vs += f" [{r.get('definition', DEFINITION)}]"
     return (f"safe WPM {vs} ({r['status']}; {g}; test wrong-commit {r['n_wrong_commits']}/{r['n_trials']} = "
             f"{r['measured_wrong_commit']:.4f}; commits {r['n_commits']}; unguarded {r['unguarded_wpm']:.2f}; "
             f"no-BCI {r.get('no_bci_wpm') or float('nan'):.2f})")
 
 
-CALIBRATION_INTERVAL = "safe-wpm-calibration-interval/0.1 (proposed reporting addition, P15-29; not adopted)"
+CALIBRATION_INTERVAL = ("safe-wpm-calibration-interval/0.1 (adopted 2026-11-22 with safe-wpm/0.2: a headline needs "
+                        "K >= 80 partition-only calibration draws)")
+#: The adopted minimum number of calibration draws for a headline interval (docs/safe-wpm.md section 6b).
+MIN_CALIBRATION_DRAWS = 80
+#: ``draw_scheme`` values of :func:`calibration_draw_interval`. Only ``"partition"`` is adopted.
+DRAW_SCHEMES = ("partition", "resample")
+
+
+class CalibrationIntervalWarning(UserWarning):
+    """A calibration-draw interval that is not an adopted headline (K < 80 or draws not partition-only)."""
 
 
 def calibration_draw_interval(draws: Sequence[Mapping[str, Any]], n_words: Sequence[float],
                               n_chars: Sequence[float], neural_s: Sequence[float], *,
                               rule: CorrectionRule = CorrectionRule(), B: int = 2000, seed: int = 0,
                               level: float = 0.95, reference: float | None = None,
-                              credit_statuses: Sequence[str] = ("certified",)) -> dict[str, Any]:
-    """Safe-WPM v0.1 interval over calibration draws and evaluation trials (PROPOSED reporting addition).
+                              credit_statuses: Sequence[str] = ("certified",),
+                              metric_version: str = DEFAULT_METRIC_VERSION,
+                              read_s_per_commit: float | None = None, read_s_per_word: float | None = None,
+                              draw_scheme: str | None = None) -> dict[str, Any]:
+    """Safe-WPM interval over calibration draws and evaluation trials (reporting addition, adopted 2026-11-22).
 
     The usual ``safe_wpm`` CI is a trial bootstrap with the decisions fixed,
     so it is conditional on one calibration. This function takes K
@@ -741,13 +812,30 @@ def calibration_draw_interval(draws: Sequence[Mapping[str, Any]], n_words: Seque
     * interval: percentiles of the pooled K x B values at ``level``;
       point: the mean of the K draw values.
 
+    ``metric_version`` (P14-61): ``"0.2"`` (default; the adopted reading
+    cost, see :func:`safe_wpm`) or ``"0.1"`` (to reproduce old intervals).
+
     ``draws``: one mapping per draw with ``committed`` and ``correct`` (one
-    bool per evaluation trial, v0.1 sentence commits) and ``guarantee`` (as
-    for :func:`safe_wpm`), or ``{"refused": True}`` for a calibration that
-    produced no guard. ``reference`` (optional, e.g. the no-BCI WPM) adds
+    bool per evaluation trial) and ``guarantee`` (as for :func:`safe_wpm`),
+    or ``{"refused": True}`` for a calibration that produced no guard. With
+    v0.2 a draw may also give ``complete``, ``committed_words`` and
+    ``penalty_chars`` (prefix commits, as for :func:`safe_wpm`).
+    ``reference`` (optional, e.g. the no-BCI WPM) adds
     ``lower_above_reference``. Also returned: the law-of-total-variance
     decomposition (within-draw and between-draw SD) and its normal interval
-    as a cross-check. It changes no adopted ``safe-wpm/0.1`` rule.
+    as a cross-check, the count of non-credited draws and the between-draw
+    SD of the credited draws only.
+
+    Adopted rules for a headline interval (docs/safe-wpm.md section 6b):
+    K >= :data:`MIN_CALIBRATION_DRAWS` (80) draws, and partition-only draws
+    (``draw_scheme="partition"``: a new split of the calibration set per
+    draw, no resample with replacement inside a part). The function cannot
+    see how the draws were made, so the caller states it in
+    ``draw_scheme`` (``"partition"`` or ``"resample"``; ``None`` = not
+    stated). If K < 80 or the draws are not stated as partition-only, it
+    gives a :class:`CalibrationIntervalWarning` and sets
+    ``adopted_headline`` to False with the reasons in
+    ``not_headline_because``. The numbers do not change.
     """
     if not 0.0 < float(level) < 1.0:
         raise ValueError("level must be a confidence level in (0, 1), e.g. 0.95")
@@ -755,13 +843,21 @@ def calibration_draw_interval(draws: Sequence[Mapping[str, Any]], n_words: Seque
         raise ValueError("B must be >= 2")
     if not draws:
         raise ValueError("draws is empty: give at least one calibration draw")
+    if metric_version not in METRIC_VERSIONS:
+        raise ValueError(f"metric_version must be one of {METRIC_VERSIONS}, not {metric_version!r}")
+    if draw_scheme is not None and draw_scheme not in DRAW_SCHEMES:
+        raise ValueError(f"draw_scheme must be one of {DRAW_SCHEMES} or None, not {draw_scheme!r}")
+    v02 = metric_version == "0.2"
+    if not v02 and any(x not in (None, 0, 0.0) for x in (read_s_per_commit, read_s_per_word)):
+        raise ValueError("read_s_per_commit / read_s_per_word are safe-wpm/0.2 fields; pass metric_version='0.2'")
+    rsc = (READ_S_PER_COMMIT if read_s_per_commit is None else float(read_s_per_commit)) if v02 else 0.0
+    rsw = (READ_S_PER_WORD if read_s_per_word is None else float(read_s_per_word)) if v02 else 0.0
     ns = np.asarray(neural_s, float)
     nw = np.asarray(n_words, float)
     nc = np.asarray(n_chars, float)
     n = len(ns)
     if n == 0 or len(nw) != n or len(nc) != n:
         raise ValueError("n_words, n_chars and neural_s must be non-empty and of the same length")
-    pen = rule.penalty(nc)
     rng = np.random.default_rng(seed)
     W = np.empty((int(B), n))
     for b in range(int(B)):
@@ -769,6 +865,7 @@ def calibration_draw_interval(draws: Sequence[Mapping[str, Any]], n_words: Seque
     t_neural = W @ ns
     q = [(1.0 - level) / 2.0 * 100.0, (1.0 + level) / 2.0 * 100.0]
     values, statuses, cond, per_draw = [], [], [], []
+    v02_keys = ("complete", "committed_words", "penalty_chars")
     for k, d in enumerate(draws):
         if d.get("refused"):
             st, v, vals, info = "refused", 0.0, np.zeros(int(B)), {}
@@ -776,15 +873,28 @@ def calibration_draw_interval(draws: Sequence[Mapping[str, Any]], n_words: Seque
             for key in ("committed", "correct"):
                 if len(d.get(key, ())) != n:
                     raise ValueError(f"draw {k}: {key!r} must have one value per evaluation trial ({n})")
+            extra = {key: d[key] for key in v02_keys if d.get(key) is not None}
+            if extra and not v02:
+                raise ValueError(f"draw {k}: {sorted(extra)} are safe-wpm/0.2 fields; pass metric_version='0.2'")
+            kw02 = dict(read_s_per_commit=rsc, read_s_per_word=rsw, **extra) if v02 else {}
             r = safe_wpm(d["committed"], d["correct"], nw, nc, ns, guarantee=d.get("guarantee"), rule=rule,
-                         gaze_chars_per_min=None)
+                         gaze_chars_per_min=None, metric_version=metric_version, **kw02)
             st = r["status"]
             info = {"n_commits": r["n_commits"], "n_wrong_commits": r["n_wrong_commits"]}
             if st in credit_statuses and r["value"] is not None:
                 cm = np.asarray(d["committed"], bool)
                 ok = cm & np.asarray(d["correct"], bool)
-                credit = W @ np.where(ok, nw, 0.0)
-                den = t_neural + W @ np.where(cm & ~ok, pen, 0.0)
+                full = np.ones(n, bool) if extra.get("complete") is None else np.asarray(extra["complete"], bool)
+                part = cm & ~full
+                kwd = (np.full(n, np.nan) if extra.get("committed_words") is None
+                       else np.asarray(extra["committed_words"], float))
+                pch = (np.full(n, np.nan) if extra.get("penalty_chars") is None
+                       else np.asarray(extra["penalty_chars"], float))
+                credit_w = np.where(part, np.nan_to_num(kwd), nw)
+                pen = rule.penalty(np.where(part, np.nan_to_num(pch), nc))
+                read = rsc + rsw * np.where(np.isfinite(kwd), kwd, nw)
+                credit = W @ np.where(ok, credit_w, 0.0)
+                den = t_neural + W @ np.where(cm & ~ok, pen, 0.0) + W @ np.where(cm, read, 0.0)
                 vals = np.where(den > 0, 60.0 * credit / np.where(den > 0, den, 1.0), 0.0)
                 v = float(r["value"])
             else:
@@ -800,28 +910,58 @@ def calibration_draw_interval(draws: Sequence[Mapping[str, Any]], n_words: Seque
     K = len(values)
     mean = float(vals_arr.mean())
     sd_between = float(vals_arr.std(ddof=1)) if K > 1 else 0.0
+    credited = np.asarray([x for x, s in zip(values, statuses) if s in credit_statuses])
     var_within = float(np.mean([c.var(ddof=1) for c in cond]))
     sd_total = math.sqrt(var_within + sd_between ** 2)
     from statistics import NormalDist
 
     z = NormalDist().inv_cdf((1.0 + level) / 2.0)
+    why = []
+    if K < MIN_CALIBRATION_DRAWS:
+        why.append(f"K = {K} calibration draws (a headline needs K >= {MIN_CALIBRATION_DRAWS})")
+    if draw_scheme != "partition":
+        why.append("the draws are not stated as partition-only" if draw_scheme is None else
+                   f"draw_scheme {draw_scheme!r} (a headline needs partition-only draws)")
+    if v02 and (rsc, rsw) != (READ_S_PER_COMMIT, READ_S_PER_WORD):
+        why.append(f"reading cost {rsc:g} s + {rsw:g} s/word (adopted: {READ_S_PER_COMMIT:g} s + "
+                   f"{READ_S_PER_WORD:g} s/word)")
+    if not v02:
+        why.append("safe-wpm/0.1 (the headline metric is safe-wpm/0.2 since 2026-11-22)")
+    if rule.to_dict() != CorrectionRule().to_dict():
+        why.append(f"correction rule {rule.name!r} is not the aac-gaze-v1 rewrite rule")
+    rule_warn = [w for w in why if w.startswith("K =") or "partition" in w]
+    if rule_warn:
+        import warnings
+
+        warnings.warn("calibration_draw_interval: not an adopted headline interval: " + "; ".join(rule_warn),
+                      CalibrationIntervalWarning, stacklevel=2)
     out: dict[str, Any] = {
         "method": CALIBRATION_INTERVAL,
         "description": ("two-level bootstrap: K calibration draws (outer) x B trial resamples of the fixed "
                         "evaluation set (inner, the same resamples in every draw); percentile interval of the "
                         "pooled values; non-credited draws add 0.0"),
-        "definition": DEFINITION, "level": float(level), "B": int(B), "seed": int(seed), "n_trials": n,
+        "definition": DEFINITION_V02 if v02 else DEFINITION,
+        "adopted_headline": not why,
+        "draw_scheme": draw_scheme or "not stated",
+        "min_draws": MIN_CALIBRATION_DRAWS,
+        "level": float(level), "B": int(B), "seed": int(seed), "n_trials": n,
         "n_draws": K, "credit_statuses": list(credit_statuses),
         "n_credited": int(sum(s in credit_statuses for s in statuses)),
+        "n_not_credited": int(sum(s not in credit_statuses for s in statuses)),
         "statuses": {s: statuses.count(s) for s in sorted(set(statuses))},
         "value": mean, "median_draw_value": float(np.median(vals_arr)),
         "draw_value_range": [float(vals_arr.min()), float(vals_arr.max())],
         "interval": [lo, hi],
         "sd_between_draws": sd_between, "sd_within_draw": math.sqrt(var_within), "sd_total": sd_total,
+        "sd_between_credited_draws": float(credited.std(ddof=1)) if len(credited) > 1 else None,
         "between_to_within_sd": (sd_between / math.sqrt(var_within)) if var_within > 0 else None,
         "analytic_interval": [mean - z * sd_total, mean + z * sd_total],
         "draws": per_draw,
     }
+    if v02:
+        out["reading_cost"] = {"read_s_per_commit": rsc, "read_s_per_word": rsw, "model": "aac-gaze-v1"}
+    if why:
+        out["not_headline_because"] = why
     if reference is not None:
         out["reference"] = float(reference)
         out["lower_above_reference"] = bool(lo > float(reference))
@@ -829,8 +969,11 @@ def calibration_draw_interval(draws: Sequence[Mapping[str, Any]], n_words: Seque
     return out
 
 
-__all__ = ["DEFINITION", "DEFINITION_V02", "METRIC_VERSIONS", "RISK_SENTENCE", "RISK_PREFIX", "prefix_outcome",
+__all__ = ["DEFINITION", "DEFINITION_V02", "METRIC_VERSIONS", "DEFAULT_METRIC_VERSION", "V02_ADOPTED", "V02_STATUS",
+           "READ_S_PER_COMMIT", "READ_S_PER_WORD", "MIN_PREFIX_WORDS", "RISK_SENTENCE", "RISK_PREFIX",
+           "prefix_outcome",
            "CorrectionRule", "certification", "model_neural_s", "safe_wpm", "from_trial_scores",
            "summarize_controls", "SHEET_SCOPE", "guarantee_from_sheet", "controls_from_sheet", "from_decisions",
            "load_trials_jsonl", "format_line",
-           "CALIBRATION_INTERVAL", "calibration_draw_interval"]
+           "CALIBRATION_INTERVAL", "MIN_CALIBRATION_DRAWS", "DRAW_SCHEMES", "CalibrationIntervalWarning",
+           "calibration_draw_interval"]

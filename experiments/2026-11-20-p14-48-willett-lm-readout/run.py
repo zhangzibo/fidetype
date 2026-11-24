@@ -502,7 +502,7 @@ def stage_score() -> None:
     blk = safe_wpm(committed, correct, [len(t.split()) for t in truths], [len(t) for t in truths], durations,
                    guarantee=guarantee_from_sheet(sheet), timing="neural time = 10 ms bins of the sentence window "
                    "(go cue to sentence end + up to 1 s tail, P15-08 cut)", controls=controls_from_sheet(sheet),
-                   B=2000, seed=SEED)
+                   B=2000, seed=SEED, metric_version="0.1")
     blk["ci_note"] = "no CI: one participant (T5)"
     offered = [(t, d) for t, d in zip(truths, real) if d["action"] == "offer"]
     ed = [edit_distance(t, d["top1"]) for t, d in offered]

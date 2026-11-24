@@ -626,7 +626,7 @@ def score_arm(arm: str, d: dict, ev: list[dict], sheet: dict) -> dict:
         wrong = sum(c and not k for c, k in zip(com, cor))
         v02 = dict(metric_version="0.2", committed_words=cw, complete=full, penalty_chars=pen)
         r02 = SW.safe_wpm(com, cor, nw, nch, neural, guarantee=g, controls=ctl, timing=timing, clusters=cl,
-                          ci_unit="group", B=2000, seed=0, **v02)
+                          ci_unit="group", B=2000, seed=0, read_s_per_commit=0.0, read_s_per_word=0.0, **v02)
         r02r = SW.safe_wpm(com, cor, nw, nch, neural, guarantee=g, controls=ctl, timing=timing, clusters=cl,
                            ci_unit="group", B=2000, seed=0, read_s_per_commit=READ_S_PER_COMMIT,
                            read_s_per_word=READ_S_PER_WORD, **v02)
@@ -634,7 +634,7 @@ def score_arm(arm: str, d: dict, ev: list[dict], sheet: dict) -> dict:
         com_c = [c and bool(x["complete"]) for c, x in zip(com, real)]
         cor_c = [c and same(x["text"], t) for c, x, t in zip(com_c, real, truths)]
         r01c = SW.safe_wpm(com_c, cor_c, nw, nch, neural, guarantee=g, controls=ctl, timing=timing, clusters=cl,
-                           ci_unit="group", B=2000, seed=0)
+                           ci_unit="group", B=2000, seed=0, metric_version="0.1")
         a.update(safe_v02=safe_block(r02), safe_v02_read=safe_block(r02r), safe_v01_complete_only=safe_block(r01c),
                  n_prefix_commits=sum(c and not bool(x["complete"]) for c, x in zip(com, real)),
                  n_complete_commits=sum(com_c), committed_right_words=int(sum(o["credit_words"] for o in outs if o)))
@@ -642,16 +642,16 @@ def score_arm(arm: str, d: dict, ev: list[dict], sheet: dict) -> dict:
         cor = [c and same(x["text"], t) for c, x, t in zip(com, real, truths)]
         wrong = sum(c and not k for c, k in zip(com, cor))
         r01 = SW.safe_wpm(com, cor, nw, nch, neural, guarantee=g, controls=ctl, timing=timing, clusters=cl,
-                          ci_unit="group", B=2000, seed=0)
+                          ci_unit="group", B=2000, seed=0, metric_version="0.1")
         r02 = SW.safe_wpm(com, cor, nw, nch, neural, guarantee=g, controls=ctl, timing=timing, clusters=cl,
-                          ci_unit="group", B=2000, seed=0, metric_version="0.2")
+                          ci_unit="group", B=2000, seed=0, metric_version="0.2", read_s_per_commit=0.0, read_s_per_word=0.0)
         r02r = SW.safe_wpm(com, cor, nw, nch, neural, guarantee=g, controls=ctl, timing=timing, clusters=cl,
                            ci_unit="group", B=2000, seed=0, metric_version="0.2", read_s_per_commit=READ_S_PER_COMMIT,
                            read_s_per_word=READ_S_PER_WORD)
         always_c = [True] * len(ev)
         always_k = [same(x["top1"], t) for x, t in zip(real, truths)]
         ra = SW.safe_wpm(always_c, always_k, nw, nch, neural, guarantee=None, timing=timing, clusters=cl,
-                         ci_unit="group", B=2000, seed=0)
+                         ci_unit="group", B=2000, seed=0, metric_version="0.1")
         a.update(safe_v01=safe_block(r01), safe_v02=safe_block(r02), safe_v02_read=safe_block(r02r),
                  always_commit={"unguarded_wpm": ra.get("unguarded_wpm"), "n_right": int(sum(always_k))})
     lo, hi = clopper_pearson(wrong, len(ev), 0.95)

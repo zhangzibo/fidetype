@@ -543,7 +543,7 @@ def criterion(s: np.ndarray, tab: dict) -> dict:
     thr = float(res.threshold)
     com = [bool(v >= thr) for v in s]
     cor = [c and bool(k) for c, k in zip(com, tab["right"])]
-    sw = SW.safe_wpm(com, cor, tab["nw"], tab["nch"], tab["neural"], guarantee=None)
+    sw = SW.safe_wpm(com, cor, tab["nw"], tab["nch"], tab["neural"], guarantee=None, metric_version="0.1")
     wrong = int(sum(c and not k for c, k in zip(com, cor)))
     return {"threshold": thr, "feasible": bool(res.feasible), "commits": int(sum(com)), "wrong": wrong,
             "right_words": int(sum(w for w, k in zip(tab["nw"], cor) if k)),

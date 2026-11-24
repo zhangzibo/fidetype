@@ -35,7 +35,12 @@ Metrics (all on the scored split, pooled over trials)
     bound (:mod:`fidetype.benchmark.safe_wpm`, ``docs/safe-wpm.md``).
     Neural time: per-trial ``neural_s`` of the truth file if every scored
     trial has it, else the track rate model (``len(truth) * 60 /
-    chars_per_min``).
+    chars_per_min``). Label ``safe-wpm/0.1`` (key kept since the first
+    cards).
+``safe_wpm_v02`` (block, P14-61; the headline since 2026-11-22)
+    The same entry under the adopted ``safe-wpm/0.2``: the v0.1 credit and
+    penalty plus the ``aac-gaze-v1`` reading cost (0.5 s + 0.3 s per word
+    per commit). ``safe_wpm_headline`` names the headline block.
 
 Confidence intervals
 --------------------
@@ -307,16 +312,21 @@ def guarantee_block(g: dict[str, Any], metrics: dict[str, dict[str, Any]], n_cal
 
 
 def safe_wpm_block(t: Track, real: Sequence[TrialScore], guarantee: dict[str, Any] | None,
-                   controls: dict[str, Any] | None, B: int = DEFAULT_B, seed: int = 0) -> dict[str, Any]:
-    """The P14-05 safe-WPM block of one entry (see :mod:`fidetype.benchmark.safe_wpm`)."""
-    from fidetype.benchmark.safe_wpm import from_trial_scores
+                   controls: dict[str, Any] | None, B: int = DEFAULT_B, seed: int = 0,
+                   metric_version: str | None = None) -> dict[str, Any]:
+    """The safe-WPM block of one entry (see :mod:`fidetype.benchmark.safe_wpm`).
+
+    ``metric_version``: ``"0.2"`` (``None`` = the default, adopted 2026-11-22, with the reading cost) or ``"0.1"``.
+    """
+    from fidetype.benchmark.safe_wpm import DEFAULT_METRIC_VERSION, from_trial_scores
 
     if real and all(s.neural_measured for s in real):
         timing = "measured per-trial durations (truth file neural_s)"
     else:
         timing = f"track rate model: len(truth) * 60 / {t.user_model.config.get('chars_per_min')} chars/min"
     return from_trial_scores(real, guarantee=guarantee, timing=timing, ci_unit=t.ci_unit, controls=controls,
-                             gaze_chars_per_min=t.user_model.gaze_chars_per_min, B=B, seed=seed)
+                             gaze_chars_per_min=t.user_model.gaze_chars_per_min, B=B, seed=seed,
+                             metric_version=metric_version or DEFAULT_METRIC_VERSION)
 
 
 # ---------------------------------------------------------------------------
@@ -351,7 +361,11 @@ def build_result(track: Track | str, real: Sequence[TrialScore], *, decoder: dic
         "metrics": metrics,
         "controls": ctl,
         "guarantee": guarantee_block(guarantee or {"method": "none"}, metrics, n_cal_split),
-        "safe_wpm": safe_wpm_block(t, real, guarantee, ctl, B=B, seed=seed),
+        # Two safe-WPM blocks, each labelled by its "definition": "safe_wpm" keeps safe-wpm/0.1 (its key and
+        # label since the first cards), "safe_wpm_v02" is the headline safe-wpm/0.2 (adopted 2026-11-22).
+        "safe_wpm": safe_wpm_block(t, real, guarantee, ctl, B=B, seed=seed, metric_version="0.1"),
+        "safe_wpm_v02": safe_wpm_block(t, real, guarantee, ctl, B=B, seed=seed, metric_version="0.2"),
+        "safe_wpm_headline": "safe_wpm_v02",
         "conformance": conformance or {"level": "unknown"},
         "user_model": {"name": t.user_model.name, "config": t.user_model.config,
                        "gaze_chars_per_min": t.user_model.gaze_chars_per_min},

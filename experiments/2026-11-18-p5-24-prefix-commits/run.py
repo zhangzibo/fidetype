@@ -200,10 +200,11 @@ def score(rows: list[dict], sheet: dict, durs: list[float], version: str, view: 
     kw = dict(guarantee=guarantee_from_sheet(sheet), controls=controls_from_sheet(sheet), B=B, seed=SEED,
               timing="measured trial duration (20 ms neural bins)")
     if version == "0.1":
-        return safe_wpm(a["committed"], a["correct"], a["n_words"], a["n_chars"], durs, **kw)
+        return safe_wpm(a["committed"], a["correct"], a["n_words"], a["n_chars"], durs, metric_version="0.1", **kw)
     return safe_wpm(a["committed"], a["correct"], a["n_words"], a["n_chars"], durs, metric_version="0.2",
                     committed_words=a["committed_words"], complete=a["complete"], penalty_chars=a["penalty_chars"],
-                    speech_s=speech, speech_timing="active-speech span of our CTC output (secondary)", **kw)
+                    speech_s=speech, speech_timing="active-speech span of our CTC output (secondary)",
+                    read_s_per_commit=0.0, read_s_per_word=0.0, **kw)  # v0.2 as proposed then (no reading cost)
 
 
 def credit_arrays(rows: list[dict], version: str, view: str = "all"):

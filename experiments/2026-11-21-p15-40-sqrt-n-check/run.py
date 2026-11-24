@@ -496,7 +496,7 @@ def stage_analyse() -> dict:
         if len(ds) < 2:
             continue
         comb = calibration_draw_interval([as_draw(d) for d in ds], nw, nc, durs, B=B_INNER, seed=SEED_INNER,
-                                         reference=NO_BCI)
+                                         reference=NO_BCI, metric_version="0.1")
         v = np.array([x["value"] for x in comb["draws"]], float)
         st = [x["status"] for x in comb["draws"]]
         own_sd = float(v.std(ddof=1))

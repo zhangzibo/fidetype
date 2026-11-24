@@ -679,7 +679,7 @@ def verdict(comb: dict) -> str:
 
 
 def combine(draws: list[dict], nw, nc, durs) -> dict:
-    comb = calibration_draw_interval(draws, nw, nc, durs, B=B_INNER, seed=SEED_INNER, reference=NO_BCI)
+    comb = calibration_draw_interval(draws, nw, nc, durs, B=B_INNER, seed=SEED_INNER, reference=NO_BCI, metric_version="0.1")
     pub = {k: v for k, v in comb.items() if k != "draws"}
     vals = [x["value"] for x in comb["draws"]]
     pub["draw_values"] = vals
@@ -725,7 +725,7 @@ def stage_analyse() -> dict:
         x4["n"] = len(ref_rows)
         x4["z0_value"] = v["value"]
         one = calibration_draw_interval([as_draw(rows0, z0["A0"]["sheet"], False)], nw, nc, durs, B=B_INNER,
-                                        seed=SEED_INNER)
+                                        seed=SEED_INNER, metric_version="0.1")
         x4["k1_interval"] = one["interval"]
         x4["z0_threshold_commits_wrong"] = [z0["A0"]["sheet"].get("commit_threshold"), v["n_commits"],
                                             v["n_wrong_commits"]]

@@ -497,7 +497,8 @@ def safe_v02(dec: dict, rows: list[dict], sheet: dict) -> dict:
     cl = [{"group": f"u{r['i']}"} for r in rows]
     g = SW.guarantee_from_sheet(sheet)
     res = {}
-    for name, kw in (("v0.1", {}), ("v0.2", {"metric_version": "0.2"}),
+    for name, kw in (("v0.1", {"metric_version": "0.1"}),
+                     ("v0.2", {"metric_version": "0.2", "read_s_per_commit": 0.0, "read_s_per_word": 0.0}),
                      ("v0.2+read", {"metric_version": "0.2", "read_s_per_commit": READ_S_PER_COMMIT,
                                     "read_s_per_word": READ_S_PER_WORD})):
         r = SW.safe_wpm(com, cor, nw, nch, neural, guarantee=g, timing="measured per prompt (first to last key)",

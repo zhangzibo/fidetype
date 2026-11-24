@@ -151,7 +151,7 @@ def stage_tracks() -> dict:
                 g = {"method": "none"}
             blk = safe_wpm(on, correct, nw, nc, ns, guarantee=g, timing=timing, clusters=clusters, ci_unit=t.ci_unit,
                            controls=res.get("controls"), gaze_chars_per_min=t.user_model.gaze_chars_per_min, B=B,
-                           seed=SEED)
+                           seed=SEED, metric_version="0.1")
             if blk["status"] == "not-certified":
                 blk["note"] = "plug-in threshold fit, no certified bound; unguarded_wpm is for reference only"
             write(name, blk)
@@ -198,7 +198,7 @@ def stage_tracks() -> dict:
         blk = safe_wpm(committed, correct, nw_fake, nc_fake, ns_fake, guarantee=res.get("guarantee"),
                        timing=f"track rate model: len(truth) * 60 / {cpm:g} chars/min (composed sentences, no "
                              "natural typing time)", controls=res.get("controls"),
-                       gaze_chars_per_min=t.user_model.gaze_chars_per_min)
+                       gaze_chars_per_min=t.user_model.gaze_chars_per_min, metric_version="0.1")
         blk["committed_correct_words"] = round(credit, 1)
         blk["total_words"] = int(nw_all.sum())
         blk["no_bci_wpm"] = 60.0 * nw_all.sum() / (nc_all.sum() * 60.0 / t.user_model.gaze_chars_per_min)
@@ -251,7 +251,7 @@ def replay_block(decisions: list[dict], durations: list[float], sheet: dict, lab
     correct = [c and norm(d["text"]) == t for c, d, t in zip(committed, decisions, truths)]
     blk = safe_wpm(committed, correct, [len(t.split()) for t in truths], [len(t) for t in truths], durations,
                    guarantee=guarantee_from_sheet(sheet), timing=timing, controls=controls_from_sheet(sheet), B=B,
-                   seed=SEED)
+                   seed=SEED, metric_version="0.1")
     blk["set"] = label
     blk["config_id"] = sheet.get("config_id")
     blk["ci_note"] = "no CI: one participant; a trial bootstrap would be too narrow (see docs/safe-wpm.md)"

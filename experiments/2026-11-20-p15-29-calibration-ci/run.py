@@ -373,7 +373,7 @@ def analyse_unit(unit: str) -> dict:
         x4["same_action_and_text"] = same_rows(z0["rows"], ref_rows)
         x4["n"] = len(ref_rows)
         x4["z0_value"] = z0["v0_1"]["value"]
-        one = calibration_draw_interval([as_draw(z0)], nw, nc, z0_durs(unit, z0), B=B_INNER, seed=SEED_INNER)
+        one = calibration_draw_interval([as_draw(z0)], nw, nc, z0_durs(unit, z0), B=B_INNER, seed=SEED_INNER, metric_version="0.1")
         x4["k1_interval"] = one["interval"]
         x4["reproduces"] = x4["same_action_and_text"] == x4["n"] == len(z0["rows"])
         if unit == "t15":
@@ -399,7 +399,7 @@ def analyse_unit(unit: str) -> dict:
     out["K_min_reached"] = Kused >= K_MIN[unit]
     out["draws"] = [summary(d) for d in draws]
     comb = calibration_draw_interval([as_draw(d) for d in draws], nw, nc, durs, B=B_INNER, seed=SEED_INNER,
-                                     reference=ref)
+                                     reference=ref, metric_version="0.1")
     comb_public = {k: v for k, v in comb.items() if k != "draws"}
     comb_public["draw_values"] = [x["value"] for x in comb["draws"]]
     comb_public["draw_conditional_intervals"] = [x["conditional_interval"] for x in comb["draws"]]
@@ -422,7 +422,7 @@ def analyse_unit(unit: str) -> dict:
             cds.append({"committed": P524.trial_arrays(r["rows"], "0.1")["committed"],
                         "correct": P524.trial_arrays(r["rows"], "0.1")["correct"],
                         "guarantee": guarantee_from_sheet(r["sheet"])})
-        x2 = calibration_draw_interval(cds, nw, nc, durs, B=B_INNER, seed=SEED_INNER, reference=ref)
+        x2 = calibration_draw_interval(cds, nw, nc, durs, B=B_INNER, seed=SEED_INNER, reference=ref, metric_version="0.1")
         out["X2_p15_26_full_refit"] = {**{k: v for k, v in x2.items() if k != "draws"},
                                        "draw_values": [x["value"] for x in x2["draws"]], "draws_used": "c0 c1 c2 c3"}
         log(f"t15 X2 (P15-26 c0-c3 full refit): {x2['value']:.3f} [{x2['interval'][0]:.3f}, {x2['interval'][1]:.3f}]")
@@ -504,7 +504,7 @@ def stage_smoke() -> dict:
     nw, nc = lengths(rows)
     durs = [float(x.shape[0]) * 0.08 for x in K.load_t15("m4-13", norm_text=True)[0][0][120:160]]
     res["combined_t15"] = {k: v for k, v in calibration_draw_interval(
-        [as_draw(load_draw("t15", n)) for n in ("z0", "k01")], nw, nc, durs, B=200).items() if k != "draws"}
+        [as_draw(load_draw("t15", n)) for n in ("z0", "k01")], nw, nc, durs, B=200, metric_version="0.1").items() if k != "draws"}
     log(f"smoke: {res['combined_t15']}")
     return res
 

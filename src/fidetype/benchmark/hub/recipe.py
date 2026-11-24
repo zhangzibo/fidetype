@@ -160,6 +160,9 @@ def make_recipe(card: Mapping[str, Any], *, command: str, level: str = "rescore"
     metrics: dict[str, Any] = {}
     if sw.get("definition"):
         metrics["safe_wpm"] = sw["definition"]
+    s2 = card.get("safe_wpm_v02") or {}
+    if s2.get("definition"):  # the headline safe-wpm/0.2 block (adopted 2026-11-22)
+        metrics["safe_wpm_v02"] = s2["definition"]
     sha = weights_sha256 or dec.get("weights_sha256")
     cid = policy_config_id or pol.get("config_id")
     decoder: dict[str, Any] = {"name": dec.get("name"), "version": dec.get("version"), "url": dec.get("url"),

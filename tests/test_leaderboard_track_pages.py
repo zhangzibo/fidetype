@@ -66,9 +66,42 @@ def test_research_only_tracks_stay_in_their_own_section():
     assert '<a id="research-only"></a>' in md and '<a id="track-b2t25-t15"></a>' in md
 
 
-def test_safe_wpm_v02_is_marked_proposed_on_every_track_page():
-    for p in (SITE / "tracks").glob("*.html"):
-        assert "PROPOSED, NOT ADOPTED" in p.read_text(encoding="utf-8"), p.name
+def test_safe_wpm_v02_is_the_dated_headline_on_every_page():
+    # safe-wpm/0.2 was adopted on 2026-11-22: it is the headline column with a dated note; v0.1 is the second column.
+    for p in [*(SITE / "tracks").glob("*.html"), SITE / "index.html"]:
+        text = p.read_text(encoding="utf-8")
+        assert "ADOPTED on that date" in text and "since 2026-11-22" in text, p.name
+        assert "Safe WPM v0.2 @ alpha" in text and "Safe WPM v0.1 @ alpha" in text, p.name
+        assert "PROPOSED, NOT ADOPTED" not in text, p.name
+    md = (SITE / "leaderboard.md").read_text(encoding="utf-8")
+    assert "| Safe WPM v0.2 @ alpha | Safe WPM v0.1 @ alpha |" in md
+
+
+def test_every_v01_number_keeps_its_value_and_label():
+    # The switch adds a v0.2 block; it never changes or re-labels a v0.1 block (git HEAD~ is not needed: the
+    # v0.1 block of each card is the one the leaderboard shows in the v0.1 column).
+    lb = json.loads((SITE / "leaderboard.json").read_text(encoding="utf-8"))
+    rows = {r["file"]: r for t in lb["tracks"].values() for r in t}
+    for f in RESULTS:
+        for p in f.glob("*.json"):
+            card = json.loads(p.read_text(encoding="utf-8"))
+            v1 = card.get("safe_wpm")
+            if not v1:
+                continue
+            assert v1["definition"] == "safe-wpm/0.1", p.name
+            r = rows[p.name]
+            assert r["safe_wpm_v01"] == v1["value"] and r["safe_wpm_v01_status"] == v1["status"], p.name
+            v2 = card.get("safe_wpm_v02")
+            if v2 is None:
+                assert r["safe_wpm"] is None and r["safe_wpm_s"].startswith("v0.1 only"), p.name
+                continue
+            assert v2["definition"] == "safe-wpm/0.2" and v2["adopted_headline"] is True, p.name
+            assert r["safe_wpm"] == v2["value"] and r["safe_wpm_definition"] == "safe-wpm/0.2", p.name
+            # Same certification, and the reading cost can only lower the value.
+            assert v2["status"] == v1["status"], p.name
+            if v1["value"] is not None:
+                assert v2["value"] <= v1["value"] + 1e-12, p.name
+                assert v2["reading_cost"]["wpm_without_reading"] == pytest.approx(v1["value"]), p.name
 
 
 def test_committed_pages_are_generated_from_the_cards_and_the_history_file(tmp_path):
@@ -215,7 +248,7 @@ def test_site_copies_the_track_pages_and_links_them(tmp_path):
         html = page.read_text(encoding="utf-8")
         # On the site the leaderboard is benchmark/leaderboard.html, so the back link names it.
         assert f'href="../leaderboard.html#{tp["anchor"]}"' in html and 'href="../index.html#' not in html
-        assert "PROPOSED" in html
+        assert "ADOPTED" in html and "PROPOSED, NOT ADOPTED" not in html  # the dated v0.2 note
         assert f'href="{tp["page"]}"' in overview, slug  # the overview links each track row
     assert (out / "benchmark/history.json").is_file()
 

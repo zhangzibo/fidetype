@@ -158,7 +158,7 @@ def test_stream_guard_checks():
                                                                   [True, False] * 5, unit="prefix"), 3)
 
 
-# --- the safe-wpm/0.2 "several commits per trial" extension (proposed) ---------------------------------------------
+# --- the "several commits per trial" extension of safe-wpm/0.2 (proposed, not adopted) ---------------------------------------------
 
 LTT_STREAM = {"method": "ltt", "alpha": 0.5, "delta": 0.1, "n_cal": 100, "risk": "wrong-stream-commit"}
 
@@ -190,7 +190,7 @@ def test_v02_multi_commit_hand_computed():
     assert mc["n_commit_events"] == 5 and mc["n_trials_with_several_commits"] == 2 and mc["max_commits_per_trial"] == 2
     assert r["n_wrong_commits"] == 1 and r["measured_wrong_commit"] == pytest.approx(0.25)
     # without reading cost the number of commits does not change the value
-    r0 = safe_wpm(*args, **kw, n_commits=nc)
+    r0 = safe_wpm(*args, **kw, n_commits=nc, read_s_per_commit=0.0, read_s_per_word=0.0)
     assert r0["value"] == pytest.approx(60 * 5 / (14.0 + pen))
 
 
@@ -207,7 +207,7 @@ def test_v02_multi_commit_needs_the_stream_bound_and_reduces_to_v02():
     # a stream bound also certifies a one-commit prefix policy
     assert safe_wpm(*args, **kw)["status"] == "certified"
     with pytest.raises(ValueError, match="safe-wpm/0.2"):
-        safe_wpm(*args, guarantee=LTT_STREAM, n_commits=nc)
+        safe_wpm(*args, guarantee=LTT_STREAM, n_commits=nc, metric_version="0.1")
     with pytest.raises(ValueError, match="min_prefix_words"):
         safe_wpm(*args, **kw, n_commits=nc, min_prefix_words=2)
     with pytest.raises(ValueError, match="n_commits"):
@@ -234,6 +234,6 @@ def test_v02_multi_commit_cli(tmp_path: Path):
     g.write_text(json.dumps(LTT_STREAM), encoding="utf-8")
     out = tmp_path / "o.json"
     assert main(["safe-wpm", "--trials", str(p), "--guarantee", str(g), "--metric-version", "0.2",
-                 "--read-s-per-commit", "0.5", "--out", str(out)]) == 0
+                 "--read-s-per-commit", "0.5", "--read-s-per-word", "0", "--out", str(out)]) == 0
     r = json.loads(out.read_text(encoding="utf-8"))
     assert r["multi_commit"]["n_commit_events"] == 2 and r["value"] == pytest.approx(60 * 3 / (5.0 + 1.0))

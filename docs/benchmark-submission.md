@@ -162,7 +162,7 @@ Schema `fidetype.benchmark.submission/0.2`. All v0.1 fields stay. New fields: `r
 |---|---|
 | CER / WER (key error on key tracks) | Edit distance of `nbest[0]` over the truth length, pooled over units |
 | eWPM, no-BCI eWPM, difference | Simulated user `aac-gaze-v1` at the track rate; no-BCI = gaze typing at 20 chars/min |
-| Safe WPM @ alpha | [safe WPM](safe-wpm.md): committed exactly-right words per minute with a correction penalty, only under a certified CRC / LTT bound. Status `certified`, `above-alpha`, `vacuous` or `not-certified` |
+| Safe WPM v0.2 @ alpha (headline), Safe WPM v0.1 @ alpha | [safe WPM](safe-wpm.md): committed right words per minute with a correction penalty, only under a certified CRC / LTT bound. Status `certified`, `above-alpha`, `vacuous` or `not-certified`. v0.2 (adopted 2026-11-22; card block `safe_wpm_v02`) adds prefix credit and a reading cost of 0.5 s + 0.3 s per committed word per commit. v0.1 (card block `safe_wpm`) is the earlier rule |
 | Wrong-commit | Wrong commits / all units (the quantity CRC / LTT control) |
 | Error among commits | Wrong commits / commits |
 | Commit rate | Commits / all units |

@@ -116,7 +116,7 @@ Reference submission: `tools/benchmark/make_b2t25_published.py` builds a full st
 |---|---|
 | CER | Character edit distance of the top-1 text / truth length, pooled over trials |
 | eWPM [95% CI] | Effective words per minute with the documented simulated user (`aac-gaze-v1`, word model); a sentence counts only if it ends exactly right |
-| Safe WPM @ alpha | Words per minute of committed, exactly right text; each wrong commit adds a correction time; shown only under a certified CRC / LTT bound; `! ABOVE alpha` if the measured test rate is above alpha ([docs/safe-wpm.md](../docs/safe-wpm.md)). Add `neural_s` (seconds) per trial to the truth file to use measured times |
+| Safe WPM v0.2 @ alpha, Safe WPM v0.1 @ alpha | Words per minute of committed, right text; each wrong commit adds a correction time; shown only under a certified CRC / LTT bound; `! ABOVE alpha` if the measured test rate is above alpha ([docs/safe-wpm.md](../docs/safe-wpm.md)). v0.2 is the headline since 2026-11-22: it adds prefix credit and a reading cost of 0.5 s + 0.3 s per committed word per commit. v0.1 keeps the earlier values. Add `neural_s` (seconds) per trial to the truth file to use measured times |
 | Wrong-commit | Wrong commits / all trials (the marginal rate that CRC and LTT control) |
 | Error among commits | Wrong commits / commits |
 | Commit rate | Commits / all trials |

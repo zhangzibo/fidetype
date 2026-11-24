@@ -317,6 +317,8 @@ def score_v02(rows: list[dict], sheet: dict, durs: list[float], reading: bool) -
               committed_words=a["committed_words"], complete=a["complete"], penalty_chars=a["penalty_chars"])
     if reading:
         kw.update(read_s_per_commit=READ_S_PER_COMMIT, read_s_per_word=READ_S_PER_WORD)
+    else:  # the v0.2 of that date had no reading cost by default
+        kw.update(read_s_per_commit=0.0, read_s_per_word=0.0)
     return safe_wpm(a["committed"], a["correct"], a["n_words"], a["n_chars"], durs, **kw)
 
 

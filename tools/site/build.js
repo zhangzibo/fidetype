@@ -419,10 +419,13 @@ function benchmarkPage(map) {
   const lb = readJson('benchmark/site/leaderboard.json');
   const splits = trackSplits();
   const v2 = new Set(splits.map(s => s.track));
-  const best = entries => {
-    const c = (entries || []).filter(e => e.safe_wpm_status === 'certified' && e.safe_wpm != null);
-    return c.length ? c.reduce((a, b) => (b.safe_wpm > a.safe_wpm ? b : a)) : null;
+  // Headline: safe-wpm/0.2 (adopted 2026-11-22; fields safe_wpm*). Tracks v0.1 have v0.1 values only (safe_wpm_v01*).
+  const bestBy = (entries, val, st) => {
+    const c = (entries || []).filter(e => e[st] === 'certified' && e[val] != null);
+    return c.length ? c.reduce((a, b) => (b[val] > a[val] ? b : a)) : null;
   };
+  const best = entries => bestBy(entries, 'safe_wpm', 'safe_wpm_status');
+  const best01 = entries => bestBy(entries, 'safe_wpm_v01', 'safe_wpm_v01_status');
   const testN = s => {
     const parts = Object.entries(s.counts).map(([unit, c]) => (c && c.test != null ? `${c.test} ${unit}s` : null)).filter(Boolean);
     return parts.join(', ') || '—';
@@ -439,20 +442,20 @@ function benchmarkPage(map) {
     const b = best(e);
     return `<tr><td class="nw">${trackCell(s.track)}${s.research_only ? '<br><span class="badge ro">RESEARCH ONLY</span>' : ''}</td><td class="nw"><code>${esc(s.dataset)}</code></td><td>${esc(s.licence)}</td><td class="num">${esc(testN(s))}</td><td class="num">${e.length}</td><td>${b ? `<span class="num">${fmt(b.safe_wpm)}</span> <span class="muted">(${esc(b.decoder)}; ${esc(b.policy)})</span>` : '<span class="muted">none certified</span>'}</td></tr>`;
   }).join('\n');
-  const head = '<thead><tr><th>Track</th><th>Dataset</th><th>Licence</th><th>Test units</th><th>Entries</th><th>Best certified safe WPM (v0.1)</th></tr></thead>';
+  const head = '<thead><tr><th>Track</th><th>Dataset</th><th>Licence</th><th>Test units</th><th>Entries</th><th>Best certified safe WPM (v0.2)</th></tr></thead>';
   const clean = splits.filter(s => !s.research_only);
   const ro = splits.filter(s => s.research_only);
   const legacy = Object.keys(lb.tracks).filter(t => !v2.has(t)).map(t => {
     const e = lb.tracks[t];
-    const b = best(e);
+    const b = best01(e);
     const ro = pages[t] && pages[t].research_only ? '<br><span class="badge ro">RESEARCH ONLY</span>' : '';
-    return `<tr><td class="nw">${trackCell(t)}${ro}</td><td class="num">${e.length}</td><td>${b ? fmt(b.safe_wpm) : '<span class="muted">none certified</span>'}</td></tr>`;
+    return `<tr><td class="nw">${trackCell(t)}${ro}</td><td class="num">${e.length}</td><td>${b ? fmt(b.safe_wpm_v01) : '<span class="muted">none certified</span>'}</td></tr>`;
   }).join('\n');
   const prop = read('docs/safe-wpm-v0.2-proposal.md');
   const propStatus = docStatus(prop) || 'see the page';
   const metrics = `<div class="table-wrap"><table><thead><tr><th>Metric version</th><th>State</th><th>Definition</th></tr></thead><tbody>
-<tr><td><code>safe-wpm/0.1</code></td><td><span class="badge ok">IN USE</span> Headline column of the leaderboard</td><td><a href="${siteRel('benchmark/index.html', map.get('docs/safe-wpm.md'))}">Safe WPM</a></td></tr>
-<tr><td><code>safe-wpm/0.2</code></td><td><span class="badge warn">${esc(propStatus.toUpperCase())}</span> No leaderboard number uses it</td><td><a href="${siteRel('benchmark/index.html', map.get('docs/safe-wpm-v0.2-proposal.md'))}">Safe WPM v0.2 proposal</a></td></tr>
+<tr><td><code>safe-wpm/0.2</code></td><td><span class="badge ok">${esc(propStatus.toUpperCase())}</span> Headline column of the leaderboard since 2026-11-22: prefix credit and a reading cost of 0.5 s + 0.3 s per committed word per commit</td><td><a href="${siteRel('benchmark/index.html', map.get('docs/safe-wpm.md'))}">Safe WPM</a> (section 6a), <a href="${siteRel('benchmark/index.html', map.get('docs/safe-wpm-v0.2-proposal.md'))}">v0.2 text and history</a></td></tr>
+<tr><td><code>safe-wpm/0.1</code></td><td><span class="badge">EARLIER</span> Second column of the leaderboard. Every earlier number keeps its value and its v0.1 label</td><td><a href="${siteRel('benchmark/index.html', map.get('docs/safe-wpm.md'))}">Safe WPM</a></td></tr>
 </tbody></table></div>`;
   const L = f => siteRel('benchmark/index.html', map.get(f));
   const body = `<h1>Benchmark</h1>
@@ -478,6 +481,7 @@ ${rowsFor(clean)}
 ${rowsFor(ro)}
 </tbody></table></div>
 <h2 id="tracks-v01">Tracks v0.1 (earlier splits)</h2>
+<p class="muted">These entries were not scored again under v0.2. They show safe WPM v0.1 only.</p>
 <div class="table-wrap"><table><thead><tr><th>Track</th><th>Entries</th><th>Best certified safe WPM (v0.1)</th></tr></thead><tbody>
 ${legacy}
 </tbody></table></div>
@@ -568,9 +572,8 @@ ${rows}
 }
 
 function leaderboardNote(map, from = 'benchmark/leaderboard.html') {
-  const status = docStatus(read('docs/safe-wpm-v0.2-proposal.md')) || 'PROPOSED';
-  const href = siteRel(from, map.get('docs/safe-wpm-v0.2-proposal.md'));
-  return `<div class="ftbar" style="border-bottom:none"><div class="ftin" style="padding:8px 16px;color:var(--ftm)">The "Safe WPM @ alpha" column uses <code>safe-wpm/0.1</code>. Safe WPM v0.2 is <b style="color:var(--ftf)">${esc(status.toUpperCase())}</b>: <a style="color:var(--fta)" href="${href}">proposal</a>.</div></div>`;
+  const href = siteRel(from, map.get('docs/safe-wpm.md'));
+  return `<div class="ftbar" style="border-bottom:none"><div class="ftin" style="padding:8px 16px;color:var(--ftm)">The headline column "Safe WPM v0.2 @ alpha" uses <code>safe-wpm/0.2</code>, <b style="color:var(--ftf)">ADOPTED 2026-11-22</b> (with the reading cost). The "Safe WPM v0.1 @ alpha" column keeps the earlier values and labels: <a style="color:var(--fta)" href="${href}">definition</a>.</div></div>`;
 }
 
 function pythonVersion() {

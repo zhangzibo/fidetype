@@ -538,7 +538,7 @@ def stage_analyse() -> dict:
         x4["same_action_and_text"] = same_rows(z0["rows"], ref_rows)
         x4["n"] = len(ref_rows)
         x4["z0_value"] = z0["v0_1_claimed"]["value"]
-        one = calibration_draw_interval([as_draw(z0)], nw, nc, durs, B=B_INNER, seed=SEED_INNER)
+        one = calibration_draw_interval([as_draw(z0)], nw, nc, durs, B=B_INNER, seed=SEED_INNER, metric_version="0.1")
         x4["k1_interval"] = one["interval"]
         x4["k1_interval_matches_p15_22"] = [round(v, 2) for v in one["interval"]] == [4.25, 5.57]
         x4["z0_threshold_commits_wrong"] = [z0["sheet"].get("commit_threshold"), z0["v0_1_claimed"]["n_commits"],
@@ -573,7 +573,7 @@ def stage_analyse() -> dict:
         res["K"] = len(draws)
         for mode in ("claimed", "strict"):
             comb = calibration_draw_interval([as_draw(d, strict=(mode == "strict")) for d in draws], nw, nc, durs,
-                                             B=B_INNER, seed=SEED_INNER, reference=NO_BCI)
+                                             B=B_INNER, seed=SEED_INNER, reference=NO_BCI, metric_version="0.1")
             pub = {k: v for k, v in comb.items() if k != "draws"}
             pub["draw_values"] = [x["value"] for x in comb["draws"]]
             pub["draw_statuses"] = [x["status"] for x in comb["draws"]]
@@ -645,7 +645,7 @@ def _pooled(draws: list[dict], nw, nc, durs) -> np.ndarray:
             vals.append(np.zeros(B_INNER))
             continue
         r = safe_wpm(dd["committed"], dd["correct"], nw_, nc_, ns, guarantee=dd["guarantee"], rule=rule,
-                     gaze_chars_per_min=None)
+                     gaze_chars_per_min=None, metric_version="0.1")
         if r["status"] != "certified" or r["value"] is None:
             vals.append(np.zeros(B_INNER))
             continue

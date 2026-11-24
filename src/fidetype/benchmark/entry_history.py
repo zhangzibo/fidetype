@@ -114,10 +114,18 @@ def version_facts(card: Mapping[str, Any]) -> dict[str, Any]:
     sw = card.get("safe_wpm") if isinstance(card.get("safe_wpm"), Mapping) else None
     if sw and sw.get("definition"):
         metrics.setdefault("safe_wpm", sw["definition"])
+    # The safe-wpm/0.2 block (the headline since 2026-11-22); cards before that have none.
+    s2 = card.get("safe_wpm_v02") if isinstance(card.get("safe_wpm_v02"), Mapping) else None
+    if s2 and s2.get("definition"):
+        metrics.setdefault("safe_wpm_v02", s2["definition"])
     ew = ((card.get("metrics") or {}).get("ewpm") or {}).get("value")
-    return {"schema": card.get("schema"), "split_version": split, "split_digest": digest, "scorer_version": scorer,
-            "metric_versions": metrics, "rerun_level": rerun_level(card),
-            "ewpm": ew, "safe_wpm": sw.get("value") if sw else None, "safe_wpm_status": sw.get("status") if sw else None}
+    out = {"schema": card.get("schema"), "split_version": split, "split_digest": digest, "scorer_version": scorer,
+           "metric_versions": metrics, "rerun_level": rerun_level(card),
+           "ewpm": ew, "safe_wpm": sw.get("value") if sw else None, "safe_wpm_status": sw.get("status") if sw else None}
+    if s2:
+        out["safe_wpm_v02"] = s2.get("value")
+        out["safe_wpm_v02_status"] = s2.get("status")
+    return out
 
 
 def changed_fields(old: Mapping[str, Any] | None, new: Mapping[str, Any]) -> list[str]:

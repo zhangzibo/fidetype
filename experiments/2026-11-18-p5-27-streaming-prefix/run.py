@@ -292,8 +292,9 @@ def score(rows: list[dict], guarantee: dict, controls: dict | None, durs: list[f
         y = [r["truth"] for r in rows]
         return safe_wpm(keep, [k and norm(r["text"]) == t for k, r, t in zip(keep, rows, y)], a["n_words"],
                         a["n_chars"], durs, guarantee=dict(guarantee, risk="wrong-commit"), controls=controls, B=B,
-                        seed=SEED, timing="measured trial duration (20 ms neural bins)")
-    kw = dict(read_s_per_commit=READ_C, read_s_per_word=READ_W) if read else {}
+                        seed=SEED, timing="measured trial duration (20 ms neural bins)", metric_version="0.1")
+    kw = (dict(read_s_per_commit=READ_C, read_s_per_word=READ_W) if read
+          else dict(read_s_per_commit=0.0, read_s_per_word=0.0))
     return safe_wpm(a["committed"], a["correct"], a["n_words"], a["n_chars"], durs, guarantee=guarantee,
                     controls=controls, B=B, seed=SEED, timing="measured trial duration (20 ms neural bins)",
                     metric_version="0.2", committed_words=a["committed_words"], complete=a["complete"],

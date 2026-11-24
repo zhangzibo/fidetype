@@ -187,6 +187,78 @@
    "commit_rate_zeros": 0.0
   }
  },
+ "safe_wpm_v02": {
+  "definition": "safe-wpm/0.2",
+  "definition_status": "adopted 2026-11-22: the headline metric (prefix credit + the aac-gaze-v1 reading cost); safe-wpm/0.1 stays selectable with metric_version='0.1' for old numbers",
+  "adopted_headline": true,
+  "value": 0.47239992156805133,
+  "ci": [
+   0.1946412341004165,
+   0.7725177865111299
+  ],
+  "status": "certified",
+  "unguarded_wpm": 0.47239992156805133,
+  "wpm_no_penalty": 0.4983501589434977,
+  "method": "ltt",
+  "alpha": 0.05,
+  "delta": 0.1,
+  "n_cal": 330,
+  "calibration": "cal",
+  "confidence": "probability >= 0.9 over calibration draws",
+  "risk": "wrong-commit",
+  "measured_wrong_commit": 0.010227272727272727,
+  "measured_wrong_commit_cp95": [
+   0.0047,
+   0.0193
+  ],
+  "n_trials": 880,
+  "n_commits": 17,
+  "n_wrong_commits": 9,
+  "n_correct_commits": 8,
+  "n_prefix_commits": 0,
+  "n_complete_commits": 17,
+  "n_right_complete_commits": 8,
+  "error_among_commits": 0.5294117647058824,
+  "committed_correct_words": 44,
+  "total_words": 5502,
+  "minutes_neural": 88.29133333333333,
+  "minutes_correction": 4.168421052631579,
+  "timing": "measured per-trial durations (truth file neural_s)",
+  "correction_rule": {
+   "name": "rewrite",
+   "overhead_s": 2.0,
+   "s_per_char": 0.7894736842105263,
+   "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit",
+   "prefix": "a wrong prefix of k words costs the penalty of the first k words of the truth"
+  },
+  "reading_cost": {
+   "read_s_per_commit": 0.5,
+   "read_s_per_word": 0.3,
+   "min_prefix_words": 1,
+   "formula": "0.5 s + 0.3 s/word * k per commit (right or wrong); prefix commits with fewer than 1 word(s) count as no commit",
+   "minutes_reading": 0.6816666666666666,
+   "n_prefix_commits_dropped": 0,
+   "wpm_without_reading": 0.475882726405761,
+   "model": "aac-gaze-v1",
+   "adopted": {
+    "read_s_per_commit": 0.5,
+    "read_s_per_word": 0.3,
+    "min_prefix_words": 1
+   },
+   "note": "the adopted safe-wpm/0.2 reading cost (2026-11-22) is 0.5 s + 0.3 s/word per commit, minimum prefix 1 word; other values give a sensitivity variant"
+  },
+  "ci_unit": "group",
+  "no_bci_wpm": 4.0030557677616505,
+  "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+  "controls": {
+   "shuffled": "pass",
+   "zeros": "pass",
+   "null_commit": "pass",
+   "passed": true,
+   "commit_rate_zeros": 0.0
+  }
+ },
+ "safe_wpm_headline": "safe_wpm_v02",
  "conformance": {
   "level": "not checked (units JSONL: NTS-derived rows)"
  },
@@ -268,7 +340,8 @@
   "scorer": {
    "scorer_version": "0.2",
    "metrics": {
-    "safe_wpm": "safe-wpm/0.1"
+    "safe_wpm": "safe-wpm/0.1",
+    "safe_wpm_v02": "safe-wpm/0.2"
    },
    "B": 2000,
    "seed": 0

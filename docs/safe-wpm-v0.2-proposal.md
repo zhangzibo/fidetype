@@ -2,7 +2,7 @@
 
 > **Design record.** This page records a design and its decisions. It is not a user guide. For the user guide, see [Safe WPM](safe-wpm.md).
 
-> **Status: Adopted (2026-11-22).** The project maintainer adopted it after review. `safe-wpm/0.2` is adopted with three conditions: (1) the reading cost of section 6 is part of the definition (`aac-gaze-v1`: 0.5 s + 0.3 s per word per commit, minimum prefix 1 word); (2) a headline interval includes the calibration draw (docs/safe-wpm.md section 6b) with K >= 80 calibration draws; (3) the draws are partition-only (a new split of the calibration set, no resample with replacement inside a part). Numbers computed before this date keep their labels: a v0.1 number stays a v0.1 number, and a number labelled "proposed v0.2" is not re-labelled. A v0.2 value without the reading cost, or with fewer than 80 draws, is not an adopted-v0.2 headline. The scorer default (`metric_version="0.1"`), the leaderboard column and the status strings in the code change in a separate, later step.
+> **Status: Adopted (2026-11-22).** The project maintainer adopted it after review. `safe-wpm/0.2` is adopted with three conditions: (1) the reading cost of section 6 is part of the definition (`aac-gaze-v1`: 0.5 s + 0.3 s per word per commit, minimum prefix 1 word); (2) a headline interval includes the calibration draw (docs/safe-wpm.md section 6b) with K >= 80 calibration draws; (3) the draws are partition-only (a new split of the calibration set, no resample with replacement inside a part). Numbers computed before this date keep their labels: a v0.1 number stays a v0.1 number, and a number labelled "proposed v0.2" is not re-labelled. A v0.2 value without the reading cost, or with fewer than 80 draws, is not an adopted-v0.2 headline. The scorer default (then `metric_version="0.1"`), the leaderboard column and the status strings in the code changed in a separate step on 2026-11-23: the default is now `metric_version="0.2"` with this reading cost, and the leaderboard shows v0.2 as the headline column and v0.1 as a second column ([safe-wpm.md](safe-wpm.md) section 6a).
 >
 > History (status before 2026-11-22): **PROPOSED, NOT ADOPTED.** The maintainer decides adoption (planned for the week of 2026-11-18). Until then, `safe-wpm/0.1` ([docs/safe-wpm.md](safe-wpm.md)) stays the headline metric. No published v0.1 number changes. The scorer computes v0.2 only when the caller asks for it (`metric_version="0.2"`). Adoption needs one switch: the default of `metric_version` and the leaderboard column. **A review of 2026-11-18 recommended adopting v0.2 only together with a reading cost per commit (section 6).**
 
@@ -101,7 +101,7 @@ r = safe_wpm(committed, [x["correct"] for x in o], n_words, n_chars, neural_s,
              speech_s=speech_s, speech_timing="CTC active-speech span")      # speech_s is optional
 ```
 
-Command line: `fidetype benchmark safe-wpm --trials t.jsonl --guarantee g.json --metric-version 0.2`. Per-trial JSON fields: `committed`, `truth`, `neural_s`, and for a commit `committed_text` + `complete` (or `committed_words` + `penalty_chars`); optional `speech_s`. Without `--metric-version` the CLI scores v0.1, where only the exact sentence counts.
+Command line: `fidetype benchmark safe-wpm --trials t.jsonl --guarantee g.json --metric-version 0.2`. Per-trial JSON fields: `committed`, `truth`, `neural_s`, and for a commit `committed_text` + `complete` (or `committed_words` + `penalty_chars`); optional `speech_s`. Without `--metric-version` the CLI scores v0.2 (the default since 2026-11-23, with the section 6 reading cost). `--metric-version 0.1` scores v0.1, where only the exact sentence counts.
 
 ## 5. Adoption (the user's decision)
 
@@ -179,7 +179,7 @@ No source measures the time a BCI user needs to check one committed word. The va
 | Claim "above the no-BCI reference" (T15) | Holds under the recommended cost (4.67 [4.26, 5.07]) and up to about 6 s per commit | Pre-registered statements 1 and 2: robust, not fragile. |
 | Rule 6 | Restate it: with a reading cost, a sentence policy's v0.2 value is a little below its v0.1 value (T15 sentence guard 2.64 → 2.60) | The reading time is a real user cost for every commit. |
 
-Until the user decides, the scorer default stays c = 0, w = 0, m = 1. Adoption of the recommendation is one more default change in `safe_wpm` and the CLI.
+Until the user decides, the scorer default stays c = 0, w = 0, m = 1. Adoption of the recommendation is one more default change in `safe_wpm` and the CLI. (Done: adopted 2026-11-22; since 2026-11-23 the default is c = 0.5, w = 0.3, m = 1. c = 0, w = 0 is now a sensitivity variant.)
 
 > **Our take:** the T15 gain of prefix commits under v0.2 is not an artefact of free reading time. The weak points of the v0.2 result are T12 (break-even 2.8 s, CI includes the reference) and the single participant per set, not the one-word commits.
 

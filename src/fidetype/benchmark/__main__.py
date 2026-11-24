@@ -33,7 +33,8 @@ Sub-commands:
     match a scored test unit (leave them out of training). Local output only.
 ``safe-wpm --trials trials.jsonl (--guard guard.json | --guarantee g.json | --method ltt --alpha A ...)``
     Safe WPM at a certified wrong-commit rate (P14-05; ``docs/safe-wpm.md``)
-    from a per-trial JSON Lines file.
+    from a per-trial JSON Lines file. Default ``--metric-version 0.2``
+    (adopted 2026-11-22, with the reading cost); ``0.1`` reproduces old numbers.
 ``leaderboard [--results DIR] [--out DIR]``
     Build the static leaderboard (``index.html``, ``leaderboard.json``,
     ``leaderboard.md``).
@@ -285,17 +286,18 @@ def cmd_safe_wpm(a) -> int:
         timing = "measured per-trial durations (neural_s)"
     clusters = [{"cluster": c} for c in cols["cluster"]] if all(cols["cluster"]) else None
     v02 = {}
-    if a.metric_version == "0.2":  # P14-26: proposed, not adopted
+    if a.metric_version == "0.2":  # adopted 2026-11-22: the default (P14-61)
         sp = cols["speech_s"]
         v02 = {"committed_words": cols["committed_words"], "complete": cols["complete"],
                "penalty_chars": cols["penalty_chars"]}
         if not any(math.isnan(x) for x in sp):
             v02.update(speech_s=sp, speech_timing="per-trial speech_s")
         v02.update(read_s_per_commit=a.read_s_per_commit, read_s_per_word=a.read_s_per_word,
-                   min_prefix_words=a.min_prefix_words)  # P14-28 sensitivity options (default: off)
+                   min_prefix_words=a.min_prefix_words)  # reading cost: None = the adopted aac-gaze-v1 values
         if any(x > 1 for x in cols["n_commits"]):  # P5-27: several append-only commits per trial
             v02["n_commits"] = cols["n_commits"]
-    elif (a.read_s_per_commit, a.read_s_per_word, a.min_prefix_words) != (0.0, 0.0, 1):
+    elif (a.read_s_per_commit not in (None, 0.0) or a.read_s_per_word not in (None, 0.0)
+          or a.min_prefix_words != 1):
         print("--read-s-per-commit, --read-s-per-word and --min-prefix-words need --metric-version 0.2",
               file=sys.stderr)
         return 2
@@ -371,15 +373,16 @@ def main(argv=None) -> int:
     p.add_argument("--n-cal", type=int, default=None)
     p.add_argument("--chars-per-min", type=float, default=None, help="rate model for trials without neural_s")
     p.add_argument("--correction", default="rewrite", choices=("rewrite", "none"))
-    p.add_argument("--metric-version", default="0.1", choices=("0.1", "0.2"),
-                   help="0.1 (default, the headline) or 0.2 (PROPOSED, not adopted: prefix credit and speech time; "
-                   "docs/safe-wpm-v0.2-proposal.md)")
-    p.add_argument("--read-s-per-commit", type=float, default=0.0,
-                   help="v0.2 only (P14-28 sensitivity): reading / checking seconds added to every commit")
-    p.add_argument("--read-s-per-word", type=float, default=0.0,
-                   help="v0.2 only (P14-28 sensitivity): reading seconds per committed word")
+    p.add_argument("--metric-version", default="0.2", choices=("0.1", "0.2"),
+                   help="0.2 (default; adopted 2026-11-22: prefix credit, the aac-gaze-v1 reading cost, speech "
+                   "time; docs/safe-wpm.md section 6a) or 0.1 (the earlier headline, to reproduce old numbers)")
+    p.add_argument("--read-s-per-commit", type=float, default=None,
+                   help="v0.2 only: reading / checking seconds added to every commit (default: the adopted 0.5; "
+                   "another value is a sensitivity variant)")
+    p.add_argument("--read-s-per-word", type=float, default=None,
+                   help="v0.2 only: reading seconds per committed word (default: the adopted 0.3)")
     p.add_argument("--min-prefix-words", type=int, default=1,
-                   help="v0.2 only (P14-28 sensitivity): prefix commits with fewer words count as no commit")
+                   help="v0.2 only: prefix commits with fewer words count as no commit (adopted: 1)")
     p.add_argument("--out", default=None)
     p.add_argument("--B", type=int, default=2000)
     p.add_argument("--seed", type=int, default=0)

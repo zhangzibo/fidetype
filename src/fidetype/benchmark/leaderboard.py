@@ -79,8 +79,17 @@ def track_info(slug: str) -> dict[str, Any] | None:
                 "user_model": scoring_track(slug).user_model.name, "gaze_cpm": 20.0, "notes": notes, "version": "0.2"}
     return None
 
-COLUMNS = ("Decoder", "Policy", "CER", "eWPM [95% CI]", "Safe WPM @ alpha", "Wrong-commit", "Error among commits", "Commit rate",
+COLUMNS = ("Decoder", "Policy", "CER", "eWPM [95% CI]", "Safe WPM v0.2 @ alpha", "Safe WPM v0.1 @ alpha",
+           "Wrong-commit", "Error among commits", "Commit rate",
            "Controls", "Guarantee", "Conformance", "Weights licence", "Scored from", "Rerun")
+#: The dated note on the safe-WPM columns (the switch to v0.2, docs/safe-wpm.md section 6a).
+SAFE_WPM_NOTE = ("Safe WPM v0.2 is the headline column since 2026-11-22 (ADOPTED on that date): prefix credit and a "
+                 "reading cost of 0.5 s + 0.3 s per committed word for every commit (user model aac-gaze-v1). For an "
+                 "entry that commits whole sentences, v0.2 is the v0.1 value with the reading time added. The v0.1 "
+                 "column keeps every earlier number with its value and its v0.1 label. Entries on tracks v0.1 were "
+                 "not scored again and show v0.1 only.")
+#: The v0.2 cell of a card without a safe-wpm/0.2 block.
+NO_V02 = "v0.1 only (not rescored)"
 
 
 def load_results(folder: str | PathLike[str] | list) -> list[dict[str, Any]]:
@@ -170,10 +179,28 @@ def guarantee_text(g: dict[str, Any]) -> str:
     return s
 
 
-def safe_wpm_text(sw: dict[str, Any] | None) -> str:
+def safe_wpm_blocks(d: dict[str, Any]) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
+    """(safe-wpm/0.2 block, safe-wpm/0.1 block) of a card, each found by its ``definition`` label.
+
+    Cards keep the v0.1 block under ``safe_wpm``; the v0.2 block (the headline since 2026-11-22) is
+    ``safe_wpm_v02``. Cards scored before that have no v0.2 block (None).
+    """
+    v1 = v2 = None
+    for k in ("safe_wpm", "safe_wpm_v02"):
+        b = d.get(k)
+        if not isinstance(b, dict):
+            continue
+        if b.get("definition") == "safe-wpm/0.2":
+            v2 = v2 or b
+        elif k == "safe_wpm":
+            v1 = b
+    return v2, v1
+
+
+def safe_wpm_text(sw: dict[str, Any] | None, missing: str = "not computed") -> str:
     """The safe-WPM cell (P14-05): value [CI], bound, and a mark when the test rate is above alpha."""
     if not sw:
-        return "not computed"
+        return missing
     st = sw.get("status")
     if st == "not-certified":
         return "n/a (no certified bound)"
@@ -251,6 +278,7 @@ def row(d: dict[str, Any]) -> dict[str, Any]:
     tgt = card_target(d)
     if tgt is not None and tgt != _default_target(str(d.get("track"))):
         name += f" [target: {tgt}]"
+    sw2, sw1 = safe_wpm_blocks(d)
     return {
         "entry_id": d.get("entry_id"), "track": d.get("track"), "decoder": name, "target": tgt,
         "policy": d.get("policy", {}).get("name", ""),
@@ -263,8 +291,12 @@ def row(d: dict[str, Any]) -> dict[str, Any]:
         "weights_licence": dec.get("weights_licence", "?"), "scored_from": d.get("scored_from", "?"),
         "n_trials": d.get("n_trials"), "ci_unit": (d.get("ci") or {}).get("unit"), "notes": d.get("notes", []),
         "file": d.get("_file"), "ewpm_s": ew_s,
-        "safe_wpm": (d.get("safe_wpm") or {}).get("value"), "safe_wpm_status": (d.get("safe_wpm") or {}).get("status"),
-        "safe_wpm_s": safe_wpm_text(d.get("safe_wpm")),
+        # Headline: safe-wpm/0.2 (adopted 2026-11-22). Second column: safe-wpm/0.1 (values and labels kept).
+        "safe_wpm_definition": (sw2 or {}).get("definition"),
+        "safe_wpm": (sw2 or {}).get("value"), "safe_wpm_status": (sw2 or {}).get("status"),
+        "safe_wpm_s": safe_wpm_text(sw2, NO_V02) if sw1 else safe_wpm_text(sw2),
+        "safe_wpm_v01": (sw1 or {}).get("value"), "safe_wpm_v01_status": (sw1 or {}).get("status"),
+        "safe_wpm_v01_s": safe_wpm_text(sw1),
         # P13-06: rerun level (design section 5.2) and the full recipe; "no" when the card has none.
         "rerun_level": rerun_level(d), "rerun": d.get("rerun"),
         "overlap_status": (ov or {}).get("status"),
@@ -275,7 +307,8 @@ def row(d: dict[str, Any]) -> dict[str, Any]:
 
 
 def cells(r: dict[str, Any]) -> list[str]:
-    return [r["decoder"], r["policy"], fmt(r["cer"]), r["ewpm_s"], r["safe_wpm_s"], fmt(r["wrong_commit_rate"]),
+    return [r["decoder"], r["policy"], fmt(r["cer"]), r["ewpm_s"], r["safe_wpm_s"], r["safe_wpm_v01_s"],
+            fmt(r["wrong_commit_rate"]),
             fmt(r["error_among_commits"]), fmt(r["commit_rate"]), r["controls"], r["guarantee"], r["conformance"],
             r["weights_licence"], r["scored_from"], r["rerun_level"]]
 
@@ -339,9 +372,8 @@ def markdown(by: dict[str, list[dict[str, Any]]]) -> str:
          "Safe WPM @ alpha (P14-05): committed, exactly right words per minute, with a time penalty per wrong "
          "commit, only under a certified CRC / LTT bound. `! ABOVE alpha` marks a measured test wrong-commit rate "
          "above the stated alpha. Definition: [docs/safe-wpm.md](../../docs/safe-wpm.md).", "",
-         "Safe WPM v0.2 (prefix credit, speech-time field) is PROPOSED, NOT ADOPTED "
-         "([docs/safe-wpm-v0.2-proposal.md](../../docs/safe-wpm-v0.2-proposal.md)). Every entry here commits whole "
-         "sentences, so its v0.2 value equals the v0.1 value shown.", "",
+         SAFE_WPM_NOTE + " Definition and history: [docs/safe-wpm.md](../../docs/safe-wpm.md) section 6a, "
+         "[docs/safe-wpm-v0.2-proposal.md](../../docs/safe-wpm-v0.2-proposal.md).", "",
          "Rerun (P13-06): the rerun level of each entry (`rescore`, `replay`, `full` or `no`). Below each table, "
          "the exact rerun recipe of every entry: dataset version, split digest, adapter hash, scorer version and "
          "commands, with `<placeholders>` for local paths ([docs/hub-design.md](../../docs/hub-design.md) "
@@ -463,6 +495,8 @@ def page(by: dict[str, list[dict[str, Any]]]) -> str:
              "penalty for each wrong commit, shown only when the policy has a certified CRC / LTT bound on the "
              "wrong-commit rate. Offered or withheld text counts 0 words. <b>ABOVE alpha</b> marks an entry whose "
              "measured test rate is higher than its stated alpha. Definition: <code>docs/safe-wpm.md</code>.</p>",
+             f"<p><b>{html.escape(SAFE_WPM_NOTE)}</b> Definition and history: <code>docs/safe-wpm.md</code> "
+             "section 6a.</p>",
              "<p>Tracks v0.1 (three tracks) and tracks v0.2 (seven tracks). v0.2 entries are scored by "
              "<code>python -m fidetype.benchmark score &lt;track&gt; &lt;submission&gt;</code> "
              "(<code>docs/benchmark-submission.md</code>). <b>[RESEARCH ONLY]</b> marks entries on non-commercial "
@@ -528,15 +562,18 @@ def _board_table(slug: str, rows: list[dict[str, Any]], link: str) -> str:
         cpm = t["gaze_cpm"] if t else 20.0
         out.append('<tr class="ref">' + _td(f"No-BCI reference: gaze typing ({cpm:.0f} chars/min)") + _td("type all")
                    + _td("n/a", "num") + _td(f"{g:.2f}", "num") + _td("n/a", "num") + _td("0.000", "num")
-                   + _td("n/a", "num")
+                   + _td("n/a", "num") + _td("n/a", "num")
                    + _td("0.000", "num") + "".join(_td("") for _ in range(6)) + "</tr>")
     for r in rows:
         c = cells(r)
         ctl_cls = "ok" if r["controls_passed"] else "bad"
-        sw_cls = "bad" if r["safe_wpm_status"] == "above-alpha" else ("ok" if r["safe_wpm_status"] == "certified" else "num")
+        def cls(st: str | None) -> str:
+            return "bad" if st == "above-alpha" else ("ok" if st == "certified" else "num")
+
         first = f'<td><a href="{html.escape(link)}#{r["anchor"]}">{html.escape(c[0])}</a></td>'
-        tds = ([first, _td(c[1]), _td(c[2], "num"), _td(c[3], "num"), _td(c[4], sw_cls)]
-               + [_td(x, "num") for x in c[5:8]] + [_td(c[8], ctl_cls)] + [_td(x) for x in c[9:]])
+        tds = ([first, _td(c[1]), _td(c[2], "num"), _td(c[3], "num"), _td(c[4], cls(r["safe_wpm_status"])),
+                _td(c[5], cls(r["safe_wpm_v01_status"]))]
+               + [_td(x, "num") for x in c[6:9]] + [_td(c[9], ctl_cls)] + [_td(x) for x in c[10:]])
         out.append("<tr>" + "".join(tds) + "</tr>")
     out.append("</tbody></table></div>")
     return "\n".join(out)
@@ -597,9 +634,14 @@ def _change_text(v: dict[str, Any]) -> str:
 
 
 def _sw_short(v: dict[str, Any]) -> str:
-    if v.get("safe_wpm_status") in (None, "not-certified"):
-        return "n/a" if v.get("safe_wpm_status") else "not computed"
-    return fmt(v.get("safe_wpm"), 2) + (" (above alpha)" if v.get("safe_wpm_status") == "above-alpha" else "")
+    """The safe-WPM cell of one card version: v0.2 when the version has it, else v0.1 (labelled)."""
+    if "safe_wpm_v02_status" in v:
+        st, val, lab = v.get("safe_wpm_v02_status"), v.get("safe_wpm_v02"), "v0.2"
+    else:
+        st, val, lab = v.get("safe_wpm_status"), v.get("safe_wpm"), "v0.1"
+    if st in (None, "not-certified"):
+        return f"n/a ({lab})" if st else "not computed"
+    return fmt(val, 2) + (" (above alpha)" if st == "above-alpha" else "") + f" ({lab})"
 
 
 def _history_rows(events: list[dict[str, Any]], names: dict[str, str], show_entry: bool) -> str:
@@ -653,9 +695,8 @@ def track_page_html(slug: str, rows: list[dict[str, Any]], history: dict[str, An
     if t and t["research_only"]:
         parts.append('<p class="ro-box">This track uses non-commercial data. Its results, streams and weights are '
                      "research only. On the leaderboard it is in the separate research-only section.</p>")
-    parts.append("<p>Safe WPM @ alpha uses <code>safe-wpm/0.1</code>. Safe WPM v0.2 (prefix credit) is "
-                 "<b>PROPOSED, NOT ADOPTED</b> (<code>docs/safe-wpm-v0.2-proposal.md</code>); no number on this page "
-                 "uses it.</p>")
+    parts.append(f"<p><b>{html.escape(SAFE_WPM_NOTE)}</b> Definition: <code>docs/safe-wpm.md</code> section 6a. "
+                 "In the entry history, each Safe WPM value names its version.</p>")
     parts.append('<p class="note">Stable links: this page is <code>' + html.escape(track_page(slug))
                  + "</code>; each entry has the anchor <code>#e-&lt;card file name&gt;</code>; the history is "
                  "<code>#history</code>. Generated by <code>python -m fidetype.benchmark leaderboard</code>; do not "
