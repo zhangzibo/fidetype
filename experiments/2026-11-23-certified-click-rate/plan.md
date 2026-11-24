@@ -1,7 +1,7 @@
 ---
 title: Certified accidental-click rate for an intracortical click decoder, with its cost in bits per second - pre-registration (plan only)
 type: experiment-plan
-task: proposed P12-07 (frontier direction 5, HORIZONTAL; CPU)
+task: P12-08 (frontier direction 5, HORIZONTAL; CPU) # id corrected 2026-11-24: P12-07 was already taken; earlier text said "proposed P12-07"
 updated: 2026-11-23
 ---
 

@@ -3,7 +3,7 @@ title: Long-term roadmap — Fidetype as a full neural input standard
 type: question
 tags: [planning, roadmap, north-star, frontier, write-side, affect, memory, standard, spec, sdk, collector, adapters, benchmark, conformance, governance, adoption, intent, cursor, benchmark-hub, value-first, toolkit, daily-use, aac-app, privacy, federated-learning, emg-hardware, foundation-model, multilingual, regulatory]
 sources: [case-study-opentelemetry, case-study-langchain, case-study-sglang, neural-input-landscape-2026, brain2qwerty-code]
-updated: 2026-11-23
+updated: 2026-11-24
 ---
 
 # Long-term roadmap: Fidetype as a full neural input standard
@@ -300,7 +300,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P2-17 LF line endings for shell scripts
 - **Gap:** 213 of the [open-gap list](open-gaps.md) (added 2026-11-23 by the rental kit). Follow-up of P2-09.
-- **Status:** `todo`. Low priority.
+- **Status:** `in_progress` (2026-11-24; one code-fix agent runs gaps 200, 202, 205, 195 and 213; nothing committed yet). Low priority.
 - **Serves:** research labs, small teams.
 - **Depends on:** rental kit `aa91210` (done); `.gitattributes` is a shared file; CPU. Low priority.
 - **Source:** plan agent report (2026-11-23, commit `aa91210`): `tools/rental/setup_cuda.sh` runs with bash on a Linux machine. A Windows checkout with `core.autocrlf=true` can write CRLF line ends, and bash then fails. `.gitattributes` has no rule for `*.sh`.
@@ -830,7 +830,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P5-38 Faster direction gate: reuse the forward decode
 - **Gap:** 191 of the [open-gap list](open-gaps.md) (added 2026-11-22 by P5-36b). Follow-up of P5-36.
-- **Status:** `in_progress` (2026-11-23; an agent runs it). Low priority.
+- **Status:** `done` (2026-11-24, commit `0997a7c`; closed by explicit user decision, option A). Gap 191 closed for the LM guard. `LmReadout` search cache: the LM guard's gate reuses the forward search of its decode. LM-guard extra time per offer 0.128 -> 0.063 s. Identity: 332 / 332 and 746 / 746 decisions equal. The built-in guard is unchanged (0.243 -> 0.249 s), because its decode has no forward LM beam to reuse. That part moved to gap 214 = [P5-41](#p5-41-bit-identical-speed-up-of-the-built-in-guard-direction-gate).
 - **Serves:** research labs, small teams.
 - **Depends on:** P5-36 (P5-36b code); CPU. Low priority.
 - **Source:** P5-36b (2026-11-22, results `a7bfbc8`, [results](../../experiments/2026-11-22-p5-36b-two-direction-lm/results.md)): the gate runs two new beam searches per offer. Extra cost median 0.25 s (built-in) and 0.11 s (LM) per sentence, about 0.43-0.75 of a guard decision. The gate is lazy, so a withhold costs nothing extra.
@@ -838,7 +838,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P5-39 Offer-gate identity in the guard identity
 - **Gap:** 200 of the [open-gap list](open-gaps.md) (added 2026-11-23 by P14-60). Follow-up of P14-60, P14-54.
-- **Status:** `todo`.
+- **Status:** `in_progress` (2026-11-24; one code-fix agent runs gaps 200, 202, 205, 195 and 213; nothing committed yet).
 - **Serves:** research labs, small teams.
 - **Depends on:** P14-60 (done); CPU.
 - **Source:** P14-60 (2026-11-23, commit `212da07`): `config_id` is computed from the frozen trust config only. By documented design an offer gate never changes it (as in P14-54). So two guards with different offer-gate lists can have the same `config_id`.
@@ -851,6 +851,14 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** a held-out block (retrain the built-in `willett-hw` decoder with a held-out block; GPU, days) or new public T5 handwriting data. Low priority.
 - **Source:** user decision 2026-11-23 (option C, gap 181 closed): the built-in guard passed the fixed threshold 0 only on the 781 decoder-seen pool sentences (P5-37, results `2451892`: `rev_out` offers 1 / 781, real offers removed 1 / 781). This is accepted as weakly tested. The model card says "tested on training data only".
 - **Done when:** a pre-registered run with the fixed threshold 0 on clean held-out data gives for the built-in guard at most 5 % `rev_out` offers and at most 5 % real offers removed, or numbers say why not. The model card then states the new result.
+
+#### P5-41 Bit-identical speed-up of the built-in guard direction gate
+- **Gap:** 214 of the [open-gap list](open-gaps.md) (added 2026-11-24 by the gap 191 user decision, option A). Follow-up of P5-38.
+- **Status:** `todo`. Low priority.
+- **Serves:** research labs, small teams.
+- **Depends on:** P5-38 (done, commit `0997a7c`); CPU. Low priority.
+- **Source:** gap 191 = P5-38 result (commit `0997a7c`): the built-in decode has no forward LM beam to reuse. So the built-in `willett-hw` guard's `lm_beam_direction` extra time per offer stayed 0.243 -> 0.249 s (LM guard 0.128 -> 0.063 s).
+- **Done when:** the built-in guard's direction-gate extra time per offer drops measurably, with all decisions identical on the same identity check sets (332 / 332 and 746 / 746 in P5-38).
 
 ## P6. Public benchmark + leaderboard
 **Goal:** one public place to compare neural text entry across modalities and datasets, with honest metrics.
@@ -1312,7 +1320,7 @@ Added 2026-11-13 (user decision). Review and publishing run on outside timelines
 - **Status:** `externally_blocked`.
 - **Serves:** research labs.
 - **Depends on:** pre-registration `29c1dc9`; the user downloads the BrainGate drag-and-drop data by hand (Dryad doi:10.5061/dryad.98sf7m0v1, CC0, about 8.2 GB; a login is needed) into `C:\Users\zhang\bci-data\raw\braingate-dragdrop\`; CPU.
-- **Source:** frontier plan (user "go", 2026-11-23), direction 5. Pre-registration `29c1dc9` ([plan](../../experiments/2026-11-23-certified-click-rate/plan.md); the plan says "proposed P12-07", but P12-07 is already "tests with real assistive devices", so this item is P12-08). Public click decoders give no false-click rate and no bound.
+- **Source:** frontier plan (user "go", 2026-11-23), direction 5. Pre-registration `29c1dc9` ([plan](../../experiments/2026-11-23-certified-click-rate/plan.md); the plan said "proposed P12-07" (corrected to P12-08 on 2026-11-24), but P12-07 is already "tests with real assistive devices", so this item is P12-08). Public click decoders give no false-click rate and no bound.
 - **Done when:** the pre-registered run reports H1 (the false-click rate stays at or below the stated alpha on held-out blocks) and H2 (bits per second at the same false-click rate against a fixed-threshold and a smoothing baseline), or numbers say why not.
 
 
@@ -1973,7 +1981,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P14-62 safe-WPM wording in the drop-in module
 - **Gap:** 202 of the [open-gap list](open-gaps.md) (added 2026-11-23 by P14-61). Follow-up of P14-61.
-- **Status:** `todo`. Low priority.
+- **Status:** `in_progress` (2026-11-24; one code-fix agent runs gaps 200, 202, 205, 195 and 213; nothing committed yet). Low priority.
 - **Serves:** research labs, small teams.
 - **Depends on:** P14-61 (done); the gap 191 (P5-38) agent commits first, because it edits the same file; CPU. Low priority.
 - **Source:** P14-61 (2026-11-23, commit `38f1e50`): `src/fidetype/trust/dropin.py` (about line 1703) still says "safe-wpm/0.2 (proposed)". safe-WPM v0.2 was adopted on 2026-11-22.
@@ -1989,7 +1997,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P14-64 Headline callers of calibration_draw_interval use partition draws and K >= 80
 - **Gap:** 205 of the [open-gap list](open-gaps.md) (added 2026-11-23 by P14-61). Follow-up of P14-61, P15-29.
-- **Status:** `todo`.
+- **Status:** `in_progress` (2026-11-24; one code-fix agent runs gaps 200, 202, 205, 195 and 213; nothing committed yet).
 - **Serves:** research labs, small teams.
 - **Depends on:** P14-61 (done); CPU.
 - **Source:** P14-61 (2026-11-23, commit `38f1e50`): `calibration_draw_interval` warns when K < 80 or when the draws are not partition-only, but it does not refuse. The adopted v0.2 rule (user decision 2026-11-22) needs K >= 80 and partition-only draws for a headline result.
@@ -2395,7 +2403,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P15-44 control_flags label in the P15-41 script
 - **Gap:** 195 of the [open-gap list](open-gaps.md) (added 2026-11-22 by P15-41). Follow-up of P15-41.
-- **Status:** `todo`. Low priority.
+- **Status:** `in_progress` (2026-11-24; one code-fix agent runs gaps 200, 202, 205, 195 and 213; nothing committed yet). Low priority.
 - **Serves:** research labs.
 - **Depends on:** P15-41 (done); CPU. Low priority.
 - **Source:** P15-41 (2026-11-22, results `02aa679`, [results](../../experiments/2026-11-22-p15-41-more-seeds/results.md)): in `experiments/2026-11-22-p15-41-more-seeds/p41.py` the `control_flags` strings read "C2 done on seed k" (the run status). `C2.<k>.pass` = false is the correct value.
@@ -2403,7 +2411,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P15-45 C2 at the full-data budget of E1
 - **Gap:** 197 of the [open-gap list](open-gaps.md) (added 2026-11-23 by P15-43). Follow-up of P15-43, P15-36.
-- **Status:** `in_progress` (2026-11-23). Medium priority. Pre-registration `20f9f5b`, code `d4f5990`; GPU job launched 18:10:12 (pid 19364). C2 passes on seeds 0-3 (deranged 0.9794, 0.8657, 0.9530, 0.8959; needed 0.75); seed 4 runs. Not done.
+- **Status:** `done` (2026-11-23, results `273fba2`, [results](../../experiments/2026-11-23-p15-45-c2-full-data/results.md); pre-registration `20f9f5b`, code `d4f5990`). Gap 197 closed. **Outcome A:** C2 passes on all 5 seeds at the full-data budget (E1a recipe, budget all, arm E). Deranged test CER 0.979 / 0.866 / 0.953 / 0.896 / 0.876 vs needed 0.750; normal 0.360 / 0.431 / 0.329 / 0.420 / 0.366; min margin +0.116. Arm E 5-seed mean 0.381. C1 passes on the new seeds. 2.52 GPU h. The run used the E1a recipe, not F-R20 (the plan states this). The north-star F3 row now states that the full-data result has a valid label-deranged control.
 - **Serves:** research labs.
 - **Depends on:** P15-43 (done); the E1a full-data recipe (or F-R20 at the full budget); GPU, long (estimate the cost in the plan). Medium priority.
 - **Source:** P15-43 (2026-11-23, results `a98964c`, [results](../../experiments/2026-11-23-p15-43-c2-30min/results.md)): C2 fails at 3, 10 and 30 min on at least one seed, so F3 rests on the full-data result only (E 0.395, V1). That result has no label-deranged control on more than one budget-matched seed set.
@@ -2445,7 +2453,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P15-50 F3 at full data with tuned arms and repeated deranged controls
 - **Gap:** 210 of the [open-gap list](open-gaps.md) (added 2026-11-23 by the frontier plan). Follow-up of P15-08, P15-45, P15-46, P15-47.
-- **Status:** `todo`.
+- **Status:** `in_progress` (GPU job since 2026-11-23 21:03:50; wrapper `88a3ab8`, no result; stage-1 recipe selection `3bb55f0`, val only, before any stage-2 test number). Stage 1 picked R+: lr 5e-4, 6000 steps (mean val CER 0.171); E+: lr 1e-3, 6000 steps (mean val CER 0.120). Several R cells were excluded by the pre-registered > 0.90 rule. At 2026-11-24 08:50 the T15 trunk pretraining (arm I) was at step 10,000 / 30,000; 11.7 GPU h used. Not done.
 - **Serves:** research labs.
 - **Depends on:** pre-registration `29c1dc9`; the run wrapper (gap 212 = P15-52); the local GPU after P15-45; the K arm needs P11-06 (gap 86).
 - **Source:** frontier plan (user "go", 2026-11-23), direction 3. Pre-registration `29c1dc9` ([plan](../../experiments/2026-11-23-f3-full-data-controls/plan.md)): tuned R+ / E+ arms (same val-only rule), K (KT-sEMG trunk) and I (T15 trunk) arms, 3 deranged runs per seed. It applies the repeated-deranged rule of P15-46 (gap 198). The packaged `willett-hw` decoder is R seed 0 (CER 0.305), so "E beats R" at full data may only show an unstable R recipe.
@@ -2459,7 +2467,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P15-52 Run wrappers for E2 and F3
 - **Gap:** 212 of the [open-gap list](open-gaps.md) (added 2026-11-23 by the frontier plan). Follow-up of P15-49, P15-50.
-- **Status:** `todo`.
+- **Status:** `in_progress` (2026-11-24). F3 part: wrapper `88a3ab8` (code + CPU tests, no result); it runs as the P15-50 GPU job. E2 part: an agent writes the wrapper now. The gap stays open for the E2 part.
 - **Serves:** research labs.
 - **Depends on:** pre-registration `29c1dc9`; CPU (a short GPU smoke into a scratch folder only).
 - **Source:** plan agent report (2026-11-23, commits `29c1dc9`, `aa91210`): the E2 and F3 plans are committed, but their run wrappers are not written yet.
@@ -2533,7 +2541,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P16-06 Beyond words: affect and memory-state decoding with signal checks
 - **Gap:** 206 of the [open-gap list](open-gaps.md) (added 2026-11-23 by the user request "beyond words"). Follow-up of P16-01, P16-02.
-- **Status:** `todo`.
+- **Status:** `in_progress` (2026-11-24). The beyond-words research agent scoped gaps 206 and 207 (report to the orchestrator; no wiki page committed yet).
 - **Serves:** research labs.
 - **Depends on:** the research scope (a research agent runs 2026-11-23); public datasets (licence check first); trust layer (P5, P14-03).
 - **Source:** user request 2026-11-23: decode more than words (emotion / affect, memory state, images), and the user wants to build it. The existing P16 phase (emotion and memory) covers the write side and one read-side affect item (P16-02). A research agent scopes the track now.
@@ -2541,7 +2549,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P16-07 Image reconstruction decoding with signal checks
 - **Gap:** 207 of the [open-gap list](open-gaps.md) (added 2026-11-23 by the user request "beyond words"). Follow-up of P16-06.
-- **Status:** `todo`.
+- **Status:** `in_progress` (2026-11-24). An agent prepares the A1 EEG image check on CPU (nothing committed yet). The GPU check waits for a free GPU and a user choice.
 - **Serves:** research labs.
 - **Depends on:** P16-06 (scope); public datasets (licence check first); GPU (cost in the plan).
 - **Source:** user request 2026-11-23 ("beyond words", images). No roadmap item covered image decoding before.
