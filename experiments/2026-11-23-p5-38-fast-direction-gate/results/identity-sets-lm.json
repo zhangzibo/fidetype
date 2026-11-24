@@ -1,0 +1,41 @@
+{
+ "guard": "lm",
+ "config_id": "tcfg-f498c0637536daec",
+ "n": 332,
+ "n_equal": 332,
+ "all_equal": true,
+ "by_set": {
+  "val_S:real": {
+   "n": 66,
+   "equal": 66,
+   "offers_off": 64,
+   "offers_on": 64
+  },
+  "val_S:rev_out": {
+   "n": 66,
+   "equal": 66,
+   "offers_off": 1,
+   "offers_on": 1
+  },
+  "val_ltt:real": {
+   "n": 40,
+   "equal": 40,
+   "offers_off": 40,
+   "offers_on": 40
+  },
+  "test:real": {
+   "n": 80,
+   "equal": 80,
+   "offers_off": 75,
+   "offers_on": 75
+  },
+  "test:rev_out": {
+   "n": 80,
+   "equal": 80,
+   "offers_off": 2,
+   "offers_on": 2
+  }
+ },
+ "compared": "action, shown candidates (digest), reason (digest), offer-gate reason (digest), every offer-gate feature incl. lm_beam_direction (float bit pattern); cache off vs on",
+ "seconds": 241.5
+}

@@ -38,7 +38,8 @@ name               input   value
                            the best beam (acoustic + LM + length bonus, end marker included), ``n`` = its
                            tokens, ``rev x`` = the frames in reverse order (``readout=``). It changes sign
                            exactly when the frame order is reversed; 0 for no frames. It costs two beam
-                           searches per scored decision (P5-36b)
+                           searches per scored decision (P5-36b), or one when the guard decodes with the
+                           same readout (its search cache gives the forward search; P5-38)
 ``p_top1``         both    calibrated top-1 probability of the decision
 ``safety``         both    1 - guard risk of the decision
 ``margin``         nbest   (score 1 - score 2) / max(1, characters of item 1); 0 for one item

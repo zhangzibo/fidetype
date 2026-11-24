@@ -721,7 +721,8 @@ class TrustGuard:
         #: A character LM for the ``char_lm`` features when no gate carries one (P5-33 analysis).
         self.offer_lm: Any = None
         #: An LM-beam readout for ``lm_beam_direction`` when no gate carries one (P5-36b analysis). With
-        #: ``collect_offer_features`` it costs two beam searches per decision.
+        #: ``collect_offer_features`` it costs two beam searches per decision (one if the guard decodes with the
+        #: same readout: its search cache gives the forward search, P5-38).
         self.offer_readout: Any = None
         self._offer_gate_why: str | None = None
         #: P5-36 frame-order check (:func:`~fidetype.trust.integrity.check_frame_times`) settings. It runs only

@@ -1,0 +1,71 @@
+[2026-11-23 19:31:43] keep_awake: on (SetThreadExecutionState)
+[2026-11-23 19:31:43] keep_awake: on (SetThreadExecutionState)
+[2026-11-23 19:31:43] start ['bench']
+[2026-11-23 19:31:43] keep_awake: cleared
+[2026-11-23 19:31:43] FAILED
+Traceback (most recent call last):
+  File "C:\Users\zhang\OneDrive\Documents\GitHub\stealth-project\experiments\2026-11-23-p5-38-fast-direction-gate\run.py", line 340, in main
+    stage_bench(m, G)
+  File "C:\Users\zhang\OneDrive\Documents\GitHub\stealth-project\experiments\2026-11-23-p5-38-fast-direction-gate\run.py", line 163, in stage_bench
+    set_cache(g, mode != "off")
+  File "C:\Users\zhang\OneDrive\Documents\GitHub\stealth-project\experiments\2026-11-23-p5-38-fast-direction-gate\run.py", line 116, in set_cache
+    ro = readout(g)
+         ^^^^^^^^^^
+  File "C:\Users\zhang\OneDrive\Documents\GitHub\stealth-project\experiments\2026-11-23-p5-38-fast-direction-gate\run.py", line 112, in readout
+    return g.offer_gates[1].readout
+           ~~~~~~~~~~~~~^^^
+IndexError: tuple index out of range
+
+[2026-11-23 19:31:43] start ['sets:lm', 'recheck:lm:off', 'recheck:lm:on']
+[2026-11-23 19:31:44] sets lm: 1 / 332 (0 s)
+[2026-11-23 19:32:12] sets lm: 51 / 332 (29 s)
+[2026-11-23 19:32:37] sets lm: 101 / 332 (53 s)
+[2026-11-23 19:32:49] keep_awake: on (SetThreadExecutionState)
+[2026-11-23 19:32:49] start ['bench']
+[2026-11-23 19:33:08] sets lm: 151 / 332 (84 s)
+[2026-11-23 19:33:46] sets lm: 201 / 332 (123 s)
+[2026-11-23 19:34:12] keep_awake: on (SetThreadExecutionState)
+[2026-11-23 19:34:12] keep_awake: on (SetThreadExecutionState)
+[2026-11-23 19:34:12] keep_awake: on (SetThreadExecutionState)
+[2026-11-23 19:34:12] start ['sets:builtin']
+[2026-11-23 19:34:12] start ['recheck:builtin:off']
+[2026-11-23 19:34:13] start ['recheck:builtin:on']
+[2026-11-23 19:34:13] sets builtin: 1 / 332 (0 s)
+[2026-11-23 19:34:23] sets lm: 251 / 332 (159 s)
+[2026-11-23 19:35:03] sets lm: 301 / 332 (200 s)
+[2026-11-23 19:35:28] bench builtin: {"n": 20, "n_coherence_offers": 20, "decision_coh_median_s": 0.3195, "extra_per_offer_median_s": {"off": 0.243, "on": 0.2486}, "extra_per_offer_cpu_median_s": {"off": 0.25, "on": 0.2578}, "gate_alone_median_s": {"off": 0.2711, "on": 0.274}, "gate_alone_cpu_median_s": {"off": 0.2656, "on": 0.2734}, "searches_per_offer_decision": {"coh": ["{\"run\": 0, \"cached\": 0}"], "off": ["{\"run\": 2, \"cached\": 0}"], "on": ["{\"run\": 2, \"cached\": 0}"]}, "actions_equal_off_on": true, "gate_alone_ratio_on_off": 1.011}
+[2026-11-23 19:35:45] sets lm: all_equal True (332 / 332); {'val_S:real': {'n': 66, 'equal': 66, 'offers_off': 64, 'offers_on': 64}, 'val_S:rev_out': {'n': 66, 'equal': 66, 'offers_off': 1, 'offers_on': 1}, 'val_ltt:real': {'n': 40, 'equal': 40, 'offers_off': 40, 'offers_on': 40}, 'test:real': {'n': 80, 'equal': 80, 'offers_off': 75, 'offers_on': 75}, 'test:rev_out': {'n': 80, 'equal': 80, 'offers_off': 2, 'offers_on': 2}}
+[2026-11-23 19:36:00] sets builtin: 51 / 332 (107 s)
+[2026-11-23 19:37:23] sets builtin: 101 / 332 (190 s)
+[2026-11-23 19:37:27] bench lm: {"n": 20, "n_coherence_offers": 20, "decision_coh_median_s": 0.3236, "extra_per_offer_median_s": {"off": 0.1279, "on": 0.0628}, "extra_per_offer_cpu_median_s": {"off": 0.1328, "on": 0.0625}, "gate_alone_median_s": {"off": 0.1248, "on": 0.0659}, "gate_alone_cpu_median_s": {"off": 0.125, "on": 0.0625}, "searches_per_offer_decision": {"coh": ["{\"run\": 1, \"cached\": 0}"], "off": ["{\"run\": 3, \"cached\": 0}"], "on": ["{\"run\": 2, \"cached\": 1}"]}, "actions_equal_off_on": true, "gate_alone_ratio_on_off": 0.528}
+[2026-11-23 19:37:27] keep_awake: cleared
+[2026-11-23 19:37:27] end of ['bench'] (277 s)
+[2026-11-23 19:38:51] sets builtin: 151 / 332 (278 s)
+[2026-11-23 19:39:59] recheck lm off: passed True: [('uniform', 0, 300), ('shuffled', 0, 300), ('user', 0, 106)], real {'n': 40, 'n_offer': 40, 'offer_rate': 1.0} (253.3 s)
+[2026-11-23 19:40:35] sets builtin: 201 / 332 (383 s)
+[2026-11-23 19:42:31] sets builtin: 251 / 332 (499 s)
+[2026-11-23 19:43:40] sets builtin: 301 / 332 (567 s)
+[2026-11-23 19:44:17] recheck lm on: passed True: [('uniform', 0, 300), ('shuffled', 0, 300), ('user', 0, 106)], real {'n': 40, 'n_offer': 40, 'offer_rate': 1.0} (258.0 s)
+[2026-11-23 19:44:17] keep_awake: cleared
+[2026-11-23 19:44:17] end of ['sets:lm', 'recheck:lm:off', 'recheck:lm:on'] (754 s)
+[2026-11-23 19:44:31] sets builtin: all_equal True (332 / 332); {'val_S:real': {'n': 66, 'equal': 66, 'offers_off': 65, 'offers_on': 65}, 'val_S:rev_out': {'n': 66, 'equal': 66, 'offers_off': 1, 'offers_on': 1}, 'val_ltt:real': {'n': 40, 'equal': 40, 'offers_off': 40, 'offers_on': 40}, 'test:real': {'n': 80, 'equal': 80, 'offers_off': 76, 'offers_on': 76}, 'test:rev_out': {'n': 80, 'equal': 80, 'offers_off': 1, 'offers_on': 1}}
+[2026-11-23 19:44:31] keep_awake: cleared
+[2026-11-23 19:44:31] end of ['sets:builtin'] (619 s)
+[2026-11-23 20:35:46] recheck builtin on: passed True: [('uniform', 0, 300), ('shuffled', 0, 300), ('user', 0, 106)], real {'n': 40, 'n_offer': 40, 'offer_rate': 1.0} (3693.0 s)
+[2026-11-23 20:35:46] keep_awake: cleared
+[2026-11-23 20:35:46] end of ['recheck:builtin:on'] (3694 s)
+[2026-11-23 20:35:50] recheck builtin off: passed True: [('uniform', 0, 300), ('shuffled', 0, 300), ('user', 0, 106)], real {'n': 40, 'n_offer': 40, 'offer_rate': 1.0} (3697.2 s)
+[2026-11-23 20:35:50] keep_awake: cleared
+[2026-11-23 20:35:50] end of ['recheck:builtin:off'] (3698 s)
+[2026-11-23 20:36:12] keep_awake: on (SetThreadExecutionState)
+[2026-11-23 20:36:12] start ['compare']
+[2026-11-23 20:36:12] compare builtin: {'n_decisions': [746, 746], 'decisions_equal': True, 'summary_equal': True, 'n_offer_off': 40, 'n_offer_on': 40, 'controls': [('uniform', 0, 300), ('shuffled', 0, 300), ('user', 0, 106)], 'real': {'n': 40, 'n_offer': 40, 'offer_rate': 1.0}, 'passed': True, 'seconds': {'off': 3697.2, 'on': 3693.0}, 'searches': {'off': {'run': 80, 'cached': 0}, 'on': {'run': 80, 'cached': 0}}}
+[2026-11-23 20:36:12] compare lm: {'n_decisions': [746, 746], 'decisions_equal': True, 'summary_equal': True, 'n_offer_off': 40, 'n_offer_on': 40, 'controls': [('uniform', 0, 300), ('shuffled', 0, 300), ('user', 0, 106)], 'real': {'n': 40, 'n_offer': 40, 'offer_rate': 1.0}, 'passed': True, 'seconds': {'off': 253.3, 'on': 258.0}, 'searches': {'off': {'run': 2070, 'cached': 324}, 'on': {'run': 2448, 'cached': 364}}}
+[2026-11-23 20:36:12] keep_awake: cleared
+[2026-11-23 20:36:12] end of ['compare'] (0 s)
+[2026-11-23 20:36:23] keep_awake: on (SetThreadExecutionState)
+[2026-11-23 20:36:24] start ['compare']
+[2026-11-23 20:36:24] compare builtin: {'n_decisions': [746, 746], 'decisions_equal': True, 'summary_equal': True, 'n_offer_off': 40, 'n_offer_on': 40, 'controls': [('uniform', 0, 300), ('shuffled', 0, 300), ('user', 0, 106)], 'real': {'n': 40, 'n_offer': 40, 'offer_rate': 1.0}, 'passed': True, 'seconds': {'off': 3697.2, 'on': 3693.0}}
+[2026-11-23 20:36:24] compare lm: {'n_decisions': [746, 746], 'decisions_equal': True, 'summary_equal': True, 'n_offer_off': 40, 'n_offer_on': 40, 'controls': [('uniform', 0, 300), ('shuffled', 0, 300), ('user', 0, 106)], 'real': {'n': 40, 'n_offer': 40, 'offer_rate': 1.0}, 'passed': True, 'seconds': {'off': 253.3, 'on': 258.0}}
+[2026-11-23 20:36:24] keep_awake: cleared
+[2026-11-23 20:36:24] end of ['compare'] (0 s)

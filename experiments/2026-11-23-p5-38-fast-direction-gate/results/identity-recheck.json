@@ -1,0 +1,77 @@
+{
+ "compared": "every _decide_quiet call of recheck_offer_control (real LTT, uniform, frame-shuffled, time-shuffled), in order: action, shown candidates, reason, offer-gate reason (digests); and the re-check result dict; cache off vs on",
+ "builtin": {
+  "n_decisions": [
+   746,
+   746
+  ],
+  "decisions_equal": true,
+  "summary_equal": true,
+  "n_offer_off": 40,
+  "n_offer_on": 40,
+  "controls": [
+   [
+    "uniform",
+    0,
+    300
+   ],
+   [
+    "shuffled",
+    0,
+    300
+   ],
+   [
+    "user",
+    0,
+    106
+   ]
+  ],
+  "real": {
+   "n": 40,
+   "n_offer": 40,
+   "offer_rate": 1.0
+  },
+  "passed": true,
+  "seconds": {
+   "off": 3697.2,
+   "on": 3693.0
+  }
+ },
+ "lm": {
+  "n_decisions": [
+   746,
+   746
+  ],
+  "decisions_equal": true,
+  "summary_equal": true,
+  "n_offer_off": 40,
+  "n_offer_on": 40,
+  "controls": [
+   [
+    "uniform",
+    0,
+    300
+   ],
+   [
+    "shuffled",
+    0,
+    300
+   ],
+   [
+    "user",
+    0,
+    106
+   ]
+  ],
+  "real": {
+   "n": 40,
+   "n_offer": 40,
+   "offer_rate": 1.0
+  },
+  "passed": true,
+  "seconds": {
+   "off": 253.3,
+   "on": 258.0
+  }
+ }
+}

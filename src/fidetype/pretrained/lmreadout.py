@@ -34,6 +34,7 @@ decoder form of :func:`fidetype.trust.calibrate`).
 from __future__ import annotations
 
 import math
+import threading
 from dataclasses import dataclass
 from typing import Any, Callable, Mapping, Sequence
 
@@ -656,6 +657,14 @@ class LmReadout:
         self.settings = dict(settings)
         self.gate = gate
         self.blank = int(blank)
+        #: Number of recent searches to keep (P5-38). A search on log-probs that are bit-equal to a kept one,
+        #: with the same LM and settings, returns the kept result instead of a new search. The search is
+        #: deterministic, so no result changes. 0: no cache.
+        self.search_cache = 2
+        self._memo: list[tuple[tuple[Any, ...], np.ndarray, list[Hyp]]] = []
+        self._memo_lock = threading.Lock()
+        #: Searches run and searches served from the cache (P5-38; for tests and measurements).
+        self.search_stats = {"run": 0, "cached": 0}
 
     def _beam(self) -> LMBeam:
         s = self.settings
@@ -666,10 +675,46 @@ class LmReadout:
     def _needs_lm(self) -> bool:
         return bool(getattr(self.gate, "needs_lm", False))
 
+    def _search_key(self, lp: np.ndarray) -> tuple[Any, ...]:
+        s = self.settings
+        return (lp.shape, id(self.lm), self.blank, len(self.vocab), float(s.get("lm_weight", 0.0)),
+                float(s.get("bonus", 0.0)), int(s.get("beam", 8)), float(s.get("prune_logp", -8.0)))
+
     def _search(self, lp: np.ndarray, n: int | None) -> list[Hyp]:
-        d = self._beam()
-        d.push(lp)
-        return d.nbest(n)
+        """The hypotheses of one search, best first (the first ``n``).
+
+        P5-38: the full sorted list of a search is kept for the last :attr:`search_cache` inputs, so a second
+        search on bit-equal log-probs (for example the forward search of the ``lm_beam_direction`` offer gate
+        after the guard decode with this readout) is not run again. ``nbest(n)`` of a search is the first
+        ``n`` items of its full sorted list, so the result is the same.
+        """
+        size = int(self.search_cache)
+        if size <= 0:
+            self.search_stats["run"] += 1
+            d = self._beam()
+            d.push(lp)
+            return d.nbest(n)
+        a = np.ascontiguousarray(lp, dtype=np.float64)
+        key = self._search_key(a)
+        bits = a.view(np.uint64)
+        hs: list[Hyp] | None = None
+        with self._memo_lock:
+            for k, kept, h in self._memo:
+                if k == key and np.array_equal(kept.view(np.uint64), bits):
+                    hs = h
+                    break
+        if hs is None:
+            self.search_stats["run"] += 1
+            d = self._beam()
+            d.push(a)
+            hs = d.nbest(None)
+            with self._memo_lock:
+                self._memo.insert(0, (key, a.copy(), hs))
+                del self._memo[size:]
+        else:
+            self.search_stats["cached"] += 1
+        out = hs if n is None else hs[:n]
+        return [Hyp(list(h.tokens), list(h.frames), h.score, h.logp_acoustic, h.logp_lm) for h in out]
 
     def gated(self, log_probs: np.ndarray) -> bool:
         """True when the gate stops this input (no text)."""
