@@ -658,7 +658,7 @@ def evaluate_rules(s: dict, gate: dict) -> tuple[dict, str]:
         out = "A"
     b0 = s["b0"]["g_plus"]
     rules["qualifier_behaviour_explains_it"] = bool(
-        s["b0"]["gate"]["lambda_plus"] is not None and b0["flags"] >= gp["flags"] and out in ("A", "B"))
+        s["b0"]["gate"]["lambda_plus"] is not None and b0["flags"] >= gp["flags"])
     return rules, out
 
 
