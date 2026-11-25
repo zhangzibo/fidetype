@@ -335,6 +335,44 @@ T15 result (pre-registered, [results](../experiments/2026-11-18-p5-27-streaming-
 
 Score it with `safe_wpm(..., metric_version="0.2", n_commits=...)`, the "several commits per trial" rule of safe-WPM v0.2 (adopted 2026-11-24; [safe-wpm.md](safe-wpm.md) section 6c). The default behaviour of `calibrate` does not change.
 
+## 10d. Optional: calibration data from several users
+
+The bound of section 1 is on the **mix** of the calibration data. When the data pool several users (or sessions), two problems can occur:
+
+1. **The score knows the user.** Users differ in how often the decoder is right. If the commit score also differs by user (for example a personal decoder makes a good user also a confident user), the LTT step can certify commits of the good users with no evidence from the utterance itself. In one memory-decoding test, a gate pooled over 30 subjects passed its threshold on permuted labels and on noise for this reason.
+2. **One user is worse than the mix.** The mix meets α, but one user does not.
+
+Give one user id per utterance to check for both. Off by default: without `users=` nothing changes.
+
+```python
+guard = ft.calibrate(cal_x, cal_texts, ..., users=cal_user_ids)   # user_check="warn" (default)
+print(guard.sheet)                                                 # adds a "users" block
+guard = ft.calibrate(cal_x, cal_texts, ..., users=cal_user_ids, user_bound="each")  # per-user bound
+```
+
+`users=` is not the same as `groups=`. `groups=` keeps repeats of a sentence in one part of the split. `users=` does not change the split.
+
+| Item | Meaning |
+|---|---|
+| User check (`user_check`) | On the LTT items, the labels "top-1 is right" are permuted **inside each user** (this keeps each user's rate of right texts) and **over all users**, 200 times each. The same LTT step runs on each permuted set, with the same scores |
+| Verdict `fail` | The guard certifies commits, but labels permuted inside users certify as many in more than 5 % of the runs. The certificate can come from who the user is, not from the utterance |
+| Verdict `partial` | Labels permuted inside users certify more commits than labels permuted over all users (one-sided Mann-Whitney U, p < 0.01). Part of the certificate is "which user" |
+| `"warn"` (default), `"refuse"`, `"off"` | `"warn"`: the result is in `sheet.users`, and `fail` or `partial` adds a sheet warning. `"refuse"`: `fail` raises `NullControlError` and no guard is returned. `"off"`: not run. The check changes no decision and not `config_id` |
+| Per-user bound (`user_bound`) | `"pooled"` (default): the bound of section 1 only. `"each"`: the commit threshold is raised until LTT certifies it on the LTT items of **each** user, at level δ per user. `"all"`: the same at level δ / K for K users, so the bound holds for **all** calibration users together with probability at least 1 − δ. A higher threshold only removes commits, so section 1 and the null controls still hold |
+| Items needed | Each user needs at least log δ_u / log(1 − α) LTT items (LTT is 37.5 % of the items): for α = 0.05, 45 LTT items per user (`"each"`, δ = 0.1) or 72 (`"all"`, 4 users). With fewer, `calibrate` raises `ValueError` |
+| Files | A per-user threshold is in the frozen configuration, so `config_id` changes only with `user_bound="each"` or `"all"`. The `users` block of the sheet holds counts only (no user ids) |
+| Not in this version | `commit_unit="prefix"`, `grounding=`, `llm=`, `target_precision=` (a `ValueError`) |
+
+Limits:
+- The check tests the LTT step at the score level. It does not fit the temperatures or the learned score again on permuted labels.
+- A `fail` also occurs when the score carries no signal inside users at all, and when most certified commits come from users with a high rate of right texts, even if some within-user signal exists. It is a warning sign, not a proof of a leak.
+- The per-user bound is for the users in the calibration data. A new user gets no per-user guarantee (assumption A1).
+- Few items per user give a high threshold and few commits.
+
+Validated (pre-registered, [results](../experiments/2026-11-25-p5-42-per-user-null/results.md)). Synthetic data, 4 users, 20 runs per case: a score that knows only the user gets `fail` in 20 of 20 runs; real signal inside users gets `pass` in 19 of 20; with one overconfident user, `user_bound="all"` keeps every user at or below α in 20 of 20 runs (the pooled guard lets that user exceed α in 13 of 20). With real signal **and** large differences between users, the verdict is `fail` in 8 of 20 runs (`partial` in 12), so use `"refuse"` with care. On three pooled EMG typing guards (8 users) the check says `partial`; `user_bound="each"` is certified but commits only 2 to 8 of 1,221 test prompts, because each user has only about 57 LTT items.
+
+Code: [`src/fidetype/trust/user_check.py`](../src/fidetype/trust/user_check.py).
+
 ## 11. Online use: adaptive risk control for drift
 
 The guard above is calibrated once. Its bound needs exchangeable data (section 3). Live data drift: within a session, between days, after a decoder update. Adaptive conformal methods move the COMMIT threshold from the user's feedback. Their bound holds for **any** sequence of utterances. But it is a **long-run average**, not a 1 − δ statement.

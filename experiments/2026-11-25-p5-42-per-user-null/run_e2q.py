@@ -22,7 +22,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = ""
 import argparse  # noqa: E402
 import importlib.util  # noqa: E402
 import json  # noqa: E402
-import math  # noqa: E402
+import re  # noqa: E402
 import sys  # noqa: E402
 import time  # noqa: E402
 from pathlib import Path  # noqa: E402
@@ -173,7 +173,8 @@ def summary() -> dict:
                                         "nw_commits_median", "np_commits_median", "nw_commits_max", "np_commits_max",
                                         "n_items", "n_users", "n_runs")},
             "E1_full_recipe_nulls": {k2: pgc[gid]["nulls"][k2] for k2 in ("commits_median", "mwu_p_NW_gt_NP")},
-            "E2": {b: ({"status": "refused", "reason": rec[b]["reason"]} if rec[b]["status"] == "refused" else
+            "E2": {b: ({"status": "refused", "reason": re.sub(r" \(smallest: \d+\)", "", rec[b]["reason"])}
+                       if rec[b]["status"] == "refused" else
                        {"status": "guard", "config_id": rec[b]["config_id"],
                         "commit_threshold": rec[b]["commit_threshold"], "ltt_commits": rec[b]["ltt_commits"],
                         "ltt_wrong": rec[b]["ltt_wrong"], "test": rec[b]["test"],

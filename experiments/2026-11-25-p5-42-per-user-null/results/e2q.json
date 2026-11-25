@@ -1,0 +1,211 @@
+{
+ "task": "P5-42 emg2qwerty re-run",
+ "plan": "plan.md (ad51861)",
+ "alpha": 0.05,
+ "note": "aggregates only: no per-user value for emg2qwerty, no text, no id",
+ "emg2qwerty_licence": {
+  "data.licence": "CC-BY-NC-SA-4.0",
+  "data.research_only": true
+ },
+ "arms": {
+  "E-S": {
+   "E0": {
+    "passed": true,
+    "config_id": "tcfg-3875f995e4c256fb",
+    "expected": "tcfg-3875f995e4c256fb",
+    "ltt_commits": 71,
+    "ltt_wrong": 16
+   },
+   "E1": {
+    "verdict": "partial",
+    "p_user": 0.004975124378109453,
+    "p_leak": 2.125122871397377e-46,
+    "real_commits": 71,
+    "real_threshold": 0.55,
+    "nw_commits_median": 25.0,
+    "np_commits_median": 18.0,
+    "nw_commits_max": 38,
+    "np_commits_max": 31,
+    "n_items": 459,
+    "n_users": 8,
+    "n_runs": 200
+   },
+   "E1_full_recipe_nulls": {
+    "commits_median": {
+     "NX": 9.5,
+     "NW": 23.0,
+     "NP": 18.0
+    },
+    "mwu_p_NW_gt_NP": 0.008563063086472223
+   },
+   "E2": {
+    "each": {
+     "status": "guard",
+     "config_id": "tcfg-3d70f0ca31b2fa71",
+     "commit_threshold": 0.83,
+     "ltt_commits": 0,
+     "ltt_wrong": 0,
+     "test": {
+      "n": 1221,
+      "commits": 2,
+      "wrong": 0,
+      "users_rate_above_alpha": 0,
+      "users_cp_upper_above_2alpha": 0,
+      "r3_passed": true,
+      "n_users": 8
+     },
+     "level_per_user": 0.1,
+     "n_min_per_user": 45,
+     "users_never": 0
+    },
+    "all": {
+     "status": "refused",
+     "reason": "user_bound='all' needs at least 86 LTT items per user (alpha 0.05, level 0.0125); 8 of 8 users have fewer. The LTT part is 37.5 % of the items of each user on average: give more labelled utterances per user, or use user_bound='each' (level delta per user) instead of 'all'."
+    }
+   },
+   "pooled_test": {
+    "commits": 167,
+    "wrong": 35,
+    "users_rate_above_alpha": 1,
+    "users_cp_upper_above_2alpha": 1
+   },
+   "pooled_threshold": 0.55,
+   "warnings": [
+    "user check: labels permuted inside each user certify more commits than labels permuted over all users (median 25 vs 18; p_leak 2.13e-46): part of the certificate is which user. The bound is on the pool; user_bound='each' or 'all' gives a per-user bound."
+   ]
+  },
+  "E-SL": {
+   "E0": {
+    "passed": true,
+    "config_id": "tcfg-0cd6e9578e965f42",
+    "expected": "tcfg-0cd6e9578e965f42",
+    "ltt_commits": 80,
+    "ltt_wrong": 16
+   },
+   "E1": {
+    "verdict": "partial",
+    "p_user": 0.004975124378109453,
+    "p_leak": 7.111657700152726e-61,
+    "real_commits": 80,
+    "real_threshold": 0.61,
+    "nw_commits_median": 29.0,
+    "np_commits_median": 19.0,
+    "nw_commits_max": 45,
+    "np_commits_max": 32,
+    "n_items": 459,
+    "n_users": 8,
+    "n_runs": 200
+   },
+   "E1_full_recipe_nulls": {
+    "commits_median": {
+     "NX": 20.5,
+     "NW": 25.5,
+     "NP": 20.5
+    },
+    "mwu_p_NW_gt_NP": 0.00283521293287675
+   },
+   "E2": {
+    "each": {
+     "status": "guard",
+     "config_id": "tcfg-7687587f656f4191",
+     "commit_threshold": 0.94,
+     "ltt_commits": 2,
+     "ltt_wrong": 0,
+     "test": {
+      "n": 1221,
+      "commits": 8,
+      "wrong": 0,
+      "users_rate_above_alpha": 0,
+      "users_cp_upper_above_2alpha": 0,
+      "r3_passed": true,
+      "n_users": 8
+     },
+     "level_per_user": 0.1,
+     "n_min_per_user": 45,
+     "users_never": 0
+    },
+    "all": {
+     "status": "refused",
+     "reason": "user_bound='all' needs at least 86 LTT items per user (alpha 0.05, level 0.0125); 8 of 8 users have fewer. The LTT part is 37.5 % of the items of each user on average: give more labelled utterances per user, or use user_bound='each' (level delta per user) instead of 'all'."
+    }
+   },
+   "pooled_test": {
+    "commits": 194,
+    "wrong": 31,
+    "users_rate_above_alpha": 2,
+    "users_cp_upper_above_2alpha": 2
+   },
+   "pooled_threshold": 0.61,
+   "warnings": [
+    "user check: labels permuted inside each user certify more commits than labels permuted over all users (median 29 vs 19; p_leak 7.11e-61): part of the certificate is which user. The bound is on the pool; user_bound='each' or 'all' gives a per-user bound."
+   ]
+  },
+  "E-LFL": {
+   "E0": {
+    "passed": true,
+    "config_id": "tcfg-4b2192820e68660b",
+    "expected": "tcfg-4b2192820e68660b",
+    "ltt_commits": 108,
+    "ltt_wrong": 16
+   },
+   "E1": {
+    "verdict": "partial",
+    "p_user": 0.004975124378109453,
+    "p_leak": 8.374991572046603e-46,
+    "real_commits": 108,
+    "real_threshold": 0.63,
+    "nw_commits_median": 28.0,
+    "np_commits_median": 20.0,
+    "nw_commits_max": 35,
+    "np_commits_max": 28,
+    "n_items": 459,
+    "n_users": 8,
+    "n_runs": 200
+   },
+   "E1_full_recipe_nulls": {
+    "commits_median": {
+     "NX": 0.0,
+     "NW": 0.0,
+     "NP": 0.0
+    },
+    "mwu_p_NW_gt_NP": 0.13891004094104192
+   },
+   "E2": {
+    "each": {
+     "status": "guard",
+     "config_id": "tcfg-c5ca2dc86d59e190",
+     "commit_threshold": 0.98,
+     "ltt_commits": 5,
+     "ltt_wrong": 0,
+     "test": {
+      "n": 1221,
+      "commits": 8,
+      "wrong": 0,
+      "users_rate_above_alpha": 0,
+      "users_cp_upper_above_2alpha": 0,
+      "r3_passed": true,
+      "n_users": 8
+     },
+     "level_per_user": 0.1,
+     "n_min_per_user": 45,
+     "users_never": 0
+    },
+    "all": {
+     "status": "refused",
+     "reason": "user_bound='all' needs at least 86 LTT items per user (alpha 0.05, level 0.0125); 8 of 8 users have fewer. The LTT part is 37.5 % of the items of each user on average: give more labelled utterances per user, or use user_bound='each' (level delta per user) instead of 'all'."
+    }
+   },
+   "pooled_test": {
+    "commits": 285,
+    "wrong": 52,
+    "users_rate_above_alpha": 1,
+    "users_cp_upper_above_2alpha": 1
+   },
+   "pooled_threshold": 0.63,
+   "warnings": [
+    "user check: labels permuted inside each user certify more commits than labels permuted over all users (median 28 vs 20; p_leak 8.37e-46): part of the certificate is which user. The bound is on the pool; user_bound='each' or 'all' gives a per-user bound."
+   ]
+  }
+ },
+ "E0_all_passed": true
+}

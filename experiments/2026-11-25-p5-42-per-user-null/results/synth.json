@@ -1,0 +1,1731 @@
+{
+ "plan": "plan.md (ad51861)",
+ "alpha": 0.05,
+ "delta": 0.1,
+ "users": 4,
+ "items_per_user": 300,
+ "test_items_per_user": 3000,
+ "seconds": 1064.5,
+ "rules": {
+  "A": {
+   "k_real_ge_1": 20,
+   "fail": 20,
+   "validity": true,
+   "rule": true
+  },
+  "B": {
+   "pass": 19,
+   "verdicts": {
+    "pass": 19,
+    "fail": 1
+   },
+   "rule": true
+  },
+  "C": {
+   "not_fail": 12,
+   "partial": 12,
+   "verdicts": {
+    "fail": 8,
+    "partial": 12
+   },
+   "rule": false
+  },
+  "D": {
+   "pooled_bad_user_above_alpha": 13,
+   "validity": true,
+   "all_users_within": 20,
+   "rule": true,
+   "all_refused": 0,
+   "pooled_test_commits_median": 1711.0,
+   "all_test_commits_median": 141.5,
+   "verdicts": {
+    "fail": 7,
+    "pass": 10,
+    "partial": 3
+   }
+  },
+  "all_rules_pass": false
+ },
+ "runs": [
+  {
+   "case": "A",
+   "seed": 1,
+   "verdict": "fail",
+   "p_user": 1.0,
+   "p_leak": 5.348811800840671e-82,
+   "k_real": 107,
+   "nw_median": 107.0,
+   "np_median": 33.0,
+   "ltt_commits": 107,
+   "config_id": "tcfg-ff5ac003c2c2f2da",
+   "seconds": 21.5
+  },
+  {
+   "case": "A",
+   "seed": 2,
+   "verdict": "fail",
+   "p_user": 1.0,
+   "p_leak": 3.490423719324267e-79,
+   "k_real": 118,
+   "nw_median": 118.0,
+   "np_median": 27.0,
+   "ltt_commits": 118,
+   "config_id": "tcfg-89d2e37fad03573c",
+   "seconds": 21.5
+  },
+  {
+   "case": "A",
+   "seed": 3,
+   "verdict": "fail",
+   "p_user": 1.0,
+   "p_leak": 2.950544812834901e-80,
+   "k_real": 73,
+   "nw_median": 73.0,
+   "np_median": 34.0,
+   "ltt_commits": 73,
+   "config_id": "tcfg-a4559cebe913fdd2",
+   "seconds": 21.5
+  },
+  {
+   "case": "A",
+   "seed": 4,
+   "verdict": "fail",
+   "p_user": 1.0,
+   "p_leak": 1.8690141418572894e-78,
+   "k_real": 113,
+   "nw_median": 113.0,
+   "np_median": 36.0,
+   "ltt_commits": 113,
+   "config_id": "tcfg-338163bfca377fdf",
+   "seconds": 21.4
+  },
+  {
+   "case": "A",
+   "seed": 5,
+   "verdict": "fail",
+   "p_user": 1.0,
+   "p_leak": 1.5946509292496822e-79,
+   "k_real": 101,
+   "nw_median": 101.0,
+   "np_median": 33.0,
+   "ltt_commits": 101,
+   "config_id": "tcfg-c94a55214f1dae75",
+   "seconds": 20.7
+  },
+  {
+   "case": "A",
+   "seed": 6,
+   "verdict": "fail",
+   "p_user": 1.0,
+   "p_leak": 2.6569942137625947e-80,
+   "k_real": 108,
+   "nw_median": 108.0,
+   "np_median": 28.0,
+   "ltt_commits": 108,
+   "config_id": "tcfg-ada35f954978cc6a",
+   "seconds": 20.7
+  },
+  {
+   "case": "A",
+   "seed": 7,
+   "verdict": "fail",
+   "p_user": 0.835820895522388,
+   "p_leak": 8.231376927363692e-78,
+   "k_real": 153,
+   "nw_median": 158.0,
+   "np_median": 30.0,
+   "ltt_commits": 153,
+   "config_id": "tcfg-50340b66598663e1",
+   "seconds": 20.5
+  },
+  {
+   "case": "A",
+   "seed": 8,
+   "verdict": "fail",
+   "p_user": 0.9651741293532339,
+   "p_leak": 4.38648799191954e-78,
+   "k_real": 130,
+   "nw_median": 130.0,
+   "np_median": 28.0,
+   "ltt_commits": 130,
+   "config_id": "tcfg-e1771a636b21ac98",
+   "seconds": 20.4
+  },
+  {
+   "case": "A",
+   "seed": 9,
+   "verdict": "fail",
+   "p_user": 0.373134328358209,
+   "p_leak": 9.479231998967226e-72,
+   "k_real": 155,
+   "nw_median": 141.0,
+   "np_median": 34.0,
+   "ltt_commits": 155,
+   "config_id": "tcfg-90a7d12d5f7629f1",
+   "seconds": 20.1
+  },
+  {
+   "case": "A",
+   "seed": 10,
+   "verdict": "fail",
+   "p_user": 1.0,
+   "p_leak": 1.1845063254362154e-78,
+   "k_real": 81,
+   "nw_median": 81.0,
+   "np_median": 32.0,
+   "ltt_commits": 81,
+   "config_id": "tcfg-791f664121ce0b79",
+   "seconds": 20.3
+  },
+  {
+   "case": "A",
+   "seed": 11,
+   "verdict": "fail",
+   "p_user": 0.9950248756218906,
+   "p_leak": 9.93047225334553e-79,
+   "k_real": 133,
+   "nw_median": 133.0,
+   "np_median": 28.0,
+   "ltt_commits": 133,
+   "config_id": "tcfg-ddfeddbe51a62c9f",
+   "seconds": 20.4
+  },
+  {
+   "case": "A",
+   "seed": 12,
+   "verdict": "fail",
+   "p_user": 1.0,
+   "p_leak": 9.306308978335485e-82,
+   "k_real": 123,
+   "nw_median": 123.0,
+   "np_median": 19.0,
+   "ltt_commits": 120,
+   "config_id": "tcfg-eaa01b0d8cac1d5d",
+   "seconds": 20.3
+  },
+  {
+   "case": "A",
+   "seed": 13,
+   "verdict": "fail",
+   "p_user": 1.0,
+   "p_leak": 1.526825090490707e-79,
+   "k_real": 107,
+   "nw_median": 107.0,
+   "np_median": 28.0,
+   "ltt_commits": 107,
+   "config_id": "tcfg-5ad1e23ce784374f",
+   "seconds": 20.1
+  },
+  {
+   "case": "A",
+   "seed": 14,
+   "verdict": "fail",
+   "p_user": 1.0,
+   "p_leak": 5.3693458424894966e-79,
+   "k_real": 87,
+   "nw_median": 87.0,
+   "np_median": 40.0,
+   "ltt_commits": 87,
+   "config_id": "tcfg-a9ef92ec7b42e29d",
+   "seconds": 20.1
+  },
+  {
+   "case": "A",
+   "seed": 15,
+   "verdict": "fail",
+   "p_user": 1.0,
+   "p_leak": 1.3943482278208597e-82,
+   "k_real": 91,
+   "nw_median": 91.0,
+   "np_median": 25.0,
+   "ltt_commits": 91,
+   "config_id": "tcfg-4427f5d697c008f1",
+   "seconds": 20.5
+  },
+  {
+   "case": "A",
+   "seed": 16,
+   "verdict": "fail",
+   "p_user": 1.0,
+   "p_leak": 3.2464345358751404e-79,
+   "k_real": 106,
+   "nw_median": 106.0,
+   "np_median": 36.0,
+   "ltt_commits": 106,
+   "config_id": "tcfg-f74d4436b90c1b87",
+   "seconds": 20.5
+  },
+  {
+   "case": "A",
+   "seed": 17,
+   "verdict": "fail",
+   "p_user": 1.0,
+   "p_leak": 2.2868324163565222e-79,
+   "k_real": 102,
+   "nw_median": 102.0,
+   "np_median": 34.0,
+   "ltt_commits": 102,
+   "config_id": "tcfg-bdb1e031098c06c4",
+   "seconds": 20.5
+  },
+  {
+   "case": "A",
+   "seed": 18,
+   "verdict": "fail",
+   "p_user": 0.9950248756218906,
+   "p_leak": 1.862513259414213e-79,
+   "k_real": 136,
+   "nw_median": 136.0,
+   "np_median": 26.0,
+   "ltt_commits": 136,
+   "config_id": "tcfg-cc5284fd1b982d27",
+   "seconds": 20.4
+  },
+  {
+   "case": "A",
+   "seed": 19,
+   "verdict": "fail",
+   "p_user": 0.9601990049751243,
+   "p_leak": 2.45559372876628e-71,
+   "k_real": 135,
+   "nw_median": 143.0,
+   "np_median": 28.0,
+   "ltt_commits": 135,
+   "config_id": "tcfg-b611a3f8ef32d343",
+   "seconds": 20.4
+  },
+  {
+   "case": "A",
+   "seed": 20,
+   "verdict": "fail",
+   "p_user": 0.6019900497512438,
+   "p_leak": 5.041615426839538e-71,
+   "k_real": 124,
+   "nw_median": 124.0,
+   "np_median": 39.0,
+   "ltt_commits": 124,
+   "config_id": "tcfg-961aaf33cc9bc2e0",
+   "seconds": 20.6
+  },
+  {
+   "case": "B",
+   "seed": 1,
+   "verdict": "pass",
+   "p_user": 0.004975124378109453,
+   "p_leak": 0.1031294506600593,
+   "k_real": 89,
+   "nw_median": 41.0,
+   "np_median": 41.0,
+   "ltt_commits": 89,
+   "config_id": "tcfg-a1e7e1b6e3d3a527",
+   "seconds": 20.3
+  },
+  {
+   "case": "B",
+   "seed": 2,
+   "verdict": "pass",
+   "p_user": 0.004975124378109453,
+   "p_leak": 0.8508218863463981,
+   "k_real": 126,
+   "nw_median": 37.0,
+   "np_median": 37.0,
+   "ltt_commits": 126,
+   "config_id": "tcfg-789c6626d1943a1e",
+   "seconds": 20.1
+  },
+  {
+   "case": "B",
+   "seed": 3,
+   "verdict": "pass",
+   "p_user": 0.004975124378109453,
+   "p_leak": 0.37631290094654024,
+   "k_real": 85,
+   "nw_median": 32.0,
+   "np_median": 32.0,
+   "ltt_commits": 85,
+   "config_id": "tcfg-23929977f2d110c5",
+   "seconds": 20.2
+  },
+  {
+   "case": "B",
+   "seed": 4,
+   "verdict": "pass",
+   "p_user": 0.004975124378109453,
+   "p_leak": 0.07120311913079105,
+   "k_real": 107,
+   "nw_median": 43.0,
+   "np_median": 27.0,
+   "ltt_commits": 107,
+   "config_id": "tcfg-62f0e2ee3580dfe8",
+   "seconds": 20.0
+  },
+  {
+   "case": "B",
+   "seed": 5,
+   "verdict": "pass",
+   "p_user": 0.004975124378109453,
+   "p_leak": 0.9889329058294598,
+   "k_real": 73,
+   "nw_median": 29.0,
+   "np_median": 29.0,
+   "ltt_commits": 73,
+   "config_id": "tcfg-0709f7fcefca05b4",
+   "seconds": 20.4
+  },
+  {
+   "case": "B",
+   "seed": 6,
+   "verdict": "pass",
+   "p_user": 0.004975124378109453,
+   "p_leak": 0.5910226330997724,
+   "k_real": 76,
+   "nw_median": 38.0,
+   "np_median": 38.0,
+   "ltt_commits": 76,
+   "config_id": "tcfg-45bdfc727afb964f",
+   "seconds": 20.3
+  },
+  {
+   "case": "B",
+   "seed": 7,
+   "verdict": "pass",
+   "p_user": 0.004975124378109453,
+   "p_leak": 0.7824457484036521,
+   "k_real": 134,
+   "nw_median": 43.0,
+   "np_median": 43.0,
+   "ltt_commits": 126,
+   "config_id": "tcfg-1f2e805953ca4734",
+   "seconds": 20.3
+  },
+  {
+   "case": "B",
+   "seed": 8,
+   "verdict": "pass",
+   "p_user": 0.004975124378109453,
+   "p_leak": 0.018207334706461704,
+   "k_real": 104,
+   "nw_median": 30.0,
+   "np_median": 30.0,
+   "ltt_commits": 104,
+   "config_id": "tcfg-4e3e7894e3a0b9a2",
+   "seconds": 20.2
+  },
+  {
+   "case": "B",
+   "seed": 9,
+   "verdict": "pass",
+   "p_user": 0.004975124378109453,
+   "p_leak": 0.13379994881877794,
+   "k_real": 58,
+   "nw_median": 29.0,
+   "np_median": 29.0,
+   "ltt_commits": 58,
+   "config_id": "tcfg-966cb5482ea9c9af",
+   "seconds": 20.6
+  },
+  {
+   "case": "B",
+   "seed": 10,
+   "verdict": "pass",
+   "p_user": 0.004975124378109453,
+   "p_leak": 0.8063743452685979,
+   "k_real": 110,
+   "nw_median": 22.0,
+   "np_median": 22.0,
+   "ltt_commits": 110,
+   "config_id": "tcfg-36b5303b7ff1255a",
+   "seconds": 20.2
+  },
+  {
+   "case": "B",
+   "seed": 11,
+   "verdict": "pass",
+   "p_user": 0.004975124378109453,
+   "p_leak": 0.7003230107515086,
+   "k_real": 96,
+   "nw_median": 36.0,
+   "np_median": 36.0,
+   "ltt_commits": 96,
+   "config_id": "tcfg-b453572174dcf279",
+   "seconds": 20.1
+  },
+  {
+   "case": "B",
+   "seed": 12,
+   "verdict": "pass",
+   "p_user": 0.004975124378109453,
+   "p_leak": 0.17744390896303303,
+   "k_real": 105,
+   "nw_median": 29.0,
+   "np_median": 29.0,
+   "ltt_commits": 105,
+   "config_id": "tcfg-49beb6489d4660ec",
+   "seconds": 20.0
+  },
+  {
+   "case": "B",
+   "seed": 13,
+   "verdict": "pass",
+   "p_user": 0.004975124378109453,
+   "p_leak": 0.1283225183047227,
+   "k_real": 99,
+   "nw_median": 39.0,
+   "np_median": 25.0,
+   "ltt_commits": 99,
+   "config_id": "tcfg-56de24f705769ddf",
+   "seconds": 20.3
+  },
+  {
+   "case": "B",
+   "seed": 14,
+   "verdict": "pass",
+   "p_user": 0.004975124378109453,
+   "p_leak": 0.10275057891280293,
+   "k_real": 117,
+   "nw_median": 36.0,
+   "np_median": 36.0,
+   "ltt_commits": 117,
+   "config_id": "tcfg-4ee557560850cf31",
+   "seconds": 20.2
+  },
+  {
+   "case": "B",
+   "seed": 15,
+   "verdict": "pass",
+   "p_user": 0.004975124378109453,
+   "p_leak": 0.19908166279597717,
+   "k_real": 127,
+   "nw_median": 31.0,
+   "np_median": 31.0,
+   "ltt_commits": 127,
+   "config_id": "tcfg-305cdc3bd4653eba",
+   "seconds": 20.3
+  },
+  {
+   "case": "B",
+   "seed": 16,
+   "verdict": "pass",
+   "p_user": 0.004975124378109453,
+   "p_leak": 0.5670612685142468,
+   "k_real": 74,
+   "nw_median": 32.0,
+   "np_median": 32.0,
+   "ltt_commits": 74,
+   "config_id": "tcfg-2f738156caec50fb",
+   "seconds": 20.2
+  },
+  {
+   "case": "B",
+   "seed": 17,
+   "verdict": "pass",
+   "p_user": 0.01990049751243781,
+   "p_leak": 0.8507080821091428,
+   "k_real": 54,
+   "nw_median": 36.0,
+   "np_median": 36.0,
+   "ltt_commits": 54,
+   "config_id": "tcfg-1873fbc4b223c1c2",
+   "seconds": 20.0
+  },
+  {
+   "case": "B",
+   "seed": 18,
+   "verdict": "pass",
+   "p_user": 0.004975124378109453,
+   "p_leak": 0.2328442199300218,
+   "k_real": 126,
+   "nw_median": 38.0,
+   "np_median": 38.0,
+   "ltt_commits": 126,
+   "config_id": "tcfg-2978f8aa8fc3b540",
+   "seconds": 20.0
+  },
+  {
+   "case": "B",
+   "seed": 19,
+   "verdict": "pass",
+   "p_user": 0.004975124378109453,
+   "p_leak": 0.7589438252404171,
+   "k_real": 100,
+   "nw_median": 32.0,
+   "np_median": 32.0,
+   "ltt_commits": 100,
+   "config_id": "tcfg-ab7faf166b44db30",
+   "seconds": 20.0
+  },
+  {
+   "case": "B",
+   "seed": 20,
+   "verdict": "fail",
+   "p_user": 0.25870646766169153,
+   "p_leak": 0.806681075201054,
+   "k_real": 44,
+   "nw_median": 38.0,
+   "np_median": 38.0,
+   "ltt_commits": 44,
+   "config_id": "tcfg-55daa8c22cff00ee",
+   "seconds": 20.3
+  },
+  {
+   "case": "C",
+   "seed": 1,
+   "verdict": "fail",
+   "p_user": 0.7711442786069652,
+   "p_leak": 7.49315223975039e-74,
+   "k_real": 90,
+   "nw_median": 90.0,
+   "np_median": 35.0,
+   "ltt_commits": 90,
+   "config_id": "tcfg-b4474671da857e98",
+   "seconds": 20.5
+  },
+  {
+   "case": "C",
+   "seed": 2,
+   "verdict": "partial",
+   "p_user": 0.004975124378109453,
+   "p_leak": 3.301544257974099e-70,
+   "k_real": 184,
+   "nw_median": 93.0,
+   "np_median": 34.0,
+   "ltt_commits": 184,
+   "config_id": "tcfg-1a07af1963071af0",
+   "seconds": 20.2
+  },
+  {
+   "case": "C",
+   "seed": 3,
+   "verdict": "fail",
+   "p_user": 0.21890547263681592,
+   "p_leak": 3.8175798591331035e-69,
+   "k_real": 127,
+   "nw_median": 102.0,
+   "np_median": 41.0,
+   "ltt_commits": 127,
+   "config_id": "tcfg-fb216eef3dce86cb",
+   "seconds": 20.3
+  },
+  {
+   "case": "C",
+   "seed": 4,
+   "verdict": "fail",
+   "p_user": 0.26865671641791045,
+   "p_leak": 1.0487114859175152e-68,
+   "k_real": 109,
+   "nw_median": 101.0,
+   "np_median": 38.0,
+   "ltt_commits": 109,
+   "config_id": "tcfg-117008155b2709b5",
+   "seconds": 20.2
+  },
+  {
+   "case": "C",
+   "seed": 5,
+   "verdict": "partial",
+   "p_user": 0.004975124378109453,
+   "p_leak": 5.456620243188444e-67,
+   "k_real": 154,
+   "nw_median": 76.0,
+   "np_median": 33.0,
+   "ltt_commits": 154,
+   "config_id": "tcfg-1ad9ee62cd4c9bf9",
+   "seconds": 20.4
+  },
+  {
+   "case": "C",
+   "seed": 6,
+   "verdict": "partial",
+   "p_user": 0.004975124378109453,
+   "p_leak": 4.332411856946834e-74,
+   "k_real": 168,
+   "nw_median": 115.0,
+   "np_median": 40.0,
+   "ltt_commits": 156,
+   "config_id": "tcfg-5982c3ada3882c51",
+   "seconds": 20.4
+  },
+  {
+   "case": "C",
+   "seed": 7,
+   "verdict": "partial",
+   "p_user": 0.004975124378109453,
+   "p_leak": 4.155395690074681e-69,
+   "k_real": 152,
+   "nw_median": 102.0,
+   "np_median": 35.0,
+   "ltt_commits": 152,
+   "config_id": "tcfg-60bdbae788d67ece",
+   "seconds": 20.1
+  },
+  {
+   "case": "C",
+   "seed": 8,
+   "verdict": "partial",
+   "p_user": 0.009950248756218905,
+   "p_leak": 4.884133691420553e-72,
+   "k_real": 163,
+   "nw_median": 119.0,
+   "np_median": 38.0,
+   "ltt_commits": 163,
+   "config_id": "tcfg-d51adfc4a437cb4e",
+   "seconds": 20.0
+  },
+  {
+   "case": "C",
+   "seed": 9,
+   "verdict": "partial",
+   "p_user": 0.03980099502487562,
+   "p_leak": 1.4725793314319948e-69,
+   "k_real": 119,
+   "nw_median": 98.0,
+   "np_median": 42.0,
+   "ltt_commits": 119,
+   "config_id": "tcfg-f50401fc78372d8c",
+   "seconds": 20.3
+  },
+  {
+   "case": "C",
+   "seed": 10,
+   "verdict": "partial",
+   "p_user": 0.024875621890547265,
+   "p_leak": 5.234944299362176e-70,
+   "k_real": 127,
+   "nw_median": 100.0,
+   "np_median": 46.0,
+   "ltt_commits": 127,
+   "config_id": "tcfg-13acb1ef5882c7ef",
+   "seconds": 20.0
+  },
+  {
+   "case": "C",
+   "seed": 11,
+   "verdict": "partial",
+   "p_user": 0.004975124378109453,
+   "p_leak": 3.1872249875014963e-69,
+   "k_real": 159,
+   "nw_median": 110.0,
+   "np_median": 48.0,
+   "ltt_commits": 159,
+   "config_id": "tcfg-385886776dcbdd3a",
+   "seconds": 20.4
+  },
+  {
+   "case": "C",
+   "seed": 12,
+   "verdict": "fail",
+   "p_user": 0.9601990049751243,
+   "p_leak": 1.2260539960884987e-78,
+   "k_real": 98,
+   "nw_median": 98.0,
+   "np_median": 40.0,
+   "ltt_commits": 98,
+   "config_id": "tcfg-845514db33198eb1",
+   "seconds": 20.6
+  },
+  {
+   "case": "C",
+   "seed": 13,
+   "verdict": "partial",
+   "p_user": 0.004975124378109453,
+   "p_leak": 3.399377101348095e-72,
+   "k_real": 168,
+   "nw_median": 75.0,
+   "np_median": 26.0,
+   "ltt_commits": 105,
+   "config_id": "tcfg-e6270735d5b2889e",
+   "seconds": 20.5
+  },
+  {
+   "case": "C",
+   "seed": 14,
+   "verdict": "partial",
+   "p_user": 0.004975124378109453,
+   "p_leak": 7.905202121225758e-72,
+   "k_real": 139,
+   "nw_median": 79.0,
+   "np_median": 40.0,
+   "ltt_commits": 139,
+   "config_id": "tcfg-504cfff9c6992186",
+   "seconds": 20.5
+  },
+  {
+   "case": "C",
+   "seed": 15,
+   "verdict": "fail",
+   "p_user": 0.11940298507462686,
+   "p_leak": 1.064214042514408e-69,
+   "k_real": 128,
+   "nw_median": 102.0,
+   "np_median": 47.0,
+   "ltt_commits": 128,
+   "config_id": "tcfg-d0f777a6ca105a40",
+   "seconds": 20.5
+  },
+  {
+   "case": "C",
+   "seed": 16,
+   "verdict": "partial",
+   "p_user": 0.004975124378109453,
+   "p_leak": 6.313905520526034e-77,
+   "k_real": 153,
+   "nw_median": 107.0,
+   "np_median": 29.0,
+   "ltt_commits": 153,
+   "config_id": "tcfg-b7d51dae9f7bd731",
+   "seconds": 20.4
+  },
+  {
+   "case": "C",
+   "seed": 17,
+   "verdict": "fail",
+   "p_user": 0.34328358208955223,
+   "p_leak": 1.8569682001623335e-70,
+   "k_real": 114,
+   "nw_median": 107.0,
+   "np_median": 37.0,
+   "ltt_commits": 114,
+   "config_id": "tcfg-2f17b08481dbeae2",
+   "seconds": 20.2
+  },
+  {
+   "case": "C",
+   "seed": 18,
+   "verdict": "fail",
+   "p_user": 0.6417910447761194,
+   "p_leak": 6.337373940411663e-73,
+   "k_real": 87,
+   "nw_median": 87.0,
+   "np_median": 33.0,
+   "ltt_commits": 87,
+   "config_id": "tcfg-f1e39aa4b8f1f585",
+   "seconds": 20.6
+  },
+  {
+   "case": "C",
+   "seed": 19,
+   "verdict": "fail",
+   "p_user": 0.6517412935323383,
+   "p_leak": 2.5454460898909657e-72,
+   "k_real": 101,
+   "nw_median": 101.0,
+   "np_median": 40.0,
+   "ltt_commits": 101,
+   "config_id": "tcfg-b4a441b67e4cee5c",
+   "seconds": 20.6
+  },
+  {
+   "case": "C",
+   "seed": 20,
+   "verdict": "partial",
+   "p_user": 0.004975124378109453,
+   "p_leak": 3.643347919916148e-72,
+   "k_real": 172,
+   "nw_median": 85.0,
+   "np_median": 35.0,
+   "ltt_commits": 172,
+   "config_id": "tcfg-ca457222b1f4d31e",
+   "seconds": 20.3
+  },
+  {
+   "case": "D",
+   "seed": 1,
+   "verdict": "fail",
+   "p_user": 1.0,
+   "p_leak": 0.1598681321754941,
+   "k_real": 22,
+   "nw_median": 22.0,
+   "np_median": 22.0,
+   "ltt_commits": 22,
+   "config_id": "tcfg-a47b605a0de2ee59",
+   "pooled_test": {
+    "wrong_rate": [
+     0.003,
+     0.003,
+     0.0016666666666666668,
+     0.023
+    ],
+    "commits": [
+     168,
+     161,
+     135,
+     149
+    ]
+   },
+   "all": {
+    "threshold": 0.81,
+    "ltt_commits": 12,
+    "test": {
+     "wrong_rate": [
+      0.0003333333333333333,
+      0.0013333333333333333,
+      0.0006666666666666666,
+      0.010666666666666666
+     ],
+     "commits": [
+      70,
+      80,
+      61,
+      72
+     ]
+    }
+   },
+   "seconds": 47.6
+  },
+  {
+   "case": "D",
+   "seed": 2,
+   "verdict": "pass",
+   "p_user": 0.004975124378109453,
+   "p_leak": 0.11587108219253169,
+   "k_real": 100,
+   "nw_median": 29.0,
+   "np_median": 29.0,
+   "ltt_commits": 100,
+   "config_id": "tcfg-4b71f139f04a9263",
+   "pooled_test": {
+    "wrong_rate": [
+     0.01633333333333333,
+     0.022,
+     0.019333333333333334,
+     0.095
+    ],
+    "commits": [
+     566,
+     652,
+     624,
+     632
+    ]
+   },
+   "all": {
+    "threshold": 0.75,
+    "ltt_commits": 29,
+    "test": {
+     "wrong_rate": [
+      0.0016666666666666668,
+      0.0036666666666666666,
+      0.0016666666666666668,
+      0.02
+     ],
+     "commits": [
+      152,
+      167,
+      177,
+      146
+     ]
+    }
+   },
+   "seconds": 46.7
+  },
+  {
+   "case": "D",
+   "seed": 3,
+   "verdict": "pass",
+   "p_user": 0.004975124378109453,
+   "p_leak": 0.13956661281371988,
+   "k_real": 74,
+   "nw_median": 31.0,
+   "np_median": 31.0,
+   "ltt_commits": 74,
+   "config_id": "tcfg-58bcc02b593ee34c",
+   "pooled_test": {
+    "wrong_rate": [
+     0.015333333333333332,
+     0.016666666666666666,
+     0.012,
+     0.07433333333333333
+    ],
+    "commits": [
+     503,
+     526,
+     534,
+     532
+    ]
+   },
+   "all": {
+    "threshold": 0.9,
+    "ltt_commits": 0,
+    "test": {
+     "wrong_rate": [
+      0.0,
+      0.0,
+      0.0,
+      0.0003333333333333333
+     ],
+     "commits": [
+      0,
+      1,
+      1,
+      3
+     ]
+    }
+   },
+   "seconds": 47.1
+  },
+  {
+   "case": "D",
+   "seed": 4,
+   "verdict": "pass",
+   "p_user": 0.009950248756218905,
+   "p_leak": 0.9832203427053843,
+   "k_real": 51,
+   "nw_median": 26.0,
+   "np_median": 26.0,
+   "ltt_commits": 51,
+   "config_id": "tcfg-61690279a77da0d8",
+   "pooled_test": {
+    "wrong_rate": [
+     0.008666666666666666,
+     0.011333333333333334,
+     0.008666666666666666,
+     0.057
+    ],
+    "commits": [
+     406,
+     394,
+     396,
+     404
+    ]
+   },
+   "all": {
+    "threshold": 0.78,
+    "ltt_commits": 14,
+    "test": {
+     "wrong_rate": [
+      0.004333333333333333,
+      0.004,
+      0.002,
+      0.023
+     ],
+     "commits": [
+      191,
+      160,
+      169,
+      174
+     ]
+    }
+   },
+   "seconds": 47.2
+  },
+  {
+   "case": "D",
+   "seed": 5,
+   "verdict": "pass",
+   "p_user": 0.004975124378109453,
+   "p_leak": 0.20227874153181352,
+   "k_real": 76,
+   "nw_median": 35.0,
+   "np_median": 35.0,
+   "ltt_commits": 76,
+   "config_id": "tcfg-ed7d1cb31d0494d6",
+   "pooled_test": {
+    "wrong_rate": [
+     0.014333333333333333,
+     0.011333333333333334,
+     0.013666666666666667,
+     0.067
+    ],
+    "commits": [
+     455,
+     452,
+     444,
+     436
+    ]
+   },
+   "all": {
+    "threshold": 0.76,
+    "ltt_commits": 9,
+    "test": {
+     "wrong_rate": [
+      0.0003333333333333333,
+      0.0,
+      0.0003333333333333333,
+      0.005666666666666667
+     ],
+     "commits": [
+      44,
+      33,
+      40,
+      41
+     ]
+    }
+   },
+   "seconds": 46.4
+  },
+  {
+   "case": "D",
+   "seed": 6,
+   "verdict": "pass",
+   "p_user": 0.004975124378109453,
+   "p_leak": 0.4275052682745129,
+   "k_real": 92,
+   "nw_median": 25.0,
+   "np_median": 25.0,
+   "ltt_commits": 92,
+   "config_id": "tcfg-aed50a033d9ffef5",
+   "pooled_test": {
+    "wrong_rate": [
+     0.009666666666666667,
+     0.014333333333333333,
+     0.013666666666666667,
+     0.07233333333333333
+    ],
+    "commits": [
+     486,
+     490,
+     511,
+     513
+    ]
+   },
+   "all": {
+    "threshold": 0.81,
+    "ltt_commits": 0,
+    "test": {
+     "wrong_rate": [
+      0.0,
+      0.0,
+      0.0,
+      0.001
+     ],
+     "commits": [
+      1,
+      4,
+      4,
+      10
+     ]
+    }
+   },
+   "seconds": 46.5
+  },
+  {
+   "case": "D",
+   "seed": 7,
+   "verdict": "fail",
+   "p_user": 0.4925373134328358,
+   "p_leak": 8.424407231838157e-07,
+   "k_real": 36,
+   "nw_median": 35.0,
+   "np_median": 33.0,
+   "ltt_commits": 36,
+   "config_id": "tcfg-c80e92292d060063",
+   "pooled_test": {
+    "wrong_rate": [
+     0.012,
+     0.008333333333333333,
+     0.008666666666666666,
+     0.059333333333333335
+    ],
+    "commits": [
+     305,
+     310,
+     303,
+     353
+    ]
+   },
+   "all": {
+    "threshold": 0.74,
+    "ltt_commits": 10,
+    "test": {
+     "wrong_rate": [
+      0.0006666666666666666,
+      0.001,
+      0.0006666666666666666,
+      0.007
+     ],
+     "commits": [
+      53,
+      46,
+      38,
+      47
+     ]
+    }
+   },
+   "seconds": 44.9
+  },
+  {
+   "case": "D",
+   "seed": 8,
+   "verdict": "fail",
+   "p_user": 0.8606965174129353,
+   "p_leak": 0.8590622290232821,
+   "k_real": 28,
+   "nw_median": 28.0,
+   "np_median": 28.0,
+   "ltt_commits": 28,
+   "config_id": "tcfg-69fa5c095357935f",
+   "pooled_test": {
+    "wrong_rate": [
+     0.002,
+     0.0033333333333333335,
+     0.001,
+     0.028
+    ],
+    "commits": [
+     191,
+     174,
+     158,
+     182
+    ]
+   },
+   "all": {
+    "threshold": 0.84,
+    "ltt_commits": 0,
+    "test": {
+     "wrong_rate": [
+      0.0,
+      0.0003333333333333333,
+      0.0,
+      0.002
+     ],
+     "commits": [
+      13,
+      4,
+      10,
+      14
+     ]
+    }
+   },
+   "seconds": 45.3
+  },
+  {
+   "case": "D",
+   "seed": 9,
+   "verdict": "pass",
+   "p_user": 0.004975124378109453,
+   "p_leak": 0.7153167941335515,
+   "k_real": 75,
+   "nw_median": 29.0,
+   "np_median": 29.0,
+   "ltt_commits": 75,
+   "config_id": "tcfg-b3a37134fbe26929",
+   "pooled_test": {
+    "wrong_rate": [
+     0.021,
+     0.017666666666666667,
+     0.012666666666666666,
+     0.08466666666666667
+    ],
+    "commits": [
+     548,
+     572,
+     557,
+     568
+    ]
+   },
+   "all": {
+    "threshold": 0.79,
+    "ltt_commits": 6,
+    "test": {
+     "wrong_rate": [
+      0.0013333333333333333,
+      0.0003333333333333333,
+      0.0,
+      0.0036666666666666666
+     ],
+     "commits": [
+      29,
+      36,
+      39,
+      31
+     ]
+    }
+   },
+   "seconds": 43.7
+  },
+  {
+   "case": "D",
+   "seed": 10,
+   "verdict": "pass",
+   "p_user": 0.004975124378109453,
+   "p_leak": 0.011689458995623054,
+   "k_real": 78,
+   "nw_median": 35.0,
+   "np_median": 35.0,
+   "ltt_commits": 78,
+   "config_id": "tcfg-a8c87f4589b5137e",
+   "pooled_test": {
+    "wrong_rate": [
+     0.020666666666666667,
+     0.016666666666666666,
+     0.014666666666666666,
+     0.07733333333333334
+    ],
+    "commits": [
+     530,
+     565,
+     491,
+     551
+    ]
+   },
+   "all": {
+    "threshold": 0.77,
+    "ltt_commits": 1,
+    "test": {
+     "wrong_rate": [
+      0.0023333333333333335,
+      0.0,
+      0.0003333333333333333,
+      0.004333333333333333
+     ],
+     "commits": [
+      39,
+      33,
+      36,
+      40
+     ]
+    }
+   },
+   "seconds": 43.9
+  },
+  {
+   "case": "D",
+   "seed": 11,
+   "verdict": "fail",
+   "p_user": 0.9353233830845771,
+   "p_leak": 0.6644112641345397,
+   "k_real": 26,
+   "nw_median": 26.0,
+   "np_median": 26.0,
+   "ltt_commits": 26,
+   "config_id": "tcfg-cdff66fd5e2c29dc",
+   "pooled_test": {
+    "wrong_rate": [
+     0.0036666666666666666,
+     0.0026666666666666666,
+     0.0016666666666666668,
+     0.025
+    ],
+    "commits": [
+     199,
+     172,
+     182,
+     194
+    ]
+   },
+   "all": {
+    "threshold": 0.73,
+    "ltt_commits": 3,
+    "test": {
+     "wrong_rate": [
+      0.0003333333333333333,
+      0.0,
+      0.0003333333333333333,
+      0.0023333333333333335
+     ],
+     "commits": [
+      33,
+      19,
+      14,
+      26
+     ]
+    }
+   },
+   "seconds": 44.5
+  },
+  {
+   "case": "D",
+   "seed": 12,
+   "verdict": "partial",
+   "p_user": 0.004975124378109453,
+   "p_leak": 1.467822468806664e-06,
+   "k_real": 64,
+   "nw_median": 34.0,
+   "np_median": 28.0,
+   "ltt_commits": 64,
+   "config_id": "tcfg-1df84831352d800c",
+   "pooled_test": {
+    "wrong_rate": [
+     0.018333333333333333,
+     0.017,
+     0.015,
+     0.08166666666666667
+    ],
+    "commits": [
+     517,
+     544,
+     470,
+     536
+    ]
+   },
+   "all": {
+    "threshold": 0.77,
+    "ltt_commits": 4,
+    "test": {
+     "wrong_rate": [
+      0.0,
+      0.0003333333333333333,
+      0.0006666666666666666,
+      0.004333333333333333
+     ],
+     "commits": [
+      27,
+      34,
+      30,
+      36
+     ]
+    }
+   },
+   "seconds": 43.9
+  },
+  {
+   "case": "D",
+   "seed": 13,
+   "verdict": "partial",
+   "p_user": 0.004975124378109453,
+   "p_leak": 0.004358440568027729,
+   "k_real": 103,
+   "nw_median": 27.0,
+   "np_median": 27.0,
+   "ltt_commits": 72,
+   "config_id": "tcfg-24d8b58006b44dd7",
+   "pooled_test": {
+    "wrong_rate": [
+     0.012666666666666666,
+     0.014333333333333333,
+     0.015,
+     0.08033333333333334
+    ],
+    "commits": [
+     512,
+     512,
+     528,
+     557
+    ]
+   },
+   "all": {
+    "threshold": 0.68,
+    "ltt_commits": 3,
+    "test": {
+     "wrong_rate": [
+      0.0,
+      0.0006666666666666666,
+      0.0003333333333333333,
+      0.0026666666666666666
+     ],
+     "commits": [
+      14,
+      18,
+      26,
+      22
+     ]
+    }
+   },
+   "seconds": 43.9
+  },
+  {
+   "case": "D",
+   "seed": 14,
+   "verdict": "fail",
+   "p_user": 1.0,
+   "p_leak": 1.0,
+   "k_real": 17,
+   "nw_median": 17.0,
+   "np_median": 17.0,
+   "ltt_commits": 17,
+   "config_id": "tcfg-6e9fbdf08015afcd",
+   "pooled_test": {
+    "wrong_rate": [
+     0.0036666666666666666,
+     0.0033333333333333335,
+     0.004333333333333333,
+     0.03133333333333333
+    ],
+    "commits": [
+     197,
+     189,
+     242,
+     210
+    ]
+   },
+   "all": {
+    "threshold": 0.3,
+    "ltt_commits": 17,
+    "test": {
+     "wrong_rate": [
+      0.0036666666666666666,
+      0.0033333333333333335,
+      0.004333333333333333,
+      0.03133333333333333
+     ],
+     "commits": [
+      197,
+      189,
+      242,
+      210
+     ]
+    }
+   },
+   "seconds": 45.0
+  },
+  {
+   "case": "D",
+   "seed": 15,
+   "verdict": "partial",
+   "p_user": 0.004975124378109453,
+   "p_leak": 0.008666320026386096,
+   "k_real": 67,
+   "nw_median": 34.0,
+   "np_median": 34.0,
+   "ltt_commits": 67,
+   "config_id": "tcfg-9785cc235f81fe87",
+   "pooled_test": {
+    "wrong_rate": [
+     0.010333333333333333,
+     0.011,
+     0.01,
+     0.058
+    ],
+    "commits": [
+     445,
+     395,
+     415,
+     380
+    ]
+   },
+   "all": {
+    "threshold": 0.85,
+    "ltt_commits": 8,
+    "test": {
+     "wrong_rate": [
+      0.0006666666666666666,
+      0.0006666666666666666,
+      0.0006666666666666666,
+      0.006666666666666667
+     ],
+     "commits": [
+      51,
+      36,
+      42,
+      44
+     ]
+    }
+   },
+   "seconds": 43.8
+  },
+  {
+   "case": "D",
+   "seed": 16,
+   "verdict": "fail",
+   "p_user": 0.47761194029850745,
+   "p_leak": 0.7538385469924234,
+   "k_real": 35,
+   "nw_median": 34.0,
+   "np_median": 34.0,
+   "ltt_commits": 35,
+   "config_id": "tcfg-0827e963b2835f37",
+   "pooled_test": {
+    "wrong_rate": [
+     0.003,
+     0.003,
+     0.004,
+     0.027333333333333334
+    ],
+    "commits": [
+     186,
+     157,
+     182,
+     181
+    ]
+   },
+   "all": {
+    "threshold": 0.84,
+    "ltt_commits": 3,
+    "test": {
+     "wrong_rate": [
+      0.0003333333333333333,
+      0.0,
+      0.0,
+      0.002
+     ],
+     "commits": [
+      9,
+      4,
+      11,
+      9
+     ]
+    }
+   },
+   "seconds": 44.8
+  },
+  {
+   "case": "D",
+   "seed": 17,
+   "verdict": "pass",
+   "p_user": 0.004975124378109453,
+   "p_leak": 0.04510622903687616,
+   "k_real": 78,
+   "nw_median": 24.0,
+   "np_median": 24.0,
+   "ltt_commits": 78,
+   "config_id": "tcfg-c819f7497074f3a2",
+   "pooled_test": {
+    "wrong_rate": [
+     0.012,
+     0.012,
+     0.013333333333333334,
+     0.074
+    ],
+    "commits": [
+     462,
+     506,
+     469,
+     476
+    ]
+   },
+   "all": {
+    "threshold": 0.77,
+    "ltt_commits": 10,
+    "test": {
+     "wrong_rate": [
+      0.0006666666666666666,
+      0.0016666666666666668,
+      0.0033333333333333335,
+      0.01633333333333333
+     ],
+     "commits": [
+      105,
+      128,
+      121,
+      114
+     ]
+    }
+   },
+   "seconds": 43.7
+  },
+  {
+   "case": "D",
+   "seed": 18,
+   "verdict": "fail",
+   "p_user": 1.0,
+   "p_leak": 1.0,
+   "k_real": 20,
+   "nw_median": 20.0,
+   "np_median": 20.0,
+   "ltt_commits": 20,
+   "config_id": "tcfg-cb0f25dcfd20280b",
+   "pooled_test": {
+    "wrong_rate": [
+     0.003,
+     0.0016666666666666668,
+     0.004333333333333333,
+     0.022333333333333334
+    ],
+    "commits": [
+     166,
+     132,
+     159,
+     145
+    ]
+   },
+   "all": {
+    "threshold": 0.3,
+    "ltt_commits": 20,
+    "test": {
+     "wrong_rate": [
+      0.003,
+      0.0016666666666666668,
+      0.004333333333333333,
+      0.022333333333333334
+     ],
+     "commits": [
+      166,
+      132,
+      159,
+      145
+     ]
+    }
+   },
+   "seconds": 44.6
+  },
+  {
+   "case": "D",
+   "seed": 19,
+   "verdict": "pass",
+   "p_user": 0.004975124378109453,
+   "p_leak": 0.9982323026649358,
+   "k_real": 106,
+   "nw_median": 27.0,
+   "np_median": 27.0,
+   "ltt_commits": 92,
+   "config_id": "tcfg-85118de55d30d054",
+   "pooled_test": {
+    "wrong_rate": [
+     0.025,
+     0.021666666666666667,
+     0.025,
+     0.117
+    ],
+    "commits": [
+     722,
+     730,
+     705,
+     738
+    ]
+   },
+   "all": {
+    "threshold": 0.8,
+    "ltt_commits": 3,
+    "test": {
+     "wrong_rate": [
+      0.0006666666666666666,
+      0.0,
+      0.0003333333333333333,
+      0.004
+     ],
+     "commits": [
+      28,
+      34,
+      42,
+      31
+     ]
+    }
+   },
+   "seconds": 43.8
+  },
+  {
+   "case": "D",
+   "seed": 20,
+   "verdict": "pass",
+   "p_user": 0.03482587064676617,
+   "p_leak": 0.9509224171264936,
+   "k_real": 44,
+   "nw_median": 32.0,
+   "np_median": 32.0,
+   "ltt_commits": 44,
+   "config_id": "tcfg-bce50bda23134756",
+   "pooled_test": {
+    "wrong_rate": [
+     0.005666666666666667,
+     0.008333333333333333,
+     0.006,
+     0.04466666666666667
+    ],
+    "commits": [
+     318,
+     299,
+     307,
+     301
+    ]
+   },
+   "all": {
+    "threshold": 0.77,
+    "ltt_commits": 0,
+    "test": {
+     "wrong_rate": [
+      0.0006666666666666666,
+      0.0,
+      0.0,
+      0.0003333333333333333
+     ],
+     "commits": [
+      3,
+      2,
+      3,
+      4
+     ]
+    }
+   },
+   "seconds": 43.7
+  }
+ ]
+}
