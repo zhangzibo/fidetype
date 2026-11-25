@@ -3,7 +3,7 @@ title: Learn then Test (LTT)
 type: concept
 tags: [conformal, risk-control, multiple-testing, calibration, trust, guarantee]
 sources: [learn-then-test, conformal-risk-control]
-updated: 2026-11-15
+updated: 2026-11-25
 ---
 
 # Learn then Test (LTT)
@@ -43,6 +43,7 @@ It works for any model, without refitting. Unlike CRC, it does not need a monoto
 - The grid must be fixed before the data ([LTT](../sources/learn-then-test.md)).
 - It needs exchangeable (i.i.d.) calibration data ([LTT](../sources/learn-then-test.md)). Drift breaks it: use [adaptive conformal inference](adaptive-conformal-inference.md) for online re-calibration.
 - The guarantee is for the calibration distribution. Items from many days give a guarantee for the mix of days, not for each day ([CRC concept](conformal-risk-control.md#per-session-guarantee-track-a-item-2)).
+- **Pooled precision / risk gates over heterogeneous users.** A gate pooled over users with different base rates can certify "which user" instead of "which item". B1 (memory state, iEEG) failed its label nulls for this reason ([B1 results](../../experiments/2026-11-24-b1-memory-state-gate/results.md)). In our text guards the effect is weak: the emg2qwerty P11-12 guards show a small user-identity leak, and one user is above the pooled bound ([pooled-guard check](../../experiments/2026-11-25-pooled-guard-check/results.md)). The bound covers the pool, not each user, session or day.
 
 > **Our take:** For a claim about one session ("this user will rarely see more than α wrong commits"), LTT is the safer wording than CRC. On B2T '25 it costs little eWPM. Its real price is the minimum calibration size per session.
 

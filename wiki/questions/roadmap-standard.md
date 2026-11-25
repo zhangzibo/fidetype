@@ -3,7 +3,7 @@ title: Long-term roadmap — Fidetype as a full neural input standard
 type: question
 tags: [planning, roadmap, north-star, frontier, write-side, affect, memory, standard, spec, sdk, collector, adapters, benchmark, conformance, governance, adoption, intent, cursor, benchmark-hub, value-first, toolkit, daily-use, aac-app, privacy, federated-learning, emg-hardware, foundation-model, multilingual, regulatory]
 sources: [case-study-opentelemetry, case-study-langchain, case-study-sglang, neural-input-landscape-2026, brain2qwerty-code]
-updated: 2026-11-24
+updated: 2026-11-25
 ---
 
 # Long-term roadmap: Fidetype as a full neural input standard
@@ -854,11 +854,27 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P5-41 Bit-identical speed-up of the built-in guard direction gate
 - **Gap:** 214 of the [open-gap list](open-gaps.md) (added 2026-11-24 by the gap 191 user decision, option A). Follow-up of P5-38.
-- **Status:** `todo`. Low priority.
+- **Status:** `done` (2026-11-25, commit `5ed098e`). Gap 214 closed. A faster `LMBeam.push` loop with the same arithmetic (the old loop stays as the test reference). Built-in guard extra time per offer 0.337 -> 0.219 s; LM guard 0.090 -> 0.045 s (measured under load). Decisions bit-identical: 332 / 332 and 746 / 746 per guard; `config_id` and `offer_gate_id` unchanged; full suite 1946 passed. Optional follow-up: gap 235 = [P5-43](#p5-43-compiled-loop-for-the-direction-gate).
 - **Serves:** research labs, small teams.
 - **Depends on:** P5-38 (done, commit `0997a7c`); CPU. Low priority.
 - **Source:** gap 191 = P5-38 result (commit `0997a7c`): the built-in decode has no forward LM beam to reuse. So the built-in `willett-hw` guard's `lm_beam_direction` extra time per offer stayed 0.243 -> 0.249 s (LM guard 0.128 -> 0.063 s).
 - **Done when:** the built-in guard's direction-gate extra time per offer drops measurably, with all decisions identical on the same identity check sets (332 / 332 and 746 / 746 in P5-38).
+
+#### P5-42 Per-user base rates and a within-user label null in calibrate
+- **Gap:** 221 of the [open-gap list](open-gaps.md) (added 2026-11-25 by the pooled-guard check). Follow-up of P16-06, P11-12.
+- **Status:** `todo`.
+- **Serves:** research labs.
+- **Depends on:** the pooled-guard check (`74a21f8`); B1 (`994212f`); CPU.
+- **Source:** pooled-guard check (2026-11-25; plan `8dde818`, runner `c380617`, results `74a21f8`, [results](../../experiments/2026-11-25-pooled-guard-check/results.md)), findings F1 and F2, and B1 (`994212f`). F1: in the P11-12 emg2qwerty guards, labels permuted inside each user (NW) certify more commits than labels permuted over the pool (NP) (MWU p 0.0086 and 0.0028): part of the score is "which user". F2: one of 8 users has a wrong-commit rate of about 0.065 (not proven) while the pool meets alpha 0.05. B1: a pooled precision gate over heterogeneous users needs a per-user base rate in the target, or a null that permutes across users.
+- **Done when:** `calibrate` takes user groups and (a) runs the NW-vs-NP label null and warns or refuses when NW certifies more than NP, and (b) offers a per-user target or a per-user / stratified LTT when each user has enough items. Tests cover a synthetic B1-type leak. docs/trust-guarantee.md states the scope. Or a recorded decision says why not.
+
+#### P5-43 Compiled loop for the direction gate
+- **Gap:** 235 of the [open-gap list](open-gaps.md) (added 2026-11-25 by P5-41). Follow-up of P5-41.
+- **Status:** `todo`.
+- **Serves:** research labs.
+- **Depends on:** P5-41 (done, `5ed098e`); the user's choice (a new optional dependency); CPU.
+- **Source:** P5-41 results ([results](../../experiments/2026-11-24-p5-41-fast-builtin-direction-gate/results.md)): a further large speed-up needs a compiled loop.
+- **Done when:** the user decides. If yes: a numba loop (optional extra) gives bit-identical decisions on the P5-38 sets (332 / 332 and 746 / 746) with a measured speed-up. If no: the decision is recorded.
 
 ## P6. Public benchmark + leaderboard
 **Goal:** one public place to compare neural text entry across modalities and datasets, with honest metrics.
@@ -953,6 +969,22 @@ Follow-ups of P6-02 and P6-01. Full list: [open gaps](open-gaps.md). No existing
 - **Depends on:** P6-10 (done); the block lists of Card et al. 2024.
 - **Source:** P6-10 (commit `ddb0be3`, [results](../../experiments/2026-11-21-p6-10-overlap-check/results.md)): the 8 b2t25-t15 ours / published entries read `overlap_check` "not checked", because the training data of the published Card et al. 2024 online decoder are not mapped. The mapping needs the paper's block lists.
 - **Done when:** the training data of the published decoder are mapped to b2t25-t15 units (hash-only) or declared in the 8 manifests, and these entries get `overlap_check` pass or overlap; or the docs say with reasons why no mapping is possible.
+
+#### P6-13 Commit events per unit in the benchmark submission format
+- **Gap:** 226 of the [open-gap list](open-gaps.md) (added 2026-11-25 by P14-63). Follow-up of P14-63.
+- **Status:** `todo`.
+- **Serves:** research labs.
+- **Depends on:** P14-63 (done, `fa6fee2`); CPU.
+- **Source:** P14-63 recommendation (`190662e`) and decision (`fa6fee2`): the submission format holds one action per unit (`commit`, `offer` or `abstain`, with one text), so it cannot express several commits per trial. Rule (7) (needs `n_commits`) applies to the library and the CLI only.
+- **Done when:** the submission format and the scorecard accept commit events per unit (with `n_commits`), the leaderboard scores them under rule (7), docs/benchmark-submission.md says so, tests cover it, and all existing cards rescore byte-identical.
+
+#### P6-14 Word count field in the Toronto per-trial files
+- **Gap:** 227 of the [open-gap list](open-gaps.md) (added 2026-11-25 by P13-14). Follow-up of P6-01, P13-14.
+- **Status:** `todo`.
+- **Serves:** research labs.
+- **Depends on:** CPU. Minor.
+- **Source:** P13-14 results (`1b4307b`, [results](../../experiments/2026-11-24-p13-14-tracks01-v02/results.md)): in the P6-01 Toronto per-trial files the field `n_words` holds the correct flag (0 or 1), not the word count (a variable mix-up in the file writer). No stored number is affected: the v0.1 block was computed before the file was written, and the P13-14 tool takes the counts from the truth file.
+- **Done when:** the writer is fixed and the local files are rebuilt (or the field is renamed with a note), a test checks the field, and no card number changes.
 
 ## P7. Conformance + certification
 **Goal:** anyone can prove that an implementation speaks NTS correctly.
@@ -1408,11 +1440,43 @@ Follow-ups of P13-01. Full list: [open gaps](open-gaps.md). No existing item mov
 
 #### P13-14 Rescore the tracks-v0.1 benchmark cards under safe-WPM v0.2
 - **Gap:** 204 of the [open-gap list](open-gaps.md) (added 2026-11-23 by P14-61). Follow-up of P14-61, P13-13.
-- **Status:** `todo`. Optional.
+- **Status:** `done` (2026-11-24, commit `1b4307b`). Gap 204 closed. All 21 tracks-v0.1 cards have a safe-WPM v0.2 block next to their unchanged v0.1 block. Follow-up: gap 227 = [P6-14](#p6-14-word-count-field-in-the-toronto-per-trial-files) (`n_words` field in the Toronto per-trial files; no number affected).
 - **Serves:** research labs.
 - **Depends on:** P14-61 (done); the per-trial sources of the tracks-v0.1 cards (local derived data); CPU. Optional.
 - **Source:** P14-61 (2026-11-23, commit `38f1e50`): the leaderboard headline column is v0.2. The tracks-v0.1 cards keep their v0.1 numbers, because their per-trial sources are not all at hand.
 - **Done when:** each tracks-v0.1 card has a v0.2 score next to its v0.1 score (the v0.1 number keeps its value and its label), or a recorded reason why its per-trial source cannot be rebuilt.
+
+#### P13-15 Pool scope lines on multi-user and multi-session cards
+- **Gap:** 222 of the [open-gap list](open-gaps.md) (added 2026-11-25 by the pooled-guard check). Follow-up of P13-13.
+- **Status:** `todo`.
+- **Serves:** research labs.
+- **Depends on:** the pooled-guard check (`74a21f8`); CPU, text only.
+- **Source:** pooled-guard check (2026-11-25; plan `8dde818`, runner `c380617`, results `74a21f8`, [results](../../experiments/2026-11-25-pooled-guard-check/results.md)), findings F2 and F3. The emg2qwerty P11-12 / P11-14 cards say "marginal over test prompts pooled over the 8 users"; a reader can take it as a per-user promise. One user is above alpha in 3 emg2qwerty cards; sessions or days are above the rule in the T12 and B2T '25 cards. docs/trust-guarantee.md section 4 already says that a bound per user, session or sentence type is not guaranteed.
+- **Done when:** the scope line of every multi-user or multi-session card (emg2qwerty P11-12 / P11-14, B2T '25, T12, and any other pooled card) says that the bound covers the pool and not each user, session or day, with a link to trust-guarantee section 4. No number changes.
+
+#### P13-16 Label-blind commit step in the SpanishBCBL CRC and LTT entries
+- **Gap:** 223 of the [open-gap list](open-gaps.md) (added 2026-11-25 by the pooled-guard check). Follow-up of P13-13.
+- **Status:** `todo`.
+- **Serves:** research labs.
+- **Depends on:** the pooled-guard check (`74a21f8`); the local MEG decoder outputs; CPU.
+- **Source:** pooled-guard check (2026-11-25; plan `8dde818`, runner `c380617`, results `74a21f8`, [results](../../experiments/2026-11-25-pooled-guard-check/results.md)), finding F4. Only 14 of 437 val items have a finite commit score. The threshold step commits the same 14 items under every label null, as with real labels. On test, 13 of 14 (CRC) and 14 of 15 (LTT) commits are wrong. The bound holds (14 / 437 < alpha), but the commit step shows no evidence of signal.
+- **Done when:** the entries get a commit step that depends on the labels (a refit that passes a label null), or they are withdrawn, or the card and the leaderboard mark them "label-blind commit step, no evidence of signal".
+
+#### P13-17 Stored calibration scores for the Toronto T15 and B2T cards
+- **Gap:** 224 of the [open-gap list](open-gaps.md) (added 2026-11-25 by the pooled-guard check). Follow-up of P13-13.
+- **Status:** `todo`.
+- **Serves:** research labs.
+- **Depends on:** the local decoder outputs of the card build steps; CPU.
+- **Source:** pooled-guard check (2026-11-25; plan `8dde818`, runner `c380617`, results `74a21f8`, [results](../../experiments/2026-11-25-pooled-guard-check/results.md)): the Toronto (T-CAL, T-XS), T15 (S-T15), T12 (S-T12) and B2T (S-B2T) guards got no label null, because their calibration-item scores are not stored under `derived/`.
+- **Done when:** the calibration-item scores of these cards are stored locally (hash-only ids, no text), and the pooled-guard label nulls (NX, NW, NP) run on them with the plan rules; or a recorded reason says why a card cannot be rebuilt.
+
+#### P13-18 Per-day exceedance in the B2T 25 published CRC and LTT entries
+- **Gap:** 225 of the [open-gap list](open-gaps.md) (added 2026-11-25 by the pooled-guard check). Follow-up of P13-13.
+- **Status:** `todo`.
+- **Serves:** research labs.
+- **Depends on:** the pooled-guard check (`74a21f8`); P13-15 (scope line); CPU.
+- **Source:** pooled-guard check (2026-11-25; plan `8dde818`, runner `c380617`, results `74a21f8`, [results](../../experiments/2026-11-25-pooled-guard-check/results.md)), finding F3. For the "published" decoder, one day has 9 wrong commits of 50 trials (0.18; the CP lower bound is above alpha), while the pool meets the bound (CRC 0.049, LTT 0.040). This is a clear per-day exceedance. Kept apart from P13-15 because it needs a card note with numbers, not only a scope line.
+- **Done when:** the B2T '25 "published" CRC / LTT cards and the leaderboard record the per-day exceedance as a safety finding, with the numbers, and the scope line follows P13-15; or the entries are refit with a per-day rule in a new card version. No existing number changes without a new card version.
 
 ## P14. Value first: a useful toolkit (added 2026-11-15)
 **Goal:** people install `fidetype` because it is useful today, not only because it is a format. The format spreads as a side effect, as with LangChain ([LangChain case study](../sources/case-study-langchain.md)). P14 adds user value and credibility. It does not change the scope, order or priority of P1–P13.
@@ -1989,7 +2053,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P14-63 Several-commits-per-trial extension of safe-WPM v0.2
 - **Gap:** 203 of the [open-gap list](open-gaps.md) (added 2026-11-23 by P14-61). Follow-up of P14-61.
-- **Status:** `todo`.
+- **Status:** `done` (2026-11-24, commit `fa6fee2`; recommendation `190662e`). Gap 203 closed. Decision: option A, adopt rule (7); the user delegated the decision to Claude on 2026-11-24. docs/safe-wpm.md section 6c has the decision and its reason; the scorer and the tests implement it; all 36 tracks-v0.2 and 21 tracks-v0.1 cards rescore byte-identical. The `wrong-stream-commit` hole without `n_commits` is closed. Follow-up: gap 226 = [P6-13](#p6-13-commit-events-per-unit-in-the-benchmark-submission-format).
 - **Serves:** research labs, small teams.
 - **Depends on:** P14-61 (done); a user decision on an agent recommendation; CPU.
 - **Source:** P14-61 (2026-11-23, commit `38f1e50`): the adopted v0.2 scorer covers one commit per trial. An extension for trials with several commits exists as an idea, but nobody decided to adopt it.
@@ -2067,6 +2131,14 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 | **P15-43** | C2 budget range of the F-R20 recipe (open gap 194, [details](#p15-43-c2-budget-range-of-the-f-r20-recipe)) | F3 | P15-41 |
 | **P15-44** | `control_flags` label in the P15-41 script (gap 195, done 2026-11-24, [details](#p15-44-control_flags-label-in-the-p15-41-script)) | F3 | P15-41 |
 | **P15-53** | T12 stage-2 wrapper for E2 (open gap 218, [details](#p15-53-t12-stage-2-wrapper-for-e2)) | F1 | P15-52, P15-49 |
+| **P15-54** | F3 at small data with per-session input layers (open gap 219, [details](#p15-54-f3-at-small-data-with-per-session-input-layers)) | F3 | P15-50, P15-08 |
+| **P15-55** | Facial-EMG silent-speech baseline on the Gaddy and Klein data (open gap 231, [details](#p15-55-facial-emg-silent-speech-baseline-on-the-gaddy-and-klein-data)) | F3 | P15-08 |
+| **P15-56** | New signal-check tracks: truncated signal, graded noise, near-miss sentence swap (open gap 232, [details](#p15-56-new-signal-check-tracks-truncated-signal-graded-noise-near-miss-sentence-swap)) | F2 | P15-15, P15-07 |
+| **P15-57** | Periodic literature check (open gap 233, [details](#p15-57-periodic-literature-check)) | all | P15-10 |
+| **P15-58** | FALCON EvalAI submission (open gap 234, [details](#p15-58-falcon-evalai-submission)) | F3 | P15-54 |
+| **P15-59** | Power of the E2 check block (open gap 236, [details](#p15-59-power-of-the-e2-check-block)) | F1 | P15-49 |
+| **P15-60** | Sentence-repeat correlation in the T15 LTT part (open gap 237, [details](#p15-60-sentence-repeat-correlation-in-the-t15-ltt-part)) | F1 / F2 | P15-48 |
+| **P15-61** | Real-system estimate of the noticing-rate lower bound (open gap 238, [details](#p15-61-real-system-estimate-of-the-noticing-rate-lower-bound)) | F1 | P15-49, P15-04 |
 
 #### P15-00 North star and P15 scope
 - **Goal:** write down the new direction and plan the first round.
@@ -2438,7 +2510,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P15-48 T15 calibration hold-out retrain
 - **Gap:** 208 of the [open-gap list](open-gaps.md) (added 2026-11-23 by the frontier plan). Follow-up of P15-39, P15-37.
-- **Status:** `todo`.
+- **Status:** `todo`. Ready (2026-11-25): pre-run amendment 1 `98db2e2` (sentence-group-aware calibration parts) and code `d0a6a29` (opt-in `calibrate(groups=)`, amendment-1 rules 5 and 6, crossing audit; `config_id` unchanged). The old split had about 110 crossing sentence groups per draw in arm A; the new rules give 0. GPU run pending, after the current queue. Follow-up: gap 237 = [P15-60](#p15-60-sentence-repeat-correlation-in-the-t15-ltt-part).
 - **Serves:** research labs.
 - **Depends on:** pre-registration `29c1dc9`; a free GPU (local, or rented once the user approves); CPU for the hold-out rule.
 - **Source:** frontier plan (user "go", 2026-11-23), direction 2. Pre-registration `29c1dc9` ([plan](../../experiments/2026-11-23-t15-calibration-holdout/plan.md); `holdout.py` + 7 CPU tests): 2,216 trials held out by sentence group; calibration pool 2,688; safe-WPM v0.2 with K = 120; pass = lower end > 4.0153. It is the route for gap 160 = P15-39 with our own hold-out (no new outside data).
@@ -2446,7 +2518,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P15-49 GPU part of E2 self-teaching on T15
 - **Gap:** 209 of the [open-gap list](open-gaps.md) (added 2026-11-23 by the frontier plan). Follow-up of P15-03.
-- **Status:** `todo`. Ready to run (2026-11-24): wrapper `83053f3` and pre-run amendment 1 `44e64da`. Queued on the local GPU after A1 (P16-07). About 45 h local estimate, 90 h cap. T12 stage 2 needs [P15-53](#p15-53-t12-stage-2-wrapper-for-e2) (gap 218) first.
+- **Status:** `todo`. Ready to run (2026-11-24): wrapper `83053f3` and pre-run amendment 1 `44e64da`. Queued on the local GPU after A1 (P16-07). About 45 h local estimate, 90 h cap. **Update 2026-11-25:** pre-run amendment 2 `3979330` (literature check; 5 changes approved by the user), correction 1 `b1662ce` (arm CR labels follow the Card et al. 2026 fine-tuning text), code `01a5bc9` (no GPU run, no result). Unknown-truth check pairs score as ties, not as "worse" (valid test, less power). New shadow controller (target alpha x q_lower) and a second outcome reading (P2b_q); the results page prints both readings. 24 runs (plan U1 10, CR 2, plan U2 10, FBX 2); new estimate about 54 h (54-70 h), cap 90 h. Launch command unchanged; CPU dry runs need OMP / MKL thread limits. Follow-ups: gap 236 = [P15-59](#p15-59-power-of-the-e2-check-block), gap 238 = [P15-61](#p15-61-real-system-estimate-of-the-noticing-rate-lower-bound). T12 stage 2 needs [P15-53](#p15-53-t12-stage-2-wrapper-for-e2) (gap 218) first.
 - **Serves:** research labs.
 - **Depends on:** pre-registration `29c1dc9`; the run wrapper (gap 212 = P15-52); GPU (local or rented).
 - **Source:** frontier plan (user "go", 2026-11-23), direction 1. Pre-registration `29c1dc9` ([plan](../../experiments/2026-11-23-e2-self-teaching-t15/plan.md)): T15, then T12 as stage 2; primary P1: FB-F WER change <= -0.02 on 2 / 2 seeds; the bound must hold through every accepted update. It is the open GPU part of P15-03.
@@ -2454,7 +2526,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P15-50 F3 at full data with tuned arms and repeated deranged controls
 - **Gap:** 210 of the [open-gap list](open-gaps.md) (added 2026-11-23 by the frontier plan). Follow-up of P15-08, P15-45, P15-46, P15-47.
-- **Status:** `in_progress` (GPU job since 2026-11-23 21:03:50; wrapper `88a3ab8`, no result; stage-1 recipe selection `3bb55f0`, val only, before any stage-2 test number). Stage 1 picked R+: lr 5e-4, 6000 steps (mean val CER 0.171); E+: lr 1e-3, 6000 steps (mean val CER 0.120). Several R cells were excluded by the pre-registered > 0.90 rule. At 2026-11-24 08:50 the T15 trunk pretraining (arm I) was at step 10,000 / 30,000; 11.7 GPU h used. Arm I pretraining ended 11:10:21 (30,000 steps); stage 2 started then. At 12:12 stage 2 ran arm R-ball-s0, step 4,500 / 6,000 (GPU clock 14.71 h at its start, 11:46). Not done.
+- **Status:** `in_progress` (GPU job since 2026-11-23 21:03:50; wrapper `88a3ab8`, no result; stage-1 recipe selection `3bb55f0`, val only, before any stage-2 test number). Stage 1 picked R+: lr 5e-4, 6000 steps (mean val CER 0.171); E+: lr 1e-3, 6000 steps (mean val CER 0.120). Several R cells were excluded by the pre-registered > 0.90 rule. At 2026-11-24 08:50 the T15 trunk pretraining (arm I) was at step 10,000 / 30,000; 11.7 GPU h used. Arm I pretraining ended 11:10:21 (30,000 steps); stage 2 started then. At 12:12 stage 2 ran arm R-ball-s0, step 4,500 / 6,000 (GPU clock 14.71 h at its start, 11:46). At 2026-11-25 06:36 stage 2 ran the label-shuffled R controls (`R-ball-s4-labelshuf`), GPU clock 32.30 h of the 45 GPU-h cap; expected end about 2026-11-25 18:00; the last I-deranged runs may be cut by the cap ("not run (cap)"). Not done.
 - **Serves:** research labs.
 - **Depends on:** pre-registration `29c1dc9`; the run wrapper (gap 212 = P15-52); the local GPU after P15-45; the K arm needs P11-06 (gap 86).
 - **Source:** frontier plan (user "go", 2026-11-23), direction 3. Pre-registration `29c1dc9` ([plan](../../experiments/2026-11-23-f3-full-data-controls/plan.md)): tuned R+ / E+ arms (same val-only rule), K (KT-sEMG trunk) and I (T15 trunk) arms, 3 deranged runs per seed. It applies the repeated-deranged rule of P15-46 (gap 198). The packaged `willett-hw` decoder is R seed 0 (CER 0.305), so "E beats R" at full data may only show an unstable R recipe.
@@ -2468,7 +2540,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P15-52 Run wrappers for E2 and F3
 - **Gap:** 212 of the [open-gap list](open-gaps.md) (added 2026-11-23 by the frontier plan). Follow-up of P15-49, P15-50.
-- **Status:** `in_progress` (2026-11-24). F3 part: wrapper `88a3ab8` (code + CPU tests, no result); it runs as the P15-50 GPU job. **E2 part done:** wrapper `83053f3` (27 CPU tests, CPU dry run, no result files; about 45 h local estimate under a 90 h cap) and pre-run amendment 1 `44e64da` (6 plan points: nightly steps fixed at 150 by the tie rule; nightly LR = update-1 LR; one challenger per session; AdamW eps 1e-8, not the M4-13 eps 0.1; offer = top-1 + up to 4 n-best; output `derived/p15-49`). The gap stays `in_progress` until P15-50 finishes cleanly with the F3 wrapper. Follow-up: gap 218 = [P15-53](#p15-53-t12-stage-2-wrapper-for-e2) (T12 stage 2).
+- **Status:** `in_progress` (2026-11-24). F3 part: wrapper `88a3ab8` (code + CPU tests, no result); it runs as the P15-50 GPU job. **E2 part done:** wrapper `83053f3` (27 CPU tests, CPU dry run, no result files; about 45 h local estimate under a 90 h cap) and pre-run amendment 1 `44e64da` (6 plan points: nightly steps fixed at 150 by the tie rule; nightly LR = update-1 LR; one challenger per session; AdamW eps 1e-8, not the M4-13 eps 0.1; offer = top-1 + up to 4 n-best; output `derived/p15-49`). The gap stays `in_progress` until P15-50 finishes cleanly with the F3 wrapper. 2026-11-25: the E2 wrapper also implements amendment 2 (`01a5bc9`, gap 209). Follow-up: gap 218 = [P15-53](#p15-53-t12-stage-2-wrapper-for-e2) (T12 stage 2).
 - **Serves:** research labs.
 - **Depends on:** pre-registration `29c1dc9`; CPU (a short GPU smoke into a scratch folder only).
 - **Source:** plan agent report (2026-11-23, commits `29c1dc9`, `aa91210`): the E2 and F3 plans are committed, but their run wrappers are not written yet.
@@ -2481,6 +2553,70 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** P15-52 E2 part (done, `83053f3` + `44e64da`); the T15 stage of P15-49; a T12 v2 wrapper; CPU (the run itself is GPU work under P15-49).
 - **Source:** E2 wrapper agent report (2026-11-24): the wrapper covers the T15 stage only. The pre-registration `29c1dc9` names T12 as stage 2, but no T12 v2 wrapper exists.
 - **Done when:** a T12 v2 wrapper exists, calls the frozen T12 v2 trainer unchanged, has CPU tests and passes a dry run (no result files), and a second pre-run amendment is committed before any T12 run.
+
+#### P15-54 F3 at small data with per-session input layers
+- **Gap:** 219 of the [open-gap list](open-gaps.md) (added 2026-11-25 by the F3 small-data pre-registration). Follow-up of P15-50, P15-08.
+- **Status:** `todo`.
+- **Serves:** research labs.
+- **Depends on:** pre-registration `19ec6c5`; data DANDI 000950, 000941, 000128, 000129 (CC BY 4.0, about 2.2 GB, not downloaded yet); a run wrapper; the local GPU after A1 (P16-07) and E2 (P15-49): about 7 GPU h core, 16-17 GPU h total (caps 9 h core, 20 h total).
+- **Source:** F3 small-data pre-registration (2026-11-24, commit `19ec6c5`, [plan](../../experiments/2026-11-25-f3-small-data-falcon/plan.md)), after the 2026-11-24 literature check. Levin et al. 2026: cross-brain transfer helps below 200 target sentences, but only with trainable input layers. Our `XBody` model has one shared stem and no per-session layer; this is the most likely design flaw behind the minutes-scale failures (P15-36, P15-41, P15-43). Third in the GPU queue (accepted by the user 2026-11-24).
+- **Done when:** the pre-registered run reports H1-H5 and U at the core budgets (3, 12, 40 sentences per session) with the plan controls (C2 label-deranged runs), and the north-star F3 row states the result; or numbers say why not.
+
+#### P15-55 Facial-EMG silent-speech baseline on the Gaddy and Klein data
+- **Gap:** 231 of the [open-gap list](open-gaps.md) (added 2026-11-25 by the 2026-11-24 literature check). Follow-up of P15-08.
+- **Status:** `todo`.
+- **Serves:** research labs.
+- **Depends on:** the Gaddy and Klein data (CC BY 4.0, about 20 h); a pre-registration; about 10-20 GPU h, later.
+- **Source:** 2026-11-24 literature check and ingest (`7370a03`; [Gaddy digital voicing](../sources/gaddy-digital-voicing.md), [dataset](../entities/gaddy-silent-speech-dataset.md)): an open facial-EMG silent-speech set for the "any body signal" direction.
+- **Done when:** a pre-registered baseline run reports WER / CER on the published split with the trust layer's null controls, or numbers say why not.
+
+#### P15-56 New signal-check tracks: truncated signal, graded noise, near-miss sentence swap
+- **Gap:** 232 of the [open-gap list](open-gaps.md) (added 2026-11-25 by the 2026-11-24 literature check). Follow-up of P15-15, P15-07.
+- **Status:** `todo`.
+- **Serves:** research labs.
+- **Depends on:** the hallucination benchmark (P15-15); CPU.
+- **Source:** [E3 page](frontier-e3-hallucination.md) (missing tracks) and the 2026-11-24 ingest ([confidence-ordering reversal](../sources/confidence-ordering-reversal.md), Zhang & Liu 2026): after LM fusion the confidence order of repairs and errors can reverse. Near-miss swaps (1-2 word edits) and graded noise test the signal check more strictly than the current null / scrambled / swapped tracks.
+- **Done when:** the three tracks exist with fixed seeds and docs, and the shipped guards are scored on them.
+
+#### P15-57 Periodic literature check
+- **Gap:** 233 of the [open-gap list](open-gaps.md) (added 2026-11-25 by the user request of 2026-11-24). Follow-up of P15-10.
+- **Status:** `in_progress` (2026-11-24; first cycle done, repeating item).
+- **Serves:** research labs.
+- **Depends on:** one research agent per cycle; the user discusses each ingest list first.
+- **Source:** user request 2026-11-24: check recent papers regularly, verify the claims, and discuss before any ingest. First cycle done 2026-11-24: F1 / F2 and F3 checks, ingest of 18 sources (`7370a03`; the user said "ok" to the plan and the list). Rule: one cycle after every major result, or every 1-2 weeks.
+- **Done when:** (per cycle) the check is filed: sources ingested after the user discussion, north-star and novelty pages updated, and a log entry. It is a repeating item: it stays `in_progress` while the project runs.
+
+#### P15-58 FALCON EvalAI submission
+- **Gap:** 234 of the [open-gap list](open-gaps.md) (added 2026-11-25 by the 2026-11-24 literature check). Follow-up of P15-54.
+- **Status:** `externally_blocked`; it never counts as late.
+- **Serves:** research labs.
+- **Depends on:** the P15-54 result; an EvalAI account and the user's approval of a public submission.
+- **Source:** [FALCON](../sources/falcon-benchmark.md): the held-out test score needs the EvalAI server (challenge 2319, 6-hour limit per submission); local work uses only the held-in data and the released held-out calibration trials.
+- **Done when:** a submission gets a public H2 score that is recorded, or the user decides not to submit. Optional; `externally_blocked` (account and user approval).
+
+#### P15-59 Power of the E2 check block
+- **Gap:** 236 of the [open-gap list](open-gaps.md) (added 2026-11-25 by the E2 amendment 2 agent (P15-49)). Follow-up of P15-49.
+- **Status:** `todo`.
+- **Serves:** research labs.
+- **Depends on:** P15-49 amendment 2 (`3979330`); its own plan; CPU simulation first.
+- **Source:** E2 amendment 2 (`3979330`, arm FBX): the randomised-exposure gate uses inverse-propensity weighting with the G3 audit bound. With 45 check items per session it has almost no power.
+- **Done when:** a plan for a larger check block or a sequential test states its power (simulated) and is committed before any run, or a note says why it is not needed.
+
+#### P15-60 Sentence-repeat correlation in the T15 LTT part
+- **Gap:** 237 of the [open-gap list](open-gaps.md) (added 2026-11-25 by the T15 hold-out amendment agent (P15-48)). Follow-up of P15-48.
+- **Status:** `todo`.
+- **Serves:** research labs.
+- **Depends on:** P15-48 code (`d0a6a29`); CPU.
+- **Source:** P15-48 amendment 1 (`98db2e2`) and code (`d0a6a29`): the group-aware split keeps sentence groups inside one calibration part, but the LTT part still has about 932 distinct sentences per 1,008 items. So its items are not fully independent.
+- **Done when:** the effect of the repeats on the LTT bound is measured or bounded (for example a group-level LTT or a simulation) and reported next to the P15-48 result, or a note says why it is negligible.
+
+#### P15-61 Real-system estimate of the noticing-rate lower bound
+- **Gap:** 238 of the [open-gap list](open-gaps.md) (added 2026-11-25 by the E2 amendment 2 agent (P15-49)). Follow-up of P15-49, P15-04.
+- **Status:** `todo`.
+- **Serves:** research labs.
+- **Depends on:** the P15-49 result; real or realistic feedback data (random confirmation prompts, or per-sentence ratings as in Card et al. 2026); CPU.
+- **Source:** E2 amendment 2 (`3979330`, section 1c, limit 2): the secondary controller uses `q_lower`, which the simulator knows. A real system does not know `p_notice`. It must estimate a lower bound from random confirmation prompts (Wang et al. 2026) or from per-sentence ratings (Card et al. 2026).
+- **Done when:** a method that estimates a lower bound on the noticing rate is written, tested on simulated data with a known `p_notice`, and stated on the [guarantee scope](f1-guarantee-scope.md) page; or numbers say why not.
 
 ## P16. Write side: emotion and memory (exploration) (added 2026-11-15, later)
 **Goal:** find out, with evidence, whether a BCI can stimulate or replicate emotion or memory, and what part of that Fidetype could do safely. All Fidetype work so far is **read side** (signal → text). P16 looks at the **write side** (stimulation → brain state).
@@ -2504,11 +2640,15 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 | **P16-03** | Ethics and safety page for write-side BCI | P16-01 | todo |
 | **P16-04** | Design study: closed loop "detect state → stimulate → verify" (offline / simulation only) | P16-01, P16-02, P16-03 | todo |
 | **P16-05** | Any real stimulation work | P16-03, P16-04, partners, ethics approval, hardware | **externally blocked** |
-| **P16-06** | Beyond words: affect and memory-state decoding with the trust layer's signal checks (added 2026-11-23, user request) | research scope (agent runs 2026-11-23), P16-02, trust layer | todo |
-| **P16-07** | Beyond words: image reconstruction decoding with signal checks (added 2026-11-23, user request) | P16-06 | in progress (A1 ready, queued on the GPU) |
+| **P16-06** | Beyond words: affect and memory-state decoding with the trust layer's signal checks (added 2026-11-23, user request) | research scope (agent runs 2026-11-23), P16-02, trust layer | done 2026-11-25 (negative: B1 outcome C) |
+| **P16-07** | Beyond words: image reconstruction decoding with signal checks (added 2026-11-23, user request) | P16-06 | in progress (scope met; A1 ready, first in the GPU queue) |
 | **P16-08** | A1 leave-one-subject-out on all 10 THINGS-EEG2 subjects (open gap 215, low priority) | P16-07 | todo |
 | **P16-09** | NICE as a fallback decoder for A1 (open gap 216, low priority) | P16-07 | todo |
 | **P16-10** | Per-cluster decoder retraining for the A1 cluster hold-out control R2 (open gap 217, low priority) | P16-07 | todo |
+| **P16-11** | B1b memory-state gate with per-subject targets (open gap 220) | P16-06 | todo |
+| **P16-12** | Affect read-side plan on Emo-FilM (open gap 228) | P16-06, P16-02 | todo |
+| **P16-13** | FACED data licence check (open gap 229, externally blocked) | P16-06 | externally blocked |
+| **P16-14** | A2 MindEye2 audit (open gap 230, externally blocked) | P16-07 | externally blocked |
 
 #### P15-29 Safe WPM interval that includes the calibration draw
 - **Gap:** 103 of the [open-gap list](open-gaps.md) (added 2026-11-19 by P15-26). Follow-up of P15-26.
@@ -2553,7 +2693,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P16-06 Beyond words: affect and memory-state decoding with signal checks
 - **Gap:** 206 of the [open-gap list](open-gaps.md) (added 2026-11-23 by the user request "beyond words"). Follow-up of P16-01, P16-02.
-- **Status:** `in_progress` (2026-11-24). The beyond-words research agent scoped gaps 206 and 207 (report to the orchestrator; no wiki page committed yet).
+- **Status:** `done` (2026-11-25), negative result. Gap 206 closed. Scope page [beyond words](beyond-words.md) (`645f107`). B1 on Penn RAM FR1 iEEG (CC0, 30 subjects, CPU only; plan `97c412b`, amendment `e396554`, code `2a29be8` / `6533222`, gate `d8dd453`, results `994212f`, [results](../../experiments/2026-11-24-b1-memory-state-gate/results.md)): pre-registered outcome C ("not safe"). Mean test AUC 0.574 (p = 1.1e-5); G+ flag rate 0.029 [0.011, 0.054]; wrong-flag rate 0.625 [0.564, 0.708]; nulls N1 (permuted labels) certify in 14 / 20 runs (limit 4), N4 (shuffled signal) precision 0.344 (limit 0.285), N5 (uniform) flags 0. Diagnosis (post hoc): the pooled target leaks per-subject base rates. The done-when asks for the report, not for a pass. Follow-ups: gap 220 = [P16-11](#p16-11-b1b-memory-state-gate-with-per-subject-targets), gap 221 = [P5-42](#p5-42-per-user-base-rates-and-a-within-user-label-null-in-calibrate).
 - **Serves:** research labs.
 - **Depends on:** the research scope (a research agent runs 2026-11-23); public datasets (licence check first); trust layer (P5, P14-03).
 - **Source:** user request 2026-11-23: decode more than words (emotion / affect, memory state, images), and the user wants to build it. The existing P16 phase (emotion and memory) covers the write side and one read-side affect item (P16-02). A research agent scopes the track now.
@@ -2561,7 +2701,7 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 
 #### P16-07 Image reconstruction decoding with signal checks
 - **Gap:** 207 of the [open-gap list](open-gaps.md) (added 2026-11-23 by the user request "beyond words"). Follow-up of P16-06.
-- **Status:** `in_progress` (2026-11-24). **A1 is ready to run, queued on the GPU after P15-50.** A1 = trust-gated zero-shot image identification on THINGS-EEG2 (subjects 1 and 2). Commits: `1d8e9b9` ([pre-registration](../../experiments/2026-11-24-a1-things-eeg2-image-gate/plan.md)), `5e2279e` (amendment before any run: val 200 concepts; zero commits -> the error part of rule (ii) passes, outcome B), `031b053` (code: own ATM-S re-implementation with MIT notice, gate on our trust layer, 20 CPU tests, dry run; no result). Main design change from the draft: calibration on 300 held-out training concepts, test on the 200 new concepts. Licences: THINGS-EEG2 CC BY 4.0 (osf.io/3jk45); THINGS images research-only, not needed, never committed; ATM code MIT; NICE MIT; Hugging Face `LidongYang/EEG_Image_decode` 250 Hz re-preprocessing + CLIP ViT-H-14 features CC BY 4.0. Data local only: raw 23.6 GB, derived 9.7 GB. Estimate 1-3 GPU h local (not measured), cap 6 h. Follow-ups: gaps 215 = P16-08, 216 = P16-09, 217 = P16-10.
+- **Status:** `in_progress` (2026-11-25). The scope part of the done-when is met by the [beyond-words](beyond-words.md) page (`645f107`). **A1 is ready to run, first in the GPU queue after P15-50** (order accepted by the user 2026-11-24). A1 = trust-gated zero-shot image identification on THINGS-EEG2 (subjects 1 and 2). Commits: `1d8e9b9` ([pre-registration](../../experiments/2026-11-24-a1-things-eeg2-image-gate/plan.md)), `5e2279e` (amendment before any run: val 200 concepts; zero commits -> the error part of rule (ii) passes, outcome B), `031b053` (code: own ATM-S re-implementation with MIT notice, gate on our trust layer, 20 CPU tests, dry run; no result). Main design change from the draft: calibration on 300 held-out training concepts, test on the 200 new concepts. Licences: THINGS-EEG2 CC BY 4.0 (osf.io/3jk45); THINGS images research-only, not needed, never committed; ATM code MIT; NICE MIT; Hugging Face `LidongYang/EEG_Image_decode` 250 Hz re-preprocessing + CLIP ViT-H-14 features CC BY 4.0. Data local only: raw 23.6 GB, derived 9.7 GB. Estimate 1-3 GPU h local (not measured), cap 6 h. Follow-ups: gaps 215 = P16-08, 216 = P16-09, 217 = P16-10, 230 = P16-14 (A2).
 - **Serves:** research labs.
 - **Depends on:** P16-06 (scope); public datasets (licence check first); GPU (cost in the plan).
 - **Source:** user request 2026-11-23 ("beyond words", images). No roadmap item covered image decoding before.
@@ -2590,6 +2730,38 @@ The user asked that known gaps are fixed later, not forgotten. These items come 
 - **Depends on:** the A1 result (P16-07); GPU (one decoder per held-out cluster).
 - **Source:** A1 plan, control R2 (k-means, k = 8): only the gate is refit per cluster. The decoder is not retrained per cluster (it saw all fit concepts), so R2 tests the gate only.
 - **Done when:** R2 runs with a decoder retrained without each held-out cluster, and the result is reported next to the A1 R2 result, or numbers say why not (GPU cost).
+
+#### P16-11 B1b memory-state gate with per-subject targets
+- **Gap:** 220 of the [open-gap list](open-gaps.md) (added 2026-11-25 by the B1 result (P16-06)). Follow-up of P16-06.
+- **Status:** `todo`.
+- **Serves:** research labs.
+- **Depends on:** P16-06 (done, B1 results `994212f`); the local Penn RAM FR1 data (CC0, 56.8 GB; keep or delete is an open user question); a new pre-registration; CPU.
+- **Source:** B1 results (`994212f`, section "Possible next step"): the pooled target `b_order + 0.10` lets words of high-recall subjects pass with no word-level signal (per-subject Platt intercept). B1b changes only the target: `tau+` per subject from its own order-word rate, or a gate on the within-subject excess. It keeps the B1 nulls and adds one: labels permuted across subjects of the same base-rate stratum. The B1 numbers must not be used to tune it.
+- **Done when:** a pre-registered B1b run reports the B1 measures (AUC, flag rate, wrong-flag rate with intervals) with the B1 nulls and the new across-subject null, or numbers say why not.
+
+#### P16-12 Affect read-side plan on Emo-FilM
+- **Gap:** 228 of the [open-gap list](open-gaps.md) (added 2026-11-25 by the 2026-11-24 user decisions (beyond-words follow-ups)). Follow-up of P16-06, P16-02.
+- **Status:** `todo`.
+- **Serves:** research labs.
+- **Depends on:** P16-06 (done); Emo-FilM (OpenNeuro ds004892, CC0, 141.4 GB; annotation format not read yet); disk space; CPU / GPU cost in the plan.
+- **Source:** [Beyond words](beyond-words.md) (`645f107`), candidate C1-fMRI: the best affect candidate with a verified open licence (CC0). No plan yet.
+- **Done when:** a pre-registration for a trust-gated affect run on Emo-FilM with held-out films and the beyond-words null controls is committed before any data analysis, or a note says why not (for example disk space).
+
+#### P16-13 FACED data licence check
+- **Gap:** 229 of the [open-gap list](open-gaps.md) (added 2026-11-25 by the beyond-words page (P16-06)). Follow-up of P16-06.
+- **Status:** `externally_blocked`; it never counts as late.
+- **Serves:** research labs.
+- **Depends on:** the user makes a Synapse account and reads the terms of `syn50614194`.
+- **Source:** [Beyond words](beyond-words.md) (`645f107`): FACED has no data licence on record; the CC BY 4.0 licence is the paper's, and the Synapse entity has no licence field. C1-EEG stays blocked until the licence is known.
+- **Done when:** the data licence is recorded in references/README.md and on the beyond-words page; then C1-EEG gets a plan or is dropped with the reason. `externally_blocked` (a Synapse account is needed).
+
+#### P16-14 A2 MindEye2 audit
+- **Gap:** 230 of the [open-gap list](open-gaps.md) (added 2026-11-25 by the beyond-words page (P16-07)). Follow-up of P16-07.
+- **Status:** `externally_blocked`; it never counts as late.
+- **Serves:** research labs.
+- **Depends on:** the user accepts the NSD terms (click-through); GPU.
+- **Source:** [Beyond words](beyond-words.md) (`645f107`), idea A2: check whether MindEye2 outputs come from the brain signal or from the image prior, and gate per image. MindEye2 code is MIT; NSD needs its own terms.
+- **Done when:** the NSD terms are accepted, a pre-registration is committed, and the run reports the audit with null controls; or numbers say why not. `externally_blocked` (NSD terms).
 
 **Note (2026-11-23):** the user wants to build the "beyond words" read side (P16-06, P16-07). The P16 window (2027-07) and the rule "starts after the P15 core work" were set on 2026-11-15; any change of the order is a separate decision. No existing item moved.
 

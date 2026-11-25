@@ -3,7 +3,7 @@ title: Beyond words - affect, memory state and images from body signals
 type: question
 tags: [affect, emotion, memory, image-decoding, eeg, ieeg, fmri, meg, datasets, licence, null-controls, trust-layer, p16]
 sources: []
-updated: 2026-11-24
+updated: 2026-11-25
 ---
 
 # Beyond words: what can a body signal tell besides words?
@@ -74,6 +74,11 @@ All four are **CC0** in `dataset_description.json`; no signature. Details: [Penn
 
 **Which null controls carry over (a finding of the B1 design).** The Ezzyat features are log power **averaged over time**. Time reversal and per-epoch phase randomisation keep a channel's power spectrum, so they keep these features. For this feature set they are **invariance checks, not safety nulls**. The safety nulls are: label permutation end to end, noise shaped to the session-mean spectrum, and shuffled signal across words.
 
+### B1: result (2026-11-25)
+Pre-registered outcome **C (not safe)** ([B1 results](../../experiments/2026-11-24-b1-memory-state-gate/results.md), commit `994212f`). The decoder works on new sessions (mean test AUC 0.574, p = 1.1e-5), and the gate kept its precision bound. But the permuted-label null certifies in 14 of 20 runs (limit 4), shuffled-signal precision is 0.344 (limit 0.285), and the gate flags only 2.9 % of words (rule 5 %). The cause is a design gap: subject recall rates differ (0.03-0.51), and the pooled target lets words of high-recall subjects pass with no word-level signal.
+
+**Pooled precision / risk gates over heterogeneous users.** A follow-up check asked whether our text guards have the same failure ([pooled-guard check](../../experiments/2026-11-25-pooled-guard-check/results.md)). Not in its pure form, but the emg2qwerty guards show a weak user-identity leak, and one user is above the pooled bound. See also [Learn then Test](../concepts/learn-then-test.md) (limits).
+
 ## Images
 
 ### What the sources say
@@ -127,7 +132,7 @@ All four are **CC0** in `dataset_description.json`; no signature. Details: [Penn
 | Rank | ID | Area | Data (licence) | State |
 |---|---|---|---|---|
 | 1 | A1 | EEG image identity gate | THINGS-EEG2 (CC BY 4.0) | pre-registered, code done, queued on GPU |
-| 2 | B1 | iEEG encoding-state gate | Penn RAM FR1 (CC0) | pre-registered (this task), CPU |
+| 2 | B1 | iEEG encoding-state gate | Penn RAM FR1 (CC0) | done 2026-11-25: outcome C (not safe); next: B1b with per-subject targets |
 | 3 | A2 | MindEye2 "brain or prior" audit + per-image gate | NSD (click-through terms) | idea; needs the user to accept the NSD terms |
 | 4 | C1-fMRI | affect gate with held-out films | Emo-FilM (CC0) | candidate; annotation format not read |
 | 5 | B2 | offline audit of real closed-loop stimulation decisions | RAM FR3 ds005557 (CC0, 37.2 GB) | idea; links to P16-04 |
