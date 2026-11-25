@@ -105,3 +105,37 @@ Pickle safety (`t15_copyTask.pkl`): an opcode scan (`pickletools.genops`, no loa
 | Côté-Allard Myo armband | https://github.com/UlysseCoteAllard/MyoArmbandDataset | GPL-3.0 (repo) |
 | CSL-HDEMG | https://www.uni-bremen.de/en/csl/research/motion-recognition | no licence (cite) |
 | putEMG (paper) | https://pmc.ncbi.nlm.nih.gov/articles/PMC6720505/ | CC BY-NC 4.0 (paper; host page not read) |
+
+### Survey 2026-11-24: beyond words, affect / memory / images (links only, no files; see [wiki/questions/beyond-words.md](../wiki/questions/beyond-words.md))
+Checked on 2026-11-24. Paper licences from the arXiv abstract page or the journal article. Dataset licences from the host page or API. No file is stored here.
+
+| Item | Kind | Link | Licence | Read |
+|---|---|---|---|---|
+| Ezzyat et al. 2018, closed-loop stimulation of temporal cortex (Nat Commun 9:365) | paper | https://doi.org/10.1038/s41467-017-02753-0 | CC BY 4.0 | full text |
+| Li, Pazdera & Kahana 2024, "EEG decoders track memory dynamics" (Nat Commun) | paper | https://doi.org/10.1038/s41467-024-46926-0 | CC BY 4.0 | full text |
+| Hampson et al. 2018, hippocampal neural prosthetic (J Neural Eng) | paper | https://doi.org/10.1088/1741-2552/aaaed7 (PMC6576290) | journal copyright | Europe PMC abstract |
+| Sani et al. 2018, mood decoded from intracranial activity (Nat Biotechnol) | paper | https://doi.org/10.1038/nbt.4200 | journal copyright | Europe PMC abstract |
+| Scangos et al. 2021, closed-loop neuromodulation in depression (Nat Med) | paper | https://doi.org/10.1038/s41591-021-01480-w (PMC11219029) | journal copyright | Europe PMC abstract |
+| FACED, Chen et al. 2023 (Sci Data 10:740) | paper | https://pmc.ncbi.nlm.nih.gov/articles/PMC10600242/ | CC BY 4.0 (paper) | full text |
+| Xu & Plataniotis 2026, stimulus memorisation in EEG emotion recognition | paper | https://arxiv.org/abs/2610.28422 | arXiv non-exclusive distribution 1.0 | abstract + HTML |
+| Khan et al. 2025, review process failures, DEAP | paper | https://arxiv.org/abs/2508.02417 | arXiv non-exclusive distribution 1.0 | abstract |
+| MindEye2, Scotti et al. (ICML 2024) | paper + code | https://arxiv.org/abs/2403.11207 ; https://github.com/MedARC-AI/MindEyeV2 | paper CC BY 4.0; code MIT | HTML v3 |
+| Benchetrit, Banville & King (ICLR 2024), MEG image decoding | paper | https://arxiv.org/abs/2310.19812 | arXiv non-exclusive distribution 1.0 | HTML v3 |
+| NICE, Song et al. (ICLR 2024) | paper | https://arxiv.org/abs/2308.13234 | arXiv non-exclusive distribution 1.0 (code MIT, see `nice-eeg`) | HTML v3 |
+| ATM, Li et al. | paper | https://arxiv.org/abs/2403.07721 | arXiv non-exclusive distribution 1.0 (code MIT, see `atm-eeg-image-decode`) | HTML v7 |
+| BrainBits, Mayo et al. (NeurIPS 2024) | paper | https://arxiv.org/abs/2411.02783 | CC BY 4.0 | HTML v1 |
+| Shirakawa et al., spurious reconstruction (Kamitani lab) | paper | https://arxiv.org/abs/2405.10078 | CC BY 4.0 | HTML v5 |
+| NSD-Imagery, Kneeland et al. (CVPR 2025) | paper | https://arxiv.org/abs/2506.06898 | CC BY-NC-ND 4.0 | HTML v1 |
+| CrossPT-EEG (was "EEG-ImageNet"), Zhu et al. | paper | https://arxiv.org/abs/2406.07151 | arXiv non-exclusive distribution 1.0; data licence not stated | HTML v2 |
+| Kikuchi, Brain Control metric | repo | https://github.com/yukik8/brain-control | MIT | README |
+| Penn RAM FR1 (ds004789 v3.1.0) | dataset | https://openneuro.org/datasets/ds004789 | CC0 | API, 618.8 GB |
+| Penn RAM catFR1 (ds004809 v2.2.0) | dataset | https://openneuro.org/datasets/ds004809 | CC0 | API, 512.4 GB |
+| Penn RAM FR3 closed loop (ds005557 v1.0.0) | dataset | https://openneuro.org/datasets/ds005557 | CC0 | API, 37.2 GB |
+| PEERS scalp EEG (ds004395 v2.0.0) | dataset | https://openneuro.org/datasets/ds004395 | CC0 | API, 9,583.3 GB |
+| Emo-FilM (ds004892 v1.0.2) | dataset | https://openneuro.org/datasets/ds004892 | CC0 | API, 141.4 GB (fMRI + behaviour) |
+| FACED data | dataset | https://www.synapse.org/Synapse:syn50614194 | **not found** (Synapse API: no licence field) | API |
+| SEED family | dataset | https://bcmi.sjtu.edu.cn/home/seed/resource/license/license.pdf | signed academic-only licence; PI / director must sign | licence PDF |
+| DREAMER | dataset | https://zenodo.org/records/546113 | no licence shown; restricted, request form | record page |
+| WESAD | dataset | https://archive.ics.uci.edu/dataset/465/wesad+wearable+stress+and+affect+detection | not found (UCI: "See linked dataset for licensing information") | UCI page |
+| DEAP | dataset | https://www.eecs.qmul.ac.uk/mmv/datasets/deap/ | not checked (page not reachable 2026-11-24) | — |
+| NSD | dataset | https://registry.opendata.aws/nsd/ | "Terms & Conditions for the NSD dataset" + access form | registry page |
