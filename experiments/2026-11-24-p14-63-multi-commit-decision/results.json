@@ -1,0 +1,338 @@
+{
+ "task": "P14-63 (gap 203)",
+ "constants": {
+  "read_s_per_commit": 0.5,
+  "read_s_per_word": 0.3,
+  "B": 2000,
+  "seed": 0,
+  "no_bci": 4.02
+ },
+ "cards": {
+  "by_folder": {
+   "halluc-v0.1": {
+    "cards": 24,
+    "several_commits": 0,
+    "prefix_commits": 0
+   },
+   "halluc-v0.2": {
+    "cards": 28,
+    "several_commits": 0,
+    "prefix_commits": 0
+   },
+   "v0.1": {
+    "cards": 21,
+    "several_commits": 0,
+    "prefix_commits": 0
+   },
+   "v0.2": {
+    "cards": 36,
+    "several_commits": 0,
+    "prefix_commits": 0
+   }
+  },
+  "n_cards": 109,
+  "n_with_v02": 36,
+  "n_with_several_commits": 0,
+  "n_with_prefix_commits": 0,
+  "cards_with_several_commits": [],
+  "leaderboard_mentions_multi_commit": false
+ },
+ "t15": {
+  "single": {
+   "recorded_value": 4.667061076225306,
+   "library_R7": {
+    "value": 4.667061076225306,
+    "status": "certified",
+    "adopted_headline": true
+   },
+   "library_without_n_commits": {
+    "value": 4.667061076225306,
+    "status": "certified",
+    "adopted_headline": true,
+    "not_headline_because": null
+   },
+   "committing_trials": 465,
+   "commit_events": 465,
+   "trials_with_several_commits": 0,
+   "max_commits": 1,
+   "wrong_trials": 13,
+   "rules": {
+    "R7": {
+     "value": 4.667061076225306,
+     "reading_min": 9.4,
+     "wrong_trials": 13,
+     "right_words": 1073,
+     "commit_events": 465
+    },
+    "ONE": {
+     "value": 4.667061076225306,
+     "reading_min": 9.4,
+     "wrong_trials": 13,
+     "right_words": 1073,
+     "commit_events": 465,
+     "vs_R7": {
+      "diff": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     }
+    },
+    "REREAD": {
+     "value": 4.667061076225306,
+     "reading_min": 9.4,
+     "wrong_trials": 13,
+     "right_words": 1073,
+     "commit_events": 465,
+     "vs_R7": {
+      "diff": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     }
+    },
+    "FIRST": {
+     "value": 4.667061076225306,
+     "reading_min": 9.4,
+     "wrong_trials": 13,
+     "right_words": 1073,
+     "commit_events": 465,
+     "vs_R7": {
+      "diff": 0.0,
+      "ci95": [
+       0.0,
+       0.0
+      ]
+     }
+    },
+    "REFUSE": {
+     "value": 4.667061076225306,
+     "note": "adopted v0.2 rule 3: at most one commit per trial"
+    }
+   },
+   "break_even_s_per_event": {
+    "single_value": 0.5,
+    "no_bci": 5.275004198025158
+   }
+  },
+  "stream": {
+   "recorded_value": 2.343539936697323,
+   "library_R7": {
+    "value": 2.343539936697323,
+    "status": "certified",
+    "adopted_headline": false
+   },
+   "library_without_n_commits": {
+    "value": 2.3553883068463017,
+    "status": "certified",
+    "adopted_headline": true,
+    "not_headline_because": null
+   },
+   "committing_trials": 310,
+   "commit_events": 446,
+   "trials_with_several_commits": 115,
+   "max_commits": 4,
+   "wrong_trials": 5,
+   "rules": {
+    "R7": {
+     "value": 2.343539936697323,
+     "reading_min": 6.386666666666668,
+     "wrong_trials": 5,
+     "right_words": 528,
+     "commit_events": 446
+    },
+    "ONE": {
+     "value": 2.3553883068463017,
+     "reading_min": 5.253333333333333,
+     "wrong_trials": 5,
+     "right_words": 528,
+     "commit_events": 446,
+     "vs_R7": {
+      "diff": 0.01184837014897866,
+      "ci95": [
+       0.008884885751561388,
+       0.015265213841877411
+      ]
+     }
+    },
+    "REREAD": {
+     "value": 2.3339059788582053,
+     "reading_min": 7.316666666666666,
+     "wrong_trials": 5,
+     "right_words": 528,
+     "commit_events": 446,
+     "vs_R7": {
+      "diff": -0.009633957839117802,
+      "ci95": [
+       -0.012562795631732581,
+       -0.007096188684870623
+      ]
+     }
+    },
+    "FIRST": {
+     "value": 1.7540181137067519,
+     "reading_min": 4.573333333333333,
+     "wrong_trials": 5,
+     "right_words": 392,
+     "commit_events": 310,
+     "vs_R7": {
+      "diff": -0.5895218229905712,
+      "ci95": [
+       -0.6931686226729492,
+       -0.48808432300987153
+      ]
+     }
+    },
+    "REFUSE": {
+     "value": null,
+     "note": "adopted v0.2 rule 3: at most one commit per trial"
+    }
+   },
+   "break_even_s_per_event": {
+    "single_value": -14.589717145873097,
+    "no_bci": -12.13994296865918
+   }
+  },
+  "hybrid": {
+   "recorded_value": 4.890195222754168,
+   "library_R7": {
+    "value": 4.890195222754168,
+    "status": "certified",
+    "adopted_headline": false
+   },
+   "library_without_n_commits": {
+    "value": 4.943600567454413,
+    "status": "certified",
+    "adopted_headline": true,
+    "not_headline_because": null
+   },
+   "committing_trials": 500,
+   "commit_events": 803,
+   "trials_with_several_commits": 224,
+   "max_commits": 5,
+   "wrong_trials": 18,
+   "rules": {
+    "R7": {
+     "value": 4.890195222754168,
+     "reading_min": 12.596666666666666,
+     "wrong_trials": 18,
+     "right_words": 1143,
+     "commit_events": 803
+    },
+    "ONE": {
+     "value": 4.943600567454413,
+     "reading_min": 10.071666666666665,
+     "wrong_trials": 18,
+     "right_words": 1143,
+     "commit_events": 803,
+     "vs_R7": {
+      "diff": 0.05340534470024494,
+      "ci95": [
+       0.04305409702292671,
+       0.06447299854905196
+      ]
+     }
+    },
+    "REREAD": {
+     "value": 4.841825236796177,
+     "reading_min": 14.931666666666668,
+     "wrong_trials": 18,
+     "right_words": 1143,
+     "commit_events": 803,
+     "vs_R7": {
+      "diff": -0.04836998595799091,
+      "ci95": [
+       -0.05907563182078941,
+       -0.038240603362820945
+      ]
+     }
+    },
+    "FIRST": {
+     "value": 2.9100346298285413,
+     "reading_min": 7.571666666666667,
+     "wrong_trials": 13,
+     "right_words": 662,
+     "commit_events": 500,
+     "vs_R7": {
+      "diff": -1.980160592925627,
+      "ci95": [
+       -2.282832246835051,
+       -1.6761712372141733
+      ]
+     }
+    },
+    "REFUSE": {
+     "value": null,
+     "note": "adopted v0.2 rule 3: at most one commit per trial"
+    }
+   },
+   "break_even_s_per_event": {
+    "single_value": 1.3349842624909136,
+    "no_bci": 4.2804750841062456
+   }
+  },
+  "break_even_fee_both_arms_s": 2.6792971891263884,
+  "hybrid_minus_single": {
+   "R7": {
+    "diff": 0.22313414652886188,
+    "ci95": [
+     0.1444861670152803,
+     0.3066935521309724
+    ]
+   },
+   "ONE": {
+    "diff": 0.2765394912291068,
+    "ci95": [
+     0.19755395094818506,
+     0.3604863459519006
+    ]
+   },
+   "REREAD": {
+    "diff": 0.17476416057087096,
+    "ci95": [
+     0.09551499074759255,
+     0.259531628672457
+    ]
+   },
+   "FIRST": {
+    "diff": -1.757026446396765,
+    "ci95": [
+     -2.080792668767805,
+     -1.4247715474229068
+    ]
+   }
+  },
+  "stream_minus_single": {
+   "R7": {
+    "diff": -2.3235211395279833,
+    "ci95": [
+     -2.627203389039843,
+     -2.0152176215007884
+    ]
+   },
+   "ONE": {
+    "diff": -2.3116727693790047,
+    "ci95": [
+     -2.6162928159400036,
+     -2.004160795244602
+    ]
+   },
+   "REREAD": {
+    "diff": -2.333155097367101,
+    "ci95": [
+     -2.636542817305893,
+     -2.0239845470152105
+    ]
+   },
+   "FIRST": {
+    "diff": -2.9130429625185545,
+    "ci95": [
+     -3.250740499562277,
+     -2.5760647538435975
+    ]
+   }
+  }
+ },
+ "neural_min": 218.28633333333335
+}
