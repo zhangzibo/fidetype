@@ -86,8 +86,8 @@ COLUMNS = ("Decoder", "Policy", "CER", "eWPM [95% CI]", "Safe WPM v0.2 @ alpha",
 SAFE_WPM_NOTE = ("Safe WPM v0.2 is the headline column since 2026-11-22 (ADOPTED on that date): prefix credit and a "
                  "reading cost of 0.5 s + 0.3 s per committed word for every commit (user model aac-gaze-v1). For an "
                  "entry that commits whole sentences, v0.2 is the v0.1 value with the reading time added. The v0.1 "
-                 "column keeps every earlier number with its value and its v0.1 label. Entries on tracks v0.1 were "
-                 "not scored again and show v0.1 only.")
+                 "column keeps every earlier number with its value and its v0.1 label. Entries on tracks v0.1 got "
+                 "their v0.2 value on 2026-11-24 from the same per-trial decisions as their v0.1 value.")
 #: The v0.2 cell of a card without a safe-wpm/0.2 block.
 NO_V02 = "v0.1 only (not rescored)"
 

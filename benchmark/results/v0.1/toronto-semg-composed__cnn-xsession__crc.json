@@ -183,6 +183,84 @@
   },
   "basis": "exact per-trial CRC decisions (P6-01 rerun of the M6-07 pipeline; commit and wrong-commit rates equal the committed aggregates)"
  },
+ "safe_wpm_v02": {
+  "definition": "safe-wpm/0.2",
+  "definition_status": "adopted 2026-11-22: the headline metric (prefix credit + the aac-gaze-v1 reading cost); safe-wpm/0.1 stays selectable with metric_version='0.1' for old numbers",
+  "adopted_headline": true,
+  "value": 0.2514286743747007,
+  "ci": [
+   0.06212731690419713,
+   0.4573768774531059
+  ],
+  "status": "certified",
+  "unguarded_wpm": 0.2514286743747007,
+  "wpm_no_penalty": 0.2527173768468321,
+  "method": "crc",
+  "alpha": 0.05,
+  "delta": null,
+  "n_cal": 142,
+  "calibration": "cal (held-out half of the fit items)",
+  "confidence": "in expectation (CRC has no delta)",
+  "risk": "wrong-commit",
+  "measured_wrong_commit": 0.003629764065335753,
+  "measured_wrong_commit_cp95": [
+   0.0004,
+   0.013
+  ],
+  "n_trials": 551,
+  "n_commits": 10,
+  "n_wrong_commits": 2,
+  "n_correct_commits": 8,
+  "n_prefix_commits": 0,
+  "n_complete_commits": 10,
+  "n_right_complete_commits": 8,
+  "error_among_commits": 0.2,
+  "committed_correct_words": 57,
+  "total_words": 3652,
+  "minutes_neural": 225.54839999999993,
+  "minutes_correction": 0.737719298245614,
+  "timing": "track rate model: len(truth) * 60 / 75.76 chars/min (composed sentences)",
+  "correction_rule": {
+   "name": "rewrite",
+   "overhead_s": 2.0,
+   "s_per_char": 0.7894736842105263,
+   "formula": "2 s + 0.7895 s/char * len(truth) per wrong commit",
+   "prefix": "a wrong prefix of k words costs the penalty of the first k words of the truth"
+  },
+  "reading_cost": {
+   "read_s_per_commit": 0.5,
+   "read_s_per_word": 0.3,
+   "min_prefix_words": 1,
+   "formula": "0.5 s + 0.3 s/word * k per commit (right or wrong); prefix commits with fewer than 1 word(s) count as no commit",
+   "minutes_reading": 0.4183333333333333,
+   "n_prefix_commits_dropped": 0,
+   "wpm_without_reading": 0.25189348854789406,
+   "model": "aac-gaze-v1",
+   "adopted": {
+    "read_s_per_commit": 0.5,
+    "read_s_per_word": 0.3,
+    "min_prefix_words": 1
+   },
+   "note": "the adopted safe-wpm/0.2 reading cost (2026-11-22) is 0.5 s + 0.3 s/word per commit, minimum prefix 1 word; other values give a sensitivity variant"
+  },
+  "ci_unit": "participant",
+  "no_bci_wpm": 4.274594721133025,
+  "no_bci_note": "gaze typing of every sentence at 20 chars/min (the eWPM reference)",
+  "controls": {
+   "shuffled": "pass",
+   "zeros": "pass",
+   "null_commit": "pass",
+   "passed": true,
+   "commit_rate_zeros": 0.0,
+   "basis": {
+    "shuffled": "aggregate null audit (n=200): wrong-commit real 0.875 vs frame-shuffled 1.000",
+    "zeros": "aggregate null audit: wrong-commit real 0.875 vs zeros input 1.000",
+    "null_commit": "null audit, zeros input"
+   }
+  },
+  "basis": "exact per-trial CRC decisions (P6-01 rerun of the M6-07 pipeline; commit and wrong-commit rates equal the committed aggregates)"
+ },
+ "safe_wpm_headline": "safe_wpm_v02",
  "rerun": {
   "schema": "fidetype.hub.recipe/0.1",
   "level": "rescore",
@@ -227,7 +305,8 @@
   "scorer": {
    "scorer_version": "benchmark-0.1",
    "metrics": {
-    "safe_wpm": "safe-wpm/0.1"
+    "safe_wpm": "safe-wpm/0.1",
+    "safe_wpm_v02": "safe-wpm/0.2"
    },
    "B": 2000,
    "seed": 0

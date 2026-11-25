@@ -136,6 +136,30 @@
    }
   }
  },
+ "safe_wpm_v02": {
+  "definition": "safe-wpm/0.2",
+  "definition_status": "adopted 2026-11-22: the headline metric (prefix credit + the aac-gaze-v1 reading cost); safe-wpm/0.1 stays selectable with metric_version='0.1' for old numbers",
+  "adopted_headline": true,
+  "value": null,
+  "ci": null,
+  "status": "not-certified",
+  "method": "none",
+  "note": "policy 'always-commit' has no certified bound",
+  "controls": {
+   "shuffled": "pass",
+   "zeros": "pass",
+   "null_commit": "fail",
+   "passed": false,
+   "commit_rate_zeros": 1.0,
+   "basis": {
+    "shuffled": "aggregate null audit (n=200): wrong-commit real 0.575 vs frame-shuffled 1.000",
+    "zeros": "aggregate null audit: wrong-commit real 0.575 vs zeros input 1.000",
+    "null_commit": "null audit, zeros input"
+   }
+  },
+  "basis": "no certified bound: the value is n/a under safe-wpm/0.1 and safe-wpm/0.2 alike; the status follows from the card's policy (no per-trial data needed)"
+ },
+ "safe_wpm_headline": "safe_wpm_v02",
  "rerun": {
   "schema": "fidetype.hub.recipe/0.1",
   "level": "rescore",
@@ -185,7 +209,8 @@
   "scorer": {
    "scorer_version": "benchmark-0.1",
    "metrics": {
-    "safe_wpm": "safe-wpm/0.1"
+    "safe_wpm": "safe-wpm/0.1",
+    "safe_wpm_v02": "safe-wpm/0.2"
    },
    "B": 2000,
    "seed": 0
