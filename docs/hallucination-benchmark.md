@@ -54,6 +54,32 @@ The same seed always gives the same control inputs. The generators are numpy `PC
 
 Our baseline experiments use this recipe. Default seed: 0.
 
+### 1.2 Signal-check tracks (opt-in)
+
+The three control tracks above use inputs that are far from the truth. A decoder with a language model can also fail in a smaller way: it fills in the part of a sentence that the signal does not cover, or it commits a sentence that is one word away from the truth. After language-model fusion, such errors can look more confident than correct text ([Zhang & Liu 2026](../wiki/sources/confidence-ordering-reversal.md)). The signal-check tracks test this. They are **opt-in**: they do not change the four tracks above, protocol 0.2 or its score cards. They have their own outcomes file and their own card.
+
+| Track | Input to the decoder | Unsupported commit | Pass rule |
+|---|---|---|---|
+| `truncated_25`, `truncated_50`, `truncated_75` | Only the first 25 %, 50 % or 75 % of the frames of each held-out input (`max(1, ceil(f · T))` frames) | Any commit that is **not** a proper word prefix of the truth. A commit of the full sentence is unsupported: the frames that carry the end are missing | Paired test (below) for 25 and 50. **No pass rule** for 75: the speech can end before 75 % of the frames |
+| `noise_mix_25`, `noise_mix_50`, `noise_mix_75` | Per frame, `log((1 − λ) · p_signal + λ · p_noise)` with λ = 0.25, 0.5, 0.75. `p_noise` is a null-track matrix (uniform plus Gaussian noise, σ = 0.05), one per item, shared by the three levels | A commit whose text is not the truth | Paired test for each level |
+| `near_miss` | The real signal. The **language side** is a near-miss sentence: the truth with 1 or 2 words replaced by other words of the held-out vocabulary | A commit whose text is not the truth. The card also counts commits of the near-miss text | Paired test |
+
+Every track has one item per held-out trial. Item `j` uses the signal of trial `j`, so it pairs with real item `j`. The paired test is the protocol 0.2 swapped test (section 1.1) with the same constants: `R` = the real item commits, `S` = the signal-check item makes an unsupported commit. A level passes if, with 95 % confidence, unsupported commits are fewer than half of the real commits. A track verdict is `fail` if any scored level fails, `pass` if all scored levels pass, else `insufficient evidence`. `signal_checks_verdict` needs all three tracks to pass.
+
+**Recipe (seed 0 by default).** Truncation has no random draw. Noise: `rng = default_rng([seed, 13])`, one matrix `rng.standard_normal((T_j, V))` per item in held-out order. Near-miss texts: `rng = default_rng([seed, 17])`, per item in held-out order: the number of edits (1 for a one-word sentence, else 1 or 2 from `rng.integers(0, 2)`), the positions (`rng.choice`), then a replacement word per position from the sorted word list of all held-out truths, drawn again until it differs from the original word.
+
+**How a system takes the near-miss language side.** This depends on the system, as for `swapped`. Your function `decide_near_miss(x_signal, near_miss_text, item)` gets the real signal and the near-miss text. Our n-best baselines put the near-miss text in place of the text of their top candidate and keep all its scores. This is the case where the language side puts a near miss on top and gives it the confidence of the best candidate. The card states the method (`meta.near_miss_language_side`).
+
+```python
+sc = hb.make_signal_checks(xs, texts, seed=0)                 # truncated / noise-mix inputs, near-miss texts
+records = hb.run_signal_checks(guard.decide, xs, texts, sc,   # also re-runs the real track for the pairs
+                               decide_near_miss=my_near_miss_decide)
+card = hb.score_signal_outcomes(hb.to_signal_outcomes(records, hb.ConservativeFluency()))
+print(hb.signal_summary_line(card))
+```
+
+Command line: `signal-inputs` writes the truncated and noise-mix inputs (NPZ, keys `<track>/<item>`) and the near-miss texts (JSONL) from your held-out NPZ and truth file. Keep both files local. `signal-score` scores a decisions file with the header `{"schema": "fidetype.halluc.signal-decisions/0.1", "seed": 0}` and one line per decision of the `real` track and the signal-check tracks (`item` = held-out position). `signal-rescore outcomes.json --check card.json` re-scores a signal outcomes file. Schemas: outcomes `fidetype.halluc.signal-outcomes/0.1`, card `fidetype.halluc.signal-card/0.1`.
+
 ### Where the controls act
 
 The controls act on the **decoder input that the trust layer sees**. In our baselines this is the `(T, V)` phoneme log-probability matrix, and the "decoder" is the word decoder plus the language models after it. If your system starts from raw neural features, you can apply the same recipe to the features. State which level you used.
@@ -142,7 +168,8 @@ Each committed score card also holds a rerun recipe (key `rerun`, schema `fidety
 | Split file `src/fidetype/benchmark/splits/halluc-v0.1/<dataset>.json` (the same for 0.1 and 0.2) | Salted trial-id hashes (`sha256("<dataset>\|<trial id>")[:16]`), text hashes, `null_idx`, `swap_perm`, seed, `controls_sha256` | Yes: no text, no signal |
 | Outcomes `*.outcomes.json` (`fidetype.halluc.outcomes/0.1`) | Per track: flag strings `committed`, `wrong`, `fluent` (`1` / `0` / `-` = not a wrong commit), `leak`. No text | Yes |
 | Score card `*.card.json` (`fidetype.halluc.scorecard/0.2`; old: `/0.1`) | The metrics of section 2, the verdicts and pass flags, the paired swapped counts (0.2), the fluency mode | Yes |
-| Records, control inputs, truth | Texts and signals | **No.** Keep them local |
+| Signal outcomes `*.signal-outcomes.json` and signal card `*.signal-card.json` (opt-in tracks, section 1.2) | Flag strings per signal-check track (`committed`, `unsupported`, `fluent`, `prefix`, `full`, `near_miss_commit`), the paired counts and the verdicts. No text | Yes |
+| Records, control inputs, signal-check inputs, near-miss texts, truth | Texts and signals | **No.** Keep them local |
 
 **Trial ids of the T15 split (`b2t25-t15-val-eval`).** The id is `<session>|val|<i>`. `i` is the position of the trial inside the session's `val_eval` list. It is **not** the index in the HDF5 file `data_val.hdf5`. The rule (fields `id_rule` and `id_sessions` of the split file):
 

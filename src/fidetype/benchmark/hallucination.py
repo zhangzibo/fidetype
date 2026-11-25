@@ -77,6 +77,25 @@ Pair ``j`` = real item ``j`` and swapped item ``j`` (same signal trial).
 
 Defaults: ``r`` 0.5, ``alpha`` 0.05, ``m_min`` 25 (power >= 0.9 at ratio 0.1).
 
+Signal-check tracks (opt-in; P15-56, pre-registered in
+``experiments/2026-11-25-p15-56-signal-check-tracks/plan.md``)
+--------------------------------------------------------------------------
+Three stricter checks of the signal, with their own outcomes and card
+(:func:`make_signal_checks`, :func:`run_signal_checks`, :func:`to_signal_outcomes`,
+:func:`score_signal_outcomes`). They never change the tracks above, protocol 0.2 or its cards.
+
+``truncated_<pct>`` (25, 50, 75)
+    Only the first ``max(1, ceil(f * T))`` frames. Unsupported: any commit that is not a
+    proper word prefix of the truth (the full sentence included). 75 has no pass rule.
+``noise_mix_<pct>`` (25, 50, 75)
+    ``log((1 - lam) softmax(x) + lam exp(q))`` with one null-type noise matrix ``q`` per item
+    (``default_rng([seed, 13])``), shared by the levels. Unsupported: text != truth.
+``near_miss``
+    The signal of trial ``j`` with a language side whose text differs from the truth in 1 or 2
+    words (``default_rng([seed, 17])``, words from the held-out vocabulary). Unsupported: text != truth.
+
+Each scored level uses :func:`paired_swap_test` against the real track (same constants).
+
 The benchmark ships no data: the split file (:func:`split_definition`) has
 salted SHA-256 trial ids, the control indices and the recipe only.
 Command line: ``python -m fidetype.benchmark.hallucination --help``.
@@ -706,6 +725,382 @@ def read_decisions(path: str | Path, truth: Mapping[str, str], held_out: Sequenc
     return out
 
 
+# ---------------------------------------------------------------------------
+# signal-check tracks (opt-in; P15-56)
+# ---------------------------------------------------------------------------
+
+SIGNAL_PROTOCOL = "fidetype.halluc-signal/0.1"
+SIGNAL_OUTCOMES_SCHEMA = "fidetype.halluc.signal-outcomes/0.1"
+SIGNAL_CARD_SCHEMA = "fidetype.halluc.signal-card/0.1"
+SIGNAL_DECISIONS_SCHEMA = "fidetype.halluc.signal-decisions/0.1"
+TRUNC_LEVELS = (0.25, 0.50, 0.75)
+#: Truncation levels with a pass rule (at 75 % the speech can be complete).
+TRUNC_SCORED = (0.25, 0.50)
+NOISE_LEVELS = (0.25, 0.50, 0.75)
+NOISE_MIX_TAG = 13
+NEAR_MISS_TAG = 17
+SIGNAL_FAMILIES = ("truncated", "noise_mix", "near_miss")
+
+
+def _pct(f: float) -> int:
+    return int(round(float(f) * 100))
+
+
+def truncated_key(f: float) -> str:
+    return f"truncated_{_pct(f)}"
+
+
+def noise_mix_key(lam: float) -> str:
+    return f"noise_mix_{_pct(lam)}"
+
+
+def signal_track_keys(trunc_levels: Sequence[float] = TRUNC_LEVELS,
+                      noise_levels: Sequence[float] = NOISE_LEVELS) -> list[str]:
+    """Track keys in card order: truncated levels, noise levels, ``near_miss``."""
+    return [truncated_key(f) for f in trunc_levels] + [noise_mix_key(v) for v in noise_levels] + ["near_miss"]
+
+
+def signal_family(track: str) -> str | None:
+    """``truncated`` / ``noise_mix`` / ``near_miss`` for a signal-check track key, else None."""
+    if track == "near_miss":
+        return "near_miss"
+    for fam in ("truncated", "noise_mix"):
+        if track.startswith(fam + "_"):
+            return fam
+    return None
+
+
+def truncate_input(x: np.ndarray, f: float) -> np.ndarray:
+    """The first ``max(1, ceil(f * T))`` frames of ``x``."""
+    x = np.asarray(x)
+    k = max(1, int(math.ceil(float(f) * x.shape[0] - 1e-9)))
+    return np.ascontiguousarray(x[:k])
+
+
+def _log_softmax(z: np.ndarray) -> np.ndarray:
+    z = np.asarray(z, dtype=np.float64)
+    m = z.max(axis=1, keepdims=True)
+    return z - (m + np.log(np.exp(z - m).sum(axis=1, keepdims=True)))
+
+
+def noise_matrix(rng: np.random.Generator, T: int, V: int, noise: float = DEFAULT_NOISE) -> np.ndarray:
+    """One null-type noise matrix: ``-log V + noise * N(0, 1)``, log-softmax per frame (float64)."""
+    return _log_softmax(np.full((T, V), -math.log(V)) + noise * rng.standard_normal((T, V)))
+
+
+def mix_noise(x: np.ndarray, q: np.ndarray, lam: float) -> np.ndarray:
+    """``log((1 - lam) softmax(x) + lam exp(q))`` per frame, float32 (``lam`` = 1: the null input)."""
+    p = (1.0 - float(lam)) * np.exp(_log_softmax(x)) + float(lam) * np.exp(np.asarray(q, dtype=np.float64))
+    return np.log(np.maximum(p, 1e-300)).astype(np.float32)
+
+
+def near_miss_text(truth: str, rng: np.random.Generator, pool: Sequence[str]) -> tuple[str, int]:
+    """One near-miss of ``truth``: 1 or 2 words replaced by other pool words. Returns ``(text, edits)``."""
+    words = _norm(truth).split()
+    w = len(words)
+    if w == 0:
+        raise ValueError("near-miss: empty truth")
+    if len(set(pool)) < 2:
+        raise ValueError("near-miss: the word pool needs at least 2 different words")
+    e = 1 if w == 1 else 1 + int(rng.integers(0, 2))
+    pos = sorted(int(p) for p in rng.choice(w, e, replace=False))
+    out = list(words)
+    for p in pos:
+        while True:
+            c = pool[int(rng.integers(0, len(pool)))]
+            if c != words[p]:
+                break
+        out[p] = c
+    return " ".join(out), e
+
+
+def word_pool(texts: Sequence[str]) -> list[str]:
+    """Sorted set of the words of ``texts`` (the near-miss replacement words)."""
+    return sorted({w for t in texts for w in _norm(t).split()})
+
+
+def near_miss_texts(texts: Sequence[str], seed: int = DEFAULT_SEED) -> tuple[list[str], list[int]]:
+    """The near-miss text and its number of edits for every held-out truth (``default_rng([seed, 17])``)."""
+    rng = np.random.default_rng([seed, NEAR_MISS_TAG])
+    pool = word_pool(texts)
+    out, edits = [], []
+    for t in texts:
+        v, e = near_miss_text(t, rng, pool)
+        out.append(v)
+        edits.append(e)
+    return out, edits
+
+
+@dataclass
+class SignalChecks:
+    """The inputs of the signal-check tracks of one held-out set (see the module docstring)."""
+
+    seed: int
+    noise: float
+    trunc_levels: tuple
+    noise_levels: tuple
+    truncated: dict  # track key -> list of inputs
+    noise_mix: dict  # track key -> list of inputs
+    near_miss: list  # near-miss text per item
+    near_miss_edits: list
+
+    def inputs(self, track: str) -> list[np.ndarray]:
+        return self.truncated[track] if track in self.truncated else self.noise_mix[track]
+
+    def tracks(self) -> list[str]:
+        return signal_track_keys(self.trunc_levels, self.noise_levels)
+
+    def digest(self) -> str:
+        """SHA-256 over the float32 bytes of all inputs (track order) and the near-miss texts (a check, not a key)."""
+        h = hashlib.sha256()
+        for k in [*self.truncated, *self.noise_mix]:
+            for a in self.inputs(k):
+                h.update(np.ascontiguousarray(a, dtype=np.float32).tobytes())
+        for v in self.near_miss:
+            h.update(v.encode("utf-8") + b"\n")
+        return h.hexdigest()
+
+
+def make_signal_checks(xs: Sequence[np.ndarray], texts: Sequence[str], *, seed: int = DEFAULT_SEED,
+                       noise: float = DEFAULT_NOISE, trunc_levels: Sequence[float] = TRUNC_LEVELS,
+                       noise_levels: Sequence[float] = NOISE_LEVELS,
+                       vocab_size: int | None = None) -> SignalChecks:
+    """Build the truncated, noise-mix and near-miss inputs of held-out inputs ``xs`` (each ``(T, V)``).
+
+    Noise: one matrix per item in held-out order from ``default_rng([seed, 13])``, shared by the levels.
+    Near-miss texts: :func:`near_miss_texts`. ``vocab_size`` must equal ``V`` if given (mixing needs one width).
+    """
+    n = len(xs)
+    if n == 0:
+        raise ValueError("no held-out inputs")
+    if len(texts) != n:
+        raise ValueError("xs and texts differ in length")
+    tr = {truncated_key(f): [truncate_input(x, f) for x in xs] for f in trunc_levels}
+    rng = np.random.default_rng([seed, NOISE_MIX_TAG])
+    nm: dict = {noise_mix_key(v): [] for v in noise_levels}
+    for x in xs:
+        x = np.asarray(x)
+        V = x.shape[1]
+        if vocab_size is not None and int(vocab_size) != V:
+            raise ValueError(f"noise mix: input width {V} != vocab_size {vocab_size}")
+        q = noise_matrix(rng, x.shape[0], V, noise)
+        for v in noise_levels:
+            nm[noise_mix_key(v)].append(mix_noise(x, q, v))
+    nmt, ed = near_miss_texts(list(texts), seed)
+    return SignalChecks(seed=seed, noise=noise, trunc_levels=tuple(trunc_levels), noise_levels=tuple(noise_levels),
+                        truncated=tr, noise_mix=nm, near_miss=nmt, near_miss_edits=ed)
+
+
+NearMissDecideFn = Callable[[np.ndarray, str, int], Any]
+
+
+def run_signal_checks(decide: DecideFn, xs: Sequence[np.ndarray], texts: Sequence[str], checks: SignalChecks, *,
+                      decide_near_miss: NearMissDecideFn | None = None, tracks: Sequence[str] | None = None,
+                      with_real: bool = True, progress: Callable[[str, int], None] | None = None) -> list[Record]:
+    """Run a decoder + trust policy on the signal-check tracks (and, by default, the real track for the pairs).
+
+    ``decide_near_miss(x_signal, near_miss_text, item)`` decides the signal ``x_signal`` with ``near_miss_text``
+    as the language side; without it, ``near_miss`` is skipped. ``language_truth`` of a near-miss record is the
+    near-miss text.
+    """
+    texts = [_norm(t) for t in texts]
+    want = list(tracks) if tracks is not None else checks.tracks()
+    out: list[Record] = []
+    if with_real:
+        for i, x in enumerate(xs):
+            a, t = _action_text(decide(x))
+            out.append(Record("real", i, i, i, a, t, texts[i]))
+            if progress:
+                progress("real", i)
+    for k in want:
+        if k == "near_miss":
+            if decide_near_miss is None:
+                continue
+            for j, x in enumerate(xs):
+                a, t = _action_text(decide_near_miss(x, checks.near_miss[j], j))
+                out.append(Record(k, j, j, j, a, t, texts[j], checks.near_miss[j]))
+                if progress:
+                    progress(k, j)
+            continue
+        for j, z in enumerate(checks.inputs(k)):
+            a, t = _action_text(decide(z))
+            out.append(Record(k, j, j, j, a, t, texts[j]))
+            if progress:
+                progress(k, j)
+    return out
+
+
+def is_proper_prefix(text: str | None, truth: str) -> bool:
+    """True if ``text`` is 1 to (words - 1) leading words of ``truth``."""
+    a, b = _norm(text).split(), _norm(truth).split()
+    return 0 < len(a) < len(b) and a == b[: len(a)]
+
+
+def signal_unsupported(r: Record) -> bool:
+    """Unsupported commit on a signal-check track (truncated: not a proper word prefix; others: text != truth)."""
+    if not r.committed:
+        return False
+    if signal_family(r.track) == "truncated":
+        return not is_proper_prefix(r.text, r.truth)
+    return _norm(r.text) != _norm(r.truth)
+
+
+def to_signal_outcomes(records: Iterable[Record], fluency: Fluency | None = None, *, dataset: str = "",
+                       system: str = "", meta: Mapping | None = None) -> dict:
+    """Flags per item of the real track and every signal-check track found; no text.
+
+    Per track: ``committed``, ``unsupported`` and ``fluent`` (``-`` where the item is not an unsupported commit;
+    real track: ``wrong`` and ``fluent`` as :func:`to_outcomes`). Truncated tracks add ``prefix`` (supported prefix
+    commits) and ``full`` (commits of the full truth); ``near_miss`` adds ``near_miss_commit``.
+    """
+    fl = fluency or ConservativeFluency()
+    by: dict[str, list[Record]] = {}
+    for r in records:
+        by.setdefault(r.track, []).append(r)
+    order = ["real"] + sorted((k for k in by if signal_family(k)),
+                              key=lambda k: (SIGNAL_FAMILIES.index(signal_family(k)), k))
+    tracks = {}
+    for k in order:
+        rs = sorted(by.get(k, []), key=lambda r: r.item)
+        if not rs:
+            continue
+        if [r.item for r in rs] != list(range(len(rs))):
+            raise ValueError(f"track {k}: items are not 0..n-1 once each")
+        if k == "real":
+            bad = [r.wrong for r in rs]
+        else:
+            bad = [signal_unsupported(r) for r in rs]
+        t = {"n": len(rs), "committed": "".join("1" if r.committed else "0" for r in rs),
+             ("wrong" if k == "real" else "unsupported"): "".join("1" if b else "0" for b in bad),
+             "fluent": "".join(("1" if fl.is_fluent(_norm(r.text)) else "0") if b else "-" for r, b in zip(rs, bad))}
+        fam = signal_family(k)
+        if fam == "truncated":
+            t["prefix"] = "".join("1" if r.committed and is_proper_prefix(r.text, r.truth) else "0" for r in rs)
+            t["full"] = "".join("1" if r.committed and _norm(r.text) == _norm(r.truth) else "0" for r in rs)
+        elif fam == "near_miss":
+            t["near_miss_commit"] = "".join(
+                "1" if r.committed and r.language_truth is not None and _norm(r.text) == _norm(r.language_truth)
+                else "0" for r in rs)
+        tracks[k] = t
+    return {"schema": SIGNAL_OUTCOMES_SCHEMA, "protocol": SIGNAL_PROTOCOL, "dataset": dataset, "system": system,
+            "fluency": fl.describe(), "meta": dict(meta or {}), "tracks": tracks}
+
+
+def _combine(verdicts: Sequence[str]) -> str:
+    if not verdicts:
+        return INSUFFICIENT
+    if FAIL in verdicts:
+        return FAIL
+    return PASS if all(v == PASS for v in verdicts) else INSUFFICIENT
+
+
+def score_signal_outcomes(outcomes: Mapping, *, ratio_max: float = SWAP_RATIO_MAX, alpha: float = SWAP_ALPHA,
+                          m_min: int = SWAP_M_MIN, trunc_scored: Sequence[float] = TRUNC_SCORED) -> dict:
+    """The signal-check card (schema ``fidetype.halluc.signal-card/0.1``) of one signal outcomes dict.
+
+    Every track is paired with the real track (:func:`paired_swap_test`). Truncated levels outside
+    ``trunc_scored`` get ``verdict = "no rule"``. ``families`` combines the scored levels of each family,
+    ``signal_checks_verdict`` the three families (``pass`` needs all three).
+    """
+    if outcomes.get("schema") != SIGNAL_OUTCOMES_SCHEMA:
+        raise ValueError(f"not a signal outcomes file (schema {outcomes.get('schema')!r})")
+    tr = outcomes["tracks"]
+    real = tr.get("real")
+    if real is None:
+        raise ValueError("signal checks need the real track (paired test)")
+    scored_tr = {truncated_key(f) for f in trunc_scored}
+    card: dict[str, Any] = {"schema": SIGNAL_CARD_SCHEMA, "protocol": SIGNAL_PROTOCOL,
+                            "dataset": outcomes.get("dataset", ""), "system": outcomes.get("system", ""),
+                            "fluency": dict(outcomes.get("fluency", {})), "meta": dict(outcomes.get("meta", {})),
+                            "real": {"n": int(real["n"]), "commits": real["committed"].count("1"),
+                                     "wrong_commits": real["wrong"].count("1")},
+                            "tracks": {}}
+    fam_verdicts: dict[str, list[str]] = {f: [] for f in SIGNAL_FAMILIES}
+    for k, t in tr.items():
+        fam = signal_family(k)
+        if fam is None:
+            continue
+        n = int(t["n"])
+        if n != int(real["n"]):
+            raise ValueError(f"track {k}: {n} items, real track {real['n']}")
+        for f in ("committed", "unsupported", "fluent"):
+            if len(t[f]) != n:
+                raise ValueError(f"track {k}: {f} has {len(t[f])} flags, n = {n}")
+        c, u, fu = t["committed"].count("1"), t["unsupported"].count("1"), t["fluent"].count("1")
+        row: dict[str, Any] = {"family": fam, "n": n, "commit_rate": _rate(c, n), "unsupported_commit_rate": _rate(u, n),
+                               "fluent_unsupported_rate": _rate(fu, n), "unsupported_among_commits": _rate(u, c)}
+        for extra in ("prefix", "full", "near_miss_commit"):
+            if extra in t:
+                row[f"{extra}_commits"] = t[extra].count("1")
+        row["paired"] = paired_swap_test(real["committed"], t["unsupported"], ratio_max=ratio_max, alpha=alpha,
+                                         m_min=m_min)
+        if fam == "truncated" and k not in scored_tr:
+            row["verdict"] = "no rule"
+        else:
+            row["verdict"] = row["paired"]["verdict"]
+            fam_verdicts[fam].append(row["verdict"])
+        card["tracks"][k] = row
+    card["families"] = {f: {"verdict": _combine(v) if v else "not run", "levels_scored": len(v)}
+                        for f, v in fam_verdicts.items()}
+    run = [f for f in SIGNAL_FAMILIES if fam_verdicts[f]]
+    vs = [card["families"][f]["verdict"] for f in run]
+    if FAIL in vs:
+        sv = FAIL
+    elif len(run) == len(SIGNAL_FAMILIES) and all(v == PASS for v in vs):
+        sv = PASS
+    else:
+        sv = INSUFFICIENT
+    card["signal_checks_verdict"] = sv
+    card["signal_checks_complete"] = len(run) == len(SIGNAL_FAMILIES)
+    card["rules"] = {"ratio_max": ratio_max, "alpha": alpha, "m_min": m_min,
+                     "truncated_scored_levels": [truncated_key(f) for f in trunc_scored],
+                     "rule": "paired: pass iff cp_upper(n01 + n11, m, alpha) < r / (1 + r), per scored level"}
+    return card
+
+
+def signal_summary_line(card: Mapping) -> str:
+    """One line for logs and tables."""
+    parts = [f"{card.get('dataset', '')}/{card.get('system', '')}",
+             f"real commit {card['real']['commits']}/{card['real']['n']}"]
+    for k, r in card["tracks"].items():
+        p = r["paired"]
+        parts.append(f"{k} {r['unsupported_commit_rate']['k']}/{r['commit_rate']['k']}"
+                     f" m{p['m']} {r['verdict']}")
+    parts.append(f"=> {card['signal_checks_verdict']}")
+    return "  ".join(parts)
+
+
+def read_signal_decisions(path: str | Path, truth: Mapping[str, str], held_out: Sequence[str]) -> list[Record]:
+    """Read a signal decisions JSONL file (schema ``fidetype.halluc.signal-decisions/0.1``) into records.
+
+    First line: a header ``{"schema", "seed"}``. Then one line per decision ``{"track", "item", "action", "text"}``
+    for the real track and the signal-check tracks; ``item`` = held-out position. The near-miss texts are rebuilt
+    from the truth and the seed (:func:`near_miss_texts`). A track must be complete or absent.
+    """
+    lines = [json.loads(s) for s in Path(path).read_text(encoding="utf-8").splitlines() if s.strip()]
+    if not lines or lines[0].get("schema") != SIGNAL_DECISIONS_SCHEMA:
+        raise ValueError(f"first line must be a header with schema {SIGNAL_DECISIONS_SCHEMA!r}")
+    texts = [truth[i] for i in held_out]
+    nm, _ = near_miss_texts(texts, int(lines[0].get("seed", DEFAULT_SEED)))
+    out, seen = [], set()
+    for d in lines[1:]:
+        k, it = str(d["track"]), int(d["item"])
+        if k != "real" and signal_family(k) is None:
+            raise ValueError(f"unknown signal track {k!r}")
+        if (k, it) in seen:
+            raise ValueError(f"duplicate decision {k} {it}")
+        if not 0 <= it < len(texts):
+            raise ValueError(f"track {k}: item {it} out of range")
+        seen.add((k, it))
+        a, t = _action_text(d)
+        out.append(Record(k, it, it, it, a, t, texts[it], nm[it] if k == "near_miss" else None))
+    for k in {kk for kk, _ in seen}:
+        got = sum(1 for kk, _ in seen if kk == k)
+        if got != len(texts):
+            raise ValueError(f"track {k}: {got} decisions, expected {len(texts)}")
+    return out
+
+
 def _dump(obj: Any, out: str | None) -> None:
     text = json.dumps(obj, indent=1, ensure_ascii=False)
     if out in (None, "-"):
@@ -805,6 +1200,54 @@ def cmd_rescore(a) -> int:
     return 0
 
 
+def cmd_signal_inputs(a) -> int:
+    ids, xs = _load_npz_inputs(a.inputs)
+    truth = read_truth(a.truth)
+    texts = [truth[i] for i in ids]
+    sc = make_signal_checks(xs, texts, seed=a.seed)
+    arrays = {f"{k}/{j:05d}": z for k in [*sc.truncated, *sc.noise_mix] for j, z in enumerate(sc.inputs(k))}
+    Path(a.out).parent.mkdir(parents=True, exist_ok=True)
+    np.savez_compressed(a.out, **arrays)
+    with open(a.near_miss, "w", encoding="utf-8") as f:
+        for i, v, e in zip(ids, sc.near_miss, sc.near_miss_edits):
+            f.write(json.dumps({"id": i, "text": v, "edits": e}, ensure_ascii=False) + "\n")
+    print(f"wrote {len(arrays)} signal-check inputs to {a.out} and {len(ids)} near-miss texts to {a.near_miss} "
+          f"(local files: they are derived from your data). digest {sc.digest()[:16]}", file=sys.stderr)
+    return 0
+
+
+def cmd_signal_score(a) -> int:
+    truth = read_truth(a.truth)
+    split = json.loads(Path(a.split).read_text(encoding="utf-8"))
+    by_h = {trial_hash(split["dataset"], i): i for i in truth}
+    try:
+        held = [by_h[t["h"]] for t in split["trials"]]
+    except KeyError as e:
+        raise SystemExit(f"a split trial is missing from the truth file: {e}") from None
+    recs = read_signal_decisions(a.decisions, truth, held)
+    oc = to_signal_outcomes(recs, _fluency_from_args(a), dataset=split["dataset"], system=a.system)
+    if a.outcomes:
+        _dump(oc, a.outcomes)
+    card = score_signal_outcomes(oc)
+    _dump(card, a.out)
+    print(signal_summary_line(card), file=sys.stderr)
+    return 0
+
+
+def cmd_signal_rescore(a) -> int:
+    oc = json.loads(Path(a.outcomes).read_text(encoding="utf-8"))
+    card = score_signal_outcomes(oc)
+    if a.check:
+        ref = json.loads(Path(a.check).read_text(encoding="utf-8"))
+        diff = _card_diff(json.loads(json.dumps(card)), ref)
+        if diff:
+            print(f"signal card differs from {a.check} at {diff}", file=sys.stderr)
+            return 1
+    _dump(card, a.out)
+    print(signal_summary_line(card), file=sys.stderr)
+    return 0
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="python -m fidetype.benchmark.hallucination",
                                  description="Hallucination benchmark (null / scrambled / swapped tracks, fluent-wrong).")
@@ -842,6 +1285,31 @@ def main(argv: Sequence[str] | None = None) -> int:
         p.add_argument("--alpha-fluent", type=float, default=None)
         p.add_argument("--out", default=None)
         p.set_defaults(fn=cmd_score if name == "score" else cmd_rescore)
+    p = sub.add_parser("signal-inputs", help="opt-in signal checks: build the truncated / noise-mix inputs and the "
+                                             "near-miss texts from your held-out inputs")
+    p.add_argument("inputs", help="NPZ: one (T, V) log-prob array per held-out trial id, in held-out order")
+    p.add_argument("--truth", required=True, help="truth JSONL ({id, text} per line)")
+    p.add_argument("--seed", type=int, default=DEFAULT_SEED)
+    p.add_argument("--out", required=True, help="signal-check inputs NPZ (local file; do not commit)")
+    p.add_argument("--near-miss", required=True, help="near-miss texts JSONL (local file; do not commit)")
+    p.set_defaults(fn=cmd_signal_inputs)
+    p = sub.add_parser("signal-score", help="opt-in signal checks: score a signal decisions file")
+    p.add_argument("decisions", help="signal decisions JSONL (header line + one line per decision)")
+    p.add_argument("--truth", required=True)
+    p.add_argument("--split", required=True)
+    p.add_argument("--system", default="")
+    p.add_argument("--fluency", choices=("conservative", "llm", "table"), default="conservative")
+    p.add_argument("--llm-model", default=None)
+    p.add_argument("--fluency-table", default=None)
+    p.add_argument("--fluent-threshold", type=float, default=DEFAULT_FLUENT_THRESHOLD)
+    p.add_argument("--outcomes", default=None, help="also write the signal outcomes file (flags only)")
+    p.add_argument("--out", default=None)
+    p.set_defaults(fn=cmd_signal_score)
+    p = sub.add_parser("signal-rescore", help="opt-in signal checks: score a signal outcomes file (flags only)")
+    p.add_argument("outcomes")
+    p.add_argument("--check", default=None, help="exit 1 if the result differs from this signal card")
+    p.add_argument("--out", default=None)
+    p.set_defaults(fn=cmd_signal_rescore)
     a = ap.parse_args(argv)
     return a.fn(a)
 

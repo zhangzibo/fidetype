@@ -75,7 +75,7 @@ python -m fidetype.benchmark.hub rerun <card> --submission <dir> --truth truth.j
 
 ## Hallucination tracks
 
-The tracks `real`, `null`, `scrambled` and `swapped` test whether a decoder + trust policy commits text without matching neural evidence, and they report the [fluent-wrong](../docs/glossary.md#fluent-wrong) rate. Guide: [docs/hallucination-benchmark.md](../docs/hallucination-benchmark.md). Protocol `fidetype.halluc/0.2`: the swapped track uses a paired swapped / real commit-ratio test, so a system that rarely commits cannot pass it only because it rarely commits. Score cards (T15, T12): [`results/halluc-v0.2/`](results/halluc-v0.2/) (current) and [`results/halluc-v0.1/`](results/halluc-v0.1/) (old protocol, kept). Command: `python -m fidetype.benchmark.hallucination --help`.
+The tracks `real`, `null`, `scrambled` and `swapped` test whether a decoder + trust policy commits text without matching neural evidence, and they report the [fluent-wrong](../docs/glossary.md#fluent-wrong) rate. Guide: [docs/hallucination-benchmark.md](../docs/hallucination-benchmark.md). Protocol `fidetype.halluc/0.2`: the swapped track uses a paired swapped / real commit-ratio test, so a system that rarely commits cannot pass it only because it rarely commits. Score cards (T15, T12): [`results/halluc-v0.2/`](results/halluc-v0.2/) (current) and [`results/halluc-v0.1/`](results/halluc-v0.1/) (old protocol, kept). Opt-in signal-check tracks (truncated signal, graded noise mix, near-miss sentence) test the signal check more strictly; they have their own card and do not change the protocol 0.2 cards ([guide, section 1.2](../docs/hallucination-benchmark.md#12-signal-check-tracks-opt-in)). Command: `python -m fidetype.benchmark.hallucination --help`.
 
 ## How to submit
 
