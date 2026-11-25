@@ -66,3 +66,55 @@ def test_bad_q_and_forbidden_out(tmp_path):
     except ValueError:
         pass
     assert "m4-13" in H.FORBIDDEN_OUT and "m4-01-02-lookahead" in H.FORBIDDEN_OUT
+
+
+# --- amendment 1: sentence-group-aware calibration parts -------------------------------------------------------------
+
+
+def _ho_items():
+    return [(k, s, t) for k, s, t in _items() if k in H.assign(_items(), q=0.5)]
+
+
+def test_tune_groups_take_whole_groups_and_skip_excluded():
+    ho = _ho_items()
+    excl = frozenset(H.normalize_text(t) for _k, _s, t in ho[:30])
+    tune, cal = H.split_tune_groups(ho, n_tune=60, exclude=excl)
+    assert len(tune) >= 60 and not set(tune) & set(cal) and set(tune) | set(cal) == {k for k, _s, _t in ho}
+    text = {k: H.normalize_text(t) for k, _s, t in ho}
+    tune_g, cal_g = {text[k] for k in tune}, {text[k] for k in cal}
+    assert not tune_g & cal_g and not tune_g & excl
+    assert H.split_tune_groups(ho, n_tune=60, exclude=excl) == (tune, cal)  # deterministic
+    try:
+        H.split_tune_groups(ho, n_tune=10 ** 6)
+        raise AssertionError("too large n_tune accepted")
+    except ValueError:
+        pass
+
+
+def test_pool_groups_and_draw_seed():
+    pool = [("a|val_select|0", "a", "Hello, World"), ("b|train|3", "b", "hello world")]
+    assert H.pool_groups(pool) == ["hello world", "hello world"]
+    assert H.draw_seed("A", 1) == H.draw_seed("A", 1) != H.draw_seed("A", 2) != H.draw_seed("B", 1)
+    assert 0 <= H.draw_seed("A", 1) < 16 ** 8
+
+
+def test_part_crossing_plain_vs_group_aware():
+    groups = [H.normalize_text(t) for _k, _s, t in _items()]  # 300 sentences, each repeats
+    plain = H.part_crossing(groups, H.draw_seed("A", 1))
+    aware = H.part_crossing(groups, H.draw_seed("A", 1), group_aware=True)
+    assert plain["crossing_groups"] > 0 and plain["ltt_items_sharing_a_group_with_fit_or_policy"] > 0
+    assert aware["crossing_groups"] == 0 and aware["crossing_items"] == 0
+    assert aware["ltt_items_sharing_a_group_with_fit_or_policy"] == 0 and sum(aware["sizes"]) == len(groups)
+
+
+def test_crossing_audit_on_synthetic_parts():
+    items = _items()
+    parts = {"train": items,
+             "val_select": [(f"v|val_select|{i}", "v", f"sentence number {_w(i % 40)}") for i in range(60)],
+             "val_eval": [(f"v|val_eval|{i}", "v", f"sentence number {_w(i)}") for i in range(20)]}
+    r = H.crossing_audit(parts, n_draws=3, n_tune=40)
+    new = r["amendment 1 (rule 5 tune set)"]
+    assert new["tune_groups_also_in_pool_A"] == 0 and new["pool_A_items_sharing_a_group_with_tune"] == 0
+    for arm in ("A", "B", "R"):
+        assert new[f"arm_{arm}_group_aware_split"]["crossing_groups"]["max"] == 0
+    assert r["old (rule 4, plain split)"]["arm_A_plain_split"]["crossing_groups"]["max"] > 0

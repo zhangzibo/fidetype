@@ -74,7 +74,7 @@ import math
 from dataclasses import dataclass, field, replace
 from os import PathLike
 from pathlib import Path
-from typing import Any, Callable, Iterable, Literal, Mapping, Sequence
+from typing import Any, Callable, Hashable, Iterable, Literal, Mapping, Sequence
 
 import numpy as np
 
@@ -1516,6 +1516,38 @@ def _split(n: int) -> tuple[int, int, int]:
     return n_fit, n_pol, n_ltt
 
 
+def _group_split(perm: np.ndarray, groups: Sequence[Hashable], seed: int) -> tuple[np.ndarray, int, int, int]:
+    """Group-aware version of the calibration split (opt-in ``groups=`` of :func:`calibrate`).
+
+    All items of one group go to the same part (fit, policy grid or LTT). The groups are put in a uniform
+    random order (a generator seeded by ``seed``, separate from the split generator); inside a group the items
+    keep their order in ``perm`` (the plain random permutation). The two cut points are the group boundaries
+    closest to the :func:`_split` sizes. Returns (order, n_fit, n_pol, n_ltt).
+    """
+    n = len(perm)
+    if len(groups) != n:
+        raise ValueError(f"groups needs one entry per input ({len(groups)} != {n})")
+    first: dict[Hashable, int] = {}
+    for i in range(n):  # group ids in order of first appearance in the inputs (deterministic)
+        first.setdefault(groups[i], len(first))
+    if len(first) < 3:
+        raise ValueError(f"a group-aware split needs at least 3 groups, got {len(first)}")
+    members: list[list[int]] = [[] for _ in first]
+    for i in perm:
+        members[first[groups[int(i)]]].append(int(i))
+    g_order = np.random.default_rng([int(seed), 0x67726F7570]).permutation(len(members))
+    order = np.asarray([i for g in g_order for i in members[g]], dtype=np.int64)
+    bounds = np.cumsum([len(members[g]) for g in g_order])[:-1]  # possible cut points (each leaves >= 1 group)
+    t_fit, t_pol, _ = _split(n)
+    ok1 = bounds[(bounds >= 2) & (bounds < bounds[-1])]
+    if ok1.size == 0:
+        raise ValueError("the groups are too large for a group-aware split (no valid fit / policy cut)")
+    c1 = int(ok1[np.argmin(np.abs(ok1 - t_fit))])
+    ok2 = bounds[bounds > c1]
+    c2 = int(ok2[np.argmin(np.abs(ok2 - (t_fit + t_pol)))])
+    return order, c1, c2 - c1, n - c2
+
+
 def calibrate(
     inputs: Sequence[Any],
     texts: Sequence[str],
@@ -1558,6 +1590,7 @@ def calibrate(
     language: str = "en",
     offer_control: str = "warn",
     prefix_score: Any = None,
+    groups: Sequence[Hashable] | None = None,
 ) -> TrustGuard:
     """Calibrate the trust layer on your labelled data. Return a :class:`TrustGuard`.
 
@@ -1649,6 +1682,16 @@ def calibrate(
         A free name for the configuration.
     seed
         Seed of the random split and of the controls.
+    groups
+        Optional: one group id per input (for example the normalised
+        sentence text when sentences repeat). With it, all items of one
+        group fall into the same part of the split (fit, policy grid or
+        LTT), so no repeat of a sentence is in two parts. The groups go to
+        the parts in a random order (from ``seed``) and the part sizes are
+        the closest group boundaries to the default sizes. It needs at
+        least 3 groups. Default ``None``: the plain random split, with the
+        same result as before this option existed. Repeats inside the LTT
+        part stay correlated; the LTT bound treats them as independent.
     audit_text
         Keep the shown text in the audit log (default True). False keeps
         only actions, scores and hashes.
@@ -1892,12 +1935,15 @@ def calibrate(
 
     rng = np.random.default_rng(seed)
     order = rng.permutation(len(inputs))
+    if groups is not None:  # opt-in: keep each group inside one part (the default path is unchanged)
+        order, n_fit, n_pol, n_ltt = _group_split(order, list(groups), seed)
     st_texts = stream_texts if stream_texts is not None else [None] * len(inputs)
     items = [Item(streams[i], texts[i], stream_text=st_texts[i]) for i in order]
     # The frame temperature needs the truth in the token space. With your own decode_fn the texts
     # can be in another space (words vs phonemes), so it is fitted only with stream_texts.
     frame_fit = kind == "logits" and (stream_texts is not None or decode_fn is None)
-    n_fit, n_pol, n_ltt = _split(len(items))
+    if groups is None:
+        n_fit, n_pol, n_ltt = _split(len(items))
 
     # --- fit (Paper 1 v4 recipe, LTT) ------------------------------------
     hc = paper1_v4_harness_config(max_wrong_commit=alpha, risk_control_delta=delta, max_attempts=1, seed=seed,
@@ -1921,7 +1967,8 @@ def calibrate(
     stable = decoder_label == "stable"
     recipe.update({"fitted_by": "fidetype.trust.calibrate (P14-03 drop-in)", "input_kind": kind,
                    "decoder": _decoder_name(decode_fn, lex, stable=stable) if kind == "logits" else "user n-best",
-                   "split": {"fit": n_fit, "policy_grid": n_pol, "ltt": n_ltt, "seed": seed},
+                   "split": {"fit": n_fit, "policy_grid": n_pol, "ltt": n_ltt, "seed": seed,
+                             **({"group_aware": True, "n_groups": len(set(groups))} if groups is not None else {})},
                    "commit_gate": "always on (re-tune rule 2026-11-15)",
                    "frame_temperature": ("fitted on stream_texts" if stream_texts is not None else
                                          "fitted on texts" if frame_fit else "not fitted (1.0)"),

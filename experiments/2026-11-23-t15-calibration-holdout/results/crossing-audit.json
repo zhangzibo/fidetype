@@ -1,0 +1,351 @@
+{
+ "n_draws": 120,
+ "draw_seed": "first 8 hex digits of SHA-256(t15-calho|<arm>|cal|<k>), k = 1 .. n_draws",
+ "pool_order": "hold-out calibration keys in tune-hash order, then val_select in session file order (calibrate permutes the pool with the draw seed)",
+ "old (rule 4, plain split)": {
+  "tune_items": 250,
+  "tune_groups": 244,
+  "pool_A_items": 2688,
+  "pool_A_groups": 2504,
+  "tune_groups_also_in_pool_A": 41,
+  "pool_A_items_sharing_a_group_with_tune": 52,
+  "val_select_groups_also_in_holdout_pool": 12,
+  "pool_A_groups_also_in_val_eval": 24,
+  "val_eval_items_sharing_a_group_with_pool_A": 28,
+  "arm_A_plain_split": {
+   "pool": "holdout_to_calibration + val_select",
+   "n": 2688,
+   "groups": 2504,
+   "repeated_groups": 159,
+   "sizes_draw_1": [
+    672,
+    1008,
+    1008
+   ],
+   "crossing_groups": {
+    "mean": 109.59,
+    "min": 96,
+    "max": 123
+   },
+   "crossing_items": {
+    "mean": 242.51,
+    "min": 214,
+    "max": 270
+   },
+   "groups_in_all_3": {
+    "mean": 5.07,
+    "min": 0,
+    "max": 12
+   },
+   "ltt_groups": {
+    "mean": 979.55,
+    "min": 967,
+    "max": 993
+   },
+   "ltt_items_sharing_a_group_with_fit_or_policy": {
+    "mean": 87.48,
+    "min": 67,
+    "max": 105
+   }
+  },
+  "arm_B_plain_split": {
+   "pool": "val_select",
+   "n": 722,
+   "groups": 710,
+   "repeated_groups": 6,
+   "sizes_draw_1": [
+    180,
+    271,
+    271
+   ],
+   "crossing_groups": {
+    "mean": 5.38,
+    "min": 3,
+    "max": 6
+   },
+   "crossing_items": {
+    "mean": 16.12,
+    "min": 9,
+    "max": 18
+   },
+   "groups_in_all_3": {
+    "mean": 1.4,
+    "min": 0,
+    "max": 4
+   },
+   "ltt_groups": {
+    "mean": 268.75,
+    "min": 264,
+    "max": 271
+   },
+   "ltt_items_sharing_a_group_with_fit_or_policy": {
+    "mean": 5.96,
+    "min": 2,
+    "max": 11
+   }
+  },
+  "arm_R_plain_split": {
+   "pool": "val_select",
+   "n": 722,
+   "groups": 710,
+   "repeated_groups": 6,
+   "sizes_draw_1": [
+    180,
+    271,
+    271
+   ],
+   "crossing_groups": {
+    "mean": 5.3,
+    "min": 2,
+    "max": 6
+   },
+   "crossing_items": {
+    "mean": 15.9,
+    "min": 6,
+    "max": 18
+   },
+   "groups_in_all_3": {
+    "mean": 1.27,
+    "min": 0,
+    "max": 4
+   },
+   "ltt_groups": {
+    "mean": 268.75,
+    "min": 265,
+    "max": 271
+   },
+   "ltt_items_sharing_a_group_with_fit_or_policy": {
+    "mean": 6.07,
+    "min": 1,
+    "max": 10
+   }
+  }
+ },
+ "amendment 1 (rule 5 tune set)": {
+  "tune_items": 250,
+  "tune_groups": 220,
+  "pool_A_items": 2688,
+  "pool_A_groups": 2487,
+  "tune_groups_also_in_pool_A": 0,
+  "pool_A_items_sharing_a_group_with_tune": 0,
+  "val_select_groups_also_in_holdout_pool": 14,
+  "pool_A_groups_also_in_val_eval": 23,
+  "val_eval_items_sharing_a_group_with_pool_A": 27,
+  "arm_A_plain_split": {
+   "pool": "holdout_to_calibration + val_select",
+   "n": 2688,
+   "groups": 2487,
+   "repeated_groups": 171,
+   "sizes_draw_1": [
+    672,
+    1008,
+    1008
+   ],
+   "crossing_groups": {
+    "mean": 118.06,
+    "min": 99,
+    "max": 138
+   },
+   "crossing_items": {
+    "mean": 263.62,
+    "min": 226,
+    "max": 304
+   },
+   "groups_in_all_3": {
+    "mean": 6.0,
+    "min": 1,
+    "max": 11
+   },
+   "ltt_groups": {
+    "mean": 977.15,
+    "min": 964,
+    "max": 986
+   },
+   "ltt_items_sharing_a_group_with_fit_or_policy": {
+    "mean": 95.26,
+    "min": 78,
+    "max": 118
+   }
+  },
+  "arm_A_group_aware_split": {
+   "pool": "holdout_to_calibration + val_select",
+   "n": 2688,
+   "groups": 2487,
+   "repeated_groups": 171,
+   "sizes_draw_1": [
+    672,
+    1008,
+    1008
+   ],
+   "crossing_groups": {
+    "mean": 0.0,
+    "min": 0,
+    "max": 0
+   },
+   "crossing_items": {
+    "mean": 0.0,
+    "min": 0,
+    "max": 0
+   },
+   "groups_in_all_3": {
+    "mean": 0.0,
+    "min": 0,
+    "max": 0
+   },
+   "ltt_groups": {
+    "mean": 932.48,
+    "min": 915,
+    "max": 950
+   },
+   "ltt_items_sharing_a_group_with_fit_or_policy": {
+    "mean": 0.0,
+    "min": 0,
+    "max": 0
+   }
+  },
+  "arm_B_plain_split": {
+   "pool": "val_select",
+   "n": 722,
+   "groups": 710,
+   "repeated_groups": 6,
+   "sizes_draw_1": [
+    180,
+    271,
+    271
+   ],
+   "crossing_groups": {
+    "mean": 5.38,
+    "min": 3,
+    "max": 6
+   },
+   "crossing_items": {
+    "mean": 16.12,
+    "min": 9,
+    "max": 18
+   },
+   "groups_in_all_3": {
+    "mean": 1.4,
+    "min": 0,
+    "max": 4
+   },
+   "ltt_groups": {
+    "mean": 268.75,
+    "min": 264,
+    "max": 271
+   },
+   "ltt_items_sharing_a_group_with_fit_or_policy": {
+    "mean": 5.96,
+    "min": 2,
+    "max": 11
+   }
+  },
+  "arm_B_group_aware_split": {
+   "pool": "val_select",
+   "n": 722,
+   "groups": 710,
+   "repeated_groups": 6,
+   "sizes_draw_1": [
+    180,
+    271,
+    271
+   ],
+   "crossing_groups": {
+    "mean": 0.0,
+    "min": 0,
+    "max": 0
+   },
+   "crossing_items": {
+    "mean": 0.0,
+    "min": 0,
+    "max": 0
+   },
+   "groups_in_all_3": {
+    "mean": 0.0,
+    "min": 0,
+    "max": 0
+   },
+   "ltt_groups": {
+    "mean": 266.66,
+    "min": 261,
+    "max": 271
+   },
+   "ltt_items_sharing_a_group_with_fit_or_policy": {
+    "mean": 0.0,
+    "min": 0,
+    "max": 0
+   }
+  },
+  "arm_R_plain_split": {
+   "pool": "val_select",
+   "n": 722,
+   "groups": 710,
+   "repeated_groups": 6,
+   "sizes_draw_1": [
+    180,
+    271,
+    271
+   ],
+   "crossing_groups": {
+    "mean": 5.3,
+    "min": 2,
+    "max": 6
+   },
+   "crossing_items": {
+    "mean": 15.9,
+    "min": 6,
+    "max": 18
+   },
+   "groups_in_all_3": {
+    "mean": 1.27,
+    "min": 0,
+    "max": 4
+   },
+   "ltt_groups": {
+    "mean": 268.75,
+    "min": 265,
+    "max": 271
+   },
+   "ltt_items_sharing_a_group_with_fit_or_policy": {
+    "mean": 6.07,
+    "min": 1,
+    "max": 10
+   }
+  },
+  "arm_R_group_aware_split": {
+   "pool": "val_select",
+   "n": 722,
+   "groups": 710,
+   "repeated_groups": 6,
+   "sizes_draw_1": [
+    180,
+    271,
+    271
+   ],
+   "crossing_groups": {
+    "mean": 0.0,
+    "min": 0,
+    "max": 0
+   },
+   "crossing_items": {
+    "mean": 0.0,
+    "min": 0,
+    "max": 0
+   },
+   "groups_in_all_3": {
+    "mean": 0.0,
+    "min": 0,
+    "max": 0
+   },
+   "ltt_groups": {
+    "mean": 266.62,
+    "min": 261,
+    "max": 271
+   },
+   "ltt_items_sharing_a_group_with_fit_or_policy": {
+    "mean": 0.0,
+    "min": 0,
+    "max": 0
+   }
+  }
+ }
+}
