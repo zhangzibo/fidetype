@@ -2,7 +2,7 @@
 
 The definition of safe WPM, the headline metric of the Fidetype benchmark, and how to compute it.
 
-**Status:** Alpha ([status levels](glossary.md#status-levels)). `safe-wpm/0.2` is the metric in use (adopted 2026-11-22, section 6a). The scorer, the command line and the leaderboard use it by default. `safe-wpm/0.1` (sections 1 to 5) stays selectable (`metric_version="0.1"`, CLI `--metric-version 0.1`), so you can reproduce every earlier number. A v0.1 number keeps its value and its v0.1 label.
+**Status:** Alpha ([status levels](glossary.md#status-levels)). `safe-wpm/0.2` is the metric in use (adopted 2026-11-22, section 6a). The scorer, the command line and the leaderboard use it by default. `safe-wpm/0.1` (sections 1 to 5) stays selectable (`metric_version="0.1"`, CLI `--metric-version 0.1`), so you can reproduce every earlier number. A v0.1 number keeps its value and its v0.1 label. Since 2026-11-24, v0.2 also scores trials with several commits (section 6c).
 
 Code: [`src/fidetype/benchmark/safe_wpm.py`](../src/fidetype/benchmark/safe_wpm.py). Baselines: [results](../experiments/2026-11-16-p14-05-safe-wpm/results.md). Leaderboard columns in [`benchmark/site/leaderboard.md`](../benchmark/site/leaderboard.md): "Safe WPM v0.2 @ alpha" (the headline) and "Safe WPM v0.1 @ alpha" (the earlier values).
 
@@ -64,6 +64,7 @@ safe WPM  = 60 * sum_i credit_i / sum_i time_i
 | `timing`, `correction_rule` | How the time was measured and the penalty formula |
 | `definition` | The version label: `safe-wpm/0.2` (default) or `safe-wpm/0.1` |
 | `definition_status`, `adopted_headline`, `not_headline_because`, `reading_cost` | v0.2 only: the adoption status, whether the value is an adopted-v0.2 headline (and why not), and the reading cost used |
+| `multi_commit` | v0.2, only when the caller gives `n_commits`: commit events, trials with several commits, the most commits in one trial, the rule and its status (section 6c) |
 
 ## 4. How to compute it
 
@@ -140,7 +141,7 @@ All numbers use alpha 0.05. LTT entries use delta 0.1. Details and the rerun com
 
 - **Prefix credit.** A commit can claim only its first k words (a prefix commit). If these are the first k words of the truth, the trial earns k words. A complete commit (every sentence-level commit) earns words(y) only if it is exactly right, as in v0.1.
 - **Wrong prefix.** It earns 0 words and costs 2.0 s + 0.79 s per character of the k true words that it replaces. A wrong complete commit costs the v0.1 penalty.
-- **Words after a prefix commit** earn 0 words and add no time (as a withheld trial). One commit per trial.
+- **Words after a prefix commit** earn 0 words and add no time (as a withheld trial). One commit per trial, unless the caller gives the commit events (section 6c).
 - **Risk unit: the trial.** A wrong commit is a wrong prefix or a wrong complete commit; the rate is over all trials. A policy with prefix commits is certified only by a bound on this loss (`risk = "wrong-prefix-commit"`).
 - **Speech time.** An optional per-trial `speech_s` adds a secondary `speech_time` value. The headline v0.2 value still uses `neural_s`.
 - **Same as v0.1 for sentence-level policies.** Every number in section 5 is also its v0.2 value.
@@ -181,6 +182,44 @@ r = calibration_draw_interval(
     draw_scheme="partition")                                # K >= 80 partition-only draws: an adopted headline
 print(r["value"], r["interval"], r["sd_between_draws"], r["lower_above_reference"])
 ```
+
+## 6c. Several commits per trial (ADOPTED 2026-11-24, part of v0.2)
+
+> **Adopted on 2026-11-24.** A trial can have several commits. This rule was rule (7) of the [v0.2 proposal](safe-wpm-v0.2-proposal.md#7-several-commits-per-trial-p5-27-proposed-extension-not-adopted) (section 7). It changes no published number: the benchmark submission format holds one action per unit, so no score card has a trial with several commits. Numbers labelled "proposed" before this date keep their labels. Decision record: [analysis](../experiments/2026-11-24-p14-63-multi-commit-decision/recommendation.md).
+
+A streaming guard commits words while the trial goes on. For example, it commits "i need" after 2 s and "some water" after 4 s. Each commit is a **commit event**.
+
+**Rule.**
+
+| Item | Rule |
+|---|---|
+| Commits | Append-only. Each commit adds words after the words already committed. No commit removes or changes a committed word. |
+| Right trial | Every commit is right. For append-only commits, this is the same as "the final committed text is right" (by the v0.2 prefix rule). |
+| Credit and penalty | The v0.2 credit and penalty of the final committed text. After a wrong commit, the user deletes all committed words and types the true ones again. |
+| Reading time | 0.5 s for each commit event, plus 0.3 s for each committed word, read once: `read_i = 0.5 s * J_i + 0.3 s * K_i` (J_i commit events, K_i committed words). |
+| Bound | A policy with a trial of two or more commits is certified only by a bound on the trial loss "any commit of the trial is wrong" (`risk = "wrong-stream-commit"`). The rate is wrong trials / all trials. |
+| One commit per trial | The rule gives the v0.2 value. |
+| Headline | A value with several commits per trial is an adopted v0.2 headline when the other v0.2 conditions hold (reading cost, and a headline interval with K >= 80 partition-only calibration draws, section 6b). |
+
+**Why the fee is per commit event.** Each look at new text costs the user a gaze shift and a check. Without a fee per event, a guard could split one commit into many small commits at no cost. With the fee, splitting a k-word commit into k one-word commits costs (k − 1) × 0.5 s more and earns no word more. Each committed word is still read only once, so nothing is counted twice.
+
+**Why this rule.** On T15 (`val_eval`, 701 trials) three guards were scored under five reading rules. The rule above gives the recorded values: one-commit prefix guard 4.67, streaming guard 2.34, hybrid guard 4.89. Two other rules that count the later commits move the hybrid value by at most ±0.05 (one fee per trial: 4.94; read all committed words again at each event: 4.84). "Hybrid beats one-commit guard" holds under all three. A rule that counts only the first commit gives the hybrid 2.91 and misses 5 of its 18 wrong trials, so it is not safe. A rule that refuses several commits gives streaming guards no value.
+
+**The commit events must be given.** A `wrong-stream-commit` guarantee scored without `n_commits` is **not an adopted headline**. The scorer cannot see the commit events. It then charges one reading fee per committed trial, which is the cheaper reading. The value and the status do not change. `adopted_headline` is False, and `not_headline_because` gives the reason. Pass `n_commits` (one per trial; 1 for a trial with one commit). The same applies to `calibration_draw_interval`.
+
+**Not covered.** Retractions (a commit that removes words) are out of scope. Latency (how early the words appear) is reported next to safe WPM, not in it. The benchmark submission format has one action per unit, so a streaming guard cannot be scored on the leaderboard yet: the rule applies to the library and the command line.
+
+**Code.**
+
+```python
+r = safe_wpm(committed, correct, n_words, n_chars, neural_s,
+             committed_words=k, complete=complete, penalty_chars=pen,   # describe the final committed text
+             n_commits=events,                                          # commit events per trial
+             guarantee=guard.guarantee())                               # risk "wrong-stream-commit"
+print(r["value"], r["adopted_headline"], r["multi_commit"]["n_commit_events"])
+```
+
+Command line: each line of the trials file may give `n_commits` (default 1 for a committed trial). With a `wrong-stream-commit` guarantee, the CLI passes the commit events when the file gives them.
 
 ## 7. Relation to other metrics
 

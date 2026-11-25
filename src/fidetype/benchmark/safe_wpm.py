@@ -97,9 +97,9 @@ first committed) give a sensitivity variant: ``adopted_headline`` is then
 False. For a policy with only complete commits and no reading cost, v0.2
 gives the same value as v0.1.
 
-Proposed extension "several commits per trial" (P5-27; an extension of
-v0.2, NOT adopted): ``n_commits`` gives the number of append-only
-commit events of each trial (a streaming guard commits more words of the
+Several commits per trial (rule (7) of the v0.2 proposal, section 7;
+ADOPTED 2026-11-24 as part of v0.2): ``n_commits`` gives the number of
+append-only commit events of each trial (a streaming guard commits more words of the
 same sentence as evidence arrives; committed words are never retracted).
 The per-trial commit arrays then describe the union of the trial's
 commits (its final committed text): the trial is right only if every
@@ -109,8 +109,13 @@ The reading time is ``read_s_per_commit * n_commits_i + read_s_per_word *
 k_i`` (every commit pays the fixed cost; every committed word is read
 once). A trial with more than one commit is certified only by a bound on
 the trial loss "any commit of the trial is wrong" (guarantee ``risk =
-"wrong-stream-commit"``). With one commit per trial the extension gives
-the v0.2 value.
+"wrong-stream-commit"``). With one commit per trial the rule gives the
+v0.2 value. A report with several commits per trial is an adopted v0.2
+headline when the other v0.2 conditions hold. A ``wrong-stream-commit``
+guarantee without ``n_commits`` is not an adopted headline
+(``not_headline_because``): the scorer cannot see the commit events, so it
+would charge one reading fee per trial, and a guard that splits its text
+into many commits would not pay for the extra events.
 """
 
 from __future__ import annotations
@@ -143,8 +148,18 @@ MIN_PREFIX_WORDS = 1
 #: Loss names of a guarantee (``guarantee["risk"]``). Absent = ``RISK_SENTENCE``.
 RISK_SENTENCE = "wrong-commit"
 RISK_PREFIX = "wrong-prefix-commit"
-#: P5-27 (proposed extension of v0.2, not adopted): the trial is wrong if any of its append-only commits is wrong.
+#: Rule (7) of v0.2 (several commits per trial): the trial is wrong if any of its append-only commits is wrong.
 RISK_STREAM = "wrong-stream-commit"
+#: The date the maintainer adopted rule (7), several commits per trial, as part of ``safe-wpm/0.2``.
+MULTI_COMMIT_ADOPTED = "2026-11-24"
+MULTI_COMMIT_RULE = ("append-only commits; the trial is right only if every commit is right (= its final committed "
+                     "text is right); credit and penalty of that text; every commit event pays read_s_per_commit, "
+                     "every committed word read_s_per_word once")
+MULTI_COMMIT_STATUS = "adopted 2026-11-24 as part of safe-wpm/0.2 (rule (7), several commits per trial)"
+#: ``not_headline_because`` entry of a ``wrong-stream-commit`` guarantee scored without ``n_commits``.
+STREAM_WITHOUT_N_COMMITS = ("a 'wrong-stream-commit' guarantee without n_commits: the commit events of each trial "
+                            "are not known, so the scorer charged one reading fee per committed trial (pass "
+                            "n_commits)")
 CERTIFIED_METHODS = ("ltt", "crc")
 #: aac-gaze-v1 correction constants (``fidetype.interact.simulated_user.UserConfig`` defaults).
 DEFAULT_OVERHEAD_S = 2.0
@@ -303,11 +318,14 @@ def safe_wpm(committed: Sequence[bool], correct: Sequence[bool], n_words: Sequen
     ``reading_cost`` block of every v0.2 report gives them. v0.1 has no
     reading cost: there these arguments must stay ``None`` (or 0 / 1).
 
-    ``n_commits`` (P5-27, proposed extension of v0.2, not adopted): the number of
-    append-only commits of each trial (default: 1 per committed trial).
-    The other per-trial commit arrays then describe the union of the
-    trial's commits. Each commit pays ``read_s_per_commit``. A trial with
-    several commits needs a guarantee with ``risk="wrong-stream-commit"``.
+    ``n_commits`` (rule (7) of v0.2, adopted 2026-11-24): the number of
+    append-only commit events of each trial (default: 1 per committed
+    trial). The other per-trial commit arrays then describe the union of
+    the trial's commits. Each commit event pays ``read_s_per_commit``. A
+    trial with several commits needs a guarantee with
+    ``risk="wrong-stream-commit"``. A ``wrong-stream-commit`` guarantee
+    without ``n_commits`` gives ``adopted_headline`` False
+    (:data:`STREAM_WITHOUT_N_COMMITS`); the value and status do not change.
     """
     if metric_version not in METRIC_VERSIONS:
         raise ValueError(f"metric_version must be one of {METRIC_VERSIONS}, not {metric_version!r}")
@@ -421,7 +439,7 @@ def _safe_wpm_v02(committed, correct, n_words, n_chars, neural_s, *, guarantee, 
         nci = np.where(a["cm"], nci, 0.0)
     multi = a["cm"] & (nci > 1)
     if multi.any() and min_prefix_words != 1:
-        raise ValueError("min_prefix_words is not defined for trials with several commits (P5-27)")
+        raise ValueError("min_prefix_words is not defined for trials with several commits (rule (7))")
     dropped = partial & (np.nan_to_num(kw) < min_prefix_words)
     if dropped.any():  # P14-28: a prefix commit shorter than min_prefix_words becomes no commit
         a["cm"] = a["cm"] & ~dropped
@@ -444,7 +462,7 @@ def _safe_wpm_v02(committed, correct, n_words, n_chars, neural_s, *, guarantee, 
     if multi.any() and risk != RISK_STREAM:
         cert["certified"] = False
         note = (f"the policy commits several times in a trial, but its bound is on '{risk}', not on "
-                f"'{RISK_STREAM}' (the P5-27 extension needs a bound on the trial loss 'any commit is wrong')")
+                f"'{RISK_STREAM}' (rule (7) needs a bound on the trial loss 'any commit is wrong')")
     elif partial.any() and risk not in (RISK_PREFIX, RISK_STREAM):
         cert["certified"] = False
         note = (f"the policy commits prefixes, but its bound is on '{risk}', not on '{RISK_PREFIX}' "
@@ -472,8 +490,8 @@ def _safe_wpm_v02(committed, correct, n_words, n_chars, neural_s, *, guarantee, 
                 ("min_prefix_words", min_prefix_words, MIN_PREFIX_WORDS)) if v != d]
     if rule.to_dict() != CorrectionRule().to_dict():
         variant.append(f"correction rule {rule.name!r} is not the aac-gaze-v1 rewrite rule")
-    if multi.any():
-        variant.append("several commits per trial (a proposed extension, not adopted)")
+    if n_commits is None and risk == RISK_STREAM and a["cm"].any():
+        variant.append(STREAM_WITHOUT_N_COMMITS)
     out: dict[str, Any] = {
         "definition": DEFINITION_V02,
         "definition_status": V02_VARIANT_STATUS if variant else V02_STATUS,
@@ -520,10 +538,7 @@ def _safe_wpm_v02(committed, correct, n_words, n_chars, neural_s, *, guarantee, 
         out["multi_commit"] = {
             "n_commit_events": int(nci.sum()), "n_trials_with_several_commits": int(multi.sum()),
             "max_commits_per_trial": int(nci.max()) if n else 0,
-            "rule": ("P5-27 proposed extension: append-only commits; the trial is right only if every commit is "
-                     "right (= its final committed text is right); credit and penalty of that text; every commit "
-                     "pays read_s_per_commit, every committed word read_s_per_word once"),
-            "status": "proposed extension of safe-wpm/0.2 (not adopted)"}
+            "rule": MULTI_COMMIT_RULE, "status": MULTI_COMMIT_STATUS}
     if ci is not None:
         out["ci_unit"] = ci_unit
     if speech_s is not None:
@@ -695,8 +710,9 @@ def load_trials_jsonl(path: str, language: str | None = None) -> dict[str, list]
     (default true), ``committed_text`` (with ``truth``: sets ``correct``,
     ``committed_words`` and ``penalty_chars`` by :func:`prefix_outcome`, in
     ``correct_v02``; ``correct`` then means the exact sentence, as in v0.1)
-    or ``committed_words`` + ``penalty_chars``; ``speech_s``; ``n_commits`` (P5-27: the number of
-    append-only commits of the trial; default 1 if committed).
+    or ``committed_words`` + ``penalty_chars``; ``speech_s``; ``n_commits`` (rule (7): the number of
+    append-only commit events of the trial; default 1 if committed; ``n_commits_given`` records
+    whether the line gave it).
 
     ``language`` (P14-34, optional BCP 47 tag): count the words of ``truth``
     with :mod:`fidetype.lang`. A language without word boundaries (``zh``)
@@ -713,7 +729,7 @@ def load_trials_jsonl(path: str, language: str | None = None) -> dict[str, list]
 
     cols: dict[str, list] = {k: [] for k in ("committed", "correct", "n_words", "n_chars", "neural_s", "cluster",
                                              "correct_v02", "committed_words", "complete", "penalty_chars",
-                                             "speech_s", "n_commits")}
+                                             "speech_s", "n_commits", "n_commits_given")}
     with open(path, encoding="utf-8") as f:
         for ln, line in enumerate(f, 1):
             if not line.strip():
@@ -748,6 +764,7 @@ def load_trials_jsonl(path: str, language: str | None = None) -> dict[str, list]
             cols["speech_s"].append(float(d["speech_s"]) if d.get("speech_s") is not None else math.nan)
             cols["n_commits"].append(int(d["n_commits"]) if d.get("n_commits") is not None else
                                      int(bool(d["committed"])))
+            cols["n_commits_given"].append(d.get("n_commits") is not None)
     return cols
 
 
@@ -819,7 +836,10 @@ def calibration_draw_interval(draws: Sequence[Mapping[str, Any]], n_words: Seque
     bool per evaluation trial) and ``guarantee`` (as for :func:`safe_wpm`),
     or ``{"refused": True}`` for a calibration that produced no guard. With
     v0.2 a draw may also give ``complete``, ``committed_words`` and
-    ``penalty_chars`` (prefix commits, as for :func:`safe_wpm`).
+    ``penalty_chars`` (prefix commits, as for :func:`safe_wpm`), and
+    ``n_commits`` (commit events per trial, rule (7); each event pays
+    ``read_s_per_commit``). A draw with a ``wrong-stream-commit`` guarantee
+    and no ``n_commits`` makes the interval not an adopted headline.
     ``reference`` (optional, e.g. the no-BCI WPM) adds
     ``lower_above_reference``. Also returned: the law-of-total-variance
     decomposition (within-draw and between-draw SD) and its normal interval
@@ -865,7 +885,8 @@ def calibration_draw_interval(draws: Sequence[Mapping[str, Any]], n_words: Seque
     t_neural = W @ ns
     q = [(1.0 - level) / 2.0 * 100.0, (1.0 + level) / 2.0 * 100.0]
     values, statuses, cond, per_draw = [], [], [], []
-    v02_keys = ("complete", "committed_words", "penalty_chars")
+    v02_keys = ("complete", "committed_words", "penalty_chars", "n_commits")
+    stream_without_events = False
     for k, d in enumerate(draws):
         if d.get("refused"):
             st, v, vals, info = "refused", 0.0, np.zeros(int(B)), {}
@@ -880,6 +901,7 @@ def calibration_draw_interval(draws: Sequence[Mapping[str, Any]], n_words: Seque
             r = safe_wpm(d["committed"], d["correct"], nw, nc, ns, guarantee=d.get("guarantee"), rule=rule,
                          gaze_chars_per_min=None, metric_version=metric_version, **kw02)
             st = r["status"]
+            stream_without_events |= STREAM_WITHOUT_N_COMMITS in (r.get("not_headline_because") or [])
             info = {"n_commits": r["n_commits"], "n_wrong_commits": r["n_wrong_commits"]}
             if st in credit_statuses and r["value"] is not None:
                 cm = np.asarray(d["committed"], bool)
@@ -892,7 +914,11 @@ def calibration_draw_interval(draws: Sequence[Mapping[str, Any]], n_words: Seque
                        else np.asarray(extra["penalty_chars"], float))
                 credit_w = np.where(part, np.nan_to_num(kwd), nw)
                 pen = rule.penalty(np.where(part, np.nan_to_num(pch), nc))
-                read = rsc + rsw * np.where(np.isfinite(kwd), kwd, nw)
+                if extra.get("n_commits") is None:
+                    read = rsc + rsw * np.where(np.isfinite(kwd), kwd, nw)
+                else:  # rule (7): every commit event pays rsc (as in safe_wpm)
+                    nev = np.where(cm, np.asarray(extra["n_commits"], float), 0.0)
+                    read = rsc * np.maximum(nev, 1.0) + rsw * np.where(np.isfinite(kwd), kwd, nw)
                 credit = W @ np.where(ok, credit_w, 0.0)
                 den = t_neural + W @ np.where(cm & ~ok, pen, 0.0) + W @ np.where(cm, read, 0.0)
                 vals = np.where(den > 0, 60.0 * credit / np.where(den > 0, den, 1.0), 0.0)
@@ -929,6 +955,8 @@ def calibration_draw_interval(draws: Sequence[Mapping[str, Any]], n_words: Seque
         why.append("safe-wpm/0.1 (the headline metric is safe-wpm/0.2 since 2026-11-22)")
     if rule.to_dict() != CorrectionRule().to_dict():
         why.append(f"correction rule {rule.name!r} is not the aac-gaze-v1 rewrite rule")
+    if stream_without_events:
+        why.append(STREAM_WITHOUT_N_COMMITS)
     rule_warn = [w for w in why if w.startswith("K =") or "partition" in w]
     if rule_warn:
         import warnings
@@ -971,6 +999,8 @@ def calibration_draw_interval(draws: Sequence[Mapping[str, Any]], n_words: Seque
 
 __all__ = ["DEFINITION", "DEFINITION_V02", "METRIC_VERSIONS", "DEFAULT_METRIC_VERSION", "V02_ADOPTED", "V02_STATUS",
            "READ_S_PER_COMMIT", "READ_S_PER_WORD", "MIN_PREFIX_WORDS", "RISK_SENTENCE", "RISK_PREFIX",
+           "RISK_STREAM", "MULTI_COMMIT_ADOPTED", "MULTI_COMMIT_RULE", "MULTI_COMMIT_STATUS",
+           "STREAM_WITHOUT_N_COMMITS",
            "prefix_outcome",
            "CorrectionRule", "certification", "model_neural_s", "safe_wpm", "from_trial_scores",
            "summarize_controls", "SHEET_SCOPE", "guarantee_from_sheet", "controls_from_sheet", "from_decisions",

@@ -158,7 +158,7 @@ def test_stream_guard_checks():
                                                                   [True, False] * 5, unit="prefix"), 3)
 
 
-# --- the "several commits per trial" extension of safe-wpm/0.2 (proposed, not adopted) ---------------------------------------------
+# --- the "several commits per trial" rule (7) of safe-wpm/0.2 (adopted 2026-11-24) -------------------------------------------------------
 
 LTT_STREAM = {"method": "ltt", "alpha": 0.5, "delta": 0.1, "n_cal": 100, "risk": "wrong-stream-commit"}
 

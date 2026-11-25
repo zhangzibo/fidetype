@@ -333,7 +333,7 @@ Validated ([results](../experiments/2026-11-21-p5-35-external-prefix-score/resul
 
 T15 result (pre-registered, [results](../experiments/2026-11-18-p5-27-streaming-prefix/results.md)): step 6 frames (0.48 s), LTT threshold 0.99, controls 0 / 300 and 0 / 300, 5 / 701 wrong trials (0.0071). Under v0.2 + reading cost (v0.2 adopted 2026-11-22) it gives 2.34 [2.11, 2.57] against 4.67 for the one-commit prefix guard (10b): the one-commit guard wins. The streaming guard commits words about 10 s earlier, but its single threshold over about 39 checkpoints per trial is strict, and it never extends a commit at the end. Use 10b for words; use 10c only where early commits matter more than the number of words.
 
-Score it with `safe_wpm(..., metric_version="0.2", n_commits=...)`, the proposed "several commits per trial" extension (section 7 of the [v0.2 proposal](safe-wpm-v0.2-proposal.md)). The default behaviour of `calibrate` does not change.
+Score it with `safe_wpm(..., metric_version="0.2", n_commits=...)`, the "several commits per trial" rule of safe-WPM v0.2 (adopted 2026-11-24; [safe-wpm.md](safe-wpm.md) section 6c). The default behaviour of `calibrate` does not change.
 
 ## 11. Online use: adaptive risk control for drift
 

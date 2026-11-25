@@ -294,7 +294,10 @@ def cmd_safe_wpm(a) -> int:
             v02.update(speech_s=sp, speech_timing="per-trial speech_s")
         v02.update(read_s_per_commit=a.read_s_per_commit, read_s_per_word=a.read_s_per_word,
                    min_prefix_words=a.min_prefix_words)  # reading cost: None = the adopted aac-gaze-v1 values
-        if any(x > 1 for x in cols["n_commits"]):  # P5-27: several append-only commits per trial
+        # rule (7): several append-only commits per trial. A wrong-stream-commit bound also passes the
+        # commit events the file gives, so a one-commit stream policy can be an adopted headline.
+        stream = str((guarantee or {}).get("risk", "")) == "wrong-stream-commit"
+        if any(x > 1 for x in cols["n_commits"]) or (stream and any(cols["n_commits_given"])):
             v02["n_commits"] = cols["n_commits"]
     elif (a.read_s_per_commit not in (None, 0.0) or a.read_s_per_word not in (None, 0.0)
           or a.min_prefix_words != 1):
