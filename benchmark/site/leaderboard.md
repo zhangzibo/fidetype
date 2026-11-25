@@ -12,6 +12,8 @@ Rerun (P13-06): the rerun level of each entry (`rescore`, `replay`, `full` or `n
 
 Track pages (P13-09): each track has its own page, `tracks/<track>.html`, with a stable link per entry and the entry history from git.
 
+Pool scope: the Guarantee column is a bound on the wrong-commit rate of the whole scored test set of an entry, with all its users, participants, sessions, days or runs together. It is not a bound for each user, session or day: one of them can be worse than the pool. A mark in square brackets in the Guarantee column (for example [SAFETY FINDING: ...] or [LABEL-BLIND COMMIT STEP: ...]) points to a recorded safety finding; the track page gives the details and the numbers. Details: [docs/trust-guarantee.md](../../docs/trust-guarantee.md#4-what-is-not-guaranteed) section 4.
+
 <a id="tracks-v02"></a>
 
 ## Tracks v0.2: commercially clean data
@@ -29,15 +31,59 @@ No-BCI reference (gaze typing only, 20 chars/min): **4.08 eWPM**.
 | Decoder | Policy | CER | eWPM [95% CI] | Safe WPM v0.2 @ alpha | Safe WPM v0.1 @ alpha | Wrong-commit | Error among commits | Commit rate | Controls | Guarantee | Conformance | Weights licence | Scored from | Rerun |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | Card et al. 2024 online decoder (published sentence) (online, per-user) | always-commit | 0.031 | 19.60 [17.92, 21.26] | n/a (no certified bound) | n/a (no certified bound) | 0.194 | 0.194 | 1.000 | no (shuf fail, zeros fail, null fail) | none | not checked (units JSONL: NTS-derived rows) | not released (outputs in the CC0 dataset) | submission/0.2 (units-jsonl) | rescore |
-| Card et al. 2024 online decoder (published sentence) (online, per-user) | trust gate + CRC | 0.031 | 17.06 [15.85, 18.34] | 12.27 [10.83, 13.77] (CRC a=0.05) | 13.42 [11.77, 15.17] (CRC a=0.05) | 0.049 | 0.099 | 0.496 | no (shuf fail, zeros fail, null pass) | CRC a=0.05, n_cal=812; test 0.049 (met) | not checked (units JSONL: NTS-derived rows) | not released (outputs in the CC0 dataset) | submission/0.2 (units-jsonl) | rescore |
+| Card et al. 2024 online decoder (published sentence) (online, per-user) | trust gate + CRC | 0.031 | 17.06 [15.85, 18.34] | 12.27 [10.83, 13.77] (CRC a=0.05) | 13.42 [11.77, 15.17] (CRC a=0.05) | 0.049 | 0.099 | 0.496 | no (shuf fail, zeros fail, null pass) | CRC a=0.05, n_cal=812; test 0.049 (met) [SAFETY FINDING: one day above alpha] | not checked (units JSONL: NTS-derived rows) | not released (outputs in the CC0 dataset) | submission/0.2 (units-jsonl) | rescore |
 | Card et al. 2024 online decoder (published sentence) (online, per-user) | trust gate (plug-in fit) | 0.031 | 16.93 [15.75, 18.15] | n/a (no certified bound) | n/a (no certified bound) | 0.044 | 0.093 | 0.473 | no (shuf fail, zeros fail, null pass) | none | not checked (units JSONL: NTS-derived rows) | not released (outputs in the CC0 dataset) | submission/0.2 (units-jsonl) | rescore |
-| Card et al. 2024 online decoder (published sentence) (online, per-user) | trust gate + LTT | 0.031 | 16.78 [15.64, 17.98] | 11.28 [10.22, 12.38] (LTT a=0.05 d=0.1) | 12.24 [11.05, 13.51] (LTT a=0.05 d=0.1) | 0.040 | 0.091 | 0.446 | no (shuf fail, zeros fail, null pass) | LTT a=0.05 d=0.1, n_cal=812; test 0.040 (met) | not checked (units JSONL: NTS-derived rows) | not released (outputs in the CC0 dataset) | submission/0.2 (units-jsonl) | rescore |
+| Card et al. 2024 online decoder (published sentence) (online, per-user) | trust gate + LTT | 0.031 | 16.78 [15.64, 17.98] | 11.28 [10.22, 12.38] (LTT a=0.05 d=0.1) | 12.24 [11.05, 13.51] (LTT a=0.05 d=0.1) | 0.040 | 0.091 | 0.446 | no (shuf fail, zeros fail, null pass) | LTT a=0.05 d=0.1, n_cal=812; test 0.040 (met) [SAFETY FINDING: one day above alpha] | not checked (units JSONL: NTS-derived rows) | not released (outputs in the CC0 dataset) | submission/0.2 (units-jsonl) | rescore |
 | M4-13 causal T15 GRU-CTC + phoneme-to-word decoder (ours) (one participant; held-out trials of training sessions) [partial: 103/816 units] | drop-in guard (P14-03 recipe) | 0.067 | 12.83 [11.28, 14.65] | 3.94 [2.46, 5.51] (LTT a=0.05 d=0.1) | 4.07 [2.51, 5.74] (LTT a=0.05 d=0.1) | 0.029 | 0.158 | 0.184 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=231; test 0.029 (met) | not checked (units JSONL: NTS-derived rows) | not released | submission/0.2 (units-jsonl) | rescore |
 | Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0)) | always-commit | 0.095 | 11.35 [10.53, 12.25] | n/a (no certified bound) | n/a (no certified bound) | 0.610 | 0.610 | 1.000 | no (shuf pass, zeros pass, null fail) | none | not checked (units JSONL: NTS-derived rows) | no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR) | submission/0.2 (units-jsonl) | rescore |
 | Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0)) | trust gate + CRC | 0.095 | 11.24 [10.55, 12.01] | 4.70 [3.97, 5.42] ! ABOVE alpha (test 0.062; CRC a=0.05) | 4.90 [4.12, 5.67] ! ABOVE alpha (test 0.062; CRC a=0.05) | 0.062 | 0.256 | 0.244 | yes (shuf pass, zeros pass, null pass) | CRC a=0.05, n_cal=812; test 0.062 (NOT met) | not checked (units JSONL: NTS-derived rows) | no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR) | submission/0.2 (units-jsonl) | rescore |
 | Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0)) | trust gate (plug-in fit) | 0.095 | 11.23 [10.56, 12.00] | n/a (no certified bound) | n/a (no certified bound) | 0.059 | 0.254 | 0.232 | yes (shuf pass, zeros pass, null pass) | none | not checked (units JSONL: NTS-derived rows) | no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR) | submission/0.2 (units-jsonl) | rescore |
 | Phoneme beam -> CMUdict word decoder (Fidetype) (no training: decoding of the published RNN logits (CC0)) | trust gate + LTT | 0.095 | 11.17 [10.50, 11.93] | 3.91 [3.15, 4.59] (LTT a=0.05 d=0.1) | 4.05 [3.25, 4.77] (LTT a=0.05 d=0.1) | 0.047 | 0.239 | 0.195 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=812; test 0.047 (met) | not checked (units JSONL: NTS-derived rows) | no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR) | submission/0.2 (units-jsonl) | rescore |
 | M4-12 causal T15 GRU-CTC + phoneme-to-word decoder (ours) (one participant; held-out trials of training sessions) [partial: 103/816 units] | drop-in guard (P14-03 recipe) | 0.204 | 7.33 [6.66, 8.01] | 0.00 (vacuous: no commits; LTT a=0.05 d=0.1) | 0.00 (vacuous: no commits; LTT a=0.05 d=0.1) | 0.000 | n/a | 0.000 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=231; test 0.000 (met) | not checked (units JSONL: NTS-derived rows) | not released | submission/0.2 (units-jsonl) | rescore |
+
+Safety findings:
+
+- **Card et al. 2024 online decoder (published sentence) (online, per-user) / trust gate + CRC** (`b2t25-t15__published__crc.json`), 2026-11-25: **SAFETY FINDING: one day above alpha.** The CRC bound covers the pool of all 14 days (40 wrong commits in 816 test trials, rate 0.049, alpha 0.05). It does not hold for each day: on day034, 9 of 50 test trials are wrong commits (rate 0.18; Clopper-Pearson 95 % interval [0.086, 0.314], so even the lower end is above alpha). A bound per day is not promised (trust guarantee section 4: https://github.com/zhangzibo/fidetype/blob/main/docs/trust-guarantee.md#4-what-is-not-guaranteed). The table gives every day. Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed.
+
+  | Day | Test trials | Commits | Wrong commits | Wrong-commit rate | CP 95 % interval |
+  |---|---|---|---|---|---|
+  | day027 | 15 | 3 | 1 | 0.067 | [0.002, 0.319] |
+  | day034 | 50 | 24 | 9 | 0.180 | [0.086, 0.314] |
+  | day046 | 50 | 20 | 0 | 0.000 | [0.000, 0.071] |
+  | day048 | 58 | 27 | 3 | 0.052 | [0.011, 0.144] |
+  | day069 | 58 | 29 | 6 | 0.103 | [0.039, 0.212] |
+  | day074 | 37 | 14 | 0 | 0.000 | [0.000, 0.095] |
+  | day076 | 104 | 51 | 6 | 0.058 | [0.021, 0.121] |
+  | day081 | 69 | 32 | 3 | 0.043 | [0.009, 0.122] |
+  | day083 | 85 | 40 | 4 | 0.047 | [0.013, 0.116] |
+  | day088 | 45 | 22 | 2 | 0.044 | [0.005, 0.151] |
+  | day090 | 74 | 44 | 1 | 0.014 | [0.000, 0.073] |
+  | day095 | 25 | 18 | 0 | 0.000 | [0.000, 0.137] |
+  | day223 | 73 | 38 | 1 | 0.014 | [0.000, 0.074] |
+  | day244 | 73 | 43 | 4 | 0.055 | [0.015, 0.134] |
+
+  Each day is named by its post-implant day, as in the split file of the track. Only day034 has an interval whose lower end is above alpha. Days with few trials have wide intervals: an upper end above alpha alone is not proof of a rate above alpha.
+
+- **Card et al. 2024 online decoder (published sentence) (online, per-user) / trust gate + LTT** (`b2t25-t15__published__ltt.json`), 2026-11-25: **SAFETY FINDING: one day above alpha.** The LTT bound covers the pool of all 14 days (33 wrong commits in 816 test trials, rate 0.040, alpha 0.05). It does not hold for each day: on day034, 9 of 50 test trials are wrong commits (rate 0.18; Clopper-Pearson 95 % interval [0.086, 0.314], so even the lower end is above alpha). A bound per day is not promised (trust guarantee section 4: https://github.com/zhangzibo/fidetype/blob/main/docs/trust-guarantee.md#4-what-is-not-guaranteed). The table gives every day. Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed.
+
+  | Day | Test trials | Commits | Wrong commits | Wrong-commit rate | CP 95 % interval |
+  |---|---|---|---|---|---|
+  | day027 | 15 | 3 | 1 | 0.067 | [0.002, 0.319] |
+  | day034 | 50 | 24 | 9 | 0.180 | [0.086, 0.314] |
+  | day046 | 50 | 20 | 0 | 0.000 | [0.000, 0.071] |
+  | day048 | 58 | 24 | 2 | 0.034 | [0.004, 0.119] |
+  | day069 | 58 | 22 | 2 | 0.034 | [0.004, 0.119] |
+  | day074 | 37 | 14 | 0 | 0.000 | [0.000, 0.095] |
+  | day076 | 104 | 46 | 5 | 0.048 | [0.016, 0.109] |
+  | day081 | 69 | 30 | 3 | 0.043 | [0.009, 0.122] |
+  | day083 | 85 | 37 | 4 | 0.047 | [0.013, 0.116] |
+  | day088 | 45 | 22 | 2 | 0.044 | [0.005, 0.151] |
+  | day090 | 74 | 38 | 1 | 0.014 | [0.000, 0.073] |
+  | day095 | 25 | 15 | 0 | 0.000 | [0.000, 0.137] |
+  | day223 | 73 | 32 | 1 | 0.014 | [0.000, 0.074] |
+  | day244 | 73 | 37 | 3 | 0.041 | [0.009, 0.115] |
+
+  Each day is named by its post-implant day, as in the split file of the track. Only day034 has an interval whose lower end is above alpha. Days with few trials have wide intervals: an upper end above alpha alone is not proof of a rate above alpha.
 
 Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
 
@@ -335,9 +381,15 @@ No-BCI reference (gaze typing only, 20 chars/min): **3.15 eWPM**.
 | Decoder | Policy | CER | eWPM [95% CI] | Safe WPM v0.2 @ alpha | Safe WPM v0.1 @ alpha | Wrong-commit | Error among commits | Commit rate | Controls | Guarantee | Conformance | Weights licence | Scored from | Rerun |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY] | trust gate (plug-in fit) | 0.522 | 3.11 [2.92, 3.35] | n/a (no certified bound) | n/a (no certified bound) | 0.000 | n/a | 0.000 | yes (shuf pass, zeros pass, null pass) | none | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY-NC 4.0 data: research only) | submission/0.2 (units-jsonl) | rescore |
-| ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY] | trust gate + LTT | 0.522 | 3.11 [2.92, 3.35] | 0.03 [0.00, 0.17] (LTT a=0.05 d=0.1) | 0.03 [0.00, 0.17] (LTT a=0.05 d=0.1) | 0.022 | 0.933 | 0.024 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=437; test 0.022 (met) | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY-NC 4.0 data: research only) | submission/0.2 (units-jsonl) | rescore |
-| ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY] | trust gate + CRC | 0.522 | 3.11 [2.92, 3.35] | 0.03 [0.00, 0.17] (CRC a=0.05) | 0.03 [0.00, 0.17] (CRC a=0.05) | 0.020 | 0.929 | 0.022 | yes (shuf pass, zeros pass, null pass) | CRC a=0.05, n_cal=437; test 0.020 (met) | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY-NC 4.0 data: research only) | submission/0.2 (units-jsonl) | rescore |
+| ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY] | trust gate + LTT | 0.522 | 3.11 [2.92, 3.35] | 0.03 [0.00, 0.17] (LTT a=0.05 d=0.1) | 0.03 [0.00, 0.17] (LTT a=0.05 d=0.1) | 0.022 | 0.933 | 0.024 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=437; test 0.022 (met) [LABEL-BLIND COMMIT STEP: no evidence of signal] | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY-NC 4.0 data: research only) | submission/0.2 (units-jsonl) | rescore |
+| ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY] | trust gate + CRC | 0.522 | 3.11 [2.92, 3.35] | 0.03 [0.00, 0.17] (CRC a=0.05) | 0.03 [0.00, 0.17] (CRC a=0.05) | 0.020 | 0.929 | 0.022 | yes (shuf pass, zeros pass, null pass) | CRC a=0.05, n_cal=437; test 0.020 (met) [LABEL-BLIND COMMIT STEP: no evidence of signal] | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY-NC 4.0 data: research only) | submission/0.2 (units-jsonl) | rescore |
 | ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY] | always-commit | 0.522 | 2.51 [2.25, 2.84] | n/a (no certified bound) | n/a (no certified bound) | 0.997 | 0.997 | 1.000 | no (shuf pass, zeros pass, null fail) | none | not checked (units JSONL: NTS-derived rows) | not released (trained on CC BY-NC 4.0 data: research only) | submission/0.2 (units-jsonl) | rescore |
+
+Safety findings:
+
+- **ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY] / trust gate + LTT** (`spanishbcbl-meg__convctc-m-async__ltt.json`), 2026-11-25: **LABEL-BLIND COMMIT STEP: no evidence of signal.** Only 14 of the 437 calibration (val) trials can commit at all: the other rules of the trust policy block the rest. 13 of these 14 are wrong (the top-1 sentence is right for 1 of 437 val trials). Because 14 / 437 is below alpha 0.05, every threshold meets the LTT bound, so LTT takes the lowest one and commits all 14, whatever the labels are. With permuted labels it commits the same 14 items. On test, 14 of 15 commits are wrong. The bound holds (test wrong-commit rate 0.022), but only because the policy almost never commits: the commit step shows no evidence that the score separates right from wrong text. Read this entry as a vacuous guard result, not as evidence that the guard works on this decoder. Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed.
+
+- **ConvCTC-M async + es char 6-gram beam (Fidetype) (trained on the train sentences of all participants (split by sentence)) [RESEARCH ONLY] / trust gate + CRC** (`spanishbcbl-meg__convctc-m-async__crc.json`), 2026-11-25: **LABEL-BLIND COMMIT STEP: no evidence of signal.** Only 14 of the 437 calibration (val) trials can commit at all: the other rules of the trust policy block the rest. 13 of these 14 are wrong (the top-1 sentence is right for 1 of 437 val trials). Because 14 / 437 is below alpha 0.05, every threshold meets the CRC bound, so CRC takes the lowest one and commits all 14, whatever the labels are. With permuted labels it commits the same 14 items. On test, 13 of 14 commits are wrong. The bound holds (test wrong-commit rate 0.020), but only because the policy almost never commits: the commit step shows no evidence that the score separates right from wrong text. Read this entry as a vacuous guard result, not as evidence that the guard works on this decoder. Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed.
 
 Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
 
@@ -473,9 +525,15 @@ No-BCI reference (gaze typing only, 20 chars/min): **3.15 eWPM**.
 | Decoder | Policy | CER | eWPM [95% CI] | Safe WPM v0.2 @ alpha | Safe WPM v0.1 @ alpha | Wrong-commit | Error among commits | Commit rate | Controls | Guarantee | Conformance | Weights licence | Scored from | Rerun |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | ConvCTC-M async + es char 6-gram beam (Fidetype) | trust gate (plug-in fit) | 0.522 | 3.20 [3.01, 3.45] | n/a (no certified bound) | n/a (no certified bound) | 0.000 | n/a | 0.000 | yes (shuf pass, zeros pass, null pass) | none | core | not released (trained on CC BY-NC 4.0 data: research only) | committed-per-trial | rescore |
-| ConvCTC-M async + es char 6-gram beam (Fidetype) | trust gate + LTT | 0.522 | 3.20 [3.01, 3.44] | 0.03 [0.00, 0.16] (LTT a=0.05 d=0.1) | 0.03 [0.00, 0.17] (LTT a=0.05 d=0.1) | 0.022 | 0.933 | 0.024 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=437; test 0.022 (met) | core | not released (trained on CC BY-NC 4.0 data: research only) | committed-per-trial | rescore |
-| ConvCTC-M async + es char 6-gram beam (Fidetype) | trust gate + CRC | 0.522 | 3.20 [3.01, 3.44] | 0.03 [0.00, 0.17] (CRC a=0.05) | 0.03 [0.00, 0.17] (CRC a=0.05) | 0.020 | 0.929 | 0.022 | yes (shuf pass, zeros pass, null pass) | CRC a=0.05, n_cal=437; test 0.020 (met) | core | not released (trained on CC BY-NC 4.0 data: research only) | committed-per-trial | rescore |
+| ConvCTC-M async + es char 6-gram beam (Fidetype) | trust gate + LTT | 0.522 | 3.20 [3.01, 3.44] | 0.03 [0.00, 0.16] (LTT a=0.05 d=0.1) | 0.03 [0.00, 0.17] (LTT a=0.05 d=0.1) | 0.022 | 0.933 | 0.024 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=437; test 0.022 (met) [LABEL-BLIND COMMIT STEP: no evidence of signal] | core | not released (trained on CC BY-NC 4.0 data: research only) | committed-per-trial | rescore |
+| ConvCTC-M async + es char 6-gram beam (Fidetype) | trust gate + CRC | 0.522 | 3.20 [3.01, 3.44] | 0.03 [0.00, 0.17] (CRC a=0.05) | 0.03 [0.00, 0.17] (CRC a=0.05) | 0.020 | 0.929 | 0.022 | yes (shuf pass, zeros pass, null pass) | CRC a=0.05, n_cal=437; test 0.020 (met) [LABEL-BLIND COMMIT STEP: no evidence of signal] | core | not released (trained on CC BY-NC 4.0 data: research only) | committed-per-trial | rescore |
 | ConvCTC-M async + es char 6-gram beam (Fidetype) | always-commit | 0.522 | 2.58 [2.32, 2.88] | n/a (no certified bound) | n/a (no certified bound) | 0.997 | 0.997 | 1.000 | no (shuf pass, zeros pass, null fail) | none | core | not released (trained on CC BY-NC 4.0 data: research only) | committed-aggregate | rescore |
+
+Safety findings:
+
+- **ConvCTC-M async + es char 6-gram beam (Fidetype) / trust gate + LTT** (`spanishbcbl-meg-async__convctc-m-async__ltt.json`), 2026-11-25: **LABEL-BLIND COMMIT STEP: no evidence of signal.** Only 14 of the 437 calibration (val) trials can commit at all: the other rules of the trust policy block the rest. 13 of these 14 are wrong (the top-1 sentence is right for 1 of 437 val trials). Because 14 / 437 is below alpha 0.05, every threshold meets the LTT bound, so LTT takes the lowest one and commits all 14, whatever the labels are. With permuted labels it commits the same 14 items. On test, 14 of 15 commits are wrong. The bound holds (test wrong-commit rate 0.022), but only because the policy almost never commits: the commit step shows no evidence that the score separates right from wrong text. Read this entry as a vacuous guard result, not as evidence that the guard works on this decoder. Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed.
+
+- **ConvCTC-M async + es char 6-gram beam (Fidetype) / trust gate + CRC** (`spanishbcbl-meg-async__convctc-m-async__crc.json`), 2026-11-25: **LABEL-BLIND COMMIT STEP: no evidence of signal.** Only 14 of the 437 calibration (val) trials can commit at all: the other rules of the trust policy block the rest. 13 of these 14 are wrong (the top-1 sentence is right for 1 of 437 val trials). Because 14 / 437 is below alpha 0.05, every threshold meets the CRC bound, so CRC takes the lowest one and commits all 14, whatever the labels are. With permuted labels it commits the same 14 items. On test, 13 of 14 commits are wrong. The bound holds (test wrong-commit rate 0.020), but only because the policy almost never commits: the commit step shows no evidence that the score separates right from wrong text. Read this entry as a vacuous guard result, not as evidence that the guard works on this decoder. Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed.
 
 Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
 
@@ -532,13 +590,57 @@ No-BCI reference (gaze typing only, 20 chars/min): **4.08 eWPM**.
 | Decoder | Policy | CER | eWPM [95% CI] | Safe WPM v0.2 @ alpha | Safe WPM v0.1 @ alpha | Wrong-commit | Error among commits | Commit rate | Controls | Guarantee | Conformance | Weights licence | Scored from | Rerun |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | Card et al. 2024 online decoder (published sentence) (online, per-user) | always-commit | 0.031 | 19.55 [17.92, 21.21] | n/a (no certified bound) | n/a (no certified bound) | 0.194 | 0.194 | 1.000 | no (shuf missing, zeros missing, null missing) | none | trust-ready | not released (outputs in the CC0 dataset) | stream-submission | rescore |
-| Card et al. 2024 online decoder (published sentence) (online, per-user) | trust gate + CRC | 0.031 | 18.80 [17.24, 20.39] | 12.27 [10.77, 13.69] (CRC a=0.05) | 13.42 [11.72, 15.08] (CRC a=0.05) | 0.049 | 0.099 | 0.496 | no (shuf missing, zeros missing, null pass) | CRC a=0.05, n_cal=812; test 0.049 (met) | trust-ready | not released (outputs in the CC0 dataset) | committed-per-trial | rescore |
+| Card et al. 2024 online decoder (published sentence) (online, per-user) | trust gate + CRC | 0.031 | 18.80 [17.24, 20.39] | 12.27 [10.77, 13.69] (CRC a=0.05) | 13.42 [11.72, 15.08] (CRC a=0.05) | 0.049 | 0.099 | 0.496 | no (shuf missing, zeros missing, null pass) | CRC a=0.05, n_cal=812; test 0.049 (met) [SAFETY FINDING: one day above alpha] | trust-ready | not released (outputs in the CC0 dataset) | committed-per-trial | rescore |
 | Card et al. 2024 online decoder (published sentence) (online, per-user) | trust gate (plug-in fit) | 0.031 | 18.77 [17.22, 20.35] | n/a (no certified bound) | n/a (no certified bound) | 0.044 | 0.093 | 0.473 | no (shuf missing, zeros missing, null pass) | none | trust-ready | not released (outputs in the CC0 dataset) | committed-per-trial | rescore |
-| Card et al. 2024 online decoder (published sentence) (online, per-user) | trust gate + LTT | 0.031 | 18.73 [17.18, 20.31] | 11.28 [10.17, 12.32] (LTT a=0.05 d=0.1) | 12.24 [10.98, 13.45] (LTT a=0.05 d=0.1) | 0.040 | 0.091 | 0.446 | no (shuf missing, zeros missing, null pass) | LTT a=0.05 d=0.1, n_cal=812; test 0.040 (met) | trust-ready | not released (outputs in the CC0 dataset) | committed-per-trial | rescore |
+| Card et al. 2024 online decoder (published sentence) (online, per-user) | trust gate + LTT | 0.031 | 18.73 [17.18, 20.31] | 11.28 [10.17, 12.32] (LTT a=0.05 d=0.1) | 12.24 [10.98, 13.45] (LTT a=0.05 d=0.1) | 0.040 | 0.091 | 0.446 | no (shuf missing, zeros missing, null pass) | LTT a=0.05 d=0.1, n_cal=812; test 0.040 (met) [SAFETY FINDING: one day above alpha] | trust-ready | not released (outputs in the CC0 dataset) | committed-per-trial | rescore |
 | Phoneme beam -> CMUdict word decoder (Fidetype) | trust gate + CRC | 0.095 | 11.55 [10.86, 12.35] | 4.70 [3.95, 5.38] ! ABOVE alpha (test 0.062; CRC a=0.05) | 4.90 [4.10, 5.62] ! ABOVE alpha (test 0.062; CRC a=0.05) | 0.062 | 0.256 | 0.244 | yes (shuf pass, zeros pass, null pass) | CRC a=0.05, n_cal=812; test 0.062 (NOT met) | trust-ready | no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR) | committed-per-trial | rescore |
 | Phoneme beam -> CMUdict word decoder (Fidetype) | trust gate (plug-in fit) | 0.095 | 11.55 [10.85, 12.34] | n/a (no certified bound) | n/a (no certified bound) | 0.059 | 0.254 | 0.232 | yes (shuf pass, zeros pass, null pass) | none | trust-ready | no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR) | committed-per-trial | rescore |
 | Phoneme beam -> CMUdict word decoder (Fidetype) | trust gate + LTT | 0.095 | 11.51 [10.80, 12.31] | 3.91 [3.13, 4.59] (LTT a=0.05 d=0.1) | 4.05 [3.22, 4.77] (LTT a=0.05 d=0.1) | 0.047 | 0.239 | 0.195 | yes (shuf pass, zeros pass, null pass) | LTT a=0.05 d=0.1, n_cal=812; test 0.047 (met) | trust-ready | no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR) | committed-per-trial | rescore |
 | Phoneme beam -> CMUdict word decoder (Fidetype) | always-commit | 0.095 | 11.45 [10.72, 12.32] | n/a (no certified bound) | n/a (no certified bound) | 0.610 | 0.610 | 1.000 | no (shuf pass, zeros pass, null fail) | none | trust-ready | no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR) | committed-aggregate | rescore |
+
+Safety findings:
+
+- **Card et al. 2024 online decoder (published sentence) (online, per-user) / trust gate + CRC** (`b2t25-t15-copytask__published__crc.json`), 2026-11-25: **SAFETY FINDING: one day above alpha.** The CRC bound covers the pool of all 14 days (40 wrong commits in 816 test trials, rate 0.049, alpha 0.05). It does not hold for each day: on day034, 9 of 50 test trials are wrong commits (rate 0.18; Clopper-Pearson 95 % interval [0.086, 0.314], so even the lower end is above alpha). A bound per day is not promised (trust guarantee section 4: https://github.com/zhangzibo/fidetype/blob/main/docs/trust-guarantee.md#4-what-is-not-guaranteed). The table gives every day. Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed.
+
+  | Day | Test trials | Commits | Wrong commits | Wrong-commit rate | CP 95 % interval |
+  |---|---|---|---|---|---|
+  | day027 | 15 | 3 | 1 | 0.067 | [0.002, 0.319] |
+  | day034 | 50 | 24 | 9 | 0.180 | [0.086, 0.314] |
+  | day046 | 50 | 20 | 0 | 0.000 | [0.000, 0.071] |
+  | day048 | 58 | 27 | 3 | 0.052 | [0.011, 0.144] |
+  | day069 | 58 | 29 | 6 | 0.103 | [0.039, 0.212] |
+  | day074 | 37 | 14 | 0 | 0.000 | [0.000, 0.095] |
+  | day076 | 104 | 51 | 6 | 0.058 | [0.021, 0.121] |
+  | day081 | 69 | 32 | 3 | 0.043 | [0.009, 0.122] |
+  | day083 | 85 | 40 | 4 | 0.047 | [0.013, 0.116] |
+  | day088 | 45 | 22 | 2 | 0.044 | [0.005, 0.151] |
+  | day090 | 74 | 44 | 1 | 0.014 | [0.000, 0.073] |
+  | day095 | 25 | 18 | 0 | 0.000 | [0.000, 0.137] |
+  | day223 | 73 | 38 | 1 | 0.014 | [0.000, 0.074] |
+  | day244 | 73 | 43 | 4 | 0.055 | [0.015, 0.134] |
+
+  Each day is named by its post-implant day, as in the split file of the track. Only day034 has an interval whose lower end is above alpha. Days with few trials have wide intervals: an upper end above alpha alone is not proof of a rate above alpha.
+
+- **Card et al. 2024 online decoder (published sentence) (online, per-user) / trust gate + LTT** (`b2t25-t15-copytask__published__ltt.json`), 2026-11-25: **SAFETY FINDING: one day above alpha.** The LTT bound covers the pool of all 14 days (33 wrong commits in 816 test trials, rate 0.040, alpha 0.05). It does not hold for each day: on day034, 9 of 50 test trials are wrong commits (rate 0.18; Clopper-Pearson 95 % interval [0.086, 0.314], so even the lower end is above alpha). A bound per day is not promised (trust guarantee section 4: https://github.com/zhangzibo/fidetype/blob/main/docs/trust-guarantee.md#4-what-is-not-guaranteed). The table gives every day. Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed.
+
+  | Day | Test trials | Commits | Wrong commits | Wrong-commit rate | CP 95 % interval |
+  |---|---|---|---|---|---|
+  | day027 | 15 | 3 | 1 | 0.067 | [0.002, 0.319] |
+  | day034 | 50 | 24 | 9 | 0.180 | [0.086, 0.314] |
+  | day046 | 50 | 20 | 0 | 0.000 | [0.000, 0.071] |
+  | day048 | 58 | 24 | 2 | 0.034 | [0.004, 0.119] |
+  | day069 | 58 | 22 | 2 | 0.034 | [0.004, 0.119] |
+  | day074 | 37 | 14 | 0 | 0.000 | [0.000, 0.095] |
+  | day076 | 104 | 46 | 5 | 0.048 | [0.016, 0.109] |
+  | day081 | 69 | 30 | 3 | 0.043 | [0.009, 0.122] |
+  | day083 | 85 | 37 | 4 | 0.047 | [0.013, 0.116] |
+  | day088 | 45 | 22 | 2 | 0.044 | [0.005, 0.151] |
+  | day090 | 74 | 38 | 1 | 0.014 | [0.000, 0.073] |
+  | day095 | 25 | 15 | 0 | 0.000 | [0.000, 0.137] |
+  | day223 | 73 | 32 | 1 | 0.014 | [0.000, 0.074] |
+  | day244 | 73 | 37 | 3 | 0.041 | [0.009, 0.115] |
+
+  Each day is named by its post-implant day, as in the split file of the track. Only day034 has an interval whose lower end is above alpha. Days with few trials have wide intervals: an upper end above alpha alone is not proof of a rate above alpha.
 
 Rerun recipes (`python -m fidetype.benchmark.hub recipe <card>` prints one):
 

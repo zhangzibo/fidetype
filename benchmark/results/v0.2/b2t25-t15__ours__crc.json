@@ -130,7 +130,7 @@
   "alpha": 0.05,
   "delta": null,
   "n_cal": 812,
-  "scope": "marginal wrong-commit rate over test trials; assumes calibration and test trials are exchangeable",
+  "scope": "marginal wrong-commit rate over test trials; assumes calibration and test trials are exchangeable; the bound covers the pool (all days of one participant together), not each day: one day can be worse (trust guarantee section 4: https://github.com/zhangzibo/fidetype/blob/main/docs/trust-guarantee.md#4-what-is-not-guaranteed)",
   "calibration_split": "cal",
   "measured_wrong_commit": 0.0625,
   "measured_wrong_commit_ci": [
@@ -270,7 +270,8 @@
   "gaze_chars_per_min": 20.0
  },
  "notes": [
-  "Same pipeline, fit and thresholds as the v0.1 entry (experiments/2026-11-10-b2t25-trust, M2-13 items, tools/benchmark/import_baselines.py). cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable."
+  "Same pipeline, fit and thresholds as the v0.1 entry (experiments/2026-11-10-b2t25-trust, M2-13 items, tools/benchmark/import_baselines.py). cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable.",
+  "2026-11-25: the scope line now says that the bound covers the pool of all days of one participant, not each day (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed."
  ],
  "scorer_version": "0.2",
  "track_info": {

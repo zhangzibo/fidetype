@@ -131,7 +131,7 @@
   "alpha": 0.05,
   "delta": null,
   "n_cal": 437,
-  "scope": "marginal wrong-commit rate over test trials; assumes calibration and test trials are exchangeable",
+  "scope": "marginal wrong-commit rate over test trials; assumes calibration and test trials are exchangeable; the bound covers the pool (all participants together), not each participant: one participant can be worse (trust guarantee section 4: https://github.com/zhangzibo/fidetype/blob/main/docs/trust-guarantee.md#4-what-is-not-guaranteed)",
   "calibration_split": "val",
   "measured_wrong_commit": 0.02040816326530612,
   "measured_wrong_commit_ci": [
@@ -140,6 +140,25 @@
   ],
   "met_on_test": true
  },
+ "safety_findings": [
+  {
+   "date": "2026-11-25",
+   "kind": "label-blind-commit-step",
+   "mark": "LABEL-BLIND COMMIT STEP: no evidence of signal",
+   "summary": "Only 14 of the 437 calibration (val) trials can commit at all: the other rules of the trust policy block the rest. 13 of these 14 are wrong (the top-1 sentence is right for 1 of 437 val trials). Because 14 / 437 is below alpha 0.05, every threshold meets the CRC bound, so CRC takes the lowest one and commits all 14, whatever the labels are. With permuted labels it commits the same 14 items. On test, 13 of 14 commits are wrong. The bound holds (test wrong-commit rate 0.020), but only because the policy almost never commits: the commit step shows no evidence that the score separates right from wrong text. Read this entry as a vacuous guard result, not as evidence that the guard works on this decoder. Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed.",
+   "facts": {
+    "val_trials": 437,
+    "val_can_commit": 14,
+    "val_can_commit_wrong": 13,
+    "val_top1_right": 1,
+    "test_trials": 637,
+    "test_can_commit": 15,
+    "test_commits": 14,
+    "test_wrong_commits": 13
+   },
+   "numbers_changed": false
+  }
+ ],
  "safe_wpm": {
   "definition": "safe-wpm/0.1",
   "value": 0.029275959301280435,
@@ -272,7 +291,9 @@
  },
  "notes": [
   "RESEARCH ONLY (CC BY-NC 4.0 data). Same pipeline, fit (val) and thresholds as the v0.1 entry (experiments/2026-11-11-g1-async-meg-trust, tools/benchmark/import_baselines.py).",
-  "RESEARCH ONLY: CC BY-NC 4.0 data. Results and weights are non-commercial."
+  "RESEARCH ONLY: CC BY-NC 4.0 data. Results and weights are non-commercial.",
+  "2026-11-25: the scope line now says that the bound covers the pool of all participants, not each participant (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed.",
+  "2026-11-25: safety finding on the entry spanishbcbl-meg/convctc-m-async/crc: LABEL-BLIND COMMIT STEP: no evidence of signal. The key safety_findings of the card (and the entry on the track page) gives the details. No number changed."
  ],
  "scorer_version": "0.2",
  "track_info": {

@@ -90,6 +90,12 @@ SAFE_WPM_NOTE = ("Safe WPM v0.2 is the headline column since 2026-11-22 (ADOPTED
                  "their v0.2 value on 2026-11-24 from the same per-trial decisions as their v0.1 value.")
 #: The v0.2 cell of a card without a safe-wpm/0.2 block.
 NO_V02 = "v0.1 only (not rescored)"
+#: The pool scope of every CRC / LTT bound on the board (docs/trust-guarantee.md section 4), shown on every page.
+POOL_SCOPE_NOTE = ("Pool scope: the Guarantee column is a bound on the wrong-commit rate of the whole scored test set "
+                   "of an entry, with all its users, participants, sessions, days or runs together. It is not a bound "
+                   "for each user, session or day: one of them can be worse than the pool. A mark in square brackets "
+                   "in the Guarantee column (for example [SAFETY FINDING: ...] or [LABEL-BLIND COMMIT STEP: ...]) "
+                   "points to a recorded safety finding; the track page gives the details and the numbers.")
 
 
 def load_results(folder: str | PathLike[str] | list) -> list[dict[str, Any]]:
@@ -177,6 +183,62 @@ def guarantee_text(g: dict[str, Any]) -> str:
         if g.get("met_on_test") is not None:
             s += " (met)" if g["met_on_test"] else " (NOT met)"
     return s
+
+
+def safety_marks(d: dict[str, Any]) -> list[str]:
+    """The marks of the recorded safety findings of a card (key ``safety_findings``; none on most cards)."""
+    return [str(f["mark"]) for f in (d.get("safety_findings") or []) if isinstance(f, dict) and f.get("mark")]
+
+
+#: Columns of a per-group table of a safety finding (key ``per_group`` of a finding).
+GROUP_COLUMNS = ("{unit}", "Test trials", "Commits", "Wrong commits", "Wrong-commit rate", "CP 95 % interval")
+
+
+def _group_cells(g: dict[str, Any]) -> list[str]:
+    lo, hi = g.get("cp_lower"), g.get("cp_upper")
+    iv = f"[{lo:.3f}, {hi:.3f}]" if lo is not None and hi is not None else "n/a"
+    return [str(g.get("group")), str(g.get("n")), str(g.get("commits")), str(g.get("wrong")), fmt(g.get("rate")), iv]
+
+
+def findings_markdown(rows: list[dict[str, Any]]) -> list[str]:
+    """The safety findings of the entries of one track, with their per-group tables."""
+    have = [r for r in rows if r.get("safety_findings")]
+    if not have:
+        return []
+    L = ["Safety findings:", ""]
+    for r in have:
+        for f in r["safety_findings"]:
+            L += [f"- **{r['decoder']} / {r['policy']}** (`{r['file']}`), {f.get('date', '')}: "
+                  f"**{f.get('mark', '')}.** {f.get('summary', '')}", ""]
+            pg = f.get("per_group") or {}
+            if pg.get("rows"):
+                cols = [c.format(unit=str(pg.get("unit", "group")).capitalize()) for c in GROUP_COLUMNS]
+                L += ["  | " + " | ".join(cols) + " |", "  |" + "---|" * len(cols)]
+                L += ["  | " + " | ".join(_group_cells(g)) + " |" for g in pg["rows"]]
+                L += ["", f"  {pg.get('note', '')}".rstrip(), ""]
+    return L
+
+
+def findings_html(r: dict[str, Any]) -> str:
+    """The safety findings of one entry on its track page (empty if it has none)."""
+    out = []
+    for f in r.get("safety_findings") or []:
+        out.append(f'<p class="finding"><b>{html.escape(str(f.get("date", "")))}: '
+                   f'{html.escape(str(f.get("mark", "")))}.</b> {html.escape(str(f.get("summary", "")))}</p>')
+        pg = f.get("per_group") or {}
+        if pg.get("rows"):
+            alpha = pg.get("alpha")
+            cols = [c.format(unit=str(pg.get("unit", "group")).capitalize()) for c in GROUP_COLUMNS]
+            t = ['<div class="wrap"><table><thead><tr>' + "".join(f"<th>{html.escape(c)}</th>" for c in cols)
+                 + "</tr></thead><tbody>"]
+            for g in pg["rows"]:
+                above = alpha is not None and g.get("cp_lower") is not None and g["cp_lower"] > alpha
+                t.append("<tr>" + "".join(_td(x, "bad" if above else "num") for x in _group_cells(g)) + "</tr>")
+            t.append("</tbody></table></div>")
+            out.append("".join(t))
+            if pg.get("note"):
+                out.append(f'<p class="note">{html.escape(str(pg["note"]))}</p>')
+    return chr(10).join(out)
 
 
 def safe_wpm_blocks(d: dict[str, Any]) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
@@ -286,7 +348,8 @@ def row(d: dict[str, Any]) -> dict[str, Any]:
         "wrong_commit_rate": _v(m, "wrong_commit_rate"), "error_among_commits": _v(m, "error_among_commits"),
         "commit_rate": _v(m, "commit_rate"),
         "controls_passed": (d.get("controls") or {}).get("passed"), "controls": controls_text(d.get("controls") or {}),
-        "guarantee": guarantee_text(d.get("guarantee") or {}),
+        "guarantee": guarantee_text(d.get("guarantee") or {}) + "".join(f" [{m}]" for m in safety_marks(d)),
+        "safety_findings": list(d.get("safety_findings") or []),
         "conformance": (d.get("conformance") or {}).get("level", "unknown"),
         "weights_licence": dec.get("weights_licence", "?"), "scored_from": d.get("scored_from", "?"),
         "n_trials": d.get("n_trials"), "ci_unit": (d.get("ci") or {}).get("unit"), "notes": d.get("notes", []),
@@ -379,7 +442,9 @@ def markdown(by: dict[str, list[dict[str, Any]]]) -> str:
          "commands, with `<placeholders>` for local paths ([docs/hub-design.md](../../docs/hub-design.md) "
          "section 5).", "",
          "Track pages (P13-09): each track has its own page, `tracks/<track>.html`, with a stable link per entry "
-         "and the entry history from git.", ""]
+         "and the entry history from git.", "",
+         POOL_SCOPE_NOTE + " Details: [docs/trust-guarantee.md](../../docs/trust-guarantee.md#4-what-is-not-guaranteed) "
+         "section 4.", ""]
     for sid, stitle, intro, slugs in sections(by):
         L += [f'<a id="{sid}"></a>', "", f"## {stitle}", ""]
         if intro:
@@ -408,6 +473,7 @@ def _md_track(slug: str, rows: list[dict[str, Any]]) -> list[str]:
         L += ["| " + " | ".join(COLUMNS) + " |", "|" + "---|" * len(COLUMNS)]
         L += ["| " + " | ".join(c.replace("|", "/") for c in cells(r)) + " |" for r in grp]
         L.append("")
+    L += findings_markdown(rows)
     L += recipes_markdown(rows)
     return L
 
@@ -474,6 +540,7 @@ h3{font-size:1.05rem;margin:28px 0 4px}h3[id],section[id]{scroll-margin-top:12px
 .toc ul{margin:4px 0 0 18px}.tp{font-size:13px}.crumb{font-size:13px}
 .entry{border-top:1px solid var(--line);margin-top:18px}.entry h3{margin-top:12px}a.self{text-decoration:none;color:var(--muted);font-weight:400}
 table.hist td{white-space:nowrap}tbody td:first-child{min-width:11em}
+.finding{border-left:3px solid var(--bad);padding-left:10px;color:var(--fg)}
 """
 
 
@@ -511,6 +578,7 @@ def page(by: dict[str, list[dict[str, Any]]]) -> str:
              "<p>Track pages (P13-09): each track heading links to its own page, <code>tracks/&lt;track&gt;.html</code>, "
              "with a stable link per entry (<code>#e-&lt;card file name&gt;</code>) and the entry history from git: "
              "when each entry was added or changed, with its split, scorer and metric versions and rerun level.</p>",
+             f"<p><b>{html.escape(POOL_SCOPE_NOTE)}</b> Details: <code>docs/trust-guarantee.md</code> section 4.</p>",
              '<p class="note">How to submit: <code>benchmark/README.md</code>. Generated by '
              "<code>python -m fidetype.benchmark leaderboard</code>; do not edit by hand.</p>"]
     toc = []
@@ -697,6 +765,7 @@ def track_page_html(slug: str, rows: list[dict[str, Any]], history: dict[str, An
                      "research only. On the leaderboard it is in the separate research-only section.</p>")
     parts.append(f"<p><b>{html.escape(SAFE_WPM_NOTE)}</b> Definition: <code>docs/safe-wpm.md</code> section 6a. "
                  "In the entry history, each Safe WPM value names its version.</p>")
+    parts.append(f"<p><b>{html.escape(POOL_SCOPE_NOTE)}</b> Details: <code>docs/trust-guarantee.md</code> section 4.</p>")
     parts.append('<p class="note">Stable links: this page is <code>' + html.escape(track_page(slug))
                  + "</code>; each entry has the anchor <code>#e-&lt;card file name&gt;</code>; the history is "
                  "<code>#history</code>. Generated by <code>python -m fidetype.benchmark leaderboard</code>; do not "
@@ -741,6 +810,9 @@ def track_page_html(slug: str, rows: list[dict[str, Any]], history: dict[str, An
         if mine:
             facts.append(f"{len(mine)} version{'s' if len(mine) != 1 else ''}")
         parts.append("<p>" + "; ".join(facts) + ".</p>")
+        fh = findings_html(r)
+        if fh:
+            parts.append(fh)
         if mine:
             parts.append(f"<details><summary>Versions of this entry ({len(mine)})</summary>"
                          + _history_table([{**v, "file": r["file"], "anchor": r["anchor"]} for v in mine], names,

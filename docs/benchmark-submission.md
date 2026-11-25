@@ -143,7 +143,7 @@ Schema `fidetype.benchmark.submission/0.2`. All v0.1 fields stay. New fields: `r
 | `regime` | `cross-session`, `session-calibrated`, `cross-subject`, `personalised` or `other` |
 | `controls` | One sentence per control: how you made the input. Say if the control is at the input level (signal) or at the decoder output level (a stand-in) |
 | `coverage` | Leave it out if you cover every scored unit. With `{"subset": "<reason>"}` the scorer accepts missing units, scores only the covered ones, and the board marks the entry `[partial: n/N units]` |
-| `guarantee` | As v0.1. [Safe WPM](glossary.md#safe-wpm) is certified only for `crc` or `ltt` ([LTT](glossary.md#ltt-learn-then-test)) with `alpha` ([alpha](glossary.md#alpha-delta)) |
+| `guarantee` | As v0.1. [Safe WPM](glossary.md#safe-wpm) is certified only for `crc` or `ltt` ([LTT](glossary.md#ltt-learn-then-test)) with `alpha` ([alpha](glossary.md#alpha-delta)). If the scored units come from several users, sessions or days, say in `scope` that the bound covers the pool and not each user, session or day ([trust guarantee, section 4](trust-guarantee.md#4-what-is-not-guaranteed)) |
 | `target` | `emg2qwerty` only: `raw_keys` (default) or `intended_text` (see the text space above). Leave it out on every other track |
 | `training_data` | `"none"`, or the data that the decoder, its tuning and its calibration used. See [Train / test overlap check](#train--test-overlap-check). Without it the card says `overlap: not checked` and the board marks the entry `[overlap not checked]` |
 

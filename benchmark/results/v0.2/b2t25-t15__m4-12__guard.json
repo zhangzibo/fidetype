@@ -131,7 +131,7 @@
   "alpha": 0.05,
   "delta": 0.1,
   "n_cal": 231,
-  "scope": "marginal over the scored val_eval trials; exchangeable val_select / val_eval",
+  "scope": "marginal over the scored val_eval trials; exchangeable val_select / val_eval; the bound covers the pool (all days of one participant together), not each day: one day can be worse (trust guarantee section 4: https://github.com/zhangzibo/fidetype/blob/main/docs/trust-guarantee.md#4-what-is-not-guaranteed)",
   "calibration_split": "decoder val_select partition minus every b2t25-t15 test trial",
   "measured_wrong_commit": 0.0,
   "measured_wrong_commit_ci": [
@@ -265,7 +265,8 @@
   "gaze_chars_per_min": 20.0
  },
  "notes": [
-  "Drop-in guard (P14-03 recipe, as P14-05) calibrated on 616 val_select trials (the 106 val_select trials that are track test units are removed). Checkpoint chosen on val_select PER. Not comparable with full-coverage entries."
+  "Drop-in guard (P14-03 recipe, as P14-05) calibrated on 616 val_select trials (the 106 val_select trials that are track test units are removed). Checkpoint chosen on val_select PER. Not comparable with full-coverage entries.",
+  "2026-11-25: the scope line now says that the bound covers the pool of all days of one participant, not each day (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed."
  ],
  "scorer_version": "0.2",
  "track_info": {

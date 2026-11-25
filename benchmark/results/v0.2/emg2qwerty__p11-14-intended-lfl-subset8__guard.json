@@ -131,7 +131,7 @@
   "alpha": 0.05,
   "delta": 0.1,
   "n_cal": 459,
-  "scope": "marginal over test prompts pooled over the 8 users; exchangeable val / test sessions; wrong = committed intended text differs from the truth intended text",
+  "scope": "marginal over test prompts pooled over the 8 users; exchangeable val / test sessions; wrong = committed intended text differs from the truth intended text; the bound covers the pool (all users together), not each user: one user can be worse (trust guarantee section 4: https://github.com/zhangzibo/fidetype/blob/main/docs/trust-guarantee.md#4-what-is-not-guaranteed)",
   "calibration_split": "val",
   "measured_wrong_commit": 0.042588042588042586,
   "measured_wrong_commit_ci": [
@@ -274,7 +274,8 @@
   "RESEARCH ONLY (CC BY-NC-SA 4.0 data). Target intended_text (intended-text/1): the guard commits the intended text, so truth and outputs are compared after Backspace is applied. Offline decisions on full prompt windows (no latency claim). P11-14 decisions (primary arm, selected on calibration tuning items only).",
   "Target intended_text (intended-text/1): truth and outputs are compared after Backspace is applied, so CER is the character error rate of the intended text and the no-BCI reference is gaze typing of the intended text. Not ranked with raw-key entries.",
   "RESEARCH ONLY: CC BY-NC-SA 4.0 data. Results and weights are non-commercial.",
-  "FEP-0010: data.research_only = true (CC BY-NC-SA 4.0)."
+  "FEP-0010: data.research_only = true (CC BY-NC-SA 4.0).",
+  "2026-11-25: the scope line now says that the bound covers the pool of all users, not each user (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed."
  ],
  "scorer_version": "0.2",
  "track_info": {

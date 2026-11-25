@@ -137,7 +137,7 @@
   "alpha": 0.05,
   "delta": 0.1,
   "n_cal": 1125,
-  "scope": "marginal over test prompts pooled over users; exchangeable val / test sessions",
+  "scope": "marginal over test prompts pooled over users; exchangeable val / test sessions; the bound covers the pool (all users together), not each user: one user can be worse (trust guarantee section 4: https://github.com/zhangzibo/fidetype/blob/main/docs/trust-guarantee.md#4-what-is-not-guaranteed)",
   "calibration_split": "val",
   "measured_wrong_commit": 0.0,
   "measured_wrong_commit_ci": [
@@ -273,7 +273,8 @@
  "notes": [
   "RESEARCH ONLY (CC BY-NC-SA 4.0 data). Oracle key timing from the key log; not a track-conformant continuous decoder (P11-01 is). Reference only.",
   "Key track: one character per key, so CER = key error rate.",
-  "RESEARCH ONLY: CC BY-NC-SA 4.0 data. Results and weights are non-commercial."
+  "RESEARCH ONLY: CC BY-NC-SA 4.0 data. Results and weights are non-commercial.",
+  "2026-11-25: the scope line now says that the bound covers the pool of all users, not each user (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed."
  ],
  "scorer_version": "0.2",
  "track_info": {

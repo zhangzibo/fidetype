@@ -56,7 +56,7 @@ If an assumption is false, the numbers on the sheet can be wrong in either direc
 | Not guaranteed | Why |
 |---|---|
 | Any single utterance | The bound is on a rate over many utterances |
-| A bound per user, per session or per sentence type | The bound is on the mix of the calibration data. One user in a mix can be worse |
+| A bound per user, per session, per day or per sentence type | The bound is on the whole pool of test items, with all its users, sessions and days together (the mix of the calibration data). One user, session or day in the pool can be worse. Example from our benchmark: in one entry the pool met alpha 0.05, but one day had 9 wrong commits in 50 trials (0.18). Every multi-user or multi-session score card says this in its scope line ([leaderboard](../benchmark/site/leaderboard.md)) |
 | Data that differ from the calibration data | See A1 |
 | The error rate among commits (precision) | The rate is wrong commits / all utterances. With few commits, many of them can be wrong (in one early test, 6 of 9 commits were wrong at a rate of 0.0086). An optional bound exists: section 10 |
 | A minimum number of commits or a typing speed | The guard may commit rarely or never. It trades commits for safety |
@@ -208,7 +208,7 @@ Held-out check of the drop-in API, used as an outside user would use it (public 
 | T15, Brain-to-Text '25 (CC0) | by trial: 722 calibration, 701 held out | uniform 0/300, shuffled 1/300: PASS | 2 / 701 (2 wrong) | 0.0029 [0.0003, 0.0103] |
 | T12, Brain-to-Text '24 (CC0) | by session: 14 sessions (480) calibration, 10 later sessions (400) held out | uniform 0/300, shuffled 0/300: PASS | 25 / 400 (15 wrong) | 0.0375 [0.0211, 0.0611] |
 
-Both rates are below alpha. On T12 (later sessions, so with drift) the CP95 upper bound is above alpha: one draw does not prove the bound, and most commits are wrong (the bound is not on precision, section 4). Both sets are intracortical speech with our own decoders; other modalities are not yet validated.
+Both rates are below alpha. Each rate is on the pool of held-out trials, not on each session (section 4). On T12 (later sessions, so with drift) the CP95 upper bound is above alpha: one draw does not prove the bound, and most commits are wrong (the bound is not on precision, section 4). Both sets are intracortical speech with our own decoders; other modalities are not yet validated.
 
 ## 9. Optional: a bound on fluent-wrong commits
 

@@ -131,7 +131,7 @@
   "alpha": 0.05,
   "delta": null,
   "n_cal": 142,
-  "scope": "marginal wrong-commit rate over test sentences; exchangeable",
+  "scope": "marginal wrong-commit rate over test sentences; exchangeable; the bound covers the pool (all participants together), not each participant: one participant can be worse (trust guarantee section 4: https://github.com/zhangzibo/fidetype/blob/main/docs/trust-guarantee.md#4-what-is-not-guaranteed)",
   "calibration_split": "cal",
   "measured_wrong_commit": 0.003629764065335753,
   "measured_wrong_commit_ci": [
@@ -271,7 +271,8 @@
   "gaze_chars_per_min": 20.0
  },
  "notes": [
-  "decoder trained on day 1 of all 19 participants; day-2 presses. Composed sentences from isolated key presses: not natural typing. Same plan, decoder, LM weight and fits as the v0.1 entry (experiments/2026-11-11-emg-toronto/trust.py)."
+  "decoder trained on day 1 of all 19 participants; day-2 presses. Composed sentences from isolated key presses: not natural typing. Same plan, decoder, LM weight and fits as the v0.1 entry (experiments/2026-11-11-emg-toronto/trust.py).",
+  "2026-11-25: the scope line now says that the bound covers the pool of all participants, not each participant (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed."
  ],
  "scorer_version": "0.2",
  "track_info": {

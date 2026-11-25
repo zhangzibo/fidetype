@@ -74,6 +74,7 @@
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
     "guarantee": "none",
+    "safety_findings": [],
     "conformance": "core",
     "weights_licence": "not released (trained on CC BY-NC 4.0 data: research only)",
     "scored_from": "committed-per-trial",
@@ -197,7 +198,26 @@
     "commit_rate": 0.023547880690737835,
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
-    "guarantee": "LTT a=0.05 d=0.1, n_cal=437; test 0.022 (met)",
+    "guarantee": "LTT a=0.05 d=0.1, n_cal=437; test 0.022 (met) [LABEL-BLIND COMMIT STEP: no evidence of signal]",
+    "safety_findings": [
+     {
+      "date": "2026-11-25",
+      "kind": "label-blind-commit-step",
+      "mark": "LABEL-BLIND COMMIT STEP: no evidence of signal",
+      "summary": "Only 14 of the 437 calibration (val) trials can commit at all: the other rules of the trust policy block the rest. 13 of these 14 are wrong (the top-1 sentence is right for 1 of 437 val trials). Because 14 / 437 is below alpha 0.05, every threshold meets the LTT bound, so LTT takes the lowest one and commits all 14, whatever the labels are. With permuted labels it commits the same 14 items. On test, 14 of 15 commits are wrong. The bound holds (test wrong-commit rate 0.022), but only because the policy almost never commits: the commit step shows no evidence that the score separates right from wrong text. Read this entry as a vacuous guard result, not as evidence that the guard works on this decoder. Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed.",
+      "facts": {
+       "val_trials": 437,
+       "val_can_commit": 14,
+       "val_can_commit_wrong": 13,
+       "val_top1_right": 1,
+       "test_trials": 637,
+       "test_can_commit": 15,
+       "test_commits": 15,
+       "test_wrong_commits": 14
+      },
+      "numbers_changed": false
+     }
+    ],
     "conformance": "core",
     "weights_licence": "not released (trained on CC BY-NC 4.0 data: research only)",
     "scored_from": "committed-per-trial",
@@ -205,7 +225,9 @@
     "ci_unit": "two_way:sentence,participant",
     "notes": [
      "Decoder CER: greedy 0.508, beam + LM val-tuned 0.477 (pooled over trials). The trust pipeline decodes with its own beam (RETUNED, lm_weight 0.5, frame temperature): CER 0.522.",
-     "trust gate + LTT: commit threshold on calibrated p_top1 0.0000 (fitted on the 437 val trials)."
+     "trust gate + LTT: commit threshold on calibrated p_top1 0.0000 (fitted on the 437 val trials).",
+     "2026-11-25: the scope line now says that the bound covers the pool of all participants, not each participant (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed.",
+     "2026-11-25: safety finding on the entry spanishbcbl-meg-async/convctc-m-async/ltt: LABEL-BLIND COMMIT STEP: no evidence of signal. The key safety_findings of the card (and the entry on the track page) gives the details. No number changed."
     ],
     "file": "spanishbcbl-meg-async__convctc-m-async__ltt.json",
     "safe_wpm_definition": "safe-wpm/0.2",
@@ -321,7 +343,26 @@
     "commit_rate": 0.02197802197802198,
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
-    "guarantee": "CRC a=0.05, n_cal=437; test 0.020 (met)",
+    "guarantee": "CRC a=0.05, n_cal=437; test 0.020 (met) [LABEL-BLIND COMMIT STEP: no evidence of signal]",
+    "safety_findings": [
+     {
+      "date": "2026-11-25",
+      "kind": "label-blind-commit-step",
+      "mark": "LABEL-BLIND COMMIT STEP: no evidence of signal",
+      "summary": "Only 14 of the 437 calibration (val) trials can commit at all: the other rules of the trust policy block the rest. 13 of these 14 are wrong (the top-1 sentence is right for 1 of 437 val trials). Because 14 / 437 is below alpha 0.05, every threshold meets the CRC bound, so CRC takes the lowest one and commits all 14, whatever the labels are. With permuted labels it commits the same 14 items. On test, 13 of 14 commits are wrong. The bound holds (test wrong-commit rate 0.020), but only because the policy almost never commits: the commit step shows no evidence that the score separates right from wrong text. Read this entry as a vacuous guard result, not as evidence that the guard works on this decoder. Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed.",
+      "facts": {
+       "val_trials": 437,
+       "val_can_commit": 14,
+       "val_can_commit_wrong": 13,
+       "val_top1_right": 1,
+       "test_trials": 637,
+       "test_can_commit": 15,
+       "test_commits": 14,
+       "test_wrong_commits": 13
+      },
+      "numbers_changed": false
+     }
+    ],
     "conformance": "core",
     "weights_licence": "not released (trained on CC BY-NC 4.0 data: research only)",
     "scored_from": "committed-per-trial",
@@ -329,7 +370,9 @@
     "ci_unit": "two_way:sentence,participant",
     "notes": [
      "Decoder CER: greedy 0.508, beam + LM val-tuned 0.477 (pooled over trials). The trust pipeline decodes with its own beam (RETUNED, lm_weight 0.5, frame temperature): CER 0.522.",
-     "trust gate + CRC: commit threshold on calibrated p_top1 0.1024 (fitted on the 437 val trials)."
+     "trust gate + CRC: commit threshold on calibrated p_top1 0.1024 (fitted on the 437 val trials).",
+     "2026-11-25: the scope line now says that the bound covers the pool of all participants, not each participant (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed.",
+     "2026-11-25: safety finding on the entry spanishbcbl-meg-async/convctc-m-async/crc: LABEL-BLIND COMMIT STEP: no evidence of signal. The key safety_findings of the card (and the entry on the track page) gives the details. No number changed."
     ],
     "file": "spanishbcbl-meg-async__convctc-m-async__crc.json",
     "safe_wpm_definition": "safe-wpm/0.2",
@@ -446,6 +489,7 @@
     "controls_passed": false,
     "controls": "no (shuf pass, zeros pass, null fail)",
     "guarantee": "none",
+    "safety_findings": [],
     "conformance": "core",
     "weights_licence": "not released (trained on CC BY-NC 4.0 data: research only)",
     "scored_from": "committed-aggregate",
@@ -571,6 +615,7 @@
     "controls_passed": false,
     "controls": "no (shuf missing, zeros missing, null missing)",
     "guarantee": "none",
+    "safety_findings": [],
     "conformance": "trust-ready",
     "weights_licence": "not released (outputs in the CC0 dataset)",
     "scored_from": "stream-submission",
@@ -688,14 +733,159 @@
     "commit_rate": 0.4963235294117647,
     "controls_passed": false,
     "controls": "no (shuf missing, zeros missing, null pass)",
-    "guarantee": "CRC a=0.05, n_cal=812; test 0.049 (met)",
+    "guarantee": "CRC a=0.05, n_cal=812; test 0.049 (met) [SAFETY FINDING: one day above alpha]",
+    "safety_findings": [
+     {
+      "date": "2026-11-25",
+      "kind": "per-day-exceedance",
+      "mark": "SAFETY FINDING: one day above alpha",
+      "summary": "The CRC bound covers the pool of all 14 days (40 wrong commits in 816 test trials, rate 0.049, alpha 0.05). It does not hold for each day: on day034, 9 of 50 test trials are wrong commits (rate 0.18; Clopper-Pearson 95 % interval [0.086, 0.314], so even the lower end is above alpha). A bound per day is not promised (trust guarantee section 4: https://github.com/zhangzibo/fidetype/blob/main/docs/trust-guarantee.md#4-what-is-not-guaranteed). The table gives every day. Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed.",
+      "per_group": {
+       "unit": "day",
+       "alpha": 0.05,
+       "interval": "Clopper-Pearson 95 % (two-sided)",
+       "note": "Each day is named by its post-implant day, as in the split file of the track. Only day034 has an interval whose lower end is above alpha. Days with few trials have wide intervals: an upper end above alpha alone is not proof of a rate above alpha.",
+       "rows": [
+        {
+         "group": "day027",
+         "n": 15,
+         "commits": 3,
+         "wrong": 1,
+         "rate": 0.06666666666666667,
+         "cp_lower": 0.0016864302413527028,
+         "cp_upper": 0.3194845665783034
+        },
+        {
+         "group": "day034",
+         "n": 50,
+         "commits": 24,
+         "wrong": 9,
+         "rate": 0.18,
+         "cp_lower": 0.08576207810966366,
+         "cp_upper": 0.31436941128565027
+        },
+        {
+         "group": "day046",
+         "n": 50,
+         "commits": 20,
+         "wrong": 0,
+         "rate": 0.0,
+         "cp_lower": 0.0,
+         "cp_upper": 0.07112173646419764
+        },
+        {
+         "group": "day048",
+         "n": 58,
+         "commits": 27,
+         "wrong": 3,
+         "rate": 0.05172413793103448,
+         "cp_lower": 0.010796478084294736,
+         "cp_upper": 0.1438046272753446
+        },
+        {
+         "group": "day069",
+         "n": 58,
+         "commits": 29,
+         "wrong": 6,
+         "rate": 0.10344827586206896,
+         "cp_lower": 0.03892083192236426,
+         "cp_upper": 0.21168645779879747
+        },
+        {
+         "group": "day074",
+         "n": 37,
+         "commits": 14,
+         "wrong": 0,
+         "rate": 0.0,
+         "cp_lower": 0.0,
+         "cp_upper": 0.09489058741498987
+        },
+        {
+         "group": "day076",
+         "n": 104,
+         "commits": 51,
+         "wrong": 6,
+         "rate": 0.057692307692307696,
+         "cp_lower": 0.021463878543519267,
+         "cp_upper": 0.12134988653168396
+        },
+        {
+         "group": "day081",
+         "n": 69,
+         "commits": 32,
+         "wrong": 3,
+         "rate": 0.043478260869565216,
+         "cp_lower": 0.009057607358815037,
+         "cp_upper": 0.12184714936562367
+        },
+        {
+         "group": "day083",
+         "n": 85,
+         "commits": 40,
+         "wrong": 4,
+         "rate": 0.047058823529411764,
+         "cp_lower": 0.012968875186721612,
+         "cp_upper": 0.11612634268558442
+        },
+        {
+         "group": "day088",
+         "n": 45,
+         "commits": 22,
+         "wrong": 2,
+         "rate": 0.044444444444444446,
+         "cp_lower": 0.005428488700250947,
+         "cp_upper": 0.15149290024333914
+        },
+        {
+         "group": "day090",
+         "n": 74,
+         "commits": 44,
+         "wrong": 1,
+         "rate": 0.013513513513513514,
+         "cp_lower": 0.0003420740196647975,
+         "cp_upper": 0.07300738850966484
+        },
+        {
+         "group": "day095",
+         "n": 25,
+         "commits": 18,
+         "wrong": 0,
+         "rate": 0.0,
+         "cp_lower": 0.0,
+         "cp_upper": 0.1371851715307125
+        },
+        {
+         "group": "day223",
+         "n": 73,
+         "commits": 38,
+         "wrong": 1,
+         "rate": 0.0136986301369863,
+         "cp_lower": 0.0003467591525991272,
+         "cp_upper": 0.07397632317834407
+        },
+        {
+         "group": "day244",
+         "n": 73,
+         "commits": 43,
+         "wrong": 4,
+         "rate": 0.0547945205479452,
+         "cp_lower": 0.015129523838036623,
+         "cp_upper": 0.13439383435475946
+        }
+       ]
+      },
+      "numbers_changed": false
+     }
+    ],
     "conformance": "trust-ready",
     "weights_licence": "not released (outputs in the CC0 dataset)",
     "scored_from": "committed-per-trial",
     "n_trials": 816,
     "ci_unit": "day",
     "notes": [
-     "cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable (drift; see M2-13/M2-16)."
+     "cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable (drift; see M2-13/M2-16).",
+     "2026-11-25: the scope line now says that the bound covers the pool of all days of one participant, not each day (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed.",
+     "2026-11-25: safety finding on the entry b2t25-t15-copytask/published/crc: SAFETY FINDING: one day above alpha. The key safety_findings of the card (and the entry on the track page) gives the details. No number changed."
     ],
     "file": "b2t25-t15-copytask__published__crc.json",
     "safe_wpm_definition": "safe-wpm/0.2",
@@ -806,6 +996,7 @@
     "controls_passed": false,
     "controls": "no (shuf missing, zeros missing, null pass)",
     "guarantee": "none",
+    "safety_findings": [],
     "conformance": "trust-ready",
     "weights_licence": "not released (outputs in the CC0 dataset)",
     "scored_from": "committed-per-trial",
@@ -922,14 +1113,159 @@
     "commit_rate": 0.44607843137254904,
     "controls_passed": false,
     "controls": "no (shuf missing, zeros missing, null pass)",
-    "guarantee": "LTT a=0.05 d=0.1, n_cal=812; test 0.040 (met)",
+    "guarantee": "LTT a=0.05 d=0.1, n_cal=812; test 0.040 (met) [SAFETY FINDING: one day above alpha]",
+    "safety_findings": [
+     {
+      "date": "2026-11-25",
+      "kind": "per-day-exceedance",
+      "mark": "SAFETY FINDING: one day above alpha",
+      "summary": "The LTT bound covers the pool of all 14 days (33 wrong commits in 816 test trials, rate 0.040, alpha 0.05). It does not hold for each day: on day034, 9 of 50 test trials are wrong commits (rate 0.18; Clopper-Pearson 95 % interval [0.086, 0.314], so even the lower end is above alpha). A bound per day is not promised (trust guarantee section 4: https://github.com/zhangzibo/fidetype/blob/main/docs/trust-guarantee.md#4-what-is-not-guaranteed). The table gives every day. Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed.",
+      "per_group": {
+       "unit": "day",
+       "alpha": 0.05,
+       "interval": "Clopper-Pearson 95 % (two-sided)",
+       "note": "Each day is named by its post-implant day, as in the split file of the track. Only day034 has an interval whose lower end is above alpha. Days with few trials have wide intervals: an upper end above alpha alone is not proof of a rate above alpha.",
+       "rows": [
+        {
+         "group": "day027",
+         "n": 15,
+         "commits": 3,
+         "wrong": 1,
+         "rate": 0.06666666666666667,
+         "cp_lower": 0.0016864302413527028,
+         "cp_upper": 0.3194845665783034
+        },
+        {
+         "group": "day034",
+         "n": 50,
+         "commits": 24,
+         "wrong": 9,
+         "rate": 0.18,
+         "cp_lower": 0.08576207810966366,
+         "cp_upper": 0.31436941128565027
+        },
+        {
+         "group": "day046",
+         "n": 50,
+         "commits": 20,
+         "wrong": 0,
+         "rate": 0.0,
+         "cp_lower": 0.0,
+         "cp_upper": 0.07112173646419764
+        },
+        {
+         "group": "day048",
+         "n": 58,
+         "commits": 24,
+         "wrong": 2,
+         "rate": 0.034482758620689655,
+         "cp_lower": 0.004203647239867673,
+         "cp_upper": 0.11907731088039213
+        },
+        {
+         "group": "day069",
+         "n": 58,
+         "commits": 22,
+         "wrong": 2,
+         "rate": 0.034482758620689655,
+         "cp_lower": 0.004203647239867673,
+         "cp_upper": 0.11907731088039213
+        },
+        {
+         "group": "day074",
+         "n": 37,
+         "commits": 14,
+         "wrong": 0,
+         "rate": 0.0,
+         "cp_lower": 0.0,
+         "cp_upper": 0.09489058741498987
+        },
+        {
+         "group": "day076",
+         "n": 104,
+         "commits": 46,
+         "wrong": 5,
+         "rate": 0.04807692307692308,
+         "cp_lower": 0.015792448153985277,
+         "cp_upper": 0.10863596001490054
+        },
+        {
+         "group": "day081",
+         "n": 69,
+         "commits": 30,
+         "wrong": 3,
+         "rate": 0.043478260869565216,
+         "cp_lower": 0.009057607358815037,
+         "cp_upper": 0.12184714936562367
+        },
+        {
+         "group": "day083",
+         "n": 85,
+         "commits": 37,
+         "wrong": 4,
+         "rate": 0.047058823529411764,
+         "cp_lower": 0.012968875186721612,
+         "cp_upper": 0.11612634268558442
+        },
+        {
+         "group": "day088",
+         "n": 45,
+         "commits": 22,
+         "wrong": 2,
+         "rate": 0.044444444444444446,
+         "cp_lower": 0.005428488700250947,
+         "cp_upper": 0.15149290024333914
+        },
+        {
+         "group": "day090",
+         "n": 74,
+         "commits": 38,
+         "wrong": 1,
+         "rate": 0.013513513513513514,
+         "cp_lower": 0.0003420740196647975,
+         "cp_upper": 0.07300738850966484
+        },
+        {
+         "group": "day095",
+         "n": 25,
+         "commits": 15,
+         "wrong": 0,
+         "rate": 0.0,
+         "cp_lower": 0.0,
+         "cp_upper": 0.1371851715307125
+        },
+        {
+         "group": "day223",
+         "n": 73,
+         "commits": 32,
+         "wrong": 1,
+         "rate": 0.0136986301369863,
+         "cp_lower": 0.0003467591525991272,
+         "cp_upper": 0.07397632317834407
+        },
+        {
+         "group": "day244",
+         "n": 73,
+         "commits": 37,
+         "wrong": 3,
+         "rate": 0.0410958904109589,
+         "cp_lower": 0.008556489507786058,
+         "cp_upper": 0.11543607876686146
+        }
+       ]
+      },
+      "numbers_changed": false
+     }
+    ],
     "conformance": "trust-ready",
     "weights_licence": "not released (outputs in the CC0 dataset)",
     "scored_from": "committed-per-trial",
     "n_trials": 816,
     "ci_unit": "day",
     "notes": [
-     "cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable (drift; see M2-13/M2-16)."
+     "cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable (drift; see M2-13/M2-16).",
+     "2026-11-25: the scope line now says that the bound covers the pool of all days of one participant, not each day (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed.",
+     "2026-11-25: safety finding on the entry b2t25-t15-copytask/published/ltt: SAFETY FINDING: one day above alpha. The key safety_findings of the card (and the entry on the track page) gives the details. No number changed."
     ],
     "file": "b2t25-t15-copytask__published__ltt.json",
     "safe_wpm_definition": "safe-wpm/0.2",
@@ -1040,13 +1376,15 @@
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
     "guarantee": "CRC a=0.05, n_cal=812; test 0.062 (NOT met)",
+    "safety_findings": [],
     "conformance": "trust-ready",
     "weights_licence": "no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR)",
     "scored_from": "committed-per-trial",
     "n_trials": 816,
     "ci_unit": "day",
     "notes": [
-     "cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable (drift; see M2-13/M2-16)."
+     "cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable (drift; see M2-13/M2-16).",
+     "2026-11-25: the scope line now says that the bound covers the pool of all days of one participant, not each day (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed."
     ],
     "file": "b2t25-t15-copytask__ours__crc.json",
     "safe_wpm_definition": "safe-wpm/0.2",
@@ -1157,6 +1495,7 @@
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
     "guarantee": "none",
+    "safety_findings": [],
     "conformance": "trust-ready",
     "weights_licence": "no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR)",
     "scored_from": "committed-per-trial",
@@ -1274,13 +1613,15 @@
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
     "guarantee": "LTT a=0.05 d=0.1, n_cal=812; test 0.047 (met)",
+    "safety_findings": [],
     "conformance": "trust-ready",
     "weights_licence": "no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR)",
     "scored_from": "committed-per-trial",
     "n_trials": 816,
     "ci_unit": "day",
     "notes": [
-     "cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable (drift; see M2-13/M2-16)."
+     "cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable (drift; see M2-13/M2-16).",
+     "2026-11-25: the scope line now says that the bound covers the pool of all days of one participant, not each day (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed."
     ],
     "file": "b2t25-t15-copytask__ours__ltt.json",
     "safe_wpm_definition": "safe-wpm/0.2",
@@ -1391,6 +1732,7 @@
     "controls_passed": false,
     "controls": "no (shuf pass, zeros pass, null fail)",
     "guarantee": "none",
+    "safety_findings": [],
     "conformance": "trust-ready",
     "weights_licence": "no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR)",
     "scored_from": "committed-aggregate",
@@ -1508,6 +1850,7 @@
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
     "guarantee": "none",
+    "safety_findings": [],
     "conformance": "trust-ready",
     "weights_licence": "not released (trained on CC BY 4.0 data)",
     "scored_from": "committed-aggregate",
@@ -1636,13 +1979,15 @@
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
     "guarantee": "CRC a=0.05, n_cal=142; test 0.004 (met)",
+    "safety_findings": [],
     "conformance": "trust-ready",
     "weights_licence": "not released (trained on CC BY 4.0 data)",
     "scored_from": "committed-aggregate",
     "n_trials": 551,
     "ci_unit": "participant",
     "notes": [
-     "Composed sentences from isolated key presses: not natural typing."
+     "Composed sentences from isolated key presses: not natural typing.",
+     "2026-11-25: the scope line now says that the bound covers the pool of all participants, not each participant (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed."
     ],
     "file": "toronto-semg-composed__cnn-calib__crc.json",
     "safe_wpm_definition": "safe-wpm/0.2",
@@ -1764,6 +2109,7 @@
     "controls_passed": false,
     "controls": "no (shuf pass, zeros pass, null fail)",
     "guarantee": "none",
+    "safety_findings": [],
     "conformance": "trust-ready",
     "weights_licence": "not released (trained on CC BY 4.0 data)",
     "scored_from": "committed-aggregate",
@@ -1892,13 +2238,15 @@
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
     "guarantee": "CRC a=0.05, n_cal=142; test 0.004 (met)",
+    "safety_findings": [],
     "conformance": "trust-ready",
     "weights_licence": "not released (trained on CC BY 4.0 data)",
     "scored_from": "committed-aggregate",
     "n_trials": 551,
     "ci_unit": "participant",
     "notes": [
-     "Composed sentences from isolated key presses: not natural typing."
+     "Composed sentences from isolated key presses: not natural typing.",
+     "2026-11-25: the scope line now says that the bound covers the pool of all participants, not each participant (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed."
     ],
     "file": "toronto-semg-composed__cnn-xsession__crc.json",
     "safe_wpm_definition": "safe-wpm/0.2",
@@ -2015,6 +2363,7 @@
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
     "guarantee": "none",
+    "safety_findings": [],
     "conformance": "trust-ready",
     "weights_licence": "not released (trained on CC BY 4.0 data)",
     "scored_from": "committed-aggregate",
@@ -2138,6 +2487,7 @@
     "controls_passed": false,
     "controls": "no (shuf pass, zeros pass, null fail)",
     "guarantee": "none",
+    "safety_findings": [],
     "conformance": "trust-ready",
     "weights_licence": "not released (trained on CC BY 4.0 data)",
     "scored_from": "committed-aggregate",
@@ -2261,13 +2611,15 @@
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
     "guarantee": "CRC a=0.05, n_cal=142; test 0.000 (met)",
+    "safety_findings": [],
     "conformance": "trust-ready",
     "weights_licence": "not released (trained on CC BY 4.0 data)",
     "scored_from": "committed-aggregate",
     "n_trials": 551,
     "ci_unit": "participant",
     "notes": [
-     "Composed sentences from isolated key presses: not natural typing."
+     "Composed sentences from isolated key presses: not natural typing.",
+     "2026-11-25: the scope line now says that the bound covers the pool of all participants, not each participant (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed."
     ],
     "file": "toronto-semg-composed__cnn-xsubject__crc.json",
     "safe_wpm_definition": "safe-wpm/0.2",
@@ -2397,6 +2749,7 @@
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
     "guarantee": "none",
+    "safety_findings": [],
     "conformance": "trust-ready",
     "weights_licence": "not released (trained on CC BY 4.0 data)",
     "scored_from": "committed-aggregate",
@@ -2533,6 +2886,7 @@
     "controls_passed": false,
     "controls": "no (shuf pass, zeros pass, null fail)",
     "guarantee": "none",
+    "safety_findings": [],
     "conformance": "trust-ready",
     "weights_licence": "not released (trained on CC BY 4.0 data)",
     "scored_from": "committed-aggregate",
@@ -2671,6 +3025,7 @@
     "controls_passed": false,
     "controls": "no (shuf fail, zeros fail, null fail)",
     "guarantee": "none",
+    "safety_findings": [],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "not released (outputs in the CC0 dataset)",
     "scored_from": "submission/0.2 (units-jsonl)",
@@ -2784,14 +3139,159 @@
     "commit_rate": 0.4963235294117647,
     "controls_passed": false,
     "controls": "no (shuf fail, zeros fail, null pass)",
-    "guarantee": "CRC a=0.05, n_cal=812; test 0.049 (met)",
+    "guarantee": "CRC a=0.05, n_cal=812; test 0.049 (met) [SAFETY FINDING: one day above alpha]",
+    "safety_findings": [
+     {
+      "date": "2026-11-25",
+      "kind": "per-day-exceedance",
+      "mark": "SAFETY FINDING: one day above alpha",
+      "summary": "The CRC bound covers the pool of all 14 days (40 wrong commits in 816 test trials, rate 0.049, alpha 0.05). It does not hold for each day: on day034, 9 of 50 test trials are wrong commits (rate 0.18; Clopper-Pearson 95 % interval [0.086, 0.314], so even the lower end is above alpha). A bound per day is not promised (trust guarantee section 4: https://github.com/zhangzibo/fidetype/blob/main/docs/trust-guarantee.md#4-what-is-not-guaranteed). The table gives every day. Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed.",
+      "per_group": {
+       "unit": "day",
+       "alpha": 0.05,
+       "interval": "Clopper-Pearson 95 % (two-sided)",
+       "note": "Each day is named by its post-implant day, as in the split file of the track. Only day034 has an interval whose lower end is above alpha. Days with few trials have wide intervals: an upper end above alpha alone is not proof of a rate above alpha.",
+       "rows": [
+        {
+         "group": "day027",
+         "n": 15,
+         "commits": 3,
+         "wrong": 1,
+         "rate": 0.06666666666666667,
+         "cp_lower": 0.0016864302413527028,
+         "cp_upper": 0.3194845665783034
+        },
+        {
+         "group": "day034",
+         "n": 50,
+         "commits": 24,
+         "wrong": 9,
+         "rate": 0.18,
+         "cp_lower": 0.08576207810966366,
+         "cp_upper": 0.31436941128565027
+        },
+        {
+         "group": "day046",
+         "n": 50,
+         "commits": 20,
+         "wrong": 0,
+         "rate": 0.0,
+         "cp_lower": 0.0,
+         "cp_upper": 0.07112173646419764
+        },
+        {
+         "group": "day048",
+         "n": 58,
+         "commits": 27,
+         "wrong": 3,
+         "rate": 0.05172413793103448,
+         "cp_lower": 0.010796478084294736,
+         "cp_upper": 0.1438046272753446
+        },
+        {
+         "group": "day069",
+         "n": 58,
+         "commits": 29,
+         "wrong": 6,
+         "rate": 0.10344827586206896,
+         "cp_lower": 0.03892083192236426,
+         "cp_upper": 0.21168645779879747
+        },
+        {
+         "group": "day074",
+         "n": 37,
+         "commits": 14,
+         "wrong": 0,
+         "rate": 0.0,
+         "cp_lower": 0.0,
+         "cp_upper": 0.09489058741498987
+        },
+        {
+         "group": "day076",
+         "n": 104,
+         "commits": 51,
+         "wrong": 6,
+         "rate": 0.057692307692307696,
+         "cp_lower": 0.021463878543519267,
+         "cp_upper": 0.12134988653168396
+        },
+        {
+         "group": "day081",
+         "n": 69,
+         "commits": 32,
+         "wrong": 3,
+         "rate": 0.043478260869565216,
+         "cp_lower": 0.009057607358815037,
+         "cp_upper": 0.12184714936562367
+        },
+        {
+         "group": "day083",
+         "n": 85,
+         "commits": 40,
+         "wrong": 4,
+         "rate": 0.047058823529411764,
+         "cp_lower": 0.012968875186721612,
+         "cp_upper": 0.11612634268558442
+        },
+        {
+         "group": "day088",
+         "n": 45,
+         "commits": 22,
+         "wrong": 2,
+         "rate": 0.044444444444444446,
+         "cp_lower": 0.005428488700250947,
+         "cp_upper": 0.15149290024333914
+        },
+        {
+         "group": "day090",
+         "n": 74,
+         "commits": 44,
+         "wrong": 1,
+         "rate": 0.013513513513513514,
+         "cp_lower": 0.0003420740196647975,
+         "cp_upper": 0.07300738850966484
+        },
+        {
+         "group": "day095",
+         "n": 25,
+         "commits": 18,
+         "wrong": 0,
+         "rate": 0.0,
+         "cp_lower": 0.0,
+         "cp_upper": 0.1371851715307125
+        },
+        {
+         "group": "day223",
+         "n": 73,
+         "commits": 38,
+         "wrong": 1,
+         "rate": 0.0136986301369863,
+         "cp_lower": 0.0003467591525991272,
+         "cp_upper": 0.07397632317834407
+        },
+        {
+         "group": "day244",
+         "n": 73,
+         "commits": 43,
+         "wrong": 4,
+         "rate": 0.0547945205479452,
+         "cp_lower": 0.015129523838036623,
+         "cp_upper": 0.13439383435475946
+        }
+       ]
+      },
+      "numbers_changed": false
+     }
+    ],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "not released (outputs in the CC0 dataset)",
     "scored_from": "submission/0.2 (units-jsonl)",
     "n_trials": 816,
     "ci_unit": "group",
     "notes": [
-     "Same pipeline, fit and thresholds as the v0.1 entry (experiments/2026-11-10-b2t25-trust, M2-13 items, tools/benchmark/import_baselines.py). cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable."
+     "Same pipeline, fit and thresholds as the v0.1 entry (experiments/2026-11-10-b2t25-trust, M2-13 items, tools/benchmark/import_baselines.py). cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable.",
+     "2026-11-25: the scope line now says that the bound covers the pool of all days of one participant, not each day (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed.",
+     "2026-11-25: safety finding on the entry b2t25-t15/published/crc: SAFETY FINDING: one day above alpha. The key safety_findings of the card (and the entry on the track page) gives the details. No number changed."
     ],
     "file": "b2t25-t15__published__crc.json",
     "safe_wpm_definition": "safe-wpm/0.2",
@@ -2899,6 +3399,7 @@
     "controls_passed": false,
     "controls": "no (shuf fail, zeros fail, null pass)",
     "guarantee": "none",
+    "safety_findings": [],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "not released (outputs in the CC0 dataset)",
     "scored_from": "submission/0.2 (units-jsonl)",
@@ -3012,14 +3513,159 @@
     "commit_rate": 0.44607843137254904,
     "controls_passed": false,
     "controls": "no (shuf fail, zeros fail, null pass)",
-    "guarantee": "LTT a=0.05 d=0.1, n_cal=812; test 0.040 (met)",
+    "guarantee": "LTT a=0.05 d=0.1, n_cal=812; test 0.040 (met) [SAFETY FINDING: one day above alpha]",
+    "safety_findings": [
+     {
+      "date": "2026-11-25",
+      "kind": "per-day-exceedance",
+      "mark": "SAFETY FINDING: one day above alpha",
+      "summary": "The LTT bound covers the pool of all 14 days (33 wrong commits in 816 test trials, rate 0.040, alpha 0.05). It does not hold for each day: on day034, 9 of 50 test trials are wrong commits (rate 0.18; Clopper-Pearson 95 % interval [0.086, 0.314], so even the lower end is above alpha). A bound per day is not promised (trust guarantee section 4: https://github.com/zhangzibo/fidetype/blob/main/docs/trust-guarantee.md#4-what-is-not-guaranteed). The table gives every day. Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed.",
+      "per_group": {
+       "unit": "day",
+       "alpha": 0.05,
+       "interval": "Clopper-Pearson 95 % (two-sided)",
+       "note": "Each day is named by its post-implant day, as in the split file of the track. Only day034 has an interval whose lower end is above alpha. Days with few trials have wide intervals: an upper end above alpha alone is not proof of a rate above alpha.",
+       "rows": [
+        {
+         "group": "day027",
+         "n": 15,
+         "commits": 3,
+         "wrong": 1,
+         "rate": 0.06666666666666667,
+         "cp_lower": 0.0016864302413527028,
+         "cp_upper": 0.3194845665783034
+        },
+        {
+         "group": "day034",
+         "n": 50,
+         "commits": 24,
+         "wrong": 9,
+         "rate": 0.18,
+         "cp_lower": 0.08576207810966366,
+         "cp_upper": 0.31436941128565027
+        },
+        {
+         "group": "day046",
+         "n": 50,
+         "commits": 20,
+         "wrong": 0,
+         "rate": 0.0,
+         "cp_lower": 0.0,
+         "cp_upper": 0.07112173646419764
+        },
+        {
+         "group": "day048",
+         "n": 58,
+         "commits": 24,
+         "wrong": 2,
+         "rate": 0.034482758620689655,
+         "cp_lower": 0.004203647239867673,
+         "cp_upper": 0.11907731088039213
+        },
+        {
+         "group": "day069",
+         "n": 58,
+         "commits": 22,
+         "wrong": 2,
+         "rate": 0.034482758620689655,
+         "cp_lower": 0.004203647239867673,
+         "cp_upper": 0.11907731088039213
+        },
+        {
+         "group": "day074",
+         "n": 37,
+         "commits": 14,
+         "wrong": 0,
+         "rate": 0.0,
+         "cp_lower": 0.0,
+         "cp_upper": 0.09489058741498987
+        },
+        {
+         "group": "day076",
+         "n": 104,
+         "commits": 46,
+         "wrong": 5,
+         "rate": 0.04807692307692308,
+         "cp_lower": 0.015792448153985277,
+         "cp_upper": 0.10863596001490054
+        },
+        {
+         "group": "day081",
+         "n": 69,
+         "commits": 30,
+         "wrong": 3,
+         "rate": 0.043478260869565216,
+         "cp_lower": 0.009057607358815037,
+         "cp_upper": 0.12184714936562367
+        },
+        {
+         "group": "day083",
+         "n": 85,
+         "commits": 37,
+         "wrong": 4,
+         "rate": 0.047058823529411764,
+         "cp_lower": 0.012968875186721612,
+         "cp_upper": 0.11612634268558442
+        },
+        {
+         "group": "day088",
+         "n": 45,
+         "commits": 22,
+         "wrong": 2,
+         "rate": 0.044444444444444446,
+         "cp_lower": 0.005428488700250947,
+         "cp_upper": 0.15149290024333914
+        },
+        {
+         "group": "day090",
+         "n": 74,
+         "commits": 38,
+         "wrong": 1,
+         "rate": 0.013513513513513514,
+         "cp_lower": 0.0003420740196647975,
+         "cp_upper": 0.07300738850966484
+        },
+        {
+         "group": "day095",
+         "n": 25,
+         "commits": 15,
+         "wrong": 0,
+         "rate": 0.0,
+         "cp_lower": 0.0,
+         "cp_upper": 0.1371851715307125
+        },
+        {
+         "group": "day223",
+         "n": 73,
+         "commits": 32,
+         "wrong": 1,
+         "rate": 0.0136986301369863,
+         "cp_lower": 0.0003467591525991272,
+         "cp_upper": 0.07397632317834407
+        },
+        {
+         "group": "day244",
+         "n": 73,
+         "commits": 37,
+         "wrong": 3,
+         "rate": 0.0410958904109589,
+         "cp_lower": 0.008556489507786058,
+         "cp_upper": 0.11543607876686146
+        }
+       ]
+      },
+      "numbers_changed": false
+     }
+    ],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "not released (outputs in the CC0 dataset)",
     "scored_from": "submission/0.2 (units-jsonl)",
     "n_trials": 816,
     "ci_unit": "group",
     "notes": [
-     "Same pipeline, fit and thresholds as the v0.1 entry (experiments/2026-11-10-b2t25-trust, M2-13 items, tools/benchmark/import_baselines.py). cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable."
+     "Same pipeline, fit and thresholds as the v0.1 entry (experiments/2026-11-10-b2t25-trust, M2-13 items, tools/benchmark/import_baselines.py). cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable.",
+     "2026-11-25: the scope line now says that the bound covers the pool of all days of one participant, not each day (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed.",
+     "2026-11-25: safety finding on the entry b2t25-t15/published/ltt: SAFETY FINDING: one day above alpha. The key safety_findings of the card (and the entry on the track page) gives the details. No number changed."
     ],
     "file": "b2t25-t15__published__ltt.json",
     "safe_wpm_definition": "safe-wpm/0.2",
@@ -3127,13 +3773,15 @@
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
     "guarantee": "LTT a=0.05 d=0.1, n_cal=231; test 0.029 (met)",
+    "safety_findings": [],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "not released",
     "scored_from": "submission/0.2 (units-jsonl)",
     "n_trials": 103,
     "ci_unit": "group",
     "notes": [
-     "Drop-in guard (P14-03 recipe, as P14-05) calibrated on 616 val_select trials (the 106 val_select trials that are track test units are removed). Checkpoint chosen on val_select PER. Not comparable with full-coverage entries."
+     "Drop-in guard (P14-03 recipe, as P14-05) calibrated on 616 val_select trials (the 106 val_select trials that are track test units are removed). Checkpoint chosen on val_select PER. Not comparable with full-coverage entries.",
+     "2026-11-25: the scope line now says that the bound covers the pool of all days of one participant, not each day (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed."
     ],
     "file": "b2t25-t15__m4-13__guard.json",
     "safe_wpm_definition": "safe-wpm/0.2",
@@ -3246,6 +3894,7 @@
     "controls_passed": false,
     "controls": "no (shuf pass, zeros pass, null fail)",
     "guarantee": "none",
+    "safety_findings": [],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR)",
     "scored_from": "submission/0.2 (units-jsonl)",
@@ -3360,13 +4009,15 @@
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
     "guarantee": "CRC a=0.05, n_cal=812; test 0.062 (NOT met)",
+    "safety_findings": [],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR)",
     "scored_from": "submission/0.2 (units-jsonl)",
     "n_trials": 816,
     "ci_unit": "group",
     "notes": [
-     "Same pipeline, fit and thresholds as the v0.1 entry (experiments/2026-11-10-b2t25-trust, M2-13 items, tools/benchmark/import_baselines.py). cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable."
+     "Same pipeline, fit and thresholds as the v0.1 entry (experiments/2026-11-10-b2t25-trust, M2-13 items, tools/benchmark/import_baselines.py). cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable.",
+     "2026-11-25: the scope line now says that the bound covers the pool of all days of one participant, not each day (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed."
     ],
     "file": "b2t25-t15__ours__crc.json",
     "safe_wpm_definition": "safe-wpm/0.2",
@@ -3474,6 +4125,7 @@
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
     "guarantee": "none",
+    "safety_findings": [],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR)",
     "scored_from": "submission/0.2 (units-jsonl)",
@@ -3588,13 +4240,15 @@
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
     "guarantee": "LTT a=0.05 d=0.1, n_cal=812; test 0.047 (met)",
+    "safety_findings": [],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "no trained weights (input: published RNN logits, CC0; CMUdict BSD-style; Tatoeba CC BY 2.0 FR)",
     "scored_from": "submission/0.2 (units-jsonl)",
     "n_trials": 816,
     "ci_unit": "group",
     "notes": [
-     "Same pipeline, fit and thresholds as the v0.1 entry (experiments/2026-11-10-b2t25-trust, M2-13 items, tools/benchmark/import_baselines.py). cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable."
+     "Same pipeline, fit and thresholds as the v0.1 entry (experiments/2026-11-10-b2t25-trust, M2-13 items, tools/benchmark/import_baselines.py). cal = first half of each day, test = second half: the test trials are later in the day, so cal and test are not exchangeable.",
+     "2026-11-25: the scope line now says that the bound covers the pool of all days of one participant, not each day (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed."
     ],
     "file": "b2t25-t15__ours__ltt.json",
     "safe_wpm_definition": "safe-wpm/0.2",
@@ -3702,13 +4356,15 @@
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
     "guarantee": "LTT a=0.05 d=0.1, n_cal=231; test 0.000 (met)",
+    "safety_findings": [],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "not released",
     "scored_from": "submission/0.2 (units-jsonl)",
     "n_trials": 103,
     "ci_unit": "group",
     "notes": [
-     "Drop-in guard (P14-03 recipe, as P14-05) calibrated on 616 val_select trials (the 106 val_select trials that are track test units are removed). Checkpoint chosen on val_select PER. Not comparable with full-coverage entries."
+     "Drop-in guard (P14-03 recipe, as P14-05) calibrated on 616 val_select trials (the 106 val_select trials that are track test units are removed). Checkpoint chosen on val_select PER. Not comparable with full-coverage entries.",
+     "2026-11-25: the scope line now says that the bound covers the pool of all days of one participant, not each day (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed."
     ],
     "file": "b2t25-t15__m4-12__guard.json",
     "safe_wpm_definition": "safe-wpm/0.2",
@@ -3823,13 +4479,15 @@
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
     "guarantee": "LTT a=0.05 d=0.1, n_cal=330; test 0.010 (met)",
+    "safety_findings": [],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "not released",
     "scored_from": "submission/0.2 (units-jsonl)",
     "n_trials": 880,
     "ci_unit": "group",
     "notes": [
-     "Checkpoint chosen by early stopping on the decoder val part = this track's cal split (open). Decisions use the same guard as P14-03 but calibrated on the track cal split, not on test-partition trials."
+     "Checkpoint chosen by early stopping on the decoder val part = this track's cal split (open). Decisions use the same guard as P14-03 but calibrated on the track cal split, not on test-partition trials.",
+     "2026-11-25: the scope line now says that the bound covers the pool of all sessions of one participant, not each session (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed."
     ],
     "file": "b2t24-t12__t12v2__guard.json",
     "safe_wpm_definition": "safe-wpm/0.2",
@@ -3939,6 +4597,7 @@
     "controls_passed": false,
     "controls": "no (shuf pass, zeros pass, null fail)",
     "guarantee": "none",
+    "safety_findings": [],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "not released",
     "scored_from": "submission/0.2 (units-jsonl)",
@@ -4057,6 +4716,7 @@
     "controls_passed": false,
     "controls": "no (shuf pass, zeros pass, null fail)",
     "guarantee": "none",
+    "safety_findings": [],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "not released (output in the CC0 data)",
     "scored_from": "submission/0.2 (units-jsonl)",
@@ -4168,13 +4828,15 @@
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
     "guarantee": "LTT a=0.05 d=0.1, n_cal=73; test 0.000 (met)",
+    "safety_findings": [],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "not released (output in the CC0 data)",
     "scored_from": "submission/0.2 (units-jsonl)",
     "n_trials": 81,
     "ci_unit": "group",
     "notes": [
-     "Calibration on the closed-loop trials of the train + val splits of the 7 earlier sessions (the docs name the val trials; train trials are open as well and the RNN output is fixed)."
+     "Calibration on the closed-loop trials of the train + val splits of the 7 earlier sessions (the docs name the val trials; train trials are open as well and the RNN output is fixed).",
+     "2026-11-25: the scope line now says that the bound covers the pool of all sessions of one participant, not each session (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed."
     ],
     "file": "willett-hw__rnn-published__guard.json",
     "safe_wpm_definition": "safe-wpm/0.2",
@@ -4281,13 +4943,15 @@
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
     "guarantee": "CRC a=0.05, n_cal=142; test 0.004 (met)",
+    "safety_findings": [],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "not released (trained on CC BY 4.0 data)",
     "scored_from": "submission/0.2 (units-jsonl)",
     "n_trials": 551,
     "ci_unit": "group",
     "notes": [
-     "day 1 + half of day 2 (cross-fitted: the other half is predicted). Composed sentences from isolated key presses: not natural typing. Same plan, decoder, LM weight and fits as the v0.1 entry (experiments/2026-11-11-emg-toronto/trust.py)."
+     "day 1 + half of day 2 (cross-fitted: the other half is predicted). Composed sentences from isolated key presses: not natural typing. Same plan, decoder, LM weight and fits as the v0.1 entry (experiments/2026-11-11-emg-toronto/trust.py).",
+     "2026-11-25: the scope line now says that the bound covers the pool of all participants, not each participant (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed."
     ],
     "file": "toronto-semg__cnn-calib__crc.json",
     "safe_wpm_definition": "safe-wpm/0.2",
@@ -4406,6 +5070,7 @@
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
     "guarantee": "none",
+    "safety_findings": [],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "not released (trained on CC BY 4.0 data)",
     "scored_from": "submission/0.2 (units-jsonl)",
@@ -4531,6 +5196,7 @@
     "controls_passed": false,
     "controls": "no (shuf pass, zeros pass, null fail)",
     "guarantee": "none",
+    "safety_findings": [],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "not released (trained on CC BY 4.0 data)",
     "scored_from": "submission/0.2 (units-jsonl)",
@@ -4656,13 +5322,15 @@
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
     "guarantee": "CRC a=0.05, n_cal=142; test 0.004 (met)",
+    "safety_findings": [],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "not released (trained on CC BY 4.0 data)",
     "scored_from": "submission/0.2 (units-jsonl)",
     "n_trials": 551,
     "ci_unit": "group",
     "notes": [
-     "decoder trained on day 1 of all 19 participants; day-2 presses. Composed sentences from isolated key presses: not natural typing. Same plan, decoder, LM weight and fits as the v0.1 entry (experiments/2026-11-11-emg-toronto/trust.py)."
+     "decoder trained on day 1 of all 19 participants; day-2 presses. Composed sentences from isolated key presses: not natural typing. Same plan, decoder, LM weight and fits as the v0.1 entry (experiments/2026-11-11-emg-toronto/trust.py).",
+     "2026-11-25: the scope line now says that the bound covers the pool of all participants, not each participant (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed."
     ],
     "file": "toronto-semg__cnn-xsession__crc.json",
     "safe_wpm_definition": "safe-wpm/0.2",
@@ -4776,6 +5444,7 @@
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
     "guarantee": "none",
+    "safety_findings": [],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "not released (trained on CC BY 4.0 data)",
     "scored_from": "submission/0.2 (units-jsonl)",
@@ -4896,6 +5565,7 @@
     "controls_passed": false,
     "controls": "no (shuf pass, zeros pass, null fail)",
     "guarantee": "none",
+    "safety_findings": [],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "not released (trained on CC BY 4.0 data)",
     "scored_from": "submission/0.2 (units-jsonl)",
@@ -5016,13 +5686,15 @@
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
     "guarantee": "CRC a=0.05, n_cal=142; test 0.000 (met)",
+    "safety_findings": [],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "not released (trained on CC BY 4.0 data)",
     "scored_from": "submission/0.2 (units-jsonl)",
     "n_trials": 551,
     "ci_unit": "group",
     "notes": [
-     "4-fold leave-participants-out; no data of the user. Composed sentences from isolated key presses: not natural typing. Same plan, decoder, LM weight and fits as the v0.1 entry (experiments/2026-11-11-emg-toronto/trust.py)."
+     "4-fold leave-participants-out; no data of the user. Composed sentences from isolated key presses: not natural typing. Same plan, decoder, LM weight and fits as the v0.1 entry (experiments/2026-11-11-emg-toronto/trust.py).",
+     "2026-11-25: the scope line now says that the bound covers the pool of all participants, not each participant (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed."
     ],
     "file": "toronto-semg__cnn-xsubject__crc.json",
     "safe_wpm_definition": "safe-wpm/0.2",
@@ -5149,6 +5821,7 @@
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
     "guarantee": "none",
+    "safety_findings": [],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "not released (trained on CC BY 4.0 data)",
     "scored_from": "submission/0.2 (units-jsonl)",
@@ -5282,6 +5955,7 @@
     "controls_passed": false,
     "controls": "no (shuf pass, zeros pass, null fail)",
     "guarantee": "none",
+    "safety_findings": [],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "not released (trained on CC BY 4.0 data)",
     "scored_from": "submission/0.2 (units-jsonl)",
@@ -5417,6 +6091,7 @@
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
     "guarantee": "LTT a=0.05 d=0.1, n_cal=34; test 0.000 (met)",
+    "safety_findings": [],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "not released",
     "scored_from": "submission/0.2 (units-jsonl)",
@@ -5424,7 +6099,8 @@
     "ci_unit": "group",
     "notes": [
      "Oracle key timing from the key log (the decoder is told when a key is pressed). Not a track-conformant key detector; reference only.",
-     "Key track: one character per key, so CER = key error rate."
+     "Key track: one character per key, so CER = key error rate.",
+     "2026-11-25: the scope line now says that the bound covers the pool of all runs, not each run (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed."
     ],
     "file": "kt-semg__lda-oracle__guard.json",
     "safe_wpm_definition": "safe-wpm/0.2",
@@ -5529,6 +6205,7 @@
     "controls_passed": false,
     "controls": "no (shuf pass, zeros pass, null fail)",
     "guarantee": "none",
+    "safety_findings": [],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "not released",
     "scored_from": "submission/0.2 (units-jsonl)",
@@ -5643,6 +6320,7 @@
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
     "guarantee": "none",
+    "safety_findings": [],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "not released (trained on CC BY-NC 4.0 data: research only)",
     "scored_from": "submission/0.2 (units-jsonl)",
@@ -5763,7 +6441,26 @@
     "commit_rate": 0.023547880690737835,
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
-    "guarantee": "LTT a=0.05 d=0.1, n_cal=437; test 0.022 (met)",
+    "guarantee": "LTT a=0.05 d=0.1, n_cal=437; test 0.022 (met) [LABEL-BLIND COMMIT STEP: no evidence of signal]",
+    "safety_findings": [
+     {
+      "date": "2026-11-25",
+      "kind": "label-blind-commit-step",
+      "mark": "LABEL-BLIND COMMIT STEP: no evidence of signal",
+      "summary": "Only 14 of the 437 calibration (val) trials can commit at all: the other rules of the trust policy block the rest. 13 of these 14 are wrong (the top-1 sentence is right for 1 of 437 val trials). Because 14 / 437 is below alpha 0.05, every threshold meets the LTT bound, so LTT takes the lowest one and commits all 14, whatever the labels are. With permuted labels it commits the same 14 items. On test, 14 of 15 commits are wrong. The bound holds (test wrong-commit rate 0.022), but only because the policy almost never commits: the commit step shows no evidence that the score separates right from wrong text. Read this entry as a vacuous guard result, not as evidence that the guard works on this decoder. Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed.",
+      "facts": {
+       "val_trials": 437,
+       "val_can_commit": 14,
+       "val_can_commit_wrong": 13,
+       "val_top1_right": 1,
+       "test_trials": 637,
+       "test_can_commit": 15,
+       "test_commits": 15,
+       "test_wrong_commits": 14
+      },
+      "numbers_changed": false
+     }
+    ],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "not released (trained on CC BY-NC 4.0 data: research only)",
     "scored_from": "submission/0.2 (units-jsonl)",
@@ -5771,7 +6468,9 @@
     "ci_unit": "two_way:sentence,group",
     "notes": [
      "RESEARCH ONLY (CC BY-NC 4.0 data). Same pipeline, fit (val) and thresholds as the v0.1 entry (experiments/2026-11-11-g1-async-meg-trust, tools/benchmark/import_baselines.py).",
-     "RESEARCH ONLY: CC BY-NC 4.0 data. Results and weights are non-commercial."
+     "RESEARCH ONLY: CC BY-NC 4.0 data. Results and weights are non-commercial.",
+     "2026-11-25: the scope line now says that the bound covers the pool of all participants, not each participant (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed.",
+     "2026-11-25: safety finding on the entry spanishbcbl-meg/convctc-m-async/ltt: LABEL-BLIND COMMIT STEP: no evidence of signal. The key safety_findings of the card (and the entry on the track page) gives the details. No number changed."
     ],
     "file": "spanishbcbl-meg__convctc-m-async__ltt.json",
     "safe_wpm_definition": "safe-wpm/0.2",
@@ -5884,7 +6583,26 @@
     "commit_rate": 0.02197802197802198,
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
-    "guarantee": "CRC a=0.05, n_cal=437; test 0.020 (met)",
+    "guarantee": "CRC a=0.05, n_cal=437; test 0.020 (met) [LABEL-BLIND COMMIT STEP: no evidence of signal]",
+    "safety_findings": [
+     {
+      "date": "2026-11-25",
+      "kind": "label-blind-commit-step",
+      "mark": "LABEL-BLIND COMMIT STEP: no evidence of signal",
+      "summary": "Only 14 of the 437 calibration (val) trials can commit at all: the other rules of the trust policy block the rest. 13 of these 14 are wrong (the top-1 sentence is right for 1 of 437 val trials). Because 14 / 437 is below alpha 0.05, every threshold meets the CRC bound, so CRC takes the lowest one and commits all 14, whatever the labels are. With permuted labels it commits the same 14 items. On test, 13 of 14 commits are wrong. The bound holds (test wrong-commit rate 0.020), but only because the policy almost never commits: the commit step shows no evidence that the score separates right from wrong text. Read this entry as a vacuous guard result, not as evidence that the guard works on this decoder. Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed.",
+      "facts": {
+       "val_trials": 437,
+       "val_can_commit": 14,
+       "val_can_commit_wrong": 13,
+       "val_top1_right": 1,
+       "test_trials": 637,
+       "test_can_commit": 15,
+       "test_commits": 14,
+       "test_wrong_commits": 13
+      },
+      "numbers_changed": false
+     }
+    ],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "not released (trained on CC BY-NC 4.0 data: research only)",
     "scored_from": "submission/0.2 (units-jsonl)",
@@ -5892,7 +6610,9 @@
     "ci_unit": "two_way:sentence,group",
     "notes": [
      "RESEARCH ONLY (CC BY-NC 4.0 data). Same pipeline, fit (val) and thresholds as the v0.1 entry (experiments/2026-11-11-g1-async-meg-trust, tools/benchmark/import_baselines.py).",
-     "RESEARCH ONLY: CC BY-NC 4.0 data. Results and weights are non-commercial."
+     "RESEARCH ONLY: CC BY-NC 4.0 data. Results and weights are non-commercial.",
+     "2026-11-25: the scope line now says that the bound covers the pool of all participants, not each participant (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed.",
+     "2026-11-25: safety finding on the entry spanishbcbl-meg/convctc-m-async/crc: LABEL-BLIND COMMIT STEP: no evidence of signal. The key safety_findings of the card (and the entry on the track page) gives the details. No number changed."
     ],
     "file": "spanishbcbl-meg__convctc-m-async__crc.json",
     "safe_wpm_definition": "safe-wpm/0.2",
@@ -6006,6 +6726,7 @@
     "controls_passed": false,
     "controls": "no (shuf pass, zeros pass, null fail)",
     "guarantee": "none",
+    "safety_findings": [],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "not released (trained on CC BY-NC 4.0 data: research only)",
     "scored_from": "submission/0.2 (units-jsonl)",
@@ -6129,6 +6850,7 @@
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
     "guarantee": "LTT a=0.05 d=0.1, n_cal=459; test 0.025 (met)",
+    "safety_findings": [],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "not released (CC BY-NC-SA data: research only)",
     "scored_from": "submission/0.2 (units-jsonl)",
@@ -6138,7 +6860,8 @@
      "RESEARCH ONLY (CC BY-NC-SA 4.0 data). Target intended_text (intended-text/1): the guard commits the intended text, so truth and outputs are compared after Backspace is applied. Offline decisions on full prompt windows (no latency claim). P11-12 decisions, scored by P11-13.",
      "Target intended_text (intended-text/1): truth and outputs are compared after Backspace is applied, so CER is the character error rate of the intended text and the no-BCI reference is gaze typing of the intended text. Not ranked with raw-key entries.",
      "RESEARCH ONLY: CC BY-NC-SA 4.0 data. Results and weights are non-commercial.",
-     "FEP-0010: data.research_only = true (CC BY-NC-SA 4.0)."
+     "FEP-0010: data.research_only = true (CC BY-NC-SA 4.0).",
+     "2026-11-25: the scope line now says that the bound covers the pool of all users, not each user (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed."
     ],
     "file": "emg2qwerty__p11-12-intended-sl-subset8__guard.json",
     "safe_wpm_definition": "safe-wpm/0.2",
@@ -6291,6 +7014,7 @@
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
     "guarantee": "LTT a=0.05 d=0.1, n_cal=459; test 0.029 (met)",
+    "safety_findings": [],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "not released (CC BY-NC-SA data: research only)",
     "scored_from": "submission/0.2 (units-jsonl)",
@@ -6300,7 +7024,8 @@
      "RESEARCH ONLY (CC BY-NC-SA 4.0 data). Target intended_text (intended-text/1): the guard commits the intended text, so truth and outputs are compared after Backspace is applied. Offline decisions on full prompt windows (no latency claim). P11-12 decisions, scored by P11-13.",
      "Target intended_text (intended-text/1): truth and outputs are compared after Backspace is applied, so CER is the character error rate of the intended text and the no-BCI reference is gaze typing of the intended text. Not ranked with raw-key entries.",
      "RESEARCH ONLY: CC BY-NC-SA 4.0 data. Results and weights are non-commercial.",
-     "FEP-0010: data.research_only = true (CC BY-NC-SA 4.0)."
+     "FEP-0010: data.research_only = true (CC BY-NC-SA 4.0).",
+     "2026-11-25: the scope line now says that the bound covers the pool of all users, not each user (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed."
     ],
     "file": "emg2qwerty__p11-12-intended-s-subset8__guard.json",
     "safe_wpm_definition": "safe-wpm/0.2",
@@ -6453,6 +7178,7 @@
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
     "guarantee": "LTT a=0.05 d=0.1, n_cal=459; test 0.043 (met)",
+    "safety_findings": [],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "not released (CC BY-NC-SA data: research only)",
     "scored_from": "submission/0.2 (units-jsonl)",
@@ -6462,7 +7188,8 @@
      "RESEARCH ONLY (CC BY-NC-SA 4.0 data). Target intended_text (intended-text/1): the guard commits the intended text, so truth and outputs are compared after Backspace is applied. Offline decisions on full prompt windows (no latency claim). P11-14 decisions (primary arm, selected on calibration tuning items only).",
      "Target intended_text (intended-text/1): truth and outputs are compared after Backspace is applied, so CER is the character error rate of the intended text and the no-BCI reference is gaze typing of the intended text. Not ranked with raw-key entries.",
      "RESEARCH ONLY: CC BY-NC-SA 4.0 data. Results and weights are non-commercial.",
-     "FEP-0010: data.research_only = true (CC BY-NC-SA 4.0)."
+     "FEP-0010: data.research_only = true (CC BY-NC-SA 4.0).",
+     "2026-11-25: the scope line now says that the bound covers the pool of all users, not each user (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed."
     ],
     "file": "emg2qwerty__p11-14-intended-lfl-subset8__guard.json",
     "safe_wpm_definition": "safe-wpm/0.2",
@@ -6615,6 +7342,7 @@
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
     "guarantee": "LTT a=0.05 d=0.1, n_cal=459; test 0.000 (met)",
+    "safety_findings": [],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "not released (CC BY-NC-SA data: research only)",
     "scored_from": "submission/0.2 (units-jsonl)",
@@ -6624,7 +7352,8 @@
      "RESEARCH ONLY (CC BY-NC-SA 4.0 data). Track-conformant: the decoder sees only the EMG (no key times). Causal, no lookahead; the decision waits 0.20 s after the prompt end. P11-09.",
      "Key track: one character per key, so CER = key error rate.",
      "RESEARCH ONLY: CC BY-NC-SA 4.0 data. Results and weights are non-commercial.",
-     "FEP-0010: data.research_only = true (CC BY-NC-SA 4.0)."
+     "FEP-0010: data.research_only = true (CC BY-NC-SA 4.0).",
+     "2026-11-25: the scope line now says that the bound covers the pool of all users, not each user (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed."
     ],
     "file": "emg2qwerty__p11-01-crt-subset8__guard.json",
     "safe_wpm_definition": "safe-wpm/0.2",
@@ -6761,6 +7490,7 @@
     "controls_passed": false,
     "controls": "no (shuf pass, zeros pass, null fail)",
     "guarantee": "none",
+    "safety_findings": [],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "not released (CC BY-NC-SA data: research only)",
     "scored_from": "submission/0.2 (units-jsonl)",
@@ -6907,6 +7637,7 @@
     "controls_passed": true,
     "controls": "yes (shuf pass, zeros pass, null pass)",
     "guarantee": "LTT a=0.05 d=0.1, n_cal=1125; test 0.000 (met)",
+    "safety_findings": [],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "not released (would be CC BY-NC-SA: research only)",
     "scored_from": "submission/0.2 (units-jsonl)",
@@ -6915,7 +7646,8 @@
     "notes": [
      "RESEARCH ONLY (CC BY-NC-SA 4.0 data). Oracle key timing from the key log; not a track-conformant continuous decoder (P11-01 is). Reference only.",
      "Key track: one character per key, so CER = key error rate.",
-     "RESEARCH ONLY: CC BY-NC-SA 4.0 data. Results and weights are non-commercial."
+     "RESEARCH ONLY: CC BY-NC-SA 4.0 data. Results and weights are non-commercial.",
+     "2026-11-25: the scope line now says that the bound covers the pool of all users, not each user (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed."
     ],
     "file": "emg2qwerty__lda-oracle__guard.json",
     "safe_wpm_definition": "safe-wpm/0.2",
@@ -7020,6 +7752,7 @@
     "controls_passed": false,
     "controls": "no (shuf pass, zeros pass, null fail)",
     "guarantee": "none",
+    "safety_findings": [],
     "conformance": "not checked (units JSONL: NTS-derived rows)",
     "weights_licence": "not released (would be CC BY-NC-SA: research only)",
     "scored_from": "submission/0.2 (units-jsonl)",

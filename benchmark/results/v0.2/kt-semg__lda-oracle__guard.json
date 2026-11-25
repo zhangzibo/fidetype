@@ -137,7 +137,7 @@
   "alpha": 0.05,
   "delta": 0.1,
   "n_cal": 34,
-  "scope": "marginal over the test bursts; exchangeable cal / test runs",
+  "scope": "marginal over the test bursts; exchangeable cal / test runs; the bound covers the pool (all runs together), not each run: one run can be worse (trust guarantee section 4: https://github.com/zhangzibo/fidetype/blob/main/docs/trust-guarantee.md#4-what-is-not-guaranteed)",
   "calibration_split": "cal",
   "measured_wrong_commit": 0.0,
   "measured_wrong_commit_ci": [
@@ -274,7 +274,8 @@
  },
  "notes": [
   "Oracle key timing from the key log (the decoder is told when a key is pressed). Not a track-conformant key detector; reference only.",
-  "Key track: one character per key, so CER = key error rate."
+  "Key track: one character per key, so CER = key error rate.",
+  "2026-11-25: the scope line now says that the bound covers the pool of all runs, not each run (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed."
  ],
  "scorer_version": "0.2",
  "track_info": {

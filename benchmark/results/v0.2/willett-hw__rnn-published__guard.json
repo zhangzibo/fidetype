@@ -130,7 +130,7 @@
   "alpha": 0.05,
   "delta": 0.1,
   "n_cal": 73,
-  "scope": "marginal over the 81 test trials with RNN output; exchangeable with the earlier-session closed-loop trials (a session shift breaks this)",
+  "scope": "marginal over the 81 test trials with RNN output; exchangeable with the earlier-session closed-loop trials (a session shift breaks this); the bound covers the pool (all sessions of one participant together), not each session: one session can be worse (trust guarantee section 4: https://github.com/zhangzibo/fidetype/blob/main/docs/trust-guarantee.md#4-what-is-not-guaranteed)",
   "calibration_split": "train+val (closed-loop trials of the earlier sessions)",
   "measured_wrong_commit": 0.0,
   "measured_wrong_commit_ci": [
@@ -266,7 +266,8 @@
   "gaze_chars_per_min": 20.0
  },
  "notes": [
-  "Calibration on the closed-loop trials of the train + val splits of the 7 earlier sessions (the docs name the val trials; train trials are open as well and the RNN output is fixed)."
+  "Calibration on the closed-loop trials of the train + val splits of the 7 earlier sessions (the docs name the val trials; train trials are open as well and the RNN output is fixed).",
+  "2026-11-25: the scope line now says that the bound covers the pool of all sessions of one participant, not each session (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed."
  ],
  "scorer_version": "0.2",
  "track_info": {

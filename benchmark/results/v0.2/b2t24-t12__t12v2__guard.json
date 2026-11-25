@@ -130,7 +130,7 @@
   "alpha": 0.05,
   "delta": 0.1,
   "n_cal": 330,
-  "scope": "marginal over test trials; exchangeable cal / test (cal = last train block per session)",
+  "scope": "marginal over test trials; exchangeable cal / test (cal = last train block per session); the bound covers the pool (all sessions of one participant together), not each session: one session can be worse (trust guarantee section 4: https://github.com/zhangzibo/fidetype/blob/main/docs/trust-guarantee.md#4-what-is-not-guaranteed)",
   "calibration_split": "cal",
   "measured_wrong_commit": 0.010227272727272727,
   "measured_wrong_commit_ci": [
@@ -270,7 +270,8 @@
   "gaze_chars_per_min": 20.0
  },
  "notes": [
-  "Checkpoint chosen by early stopping on the decoder val part = this track's cal split (open). Decisions use the same guard as P14-03 but calibrated on the track cal split, not on test-partition trials."
+  "Checkpoint chosen by early stopping on the decoder val part = this track's cal split (open). Decisions use the same guard as P14-03 but calibrated on the track cal split, not on test-partition trials.",
+  "2026-11-25: the scope line now says that the bound covers the pool of all sessions of one participant, not each session (trust guarantee section 4). Basis: the pooled-guard check (commit 74a21f8; https://github.com/zhangzibo/fidetype/blob/main/experiments/2026-11-25-pooled-guard-check/results.md). No number changed."
  ],
  "scorer_version": "0.2",
  "track_info": {
