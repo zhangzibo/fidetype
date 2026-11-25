@@ -55,8 +55,9 @@ N1_SEEDS = 20
 
 
 class Ctx:
-    def __init__(self, raw: Path, out: Path, results: Path | None, n_subjects: int, workers: int, n_boot: int):
-        self.raw, self.out, self.results = raw, out, results
+    def __init__(self, raw: Path, out: Path, results: Path | None, n_subjects: int, workers: int, n_boot: int,
+                 dry: bool = False):
+        self.raw, self.out, self.results, self.dry = raw, out, results, dry
         self.n_subjects, self.workers, self.n_boot = n_subjects, workers, n_boot
         self.out.mkdir(parents=True, exist_ok=True)
         (self.out / "feat").mkdir(exist_ok=True)
@@ -412,7 +413,9 @@ def stage_fit(ctx: Ctx, subj: dict) -> dict | None:
         return jload(gpath)
     a0 = a0_decision(ctx, subj, "sample")
     mode = "sample"
-    if not a0["pass"]:
+    if ctx.dry and not a0["pass"]:
+        ctx.log("dry run: A0 is not decisive on few sessions; continue with `sample` (no result is kept)")
+    elif not a0["pass"]:
         ctx.log("A0 failed with `sample`: repeat once with round(onset * fs)")
         if not stage_feat(ctx, subj, "onset"):
             return None
@@ -671,9 +674,12 @@ def main() -> int:
     ap.add_argument("--n-subjects", type=int, default=N_SUBJECTS)
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--n-boot", type=int, default=10_000)
+    ap.add_argument("--dry", action="store_true", help="code check only: needs --results none; no test stage")
     args = ap.parse_args()
+    if args.dry and (args.results != "none" or args.stage in ("test", "all")):
+        ap.error("--dry needs --results none and stage parse / feat / fit")
     ctx = Ctx(Path(args.raw), Path(args.out), None if args.results == "none" else Path(args.results),
-              args.n_subjects, args.workers, args.n_boot)
+              args.n_subjects, args.workers, args.n_boot, args.dry)
     ctx.log(f"start stage {args.stage} (pid {os.getpid()})")
     subj = stage_parse(ctx)
     if args.stage == "parse":
