@@ -2,8 +2,8 @@
 title: Willett 2021 handwriting BCI dataset (T5)
 type: entity
 tags: [dataset, implant, intracortical, handwriting, cc0, licence-clean]
-sources: [neural-input-landscape-2026]
-updated: 2026-11-14
+sources: [neural-input-landscape-2026, falcon-benchmark, possm, chen-falcon-h2-fewshot]
+updated: 2026-11-24
 ---
 
 # Willett 2021 handwriting dataset
@@ -14,7 +14,9 @@ updated: 2026-11-14
 - **Participant**: one person (T5). Two 96-electrode arrays in the hand area of motor cortex.
 - **Size**: `handwritingBCIData.tar.gz` 1.41 GB + `readme.pdf`. 10.7 hours, 1,000 sentences, 43,501 characters (Dryad page, verified 2026-11-10).
 - **Content**: all neural activity of the experiments and all real-time outputs of the handwriting BCI. The format is in `readme.pdf` (not read yet).
-- **Benchmark copy**: FALCON H2 "Human Handwriting iBCI" on DANDI (000950), 1.22 GB, **CC BY 4.0** (DANDI API).
+- **Related benchmark**: FALCON H2 "Human Handwriting iBCI" on DANDI (000950), 1.22 GB, **CC BY 4.0** (DANDI API). Same participant (T5) and task, but **new sessions** (2022-05-18 to 2023-10-09, DANDI file names); test labels are private on EvalAI; only 3 calibration sentences per held-out session are public ([FALCON](../sources/falcon-benchmark.md)).
+  > **Contradiction:** this page (2026-11-14) called FALCON H2 a "benchmark copy" of this dataset. The session dates show that it is newer T5 data with the same protocol. We now use "related benchmark".
+- **Used by**: [POSSM](../sources/possm.md) (character classification, monkey pretraining helps); FALCON H2 results: [Chen et al. 2026](../sources/chen-falcon-h2-fewshot.md).
 
 ## Local copy (P4-01, 2026-11-14)
 - **Source used**: Zenodo record [4695519](https://zenodo.org/records/4695519). It is the Dryad deposit itself: its DOI is `10.5061/dryad.wh70rxwmv`, it is in the Zenodo `dryad` community, licence `cc-zero`, open access. Same method as for Brain-to-Text '24 (see `references/README.md`).

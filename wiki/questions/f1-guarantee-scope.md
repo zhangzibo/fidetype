@@ -2,8 +2,8 @@
 title: "F1 guarantee scope: what the online wrong-commit bound covers with shown-only feedback, and what it does not"
 type: question
 tags: [trust, risk-control, online, bandit-feedback, aci, guarantee, silent-errors, f1, p15]
-sources: [adaptive-conformal-inference, rolling-risk-control, conformal-risk-control, conformal-beyond-exchangeability]
-updated: 2026-11-16
+sources: [adaptive-conformal-inference, rolling-risk-control, conformal-risk-control, conformal-beyond-exchangeability, ocp-corrupted-feedback, decaying-step-ocp, card-2026-home-use, hou-error-encoding]
+updated: 2026-11-24
 ---
 
 # F1 guarantee scope (P15-04)
@@ -61,6 +61,8 @@ Notation: score `s_t`, top-1 error `c_t` ∈ {0, 1}, threshold `λ_t`, commit if
 | **A user whose intended text changes because of what was shown** | G3 assumes `c_t` is fixed before the coin | Not testable in replay; note for live studies |
 | **Wrong labels** (the user accepts a wrong offer: `p_sloppy`) | The label itself is wrong | Measured in the P15-01 simulator, not bounded |
 | **Fluent-wrong LLM text** | A different loss | [P15-06](roadmap-standard.md#p15-06-risk-controlled-hallucination-bound) |
+
+> **Theory for the silent-error row (2026-11-24):** [Wang, Zecchin & Simeone 2026](../sources/ocp-corrupted-feedback.md) show that flipped feedback adds a miscoverage term linear in the flip rate (2p for i.i.d. flips), which does not shrink with T. Our flips are one-sided (a missed wrong commit reads as right), so E[observed] = q · E[true] with q = `q_notice`; when ACI binds, the true rate tends to α / q (our arithmetic). Fixes: a target α · q̂ with a lower bound q̂ on the noticing rate, or explicit per-sentence ratings as in [Card et al. 2026](../sources/card-2026-home-use.md) (q close to 1), or later neural error signals ([Hou et al. 2025](../sources/hou-error-encoding.md)). For the "one session" row, a decaying step size gives near-target coverage at each time on stable data ([Angelopoulos, Barber & Bates 2024](../sources/decaying-step-ocp.md)).
 
 ## Exchangeable vs adversarial data
 

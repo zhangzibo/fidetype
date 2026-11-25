@@ -2,8 +2,8 @@
 title: Overview — non-invasive brain-to-text, where things stand
 type: overview
 tags: [synthesis, north-star, frontier]
-sources: [brain2qwerty-v1, brain2qwerty-v2, brain2qwerty-code, brain-to-text-25-copytask]
-updated: 2026-11-22
+sources: [brain2qwerty-v1, brain2qwerty-v2, brain2qwerty-code, brain-to-text-25-copytask, card-2026-home-use, levin-cross-brain-transfer, ndt3, chen-falcon-h2-fewshot, mona-lisa]
+updated: 2026-11-24
 ---
 
 # Overview
@@ -20,6 +20,10 @@ The project now aims at a frontier that we did not find in BCI work: **a BCI tha
 | **F3** | Cross-body language model: one output space across implant and EMG (later MEG/EEG); a new modality or a new user with minutes of data | High on paper, medium in practice |
 
 The first experiments (E2 for F1, E3 for F2, E1 for F3) are in roadmap phase [P15](questions/roadmap-standard.md#p15-frontier-added-2026-11-15-leads). The novelty ratings come from abstract-level searches; the focused literature check ([P15-10](questions/novelty-check-2026-11.md)) narrowed the wordings.
+
+**Literature update (2026-11-24, [details](questions/novelty-check-2026-11.md#update-2026-11-24-literature-check)):**
+- **F1:** the real T15 home system already fine-tunes from daily use behind a "validation improves" gate, and the user rates every sentence ([Card et al. 2026](sources/card-2026-home-use.md)). Our F1 claim is now only "a statistically tested update gate plus a stated long-run wrong-commit bound with null controls".
+- **F3:** the big picture shifted. Transfer between people works, but only with little target data (< 200 sentences, [Levin et al. 2026](sources/levin-cross-brain-transfer.md); < 1.5 h, [NDT3](sources/ndt3.md)). The working mechanism is **per-signal encoders + per-session input layers + a shared output space** ([Levin](sources/levin-cross-brain-transfer.md), [Chen et al. 2026](sources/chen-falcon-h2-fewshot.md), [MONA LISA](sources/mona-lisa.md)). One shared input trunk across modalities has no text evidence. So F3 stays the product goal ("any body signal"), and its modelling claim is this mechanism. FALCON H2 is the few-shot protocol to use ([FALCON](sources/falcon-benchmark.md)).
 
 **Frontier results so far (2026-11-18, write-ups of [P15-12](questions/north-star.md#frontier-result-write-ups-p15-12-2026-11-18)):**
 - [E2 self-teaching (F1)](questions/frontier-e2-self-teaching.md): feedback lowers PER in a T12 replay, and the wrong-commit bound holds through every update. The update gate first failed with partial feedback (P15-03a H2, H3); the default-deny gate fixed it (P15-13, G1-G6 pass). The GPU runs have not run.

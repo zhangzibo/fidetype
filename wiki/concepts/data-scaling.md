@@ -2,8 +2,8 @@
 title: Data scaling in non-invasive decoding
 type: concept
 tags: [scaling, data]
-sources: [brain2qwerty-v1, brain2qwerty-v2, generic-neuromotor-interface]
-updated: 2026-11-22
+sources: [brain2qwerty-v1, brain2qwerty-v2, generic-neuromotor-interface, ndt3, levin-cross-brain-transfer, gaddy-digital-voicing]
+updated: 2026-11-24
 ---
 
 # Data scaling
@@ -26,5 +26,12 @@ Invasive BCIs train on thousands of sentences over 10–40 h ([v2](../sources/br
 > **Our take (2026-11-08):** Our first decoder, trained on about 2.5 h, does not beat a shuffled-MEG control ([decoder M1 results](../questions/decoder-m1-results.md)). This fits the scaling law: at low volume, the async decoder learns only the text prior.
 
 > **Our take (2026-11-22):** wrist sEMG shows the same pattern. The [CTRL-labs generic neuromotor interface paper](../sources/generic-neuromotor-interface.md) fits a power law in participants and parameters for all three tasks (Fig. 2e–g). Its handwriting corpora go from 25 to 6,527 participants (Methods, PDF p. 15).
+
+## Pretraining gains stop where target data is large (intracortical, 2026-11-24)
+- [NDT3](../sources/ndt3.md): tuned NDT3 beats from-scratch models "when task data is under 1.5 hours", and matches them above that (§1, Fig. 1B). About 2,000 h of pretraining data.
+- [Levin et al. 2026](../sources/levin-cross-brain-transfer.md): cross-person transfer helps only with "< 200 sentences" of target data, and only with session-specific input layers.
+- Facial EMG: [Gaddy & Klein 2020](../sources/gaddy-digital-voicing.md) see no plateau beyond 15 h for one speaker.
+
+> **Our take (2026-11-24):** two kinds of scaling must be kept apart. More data **from the target** keeps helping (v2, Gaddy). Pretraining on **other** data helps mostly when target data is small. A transfer test at full target data is expected to give no gain.
 
 Related: [MEG](meg.md) · [Model soup](model-soup.md)

@@ -2,8 +2,8 @@
 title: BrainGate long-term unsupervised recalibration dataset (Wilson et al. 2025, Dryad)
 type: entity
 tags: [dataset, implant, intracortical, utah-array, cursor, closed-loop, human, cc0, licence-clean, p12]
-sources: []
-updated: 2026-11-14
+sources: [wilson-hmm-recalibration]
+updated: 2026-11-24
 ---
 
 # BrainGate long-term unsupervised recalibration dataset
@@ -27,5 +27,7 @@ updated: 2026-11-14
 | Click (intent profile) | ? | Not stated in the abstract; check the README |
 
 > **Our take:** the best licence-clean human cursor set we found. It should repeat the P12-03 MC_RTT tests on human closed-loop data, where the per-tick speed bound may behave differently (see [control events](../concepts/control-events.md)).
+
+Paper summary: [Wilson et al. 2025 (source)](../sources/wilson-hmm-recalibration.md) (ingested 2026-11-24, CC BY 4.0).
 
 Related: [Dryad intracortical datasets](dryad-intracortical-datasets.md) · [NLB MC_RTT](../sources/nlb-mc-rtt.md) · [Intent and control datasets](../questions/intent-datasets-survey.md)

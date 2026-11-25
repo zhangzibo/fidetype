@@ -2,8 +2,8 @@
 title: Adaptive conformal inference (ACI)
 type: concept
 tags: [conformal, online, distribution-shift, drift, guarantee, trust]
-sources: [adaptive-conformal-inference, rolling-risk-control, conformal-pid-control]
-updated: 2026-11-16
+sources: [adaptive-conformal-inference, rolling-risk-control, conformal-pid-control, ocp-corrupted-feedback, decaying-step-ocp]
+updated: 2026-11-24
 ---
 
 # Adaptive conformal inference (ACI)
@@ -45,7 +45,8 @@ The eWPM cost is −0.3 % to −0.6 % ([CRC concept](conformal-risk-control.md#o
 ## Limits
 - The bound is a long-run average. It says nothing about one short window. Windows of 50 trials still reach 0.10–0.12 ([CRC concept](conformal-risk-control.md#online-re-calibration-under-drift)).
 - The slack is small only for long streams ([ACI](../sources/adaptive-conformal-inference.md)).
-- Silent errors (wrong commits that the user does not notice) are invisible to the update. With noticed-only feedback the true rate can exceed α (EMG 0.058–0.064) ([CRC concept](conformal-risk-control.md#online-re-calibration-under-drift)).
+- Silent errors (wrong commits that the user does not notice) are invisible to the update. With noticed-only feedback the true rate can exceed α (EMG 0.058–0.064) ([CRC concept](conformal-risk-control.md#online-re-calibration-under-drift)). Theory: flipped feedback adds a miscoverage term linear in the flip rate that does not shrink with T ([OCP with corrupted feedback](../sources/ocp-corrupted-feedback.md)).
+- A fixed step gives only a long-run average. A decaying step η_t ∝ t^(−1/2−ε) keeps the any-sequence guarantee and gives near-target coverage at each time on stable data ([decaying step sizes](../sources/decaying-step-ocp.md)).
 
 > **Our take:** ACI is the complement of [LTT](learn-then-test.md) and CRC. LTT and CRC give a guarantee at the start of a session from a calibration block. ACI keeps the error rate near α when the session drifts. A live trust layer needs both: an offline start, then an online update. Always report ACI results as "long-run average over T items of this session", with the silent-error rate next to them.
 

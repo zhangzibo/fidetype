@@ -2,8 +2,8 @@
 title: "Frontier write-up E2 (F1): a decoder that learns from feedback behind an update gate"
 type: question
 tags: [frontier, f1, e2, self-improving, update-gate, champion-challenger, online-risk, write-up, negative-result, pre-registration]
-sources: []
-updated: 2026-11-18
+sources: [card-2026-home-use, corp, wilson-hmm-recalibration, roy-input-affine-recalibration, ocp-corrupted-feedback, hou-error-encoding]
+updated: 2026-11-24
 ---
 
 # E2 (F1): can a decoder learn from user feedback while the commit bound stays valid?
@@ -131,6 +131,18 @@ With partial feedback the user now gets 28-29 phase-C commits per run (P15-03a: 
 | - | [P15-03](roadmap-standard.md#p15-03-e2-full-runs-on-t12-and-t15) | full GPU runs on T12 and T15 (day-layer adaptation, all arms, realistic retype rate) |
 | 13 | [P15-18](roadmap-standard.md#p15-18-pilots-store-per-item-null-control-outputs) | pilots store per-item null-control outputs |
 | 14 | [P15-19](roadmap-standard.md#p15-19-show-usefulness-on-stronger-decoders-p5-01-p15-02-p5-02-p15-06) | usefulness on stronger decoders |
+
+## Closest prior work (literature check 2026-11-24)
+| work | what it does | difference to E2 |
+|---|---|---|
+| [Card et al. 2026](../sources/card-2026-home-use.md) | real T15 home use: continuous fine-tuning, random 1/3 hold-out, checkpoint kept "only if validation performance improved", per-sentence 4-level ratings | point-estimate gate; no test, no stated bound, no null controls. A **Card-rule arm** is the baseline that shows what our statistical gate adds |
+| [CORP](../sources/corp.md) | LM-corrected pseudo-labels, update after every sentence, 403 days (T5) | our ST arm (own top-1, no LM correction) is weaker: call it "naive self-training", not CORP |
+| [Wilson et al. 2025](../sources/wilson-hmm-recalibration.md) | HMM-inferred cursor targets as labels; distribution matching drifts | supports FB / OR labels over ST |
+| [Roy et al. 2026](../sources/roy-input-affine-recalibration.md) | input affine only (65,792 parameters) from 40 / 80 labelled trials, T12 and T15 | same family as our update 1 (day layer) |
+| [OCP with corrupted feedback](../sources/ocp-corrupted-feedback.md) | theory: flipped feedback adds a term linear in the flip rate | our silent errors are one-sided flips: when ACI binds, the true rate tends to α / p_notice |
+| [Hou et al. 2025](../sources/hou-error-encoding.md) | neural error signals detect BCI errors (up to 86 %) | a later, implicit feedback source |
+
+Novelty wording: never "first gated decoder update" or "first BCI that learns from use". Use "a statistically tested update gate plus a stated long-run wrong-commit bound with null controls" ([novelty check](novelty-check-2026-11.md#update-2026-11-24-literature-check)). The T15 run records its pre-run response to this check in [amendment 2](../../experiments/2026-11-23-e2-self-teaching-t15/amendment-2.md).
 
 ## Rerun
 Each experiment folder has its script (`replay.py`, `replay_gated.py`, `run.py`) and its plan lists the inputs. Run them through the isolation wrapper, for example `.venv\Scripts\python.exe -m fidetype.utils.isolation run --class background --threads 4 -- .venv\Scripts\python.exe -I experiments/2026-11-18-p15-13-gate-fix/run.py`. They need the T12 / T15 data (CC0) and the decoder outputs on the local disk. Per-trial outputs stay outside the repo.

@@ -2,7 +2,7 @@
 title: North star — a BCI that teaches itself and never puts words in your mouth
 type: question
 tags: [planning, north-star, frontier, self-improving, online-learning, conformal, risk-control, hallucination, llm, cross-modality, emg, implant, roadmap]
-sources: [adaptive-conformal-inference, conformal-risk-control, brain-to-text-25-copytask, brain2qwerty-v2, continual-calibration, conformal-gating-mi-bci, corteg-eeg-to-ecog]
+sources: [adaptive-conformal-inference, conformal-risk-control, brain-to-text-25-copytask, brain2qwerty-v2, continual-calibration, conformal-gating-mi-bci, corteg-eeg-to-ecog, card-2026-home-use, corp, levin-cross-brain-transfer, falcon-benchmark, chen-falcon-h2-fewshot, possm, ndt3, mona-lisa, gaddy-digital-voicing, probabilistic-co-control, ocp-corrupted-feedback]
 updated: 2026-11-24
 ---
 
@@ -33,7 +33,7 @@ Two studies on 2026-11-15 (local scratch notes, not committed) checked the prior
 
 ### What the sources say (abstract level)
 **F1, learning from feedback with a guarantee:**
-- [CORP](https://arxiv.org/abs/2311.03611) (NeurIPS 2023) uses language-model-corrected outputs as pseudo-labels to update an intracortical handwriting decoder for 403 days (one participant). It states no error bound.
+- [CORP](../sources/corp.md) (NeurIPS 2023) uses language-model-corrected outputs as pseudo-labels to update an intracortical handwriting decoder for 403 days (one participant). It states no error bound.
 - [DietCORP](https://arxiv.org/abs/2507.02800) (NeurIPS 2025) does the same for speech and updates only one layer. It states no error bound.
 - [ALIGN](https://arxiv.org/abs/2603.18299) (2026) warns that pseudo-label adaptation can compound its own errors when the first error rate is high.
 - Online conformal methods ([adaptive conformal inference](../sources/adaptive-conformal-inference.md), rolling risk control, [conformal risk control](../concepts/conformal-risk-control.md)) keep a long-run bound for any sequence. They treat the model as given. Newer work gives coverage with bandit (shown-only) feedback, for example [OCP-Unlock+](https://arxiv.org/abs/2604.17984) (ICLR 2026). It is not applied to BCI.
@@ -48,7 +48,7 @@ Two studies on 2026-11-15 (local scratch notes, not committed) checked the prior
 - Conformal factuality and abstention exist for text LLMs, for example [conformal abstention](https://arxiv.org/abs/2405.01563). None was found for brain-decoded text.
 
 **F3, one language model across body signals:**
-- [NDT3](https://www.biorxiv.org/content/10.1101/2025.02.02.634313) (NeurIPS 2025): intracortical motor, many subjects. Its authors doubt that scale alone fixes sensor variability.
+- [NDT3](../sources/ndt3.md) (NeurIPS 2025): intracortical motor, many subjects. Its authors doubt that scale alone fixes sensor variability.
 - [BIT](https://arxiv.org/abs/2511.21740) (2025–2026): cross-species intracortical speech with an audio LLM. Implant only.
 - [BrainOmni](https://arxiv.org/abs/2505.18185) (NeurIPS 2025): EEG + MEG. [iBrain](https://arxiv.org/abs/2609.06960) (2026): iEEG + spikes. [NeuGPT](https://arxiv.org/abs/2410.20916) (2024): framed as six brain modalities to text, low quality, no cross-modality transfer result.
   > **Contradiction:** the NeuGPT full text uses only MEG (MEG-MASC) for brain-to-text ([novelty check](novelty-check-2026-11.md#c3-f3-cross-body-model)). The abstract-level line above is kept for the record.
@@ -70,9 +70,18 @@ The focused check is in [novelty check 2026-11](novelty-check-2026-11.md). It re
 | **F2** | Holds with narrower wording | BIT-LLM, SemKey (offline faithfulness tests); Probabilistic Co-Control 2026 (calibration, no bound); [conformal gating](../sources/conformal-gating-mi-bci.md) (run-time conformal abstention for closed-set EEG commands) | "To our knowledge (literature check of 2026-11-15), no published brain-to-text system checks language-model output against the neural evidence at run time with a stated, distribution-free bound on the rate of unsupported (hallucinated) words that it commits. Earlier work tests faithfulness offline (noise or shuffled inputs) or bounds errors for closed-set BCI commands." |
 | **F3** | Part 1 holds; part 2 ("transfer to a new modality") **false as written** | [CORTEG](../sources/corteg-eeg-to-ecog.md) (EEG → ECoG / sEEG transfer, no text); NOBEL, BrainOmni (non-invasive unions, no held-out modality) | "To our knowledge (literature check of 2026-11-15), no published model is trained jointly on implanted, EMG and MEG/EEG recordings for text output, and no published study reports text decoding from a recording modality that the model did not see in training. Cross-modality transfer exists for other tasks (for example scalp EEG to ECoG, CORTEG 2026)." |
 
-Never say in public: "first conformal BCI", "first guarantee for an adaptive model", "first hallucination control for BCIs", "first cross-modality transfer".
+Never say in public: "first conformal BCI", "first guarantee for an adaptive model", "first hallucination control for BCIs", "first cross-modality transfer". Since 2026-11-24 also never say: "first cross-person transfer" ([Levin et al. 2026](../sources/levin-cross-brain-transfer.md)), "first conformal / ACI in speech BCI" (chen d. 2026), "first gated decoder update" ([Card et al. 2026](../sources/card-2026-home-use.md)).
 
-> **Our take:** F1 is the strongest lead. It is new as a composition, it needs no new hardware, it fits our CC0 data, and it builds directly on code that we already have (online re-calibration in [M2-16](m2-16-online-recal-result.md), [per-session risk control](per-session-risk-control.md), the [provenance ledger](../concepts/provenance-ledger.md)). The claim must be "first BCI application with a decoder-update gate", not "a new conformal theorem", unless we prove one. F2 extends the same guarantee engine to LLM output. F3 is the largest idea and the riskiest. We start it small, on one GPU, with strong controls.
+### Update of the verdicts (2026-11-24)
+A second literature check narrowed F1 again and changed the F3 mechanism ([novelty check update](novelty-check-2026-11.md#update-2026-11-24-literature-check)). The F1 safe wording in the table above is **replaced** by the 2026-11-24 line on that page.
+
+| Pillar | What changed | Effect |
+|---|---|---|
+| **F1** | The real T15 home system ([Card et al. 2026](../sources/card-2026-home-use.md)) fine-tunes continuously and keeps a checkpoint only if validation improves; T15 rates every sentence | F1 novelty = **a statistically tested update gate plus a stated long-run wrong-commit bound with null controls**. A Card-rule arm is the baseline. Explicit ratings are the first answer to silent errors ([OCP with corrupted feedback](../sources/ocp-corrupted-feedback.md)) |
+| **F2** | Co-Control full text read; confidence-ordering reversal (MEG) | C2 holds. The window is short |
+| **F3** | Cross-person transfer exists ([Levin et al. 2026](../sources/levin-cross-brain-transfer.md)); gains appear only with little target data (Levin: < 200 sentences; [NDT3](../sources/ndt3.md): < 1.5 h); per-session input layers are needed; [FALCON H2](../sources/falcon-benchmark.md) is the community few-shot protocol ([Chen et al. 2026](../sources/chen-falcon-h2-fewshot.md): 7.41 % WER with LM from 3 sentences); the best cross-modal text result uses a shared output space ([MONA LISA](../sources/mona-lisa.md)) | Transfer is a **low-data effect**. Mechanism = **per-signal encoders + per-session input layers + a shared output space**. A full-data null in P15-50 is the expected result and does not falsify F3. Next F3 test: the [small-data FALCON pre-registration](../../experiments/2026-11-25-f3-small-data-falcon/plan.md) |
+
+> **Our take:** F1 is the strongest lead. It is new as a composition, it needs no new hardware, it fits our CC0 data, and it builds directly on code that we already have (online re-calibration in [M2-16](m2-16-online-recal-result.md), [per-session risk control](per-session-risk-control.md), the [provenance ledger](../concepts/provenance-ledger.md)). The claim must not be "a new conformal theorem", unless we prove one. (2026-11-24: it also must not be "first BCI application with a decoder-update gate", because [Card et al. 2026](../sources/card-2026-home-use.md) has one; the claim is a statistically tested update gate plus a stated long-run wrong-commit bound with null controls.) F2 extends the same guarantee engine to LLM output. F3 is the largest idea and the riskiest. We start it small, on one GPU, with strong controls.
 
 ## Frontier result write-ups (P15-12, 2026-11-18)
 One write-up per experiment line. Each page gives the question, the pre-registration and its commit, the design, every pre-registered verdict with numbers, the negative results, the library changes, the limits and the open gaps.
@@ -178,6 +187,8 @@ The success criteria below are **proposed**. Each experiment freezes them in its
 **Blockers:** the GPU queue; the emg2qwerty arm needs the P11-01 weights; three implant datasets are three different people with three tasks.
 
 **Licence tracks:** a **clean track** (CC0 + CC BY: T15, T12, Willett, KT-sEMG, Toronto, about 98 h) and a **research-only track** (adds emg2qwerty, CC BY-NC-SA, and SpanishBCBL, CC BY-NC). Each checkpoint carries its data licences. Clean-track weights can ship; research-track weights never ship.
+
+**Update 2026-11-24:** the literature now favours modality-specific encoders with small per-session input layers on a shared trunk, and a shared output space across modalities, over one shared input trunk ([verdict update](#update-of-the-verdicts-2026-11-24)). Licence-clean candidate sources: monkey motor cortex for T5 ([POSSM](../sources/possm.md)) and facial EMG silent speech ([Gaddy & Klein 2020](../sources/gaddy-digital-voicing.md), CC BY 4.0).
 
 **Follow-ups:** the reverse direction (implant → EMG, E1b); a public **"new modality / new user with minutes of data"** benchmark; a joint model on one GPU before any larger scale; MEG only later (Spanish, low sentence diversity, weak decoder, NC).
 

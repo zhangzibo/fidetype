@@ -3,7 +3,7 @@ title: Public datasets for Fidetype (survey 2026-11-10)
 type: question
 tags: [dataset, licence, emg, eeg, meg, implant, ecog, survey]
 sources: [neural-input-landscape-2026, brain2qwerty-v1, brain2qwerty-code, emg2qwerty, generic-neuromotor-interface]
-updated: 2026-11-22
+updated: 2026-11-24
 ---
 
 # Public datasets for Fidetype
@@ -33,7 +33,9 @@ Fit columns: **(a)** decoder training, **(b)** trust-layer / eWPM evaluation (ne
 | generic-neuromotor-interface (Meta; [paper](../sources/generic-neuromotor-interface.md)) | wrist sEMG | handwriting, gestures, wrist | 100 per task | handwriting 98.8 / 31.5 / 10.4 h (train/val/test) | 2 kHz | prompt start/end times; text labels unclear | open (script) | CC BY-NC 4.0 per repo; paper says BY-NC-SA 4.0 (no) | ✔ | ~ | ✔ | ✔ |
 | emg2pose (Meta) | wrist sEMG | hand pose | 193 | 462.8 GB tar (HTTP header); 370 h | 2 kHz | joint angles | open (S3) | CC BY-NC-SA 4.0 (no) | ✘ | ✘ | ✔ | ✔ |
 | [Willett 2021 handwriting](../entities/willett-handwriting-2021.md) | intracortical (2 × 96 Utah) | attempted handwriting | 1 (T5) | 1.41 GB; 10.7 h, 1,000 sentences, 43,501 characters | binned spikes | sentences, characters, real-time outputs | open (Dryad) | CC0 (yes) | ✔ | ✔ | ✔ | ~ |
-| FALCON H2 | intracortical | handwriting (benchmark copy) | — | 1.22 GB (DANDI 000950) | binned | characters | open (DANDI) | CC BY 4.0 (yes) | ✔ | ~ | ✔ | ✘ |
+| [FALCON H2](../sources/falcon-benchmark.md) | intracortical | handwriting (new T5 sessions 2022-2023, few-shot benchmark; test labels private) | — | 1.22 GB (DANDI 000950) | binned | characters | open (DANDI) | CC BY 4.0 (yes) | ✔ | ~ | ✔ | ✘ |
+
+Added 2026-11-24: [Gaddy silent-speech facial EMG](../entities/gaddy-silent-speech-dataset.md) (Zenodo 4064409, CC BY 4.0, one speaker, 8 ch at 1000 Hz, 18.6 h, open vocabulary). It is the licence-clean non-invasive EMG speech set.
 
 ### Speech (attempted, perceived, imagined) and reading
 | Dataset | Modality | Task | Participants | Size / hours | Rate, channels | Labels | Access | Licence (Comm.) | a | b | c | d |

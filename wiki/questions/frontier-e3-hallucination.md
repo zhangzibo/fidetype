@@ -2,8 +2,8 @@
 title: "Frontier write-up E3 (F2): LLM decoding with a grounding check, a hallucination bound and a benchmark"
 type: question
 tags: [frontier, f2, e3, llm, hallucination, grounding, ltt, benchmark, write-up, negative-result, pre-registration]
-sources: []
-updated: 2026-11-20
+sources: [probabilistic-co-control, confidence-ordering-reversal, conformal-alignment, damri-risk-controlled-asr, mona-lisa]
+updated: 2026-11-24
 ---
 
 # E3 (F2): can an LLM improve decoded text without putting words in the user's mouth?
@@ -113,6 +113,17 @@ P15-22 entries ([results](../../experiments/2026-11-19-p15-22-llm-learned/result
 | 93 | [P15-26](roadmap-standard.md#p15-26-t12-replication-of-llm-rescoring--learned-commit-confidence) | T12 replication of P15-22 (LLM + learned score) |
 | 62 | [P14-24](roadmap-standard.md#p14-24-f2-and-m4-13-trust-rerun-rows-with-word-decoder-edit-penalty-8) | F2 rows with word-decoder edit penalty 8 |
 | 74 | [P5-26](roadmap-standard.md#p5-26-learned-commit-score-with-the-precision-and-hallucination-bounds) | learned commit score with the hallucination bound |
+
+## Closest prior work (literature check 2026-11-24)
+| work | relation to E3 |
+|---|---|
+| [Probabilistic Co-Control](../sources/probabilistic-co-control.md) | CTC brain-to-text decoders are over-confident; CE / fusion gives better probabilities. Calibration only, no bound. Most likely competitor |
+| [Confidence-ordering reversal](../sources/confidence-ordering-reversal.md) | after LM fusion, residual errors can look more confident than repairs (MEG retrieval). Supports separate acoustic and LM features in `commit_score.py`; a reversal diagnostic is not yet run |
+| [Conformal Alignment](../sources/conformal-alignment.md) | FDR control on selected LLM outputs; a baseline for our precision bound |
+| [Damri & Laufer-Goldshtein 2026](../sources/damri-risk-controlled-asr.md) | LTT around LLM correction of ASR n-best (not neural, no commit / abstain) |
+| [MONA LISA](../sources/mona-lisa.md) | LLM rewrite of EMG / implant decodes, WER only, no evidence check |
+
+Tracks still missing in the benchmark (our suggestion): truncated signal, time-reversed signal, graded noise mix, and near-miss swaps (1-2 word edits).
 
 ## Rerun
 Scripts: `experiments/2026-11-16-f2-e3-llm-grounding/run.py`, `experiments/2026-11-16-p15-06-halluc-bound/` (see its plan), `experiments/2026-11-17-f2-m4-13/run.py`, `experiments/2026-11-16-p15-07-halluc-bench/run.py`, `experiments/2026-11-17-p15-15-halluc-0.2/rescore.py` and `add_m4_13.py`. The benchmark re-score runs in CI: `python -m fidetype.benchmark.hallucination rescore`. The LLM runs need the Qwen2.5-1.5B GGUF file and about 3 GB RAM.

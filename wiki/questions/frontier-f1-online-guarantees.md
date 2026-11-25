@@ -2,8 +2,8 @@
 title: "Frontier write-up F1: online risk control with shown-only (bandit) feedback"
 type: question
 tags: [frontier, f1, online-risk, bandit-feedback, aci, ipw, audit, review, write-up, pre-registration]
-sources: [adaptive-conformal-inference]
-updated: 2026-11-18
+sources: [adaptive-conformal-inference, ocp-corrupted-feedback, decaying-step-ocp]
+updated: 2026-11-24
 ---
 
 # F1: does the wrong-commit bound hold when the user gives feedback only on what was shown?
@@ -74,6 +74,8 @@ A real user labels only what the system showed (a commit or an offer). The truth
 - Usefulness on stronger decoders: gap 14, [P15-19](roadmap-standard.md#p15-19-show-usefulness-on-stronger-decoders-p5-01-p15-02-p5-02-p15-06).
 - Online re-calibration for a learned commit score: gap 73, [P5-25](roadmap-standard.md#p5-25-online-re-calibration-for-a-guard-with-a-learned-commit-score).
 - An outside human review of G3 would be a separate, externally blocked step (open-gaps note on gap 6).
+
+Related theory found 2026-11-24: [OCP with corrupted feedback](../sources/ocp-corrupted-feedback.md) (silent errors as flipped feedback) and [decaying step sizes](../sources/decaying-step-ocp.md) (per-time coverage on stable data; a candidate descriptive controller for a CPU replay).
 
 ## Rerun
 `.venv\Scripts\python.exe -m fidetype.utils.isolation run --class background --threads 4 -- .venv\Scripts\python.exe -I experiments/2026-11-16-p15-04-bandit/replay.py` (needs the local P5-02 per-item files). P5-11: `experiments/2026-11-16-p5-11-online-replay/replay.py`.
