@@ -62,7 +62,9 @@ import fidetype.trust as ft  # noqa: E402
 from fidetype.adapters import b2t25 as B  # noqa: E402
 from fidetype.decoders.lookahead_gru import LookaheadGRUConfig, build_torch_model  # noqa: E402
 from fidetype.trust.adaptive import FeedbackUser, GuardedUpdateLoop  # noqa: E402
+from fidetype.trust.bandit_risk import ipw_slack  # noqa: E402  (the G3 audit bound, reused by the exposure test)
 from fidetype.trust.dropin import TrustGuard  # noqa: E402
+from fidetype.trust.online_risk import OnlineCommitRiskControl  # noqa: E402
 from fidetype.trust.provenance import ProvenanceLedger, verify  # noqa: E402
 from fidetype.trust.update_hooks import TrustGuardUpdater  # noqa: E402
 from fidetype.utils.binomial import clopper_pearson  # noqa: E402
@@ -75,7 +77,10 @@ PAUSED, WAITING = 3, 4
 LICENCE = {"data": ["T15 B2T'25 copy-task neural data (Card et al. 2024, Dryad doi:10.5061/dryad.dncjsxm85), CC0-1.0",
                     "CMUdict lexicon (BSD-2-Clause)", "Tatoeba-derived word / char LMs (CC BY 2.0 FR, attribution)"],
            "research_only": False, "copy_to_rented_machine": "allowed (plan.md)"}
-ARM_LABELS = {"F": None, "FB": "feedback", "OR": "oracle", "ST": "self", "SH": "shuffled"}
+# The five plan arms, then the two secondary arms of amendment 2 (appended, so the plan arms keep their seed index).
+# Arm CR trains on every labelled new item, as FB (amendment 2, correction 1: Card et al. 2026 fine-tuning text).
+ARM_LABELS = {"F": None, "FB": "feedback", "OR": "oracle", "ST": "self", "SH": "shuffled", "CR": "feedback",
+              "FBX": "feedback"}
 USER_ID = {"U1": 1, "U2": 2}
 
 
@@ -477,8 +482,11 @@ def label_set(arm: str, recs: list[dict], cmu: dict, rng: np.random.Generator | 
         ph = r["truth_ph"] if ARM_LABELS[arm] == "oracle" else phoneme_label(t, cmu)
         if ph is None:
             continue
-        rows.append({"id": r["id"], "si": r["si"], "part": r["part"], "i": r["i"], "n_bins": r["n_bins"], "ph": ph,
-                     "correct": bool(norm(t) == r["truth"])})
+        row = {"id": r["id"], "si": r["si"], "part": r["part"], "i": r["i"], "n_bins": r["n_bins"], "ph": ph,
+               "correct": bool(norm(t) == r["truth"])}
+        if "holdout" in r:  # arm CR: the item went to the held-out validation buffer
+            row["holdout"] = bool(r["holdout"])
+        rows.append(row)
     if ARM_LABELS[arm] == "shuffled" and len(rows) > 1:
         perm = rng.permutation(len(rows))
         rows = [{**rows[k], "ph": rows[int(perm[k])]["ph"], "correct": bool(int(perm[k]) == k and rows[k]["correct"])}
@@ -493,6 +501,125 @@ def shuffle_pool(pool: list[dict], rng: np.random.Generator) -> list[dict]:
     perm = rng.permutation(len(pool))
     rows = [{**pool[k], "ph": pool[int(perm[k])]["ph"], "correct": False} for k in range(len(pool))]
     return [r for r in rows if ctc_ok(r["n_bins"], len(r["ph"]))]
+
+
+# --- amendment 2: secondary controller, exposure test, Card rule, check-block report ---------------------------------
+
+
+def make_shadow(cfg: dict, lam_init, q_lower: float) -> OnlineCommitRiskControl:
+    """Amendment 2, item 1: the noticing-adjusted ACI controller (target alpha * q_lower). It sees the same phase-C
+    items, the same session threshold and gate as the live loop, and the observed loss of its own commits. It never
+    changes a live decision (a shadow on the same decoder versions)."""
+    L = cfg["loop"]
+    if not 0.0 < q_lower <= 1.0:
+        raise ValueError("q_lower must be in (0, 1]")
+    return OnlineCommitRiskControl(alpha=float(L["alpha"]) * float(q_lower), method="aci", eta=float(L["eta"]),
+                                   lam_init=lam_init, score_max=1.0)
+
+
+def ipw_challenger_test(items: list[dict], pi: float, level: float = 0.05, margin: float = 0.1,
+                        margin_abs: float = 0.1) -> dict:
+    """Amendment 2, item 2: the champion / challenger test under randomised exposure (design-based, IPW).
+
+    ``items``: one dict per check item with ``shown`` ("ch" or "cp": whose offer the user saw; chosen by a coin with
+    P(ch) = ``pi``, drawn before the feedback), ``ch`` / ``cp`` (top-1 texts), ``truth`` (the text the system knows,
+    or None). Only observed data are used. Per item, W = 1[challenger wrong, champion right] and B = 1[challenger
+    right, champion wrong] (top-1 right / wrong; no CER tie-break). With ``p_sloppy`` 0 a right shown top-1 is
+    always accepted, so W is observed on every champion-shown item and B on every challenger-shown item. Horvitz-
+    Thompson sums: W_hat = sum_cp W / (1 - pi), B_hat = sum_ch B / pi. The bounds are the G3 audit bound
+    (``bandit_risk.ipw_slack``: Bennett + Ville) with one test each, at level / 2 (Bonferroni, as the plan test):
+
+    - absolute branch: pass if W_hat + slack(n_diff pi / (1 - pi)) < margin_abs * N (H0: worse share >= margin_abs);
+    - non-inferiority branch: pass if (0.5 + m) B_hat - (0.5 - m) W_hat - slack(n_diff v) > 0
+      (H0: W / (W + B) >= 0.5 + m), v = max((0.5 + m)^2 (1 - pi) / pi, (0.5 - m)^2 pi / (1 - pi)).
+
+    n_diff = items whose two top-1 texts differ (identical texts give W = B = 0, known). All identical: pass."""
+    if not 0.0 < pi < 1.0:
+        raise ValueError("pi must be in (0, 1)")
+    m = float(margin)
+    if max((0.5 + m) * (1.0 / pi - 1.0), 0.5 - m) > 1.0:
+        raise ValueError("pi too far from 0.5 for this margin: the Bennett bound needs increments <= 1")
+    n_items = len(items)
+    n_diff = w_obs = b_obs = n_ch = 0
+    for it in items:
+        if it["shown"] not in ("ch", "cp"):
+            raise ValueError("shown must be 'ch' or 'cp'")
+        n_ch += it["shown"] == "ch"
+        ch, cp = norm(it.get("ch") or ""), norm(it.get("cp") or "")
+        t = None if it.get("truth") is None else norm(it["truth"])
+        if ch == cp:
+            continue
+        n_diff += 1
+        if it["shown"] == "cp":
+            w_obs += int(t is not None and cp == t and ch != t)
+        else:
+            b_obs += int(t is not None and ch == t and cp != t)
+    W_hat, B_hat = w_obs / (1.0 - pi), b_obs / pi
+    slack_abs = float(ipw_slack(n_diff * pi / (1.0 - pi), 1, level / 2.0)[0])
+    v = max((0.5 + m) ** 2 * (1.0 - pi) / pi, (0.5 - m) ** 2 * pi / (1.0 - pi))
+    slack_ni = float(ipw_slack(n_diff * v, 1, level / 2.0)[0])
+    upper_w = W_hat + slack_abs
+    lower_s = (0.5 + m) * B_hat - (0.5 - m) * W_hat - slack_ni
+    pass_abs, pass_ni = bool(upper_w < margin_abs * n_items), bool(lower_s > 0.0)
+    passed_by = ("identical top-1" if n_diff == 0 else "noninferior" if pass_ni else "few worse items" if pass_abs
+                 else None)
+    return {"test": "ipw", "pi": pi, "level": level, "margin": m, "margin_abs": margin_abs, "n_items": n_items,
+            "n_challenger_shown": n_ch, "n_diff": n_diff, "worse_seen": w_obs, "better_seen": b_obs,
+            "W_hat": W_hat, "B_hat": B_hat, "upper_worse": upper_w, "abs_limit": margin_abs * n_items,
+            "lower_S": lower_s, "pass_abs": pass_abs, "pass_ni": pass_ni, "passed": passed_by is not None,
+            "passed_by": passed_by}
+
+
+def card_rule(ch_ed: int, ch_n: int, cp_ed: int, cp_n: int) -> dict:
+    """Amendment 2, item 3 (Card et al. 2026): accept the challenger iff its error rate on the held-out validation
+    buffer is strictly lower than the champion's. An empty buffer gives no evidence: refuse."""
+    if ch_n <= 0 or cp_n <= 0:
+        return {"test": "card", "passed": False, "why": "empty validation buffer", "n_ph": int(ch_n)}
+    a, b = ch_ed / ch_n, cp_ed / cp_n
+    return {"test": "card", "passed": bool(a < b), "challenger_per": a, "champion_per": b, "n_ph": int(ch_n),
+            "why": "held-out PER improves" if a < b else "held-out PER does not improve"}
+
+
+def unknown_split(rows: list[dict]) -> dict:
+    """Amendment 2, item 2 (report only): check items whose truth stays unknown to the system, split by the true
+    status of the champion and of the challenger (the simulator knows the truth). ``rows``: {known, cp_right,
+    ch_right (None without a challenger), shown}. 'lost_better' = champion wrong, challenger right, unknown: the
+    plan test scores such a pair as a tie, so the challenger cannot win it. 'hidden_worse' = champion right,
+    challenger wrong, unknown (possible only when the challenger's offer was shown)."""
+    out = {"n_items": len(rows), "n_unknown": 0, "champion_right": 0, "champion_wrong": 0, "lost_better": 0,
+           "hidden_worse": 0, "unknown_challenger_shown": 0}
+    for r in rows:
+        if r["known"]:
+            continue
+        out["n_unknown"] += 1
+        out["champion_right" if r["cp_right"] else "champion_wrong"] += 1
+        if r.get("ch_right") is not None:
+            out["lost_better"] += int(r["ch_right"] and not r["cp_right"])
+            out["hidden_worse"] += int(r["cp_right"] and not r["ch_right"])
+        out["unknown_challenger_shown"] += int(r.get("shown") == "ch")
+    return out
+
+
+def add_counts(a: dict, b: dict) -> dict:
+    return {k: a.get(k, 0) + b.get(k, 0) for k in sorted(set(a) | set(b))}
+
+
+def plan_test_shadow(cfg: dict, ch_out: list[dict], cp_out: list[dict], truths: list, rejected: list) -> dict:
+    """The plan's paired champion / challenger test (non-inferiority, unchanged library code) on one check block, in
+    a throw-away loop: report only (arms CR and FBX, where another rule decides). No LTT and no null controls."""
+    loop = make_loop(cfg, None, "shadow", None)
+    loop.set_champion("champion")
+    loop.start_session("shadow")
+    loop.new_version("challenger")
+    for j, (a, c, t, rej) in enumerate(zip(ch_out, cp_out, truths, rejected)):
+        tt = None if t is None else norm(t)
+        loop.add_check_item(j, a["score"], None if tt is None else float(a["top1"] != tt), text=a["top1"] or None,
+                            text_ok=bool(a["top1"]), guard_risk=a["risk"],
+                            champion=(c["score"], None if tt is None else float(c["top1"] != tt), c["risk"],
+                                      c["top1"]), truth=tt, not_truth=[norm(x) for x in (rej or [])])
+    t = loop._challenger_test()
+    return {"refused": bool(t.refused), "p_value": float(t.p_value), "worse": int(t.worse_only),
+            "better": int(t.better_only), "n_unknown": int(t.n_unknown), "passed_by": t.passed_by}
 
 
 # --- one run ---------------------------------------------------------------------------------------------------------
@@ -520,6 +647,12 @@ class Run:
         self.settings, self.sessions, self.out, self.do_nightly = settings, sessions, out, nightly
         self.ledger_path = out / "ledger.jsonl"
         self.chain = f"p15-49-{name}"
+        # amendment 2: per-arm options (plan arms: exposure 0, the plan gate) and the secondary controller
+        acfg, a2 = ctx.cfg["arms"][arm], ctx.cfg["amendment_2"]
+        self.exposure_p = float(acfg.get("exposure_p", 0.0))
+        self.gate = acfg.get("gate", "plan")
+        self.holdout_share = float(acfg.get("holdout_share", 0.0))
+        self.q_lower = float(a2["secondary_aci"]["q_lower"][user])
 
     # state -------------------------------------------------------------------
     def fresh(self) -> None:
@@ -538,6 +671,9 @@ class Run:
         self.pool: list[dict] = []
         self.rows: list[dict] = []
         self.done: list[str] = []
+        self.shadow = make_shadow(c.cfg, lam_init_of(self.start_guard), self.q_lower)
+        self.val_buf: list[dict] = []  # arm CR: the held-out validation buffer (label rows)
+        self.per_cache: dict = {}  # arm CR: (version name, item id) -> greedy phoneme edits of the champion
 
     def checkpoint(self) -> None:
         n = len(self.done)
@@ -554,6 +690,7 @@ class Run:
         try:
             torch.save({"loop": loop, "rng": self.up.rng, "outcomes": self.up.outcomes, "live": self.live,
                         "nightly": self.nightly, "pool": self.pool, "rows": self.rows, "done": self.done,
+                        "shadow": self.shadow, "val_buf": self.val_buf, "per_cache": self.per_cache,
                         "anchor": led.anchor()}, d / "state.pt")
         finally:
             loop.listeners, loop.ledger = lis, led
@@ -583,17 +720,23 @@ class Run:
         self.up.rng, self.up.outcomes = st["rng"], st["outcomes"]
         self.live, self.nightly, self.pool = st["live"], st["nightly"], st["pool"]
         self.rows, self.done = st["rows"], st["done"]
+        self.shadow, self.val_buf, self.per_cache = st["shadow"], st["val_buf"], st["per_cache"]
         return True
 
     # one session ---------------------------------------------------------------
-    def propose(self, version: Version, lp_check, lp_champ, truths, rejected, check_ids, sess: str):
+    def propose(self, version: Version, lp_check, lp_champ, truths, rejected, check_ids, sess: str,
+                kind: str | None = None):
         """One proposal through TrustGuardUpdater (unchanged): a decoder change if ``lp_champ`` is given, else the
-        same-decoder re-calibration (kind 'recalibration')."""
+        same-decoder re-calibration (kind 'recalibration'). Amendment 2: ``kind="decoder"`` without ``lp_champ`` is
+        a decoder change that another rule (Card rule, IPW test) has already accepted; the paired test then compares
+        the version with itself, and the loop still runs the block LTT, the null controls and the ledger."""
+        decoder = lp_champ is not None or kind == "decoder"
         out = self.up.propose(copy_guard(self.start_guard), lp_check, truths, champion_inputs=lp_champ,
-                              check_ids=check_ids, trained_on=version.trained_on, version=version.name if lp_champ
-                              is not None else f"{self.name}-{sess}-r", session=sess, check_rejected=rejected)
+                              check_ids=check_ids, trained_on=version.trained_on,
+                              version=version.name if decoder else f"{self.name}-{sess}-r", session=sess,
+                              check_rejected=rejected, kind=kind)
         rec = out.record
-        row = {"kind": "decoder" if lp_champ is not None else "recalibration", "version": rec.version if rec else None,
+        row = {"kind": "decoder" if decoder else "recalibration", "version": rec.version if rec else None,
                "accepted": bool(out.accepted), "reasons": list(out.reasons), "outcome": out.to_dict(),
                "loop_config_before": rec.parent_config_id if rec else None,
                "loop_config_after": rec.config_id if rec else None,
@@ -606,6 +749,36 @@ class Run:
                          f"{row['loop_config_after']}, lambda {row['lambda_session']}, aci bound: observed "
                          f"{b['observed_rate']} <= {b['certificate']} (T {b['n_observed']}) holds {b['holds']}")
         return out, row
+
+    def refuse(self, version: Version, reason: str, sess: str, **extra) -> dict:
+        """Record a refused decoder proposal without the loop checks (broken fit, or the amendment-2 rule)."""
+        if self.loop.session != sess:
+            self.loop.start_session(sess)
+        self.loop.new_version(version.name, version.trained_on)
+        r0 = self.loop.reject_proposal(reason)
+        return {"kind": "decoder", "version": version.name, "accepted": False, "reasons": list(r0.reasons),
+                "loop_config_before": r0.parent_config_id, "loop_config_after": r0.config_id,
+                "controls_passed": False, "lambda_session": None, **extra}
+
+    def add_val(self, rows: list[dict]) -> None:
+        """Arm CR: add held-out label rows to the validation buffer (each item once)."""
+        have = {r["id"] for r in self.val_buf}
+        self.val_buf.extend(dict(r) for r in rows if r["id"] not in have)
+
+    def val_edits(self, v: Version, cache: bool) -> tuple[int, int]:
+        """Arm CR: greedy phoneme edits and length of version ``v`` on the validation buffer (champion cached)."""
+        c = self.ctx
+        buf = self.val_buf
+        todo = [r for r in buf if not cache or (v.name, r["id"]) not in self.per_cache]
+        got = {}
+        if todo:
+            load_version(c.model, v)
+            for r, lp in zip(todo, log_probs(c.model, todo, c.store.X, c.dev)):
+                got[r["id"]] = int(M.edit(list(r["ph"]), M.greedy(lp)))
+            if cache:
+                self.per_cache.update({(v.name, k): e for k, e in got.items()})
+        ed = sum(self.per_cache[(v.name, r["id"])] if cache else got[r["id"]] for r in buf)
+        return int(ed), int(sum(len(r["ph"]) for r in buf))
 
     def session(self, spec: SessionSpec) -> dict:
         c, cfg = self.ctx, self.ctx.cfg
@@ -621,7 +794,7 @@ class Run:
         rng_user = lambda j: np.random.default_rng([self.seed, USER_ID[self.user_name], d, spec.lo + j])  # noqa: E731
         recs: list[dict] = []
 
-        def rec(it, phase, j, o, fb, shown, action, dec=None, lp=None):
+        def rec(it, phase, j, o, fb, shown, action, dec=None, lp=None, thr=None):
             we, wn = word_errors(o["top1"], it["text"])
             r = {"id": it["id"], "si": it["si"], "part": it["part"], "i": it["i"], "n_bins": it["n_bins"],
                  "phase": phase, "idx": j, "shown": shown, "action": action, "top1": o["top1"], "offered": o["offered"],
@@ -633,6 +806,11 @@ class Run:
                 r["ph_ed"], r["ph_n"] = M.edit(list(it["ph"]), M.greedy(lp)), int(len(it["ph"]))
             if dec is not None:
                 r["reason"], r["threshold"] = dec.reason, dec.threshold
+            if thr is not None:
+                r["thr"] = thr
+            if self.holdout_share > 0.0:  # arm CR: the 1/3 hold-out coin of the item (Card et al. 2026)
+                r["holdout"] = bool(np.random.default_rng([self.seed, d, spec.lo + j, 33]).random()
+                                    < self.holdout_share)
             recs.append(r)
             return r
 
@@ -650,6 +828,9 @@ class Run:
         if ARM_LABELS[self.arm] is not None:
             base_ch = with_day(self.nightly, self.nightly.last_sess, d) if self.nightly is not None else champ
             lab = label_set(self.arm, recs, c.cmu, np.random.default_rng([self.seed, d, spec.lo, 31]))
+            if self.holdout_share > 0.0:  # arm CR: held-out items validate, they never train
+                self.add_val([r for r in lab if r["holdout"]])
+                lab = [r for r in lab if not r["holdout"]]
             data = [(r["si"], c.store.X(r), r["ph"]) for r in lab]
             fits["u1"] = {"n_labels": len(lab), "n_correct": int(sum(r["correct"] for r in lab)),
                           "from": "nightly" if self.nightly is not None else "champion"}
@@ -662,35 +843,69 @@ class Run:
             fits["u1"].update(loss=loss, broken=broken)
             ch = Version(f"{self.name}-{sess}-c", delta, frozenset(base_ch.trained_on | {r["id"] for r in lab}), d,
                          bool(broken or base_ch.broken))
-        # --- phase B: held-back check block; the champion's offer is shown ---------------------------------------
+        # --- phase B: held-back check block; the champion's offer is shown (arm FBX: a coin may show the
+        # challenger's offer instead; amendment 2) ---------------------------------------------------------------------
+        cand = copy_guard(self.start_guard)  # the candidate guard of a decoder proposal (as in propose)
         load_version(model, champ)
         lpB = log_probs(model, Bk, c.store.X, dev)
-        truths, rejected, ids = [], [], []
+        lpB_ch, o_ch = None, None
+        expose = self.exposure_p > 0.0 and ch is not None and not ch.broken
+        if expose:
+            load_version(model, ch)
+            lpB_ch = log_probs(model, Bk, c.store.X, dev)
+            o_ch = [guard_out(cand, tap, lp, k) for lp in lpB_ch]
+        truths, rejected, ids, shown_arm, o_cp = [], [], [], [], []
         for j, (it, lp) in enumerate(zip(Bk, lpB)):
             o = guard_out(self.up.guard, tap, lp, k)
-            fb = user.respond_offer(o["offered"], it["text"], rng_user(nA + j))
-            rec(it, "B", nA + j, o, fb, champ.name, "offer", lp=lp)
+            z = bool(expose and np.random.default_rng([self.seed, USER_ID[self.user_name], d, spec.lo + nA + j, 41])
+                     .random() < self.exposure_p)
+            so = o_ch[j] if z else o
+            fb = user.respond_offer(so["offered"], it["text"], rng_user(nA + j))
+            rec(it, "B", nA + j, so, fb, ch.name if z else champ.name, "offer", lp=lpB_ch[j] if z else lp)
             truths.append(it["text"] if fb.truth_known else None)
-            rejected.append(None if fb.truth_known else o["offered"])
+            rejected.append(None if fb.truth_known else so["offered"])
             ids.append(it["id"])
-        props, accepted_ch, lpB_ch = [], False, None
+            shown_arm.append("ch" if z else "cp")
+            o_cp.append(o)
+        props, accepted_ch = [], False
+        if ch is not None and not ch.broken and o_ch is None:
+            load_version(model, ch)
+            lpB_ch = log_probs(model, Bk, c.store.X, dev)
+            o_ch = [guard_out(cand, tap, lp, k) for lp in lpB_ch]
+        check_unknown = unknown_split([{"known": t is not None, "cp_right": o_cp[j]["top1"] == Bk[j]["text"],
+                                        "ch_right": None if o_ch is None else o_ch[j]["top1"] == Bk[j]["text"],
+                                        "shown": shown_arm[j]} for j, t in enumerate(truths)])
         if ch is not None:
             if ch.broken:
-                if self.loop.session != sess:
-                    self.loop.start_session(sess)
-                self.loop.new_version(ch.name, ch.trained_on)
-                r0 = self.loop.reject_proposal("non-finite loss or weights in a fit (broken-fit stop: refused, "
-                                               "counted, not retried)")
-                props.append({"kind": "decoder", "version": ch.name, "accepted": False, "broken": True,
-                              "reasons": list(r0.reasons), "loop_config_before": r0.parent_config_id,
-                              "loop_config_after": r0.config_id, "controls_passed": False, "lambda_session": None})
+                props.append(self.refuse(ch, "non-finite loss or weights in a fit (broken-fit stop: refused, "
+                                             "counted, not retried)", sess, broken=True))
             else:
-                load_version(model, ch)
-                lpB_ch = log_probs(model, Bk, c.store.X, dev)
-                out, row = self.propose(ch, lpB_ch, lpB, truths, rejected, ids, sess)
+                ext = shadow = None
+                if self.gate == "card":
+                    ce, cn = self.val_edits(champ, cache=True)
+                    he, hn = self.val_edits(ch, cache=False)
+                    ext = {**card_rule(he, hn, ce, cn), "val_items": len(self.val_buf)}
+                elif self.gate == "ipw":
+                    ext = ipw_challenger_test([{"shown": s_, "ch": a["top1"], "cp": b["top1"], "truth": t}
+                                               for s_, a, b, t in zip(shown_arm, o_ch, o_cp, truths)],
+                                              self.exposure_p, L["challenger_level"], L["challenger_margin"],
+                                              L["challenger_margin_abs"])
+                elif self.gate != "plan":
+                    raise ValueError(f"unknown gate {self.gate!r}")
+                if ext is not None:
+                    shadow = plan_test_shadow(cfg, o_ch, o_cp, truths, rejected)
+                if ext is None:
+                    out, row = self.propose(ch, lpB_ch, lpB, truths, rejected, ids, sess)
+                elif ext["passed"]:
+                    out, row = self.propose(ch, lpB_ch, None, truths, rejected, ids, sess, kind="decoder")
+                else:
+                    out, row = None, self.refuse(ch, f"refused by the {ext['test']} rule (amendment 2): "
+                                                     f"{ext.get('why') or ext.get('passed_by')}", sess)
                 row["per_check"] = {"challenger": _per(lpB_ch, Bk), "champion": _per(lpB, Bk)}
+                if ext is not None:
+                    row["external_rule"], row["plan_test_shadow"] = ext, shadow
                 props.append(row)
-                accepted_ch = bool(out.accepted)
+                accepted_ch = bool(out is not None and out.accepted)
         if not accepted_ch:
             out, row = self.propose(champ, lpB, None, truths, rejected, ids, sess)
             props.append(row)
@@ -698,26 +913,52 @@ class Run:
         if stop_requested(c.out):
             raise Paused()
         # --- phase C: the live version decides (commit iff the loop allows it) -----------------------------------
+        # amendment 2: the noticing-adjusted secondary controller decides on the same items as a shadow.
         load_version(model, live)
         lpC = log_probs(model, Cc, c.store.X, dev)
         alarms0 = self.loop.n_alarms
         for j, (it, lp) in enumerate(zip(Cc, lpC)):
             o = guard_out(self.up.guard, tap, lp, k)
             dec = self.loop.decide(o["score"], text_ok=bool(o["top1"]), text=o["top1"] or None, guard_risk=o["risk"])
-            rj = rng_user(nA + nB + j)
+            idx = nA + nB + j
             if dec.commit:
-                fb = user.respond_commit(o["top1"], it["text"], rj)
+                fb = user.respond_commit(o["top1"], it["text"], rng_user(idx))
             else:
-                fb = user.respond_offer(o["offered"], it["text"], rj)
+                fb = user.respond_offer(o["offered"], it["text"], rng_user(idx))
             self.loop.observe(dec, fb.observed_commit_loss if dec.commit else None)
-            rec(it, "C", nA + nB + j, o, fb, live.name, "commit" if dec.commit else "offer", dec=dec, lp=lp)
+            thr = None
+            if dec.ticket is not None:  # commit mode: the same effective score as the loop gives its ACI
+                lam_s = float(self.loop.lambda_session)
+                gate_ok = self.loop.gate_violation(o["top1"] or None, o["risk"], bool(o["top1"]),
+                                                   need_risk=True) is None
+                eff = o["score"] if (gate_ok and o["score"] >= lam_s) else -math.inf
+                if (eff >= dec.ticket.threshold) != dec.commit:
+                    raise RuntimeError("internal: the shadow input differs from the live ACI input")
+                tk2 = self.shadow.decide(eff)
+                fb2 = None
+                if tk2.commit:  # the same notice coin as the live user would draw on a commit of this item
+                    fb2 = fb if dec.commit else user.respond_commit(o["top1"], it["text"], rng_user(idx))
+                self.shadow.observe(tk2, fb2.observed_commit_loss if fb2 is not None else None)
+                thr = {"lam_session": lam_s, "lam_aci": float(dec.ticket.threshold), "lam_q": float(tk2.threshold),
+                       "commit_q": bool(tk2.commit), "true_q": float(fb2.true_loss) if fb2 is not None else 0.0,
+                       "obs_q": float(fb2.observed_commit_loss) if fb2 is not None else 0.0}
+            rec(it, "C", idx, o, fb, live.name, "commit" if dec.commit else "offer", dec=dec, lp=lp, thr=thr)
         rc = [r for r in recs if r["phase"] == "C"]
         com = [r for r in rc if r["action"] == "commit"]
+        cm = [r for r in rc if r.get("thr") is not None]
         phase_c = {"items": len(rc), "commits": len(com), "wrong": int(sum(r["true_loss"] for r in com)),
                    "silent": int(sum(r["silent"] for r in com)),
                    "corrections": int(sum(r["source"] == "correction" for r in com)),
                    "w_ed": int(sum(r["w_ed"] for r in rc)), "w_n": int(sum(r["w_n"] for r in rc)),
-                   "ph_ed": int(sum(r["ph_ed"] for r in rc)), "ph_n": int(sum(r["ph_n"] for r in rc))}
+                   "ph_ed": int(sum(r["ph_ed"] for r in rc)), "ph_n": int(sum(r["ph_n"] for r in rc)),
+                   # amendment 2: which threshold binds, and the secondary controller
+                   "commit_mode": len(cm),
+                   "aci_binds": int(sum(r["thr"]["lam_aci"] > r["thr"]["lam_session"] for r in cm)),
+                   "aci_binds_commits": int(sum(r["thr"]["lam_aci"] > r["thr"]["lam_session"] for r in com
+                                                if r.get("thr") is not None)),
+                   "q_commits": int(sum(r["thr"]["commit_q"] for r in cm)),
+                   "q_wrong": int(sum(r["thr"]["true_q"] for r in cm)),
+                   "q_observed_wrong": int(sum(r["thr"]["obs_q"] for r in cm))}
         # learning view: the latest trained version, regardless of the gate (descriptive)
         learn = None
         if ch is not None and not ch.broken:
@@ -737,6 +978,9 @@ class Run:
         # --- nightly update (from the live version, on all labels the arm has so far) ----------------------------
         if ARM_LABELS[self.arm] is not None and self.do_nightly:
             new = label_set(self.arm if self.arm != "SH" else "FB", recs, c.cmu, None)
+            if self.holdout_share > 0.0:  # arm CR: held-out items go to the validation buffer only
+                self.add_val([r for r in new if r["holdout"]])
+                new = [r for r in new if not r["holdout"]]
             self.pool.extend({kk: v for kk, v in r.items()} for r in new)
             train_set = shuffle_pool(self.pool, np.random.default_rng([self.seed, d, spec.lo, 32])) \
                 if self.arm == "SH" else list(self.pool)
@@ -754,7 +998,8 @@ class Run:
                "phase_c": phase_c, "learning_view": learn, "fits": fits,
                "alarm": self.loop.n_alarms > alarms0, "bound_end": bound_now(self.loop),
                "labels": {"source_counts": _counts([r["source"] for r in recs])},
-               "seconds": round(time.time() - t0, 1)}
+               "check_unknown": check_unknown, "n_challenger_shown": int(sum(s_ == "ch" for s_ in shown_arm)),
+               "val_buffer": len(self.val_buf), "seconds": round(time.time() - t0, 1)}
         save_items(recs, self.out / "items" / f"{sess}.jsonl")
         return row
 
@@ -797,11 +1042,42 @@ class Run:
         k = sum(r["phase_c"]["commits"] for r in self.rows)
         aci = bound_now(self.loop)
         cfg_ok = all((p["loop_config_after"] != p["loop_config_before"]) == p["accepted"] for p in props)
+        # amendment 2: which threshold binds, the secondary controller, the check-block report, the other rules
+        pcs = [r["phase_c"] for r in self.rows]
+        cm, ab = sum(p.get("commit_mode", 0) for p in pcs), sum(p.get("aci_binds", 0) for p in pcs)
+        qk, qw = sum(p.get("q_commits", 0) for p in pcs), sum(p.get("q_wrong", 0) for p in pcs)
+        sh = self.shadow.report()
+        ext = [p for p in props if "external_rule" in p]
+        unk: dict = {}
+        for r in self.rows:
+            unk = add_counts(unk, r.get("check_unknown", {}))
+        a2 = {
+            "binding": {"commit_mode_items": cm, "aci_binds_items": ab, "share_aci_binds": ab / cm if cm else None,
+                        "commits": k, "aci_binds_commits": sum(p.get("aci_binds_commits", 0) for p in pcs),
+                        "note": "aci binds = lambda_aci > lambda_session on a commit-mode phase-C item"},
+            "p2b_q": {"wrong": qw, "items": nc, "rate": qw / nc if nc else None, "cp95": clopper_pearson(qw, nc, 0.95),
+                      "commits": qk, "observed_wrong": sum(p.get("q_observed_wrong", 0) for p in pcs),
+                      "q_lower": self.q_lower, "alpha_obs": float(self.shadow.alpha),
+                      "aci_observed_rate": sh["mean_loss"], "aci_certificate": sh["certificate"],
+                      "aci_n_observed": sh["n_observed"]},
+            "noticing_adjusted_bound": {"p_notice": self.user.p_notice,
+                                        "g1_over_p_notice": (aci["certificate"] / self.user.p_notice
+                                                             if self.user.p_notice > 0 else None)},
+            "check_unknown": unk,
+            "external_rule": {"rule": self.gate, "n_tested": len(ext),
+                              "n_passed": sum(bool(p["external_rule"]["passed"]) for p in ext),
+                              "n_plan_test_would_pass": sum(not p["plan_test_shadow"]["refused"] for p in ext),
+                              "n_both_pass": sum(bool(p["external_rule"]["passed"]) and not p["plan_test_shadow"]
+                                                 ["refused"] for p in ext)} if ext else {"rule": self.gate},
+        }
         return {
             "run": self.name, "arm": self.arm, "user": self.user_name, "seed": self.seed, "settings": self.settings,
             "sessions": [r["session"] for r in self.rows],
             "per_session": [{"session": r["session"], "si": r["si"], **{kk: r["phase_c"][kk] for kk in
                              ("items", "commits", "wrong", "silent", "w_ed", "w_n", "ph_ed", "ph_n")},
+                             **{kk: r["phase_c"].get(kk) for kk in
+                                ("commit_mode", "aci_binds", "q_commits", "q_wrong")},
+                             "check_unknown": r.get("check_unknown"),
                              "accepted": [p["kind"] for p in r["proposals"] if p["accepted"]],
                              "learning_view": r["learning_view"]} for r in self.rows],
             "n_proposals": len(props), "n_accepted": len(acc),
@@ -823,6 +1099,7 @@ class Run:
             "sessions_true_rate_above_alpha": sum(r["phase_c"]["wrong"] / max(1, r["phase_c"]["items"]) > self.ctx.cfg["loop"]["alpha"]
                                                   for r in self.rows),
             "final_loop_config_id": self.loop.config_id, "final_live": self.live.name,
+            **a2,
             "time": time.strftime("%Y-%m-%dT%H:%M:%S"),
         }
 
@@ -1051,13 +1328,26 @@ def grid_committed(out: Path, root: Path = ROOT, repo_file: Path = GRID_REPO) ->
         return False, repr(ex)
 
 
-def run_specs(cfg: dict) -> list[dict]:
-    """The 20 replay runs in plan order: {name, arm, user, seed}."""
+def _specs(names: list[str]) -> list[dict]:
     out = []
-    for name in cfg["run_order"]:
+    for name in names:
         arm, user, s = name.split("-")
         out.append({"name": name, "arm": arm, "user": user, "seed": int(s[1:])})
     return out
+
+
+def run_specs(cfg: dict) -> list[dict]:
+    """The 20 plan replay runs in plan order: {name, arm, user, seed}."""
+    return _specs(cfg["run_order"])
+
+
+def exec_specs(cfg: dict) -> list[dict]:
+    """All replay runs in execution order (amendment 2): the plan's U1 runs, the Card-rule runs, the plan's U2 runs,
+    then the exposure runs."""
+    names = cfg["execution_order"]
+    if sorted(names) != sorted(cfg["run_order"] + cfg["secondary_runs"]):
+        raise ValueError("execution_order must hold every plan run and every secondary run once")
+    return _specs(names)
 
 
 def stage_replay(ctx: Ctx, clock: Clock, grid: dict, sessions: list[SessionSpec] | None = None,
@@ -1066,7 +1356,7 @@ def stage_replay(ctx: Ctx, clock: Clock, grid: dict, sessions: list[SessionSpec]
     sessions = sessions or [SessionSpec(si) for si in cfg["sessions"]["replay"]]
     st = {"lr": float(grid["chosen"]["lr"]), "update1_steps": int(u1_steps or cfg["fit"]["update1_steps"]),
           "nightly_steps": int(nightly_steps or grid["chosen"]["nightly_steps"])}
-    for sp in specs or run_specs(cfg):
+    for sp in specs or exec_specs(cfg):
         d = ctx.out / "runs" / sp["name"]
         if (d / "result.json").exists():
             continue
@@ -1136,9 +1426,12 @@ def all_or_none(vals: list) -> bool | None:
     return True
 
 
-def verdict(cfg: dict, res: dict, base: dict | None) -> dict:
+def verdict(cfg: dict, res_all: dict, base: dict | None) -> dict:
+    """Plan rules P1-P5 on the 20 plan runs (unchanged), plus amendment 2: P2b_q, the amended outcome, and the
+    secondary runs (CR, FBX; descriptive)."""
     R = cfg["rules"]
     win = cfg["sessions"]["last_third"]
+    res = {n: r for n, r in res_all.items() if n in cfg["run_order"]}
 
     def get(a, u, s):
         return res.get(f"{a}-{u}-s{s}")
@@ -1181,29 +1474,66 @@ def verdict(cfg: dict, res: dict, base: dict | None) -> dict:
             "ST_minus_F": {s: delta("ST", "F", s) for s in (0, 1)},
             "OR_minus_F": {s: delta("OR", "F", s) for s in (0, 1)},
             "U2_FB_minus_F": {s: delta("FB", "F", s, "U2") for s in (0, 1)}}
+    # --- amendment 2 -------------------------------------------------------------------------------------------
+    def q_pass(r):
+        q = r.get("p2b_q")
+        return None if q is None or q.get("rate") is None else bool(q["rate"] <= R["p2b_max_rate"])
+
+    p2b_q = {n: {**r["p2b_q"], "pass": q_pass(r)} for n, r in res.items() if r.get("p2b_q") is not None}
+    P2b_q = all_or_none([p2b_q[n]["pass"] if n in p2b_q else None for n in u1])
+    p4_ctrl_q = [p2b_q[n]["pass"] if n in p2b_q else None for n in u1 if n.startswith(("SH-", "ST-"))]
+    P4_q = all_or_none([v.get("pass") for v in p4.values()] + p4_ctrl_q)
+    rules_a2 = {**rules, "P2b": P2b_q, "P4": P4_q}
+    binding = {n: r.get("binding") for n, r in res_all.items()}
+
+    def delta_all(a, b, s, u):
+        ra, rb = res_all.get(f"{a}-{u}-s{s}"), res_all.get(f"{b}-{u}-s{s}")
+        if ra is None or rb is None:
+            return {"status": "not_run"}
+        return wer_delta(ra, rb, win, int(R["bootstrap_n"]), int(R["bootstrap_seed"]))
+
+    sec = {}
+    for n in cfg["secondary_runs"]:
+        r = res_all.get(n)
+        if r is None:
+            sec[n] = {"status": "not_run"}
+            continue
+        a, u, s = n.split("-")
+        sec[n] = {"status": "done", "p2a": r["p2a"]["holds"], "p2b": r["p2b"], "p2b_q": r.get("p2b_q"),
+                  "p3": r["p3"]["pass"], "p5": bool(r["p5"]["ledger_verify_ok"] and r["p5"]["every_proposal_decided"]
+                                                    and r["p5"]["config_changes_on_accept_only"]),
+                  "n_accepted_decoder": r.get("n_accepted_decoder"), "external_rule": r.get("external_rule"),
+                  "minus_F": delta_all(a, "F", int(s[1:]), u), "minus_FB": delta_all(a, "FB", int(s[1:]), u)}
+    sec_fault = any(v.get("p2a") is False or v.get("p5") is False for v in sec.values())
+    a2 = {"P2b_q": p2b_q, "rules_amendment_2": rules_a2, "outcome_amendment_2": outcome(rules_a2),
+          "P4_P2b_q_SH_ST": p4_ctrl_q, "binding": binding, "secondary": sec, "secondary_code_fault": sec_fault,
+          "note": "outcome = the plan reading (plan.md rules, unchanged); outcome_amendment_2 = the same table with "
+                  "P2b read on the noticing-adjusted secondary controller (amendment-2.md). Both are reported."}
     return {"rules": rules, "P1": p1, "P2a": p2a, "P2b": p2b, "P3": p3, "P4": {"SH_minus_F": p4, "P2b_SH_ST": p4_ctrl},
-            "P5": p5, "descriptive": desc, "outcome": outcome(rules)}
+            "P5": p5, "descriptive": desc, "outcome": outcome(rules), "amendment_2": a2}
 
 
 def stage_summary(ctx: Ctx, status: str, gpu_h: float, repo: Path | None) -> dict:
     cfg, out = ctx.cfg, ctx.out
     base = read_json(out / "base" / "DONE.json") if (out / "base" / "DONE.json").exists() else None
     res = {}
-    for sp in run_specs(cfg):
+    for sp in exec_specs(cfg):
         p = out / "runs" / sp["name"] / "result.json"
         if p.exists():
             res[sp["name"]] = read_json(p)
     v = verdict(cfg, res, base)
     runs = {n: {kk: r[kk] for kk in ("arm", "user", "seed", "n_proposals", "n_accepted", "n_accepted_decoder",
                                       "n_broken_fits", "refusal_reasons", "p2a", "p2b", "p3", "p5", "commits",
-                                      "precision", "silent_errors", "observed_wrong", "sessions_true_rate_above_alpha")}
+                                      "precision", "silent_errors", "observed_wrong", "sessions_true_rate_above_alpha")
+                 if kk in r} | {kk: r.get(kk) for kk in ("binding", "p2b_q", "noticing_adjusted_bound",
+                                                         "check_unknown", "external_rule")}
             for n, r in res.items()}
-    agg = {"note": "P15-49 E2 on T15 (plan.md 29c1dc9): aggregates only, no text. Phase-C WER of the live output; "
-                   "simulated users; one participant.",
+    agg = {"note": "P15-49 E2 on T15 (plan.md 29c1dc9, amendments 1 and 2): aggregates only, no text. Phase-C WER "
+                   "of the live output; simulated users; one participant.",
            "status": status, "gpu_hours_wall": round(gpu_h, 3), "base": base,
            "guard": read_json(out / "guard" / "guard.json") if (out / "guard" / "guard.json").exists() else None,
            "grid": read_json(out / "grid.json")["chosen"] if (out / "grid.json").exists() else None,
-           "runs_done": sorted(res), "runs_not_run": [n for n in cfg["run_order"] if n not in res],
+           "runs_done": sorted(res), "runs_not_run": [n for n in cfg["execution_order"] if n not in res],
            **v, "runs": runs, "time": time.strftime("%Y-%m-%dT%H:%M:%S")}
     save_json(agg, out / "summary.json")
     if repo is not None:
@@ -1231,8 +1561,14 @@ def dry_run(ctx: Ctx, clock: Clock, a) -> int:
     log(f"[dry] replay gate would wait: {not ok} ({why}); the dry run skips the gate")
     s8 = int(ctx.cfg["sessions"]["tuning"])
     sess = [SessionSpec(s8, 0, 100, "S08a"), SessionSpec(s8, 100, 200, "S08b")]
-    specs = [{"name": f"{arm}-U1-s0", "arm": arm, "user": "U1", "seed": 0} for arm in ARM_LABELS]
+    arms = [x for x in ARM_LABELS if not a.dry_arms or x in a.dry_arms.split(",")]
+    specs = [{"name": f"{arm}-U1-s0", "arm": arm, "user": "U1", "seed": 0} for arm in arms]
     stage_replay(ctx, clock, grid, sess, specs, u1_steps=2, nightly_steps=2)
+    if "FB" not in arms:
+        log(f"[dry] arms {arms}: no FB run, so no resume test")
+        agg = stage_summary(ctx, "dry", clock.hours(), None)
+        log(f"[dry] summary rules {agg['rules']} outcome {agg['outcome']} (dry: S8 stand-in, not results)")
+        return 0
     # resume test: FB run again, stopped after one session, then resumed
     spec_r = [{"name": "FB-U1-s0-resume", "arm": "FB", "user": "U1", "seed": 0}]
     try:
@@ -1258,6 +1594,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--dry-base-steps", type=int, default=3)
     ap.add_argument("--dry-ckpt", default=None, help="dry run only: a read-only checkpoint for the replay part")
     ap.add_argument("--threads", type=int, default=4)
+    ap.add_argument("--dry-arms", default=None, help="dry run only: comma list of arms (default: all arms)")
     a = ap.parse_args(argv)
     out = Path(a.out).resolve()
     if not check_out(out):

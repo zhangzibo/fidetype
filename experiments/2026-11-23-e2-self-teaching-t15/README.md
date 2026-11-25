@@ -1,10 +1,10 @@
 # P15-49 E2 self-teaching on T15: how to run it
 
-The pre-registration is [plan.md](plan.md) (commit `29c1dc9`, frozen). [amendment-1.md](amendment-1.md) (2026-11-24, before any GPU run) records the six points where the plan is ambiguous or defective and the wrapper's choices. This folder adds the run wrapper (roadmap P15-52, gap 212, E2 part). No result exists yet.
+The pre-registration is [plan.md](plan.md) (commit `29c1dc9`, frozen). [amendment-1.md](amendment-1.md) (2026-11-24, before any GPU run) records the six points where the plan is ambiguous or defective and the wrapper's choices. [amendment-2.md](amendment-2.md) (2026-11-24, before any GPU run) adds the changes of the literature check: a second reading of P2b with a noticing-adjusted shadow controller, a report of the gate's bias, a randomised-exposure arm (FBX), a Card-rule baseline arm (CR), narrower claim wording and a new GPU estimate. This folder adds the run wrapper (roadmap P15-52, gap 212, E2 part). No result exists yet.
 
 | file | what it does |
 |---|---|
-| `e2.py` | the runner: base decoder, start guard, S8 grid, commit gate, 20 replay runs, rules P1-P5, outcome |
+| `e2.py` | the runner: base decoder, start guard, S8 grid, commit gate, 20 plan replay runs + 4 secondary runs (amendment 2), rules P1-P5, both outcome readings |
 | `config.json` | the plan values in one place, plus the choices that the plan does not fix (keys that end in `_choice`) |
 | `launch.py` | starts `e2.py all` detached, with no visible window |
 | `test_e2.py` | CPU tests (no data, no GPU) |
@@ -19,8 +19,8 @@ The pre-registration is [plan.md](plan.md) (commit `29c1dc9`, frozen). [amendmen
 base (30,000 steps, about 10.6 h) -> base stop check (S0-S7 val PER > 0.30: outcome N, stop)
   -> start guard (calibrate on S8) -> grid on S8 -> results/grid.json
   -> gate: wait until results/grid.json is committed and on origin/main (exit code 4)
-  -> 20 replay runs in plan order (GPU cap 90 h, checked before each part)
-  -> summary.json + results/results.json (aggregates only, no text)
+  -> 24 replay runs: plan U1 (10), CR (2), plan U2 (10), FBX (2) (GPU cap 90 h, checked before each part)
+  -> summary.json + results/results.json (aggregates only, no text; plan reading and amendment-2 reading)
 ```
 All outputs go to `C:\Users\zhang\bci-data\derived\p15-49` (plan.md names `derived/e2-t15`; the task brief names `p15-49`; this is a path change only). The runner refuses any other folder under `derived`. Per-item records, ledgers and checkpoints stay there. They contain sentence texts, so never commit them.
 
@@ -81,6 +81,17 @@ The dry run proves that a run stopped after one session and resumed gives the sa
 4. **Stage 2 (T12) is not wired.** The plan starts it only after the T15 U1 runs and only if the cap leaves 8 h. It needs a wrapper for the T12 v2 recipe.
 5. eWPM and safe WPM v0.2 (descriptive) are not computed by the runner. The per-item records keep what they need (action, right / wrong, texts, bins).
 
+## Amendment 2 in short ([amendment-2.md](amendment-2.md))
+| item | what the runner does | changes a plan-run decision? |
+|---|---|---|
+| P2b prediction | when ACI binds, the true rate tends to alpha / p_notice (U1 0.0556, U2 0.10), above 0.05. Per run: which threshold binds (`binding`), and G1 / p_notice | no |
+| secondary controller | a shadow ACI with target alpha x q_lower (q_lower U1 0.82, U2 0.38) on the same phase-C items; `p2b_q`; the outcome is computed for the plan reading and for the amendment-2 reading | no (shadow) |
+| gate bias | `check_unknown` per session: unknown-truth check items by champion / challenger right or wrong (`lost_better`, `hidden_worse`) | no |
+| arm FBX (2 runs, last) | phase-B coin 0.5 shows the challenger's offer; IPW test with the G3 bound (`ipw_challenger_test`); the plan test on the same block is reported | secondary arm only |
+| arm CR (2 runs, after the plan's U1 runs) | Card et al. 2026 rule: the FB labels (every new item; correction 1), 33 % held out, accept iff held-out PER improves; the trust guard, LTT, nulls and ACI still apply | secondary arm only |
+| ST name | "naive self-training" (not CORP) | no |
+| claim | "a statistically tested update gate plus a stated long-run wrong-commit bound with null controls", not "an update gate" | - |
+
 ## Estimated time on the local RX 7800 XT
 | part | estimate |
 |---|---|
@@ -88,14 +99,16 @@ The dry run proves that a run stopped after one session and resumed gives the sa
 | fits | 16 runs x 36 sessions x (100 update-1 + 150 nightly) steps x about 0.5 s = about 20 h (about 30 h if the nightly step count were 300) |
 | forward passes | about 0.3 h per run, about 6 h in all (our estimate) |
 | word decoding (CPU, in the job) | measured 0.06 s per guard decision; about 25,000 per run: about 0.4 h per run, about 8 h in all |
-| **total wall time** | **about 45 h** (the plan said 45-60 h); the cap is 90 h |
+| plan runs total | about 45 h (the plan said 45-60 h) |
+| amendment 2: CR (2 runs) + FBX (2 runs) + the challenger check-block decodes | about 4.8 h + 4 h + 0.6 h |
+| **total wall time** | **about 54 h (range 54-70 h)**; the cap is 90 h |
 
 ## Dry run (CPU only, scratch folder, no GPU)
 ```powershell
 $env:HIP_VISIBLE_DEVICES="-1"; $env:CUDA_VISIBLE_DEVICES="-1"
 C:\venvs\fidetype-rocm\Scripts\python.exe experiments\2026-11-23-e2-self-teaching-t15\e2.py dry --out <scratch folder> --device cpu --threads 2 --dry-ckpt C:\Users\zhang\bci-data\runs\m4-13-long0\best.pt
 ```
-It trains the base decoder for 3 steps on S0-S7 (CPU), then uses the M4-13 checkpoint (read only) as a strong stand-in decoder for the plumbing. It runs the start guard, the grid and all five arms on two pseudo-sessions made of S8 items, and the stop / resume test. It reads no replay session (S9-S44) and writes nothing into `results/`. Its numbers are not results.
+`--dry-arms F,FB` limits the dry run to some arms (default: all; the stop / resume test needs FB). It trains the base decoder for 3 steps on S0-S7 (CPU), then uses the M4-13 checkpoint (read only) as a strong stand-in decoder for the plumbing. It runs the start guard, the grid and all seven arms (the five plan arms, CR and FBX) on two pseudo-sessions made of S8 items, and the stop / resume test. It reads no replay session (S9-S44) and writes nothing into `results/`. Its numbers are not results.
 
 ## Tests
 ```powershell

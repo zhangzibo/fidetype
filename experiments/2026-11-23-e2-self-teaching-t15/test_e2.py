@@ -1,5 +1,6 @@
 """CPU unit tests for the P15-49 wrapper (no T15 data, no GPU): config vs plan, stream order, session filter, labels
-per arm, fits touch only the allowed parameters, guard outputs, the aci bound, rules and outcomes."""
+per arm, fits touch only the allowed parameters, guard outputs, the aci bound, rules and outcomes, and the amendment-2
+parts (secondary controller, IPW exposure test, Card rule, check-block report, both outcome readings)."""
 
 from __future__ import annotations
 
@@ -22,6 +23,7 @@ sys.path.insert(0, str(HERE))
 import e2  # noqa: E402
 
 CFG = json.loads((HERE / "config.json").read_text(encoding="utf-8"))
+PLAN_ARMS = {"F", "FB", "OR", "ST", "SH"}
 
 
 # --- config vs plan.md ---------------------------------------------------------------------------------------------
@@ -43,7 +45,8 @@ def test_config_matches_plan():
     assert (g["arm"], g["user"], g["seed"], g["session"]) == ("FB", "U1", 0, 8)
     assert CFG["users"]["U1"] == {"p_retype": 0.3, "p_notice": 0.9, "p_sloppy": 0.0}
     assert CFG["users"]["U2"] == {"p_retype": 0.1, "p_notice": 0.5, "p_sloppy": 0.0}
-    assert set(CFG["arms"]) == {"F", "FB", "OR", "ST", "SH"} and set(e2.ARM_LABELS) == set(CFG["arms"])
+    assert set(CFG["arms"]) == PLAN_ARMS | {"CR", "FBX"} and set(e2.ARM_LABELS) == set(CFG["arms"])
+    assert list(e2.ARM_LABELS)[:5] == ["F", "FB", "OR", "ST", "SH"]  # plan arms keep their seed index
     R = CFG["rules"]
     assert (R["p1_max_delta"], R["p1_seeds_needed"], R["p2b_max_rate"], R["p4_min_delta"]) == (-0.02, 2, 0.05, -0.005)
     assert (R["bootstrap_n"], R["bootstrap_seed"]) == (2000, 0)
@@ -62,7 +65,7 @@ def test_run_order_is_plan_order():
     assert len(sp) == 20 and len({s["name"] for s in sp}) == 20
     assert [s["name"] for s in sp[:4]] == ["F-U1-s0", "FB-U1-s0", "F-U1-s1", "FB-U1-s1"]
     assert [s["name"] for s in sp[4:10]] == ["SH-U1-s0", "SH-U1-s1", "ST-U1-s0", "ST-U1-s1", "OR-U1-s0", "OR-U1-s1"]
-    assert all(s["user"] == "U2" for s in sp[10:]) and {s["arm"] for s in sp} == set(e2.ARM_LABELS)
+    assert all(s["user"] == "U2" for s in sp[10:]) and {s["arm"] for s in sp} == PLAN_ARMS
     assert sum(e2.ARM_LABELS[s["arm"]] is not None for s in sp) == 16  # 16 runs with fits
 
 
@@ -395,3 +398,202 @@ def test_outcome_table_direct():
 
 def test_no_gpu_used():
     assert not torch.cuda.is_initialized()
+
+
+# --- amendment 2 ---------------------------------------------------------------------------------------------------
+
+
+def test_amendment2_config():
+    a2 = CFG["amendment_2"]
+    assert a2["secondary_aci"]["q_lower"] == {"U1": 0.82, "U2": 0.38}
+    assert CFG["secondary_runs"] == ["CR-U1-s0", "CR-U1-s1", "FBX-U1-s0", "FBX-U1-s1"]
+    assert CFG["arms"]["CR"]["gate"] == "card" and CFG["arms"]["CR"]["holdout_share"] == 0.33
+    assert CFG["arms"]["FBX"]["gate"] == "ipw" and CFG["arms"]["FBX"]["exposure_p"] == 0.5
+    assert all(CFG["arms"][a].get("gate", "plan") == "plan" and "exposure_p" not in CFG["arms"][a] for a in PLAN_ARMS)
+    assert "naive self-training" in CFG["arms"]["ST"]["role"]
+
+
+def test_q_lower_is_the_pre_stated_binomial_percentile():
+    from scipy.stats import binom
+
+    for u, q in CFG["amendment_2"]["secondary_aci"]["q_lower"].items():
+        p = CFG["users"][u]["p_notice"]
+        assert q == pytest.approx(binom.ppf(0.01, 100, p) / 100)
+        assert binom.cdf(round(q * 100) - 1, 100, p) <= 0.01  # P(realised share < q_lower) <= 1 % at N = 100
+
+
+def test_execution_order_holds_plan_and_secondary_runs():
+    ex = [s["name"] for s in e2.exec_specs(CFG)]
+    assert len(ex) == 24 and ex[:10] == CFG["run_order"][:10] and ex[10:12] == ["CR-U1-s0", "CR-U1-s1"]
+    assert ex[12:22] == CFG["run_order"][10:] and ex[22:] == ["FBX-U1-s0", "FBX-U1-s1"]
+    bad = {**CFG, "execution_order": CFG["execution_order"][:-1]}
+    with pytest.raises(ValueError):
+        e2.exec_specs(bad)
+
+
+def test_card_arm_uses_the_fb_labels_and_keeps_the_holdout_flag():
+    recs = [_rec(0, "yes", "no", "yes"), _rec(1, "no", "go", "go"), {**_rec(2, "go", "go", "go"), "holdout": True}]
+    cr, fb = e2.label_set("CR", recs, CMU, None), e2.label_set("FB", recs, CMU, None)
+    assert [r["id"] for r in cr] == [r["id"] for r in fb] and [r["correct"] for r in cr] == [True, False, True]
+    assert [r.get("holdout") for r in cr] == [None, None, True]
+
+
+def _aci_stream(q_notice, alpha, n=30000, seed=0):
+    """Synthetic stream where ACI binds: score s ~ U(0, 1), P(wrong | s) = 0.5 (1 - s)."""
+    rng = np.random.default_rng(seed)
+    rc = OnlineCommitRiskControl(alpha=alpha, method="aci", eta=0.05, lam_init=0.5)
+    true = obs = 0
+    for _ in range(n):
+        s = float(rng.uniform())
+        wrong = rng.uniform() < 0.5 * (1.0 - s)
+        noticed = rng.uniform() < q_notice
+        tk = rc.decide(s)
+        if tk.commit:
+            true += int(wrong)
+            obs += int(wrong and noticed)
+        rc.observe(tk, float(wrong and noticed) if tk.commit else None)
+    return true / n, obs / n
+
+
+from fidetype.trust.online_risk import OnlineCommitRiskControl  # noqa: E402
+
+
+def test_aci_on_observed_loss_overshoots_by_one_over_p_notice_and_the_secondary_target_holds():
+    true, obs = _aci_stream(0.9, 0.05)
+    assert obs == pytest.approx(0.05, abs=0.003) and true == pytest.approx(0.05 / 0.9, abs=0.004) and true > 0.052
+    sh = e2.make_shadow(CFG, 0.5, CFG["amendment_2"]["secondary_aci"]["q_lower"]["U1"])
+    assert sh.alpha == pytest.approx(0.05 * 0.82)
+    true_q, _ = _aci_stream(0.9, sh.alpha)
+    assert true_q < 0.05
+    true2, _ = _aci_stream(0.5, 0.05)
+    assert true2 == pytest.approx(0.10, abs=0.008)
+    true2q, _ = _aci_stream(0.5, 0.05 * 0.38)
+    assert true2q < 0.05
+    with pytest.raises(ValueError):
+        e2.make_shadow(CFG, 0.5, 0.0)
+
+
+def _ipw_items(W, B, n_items, pi, rng, n_same=0):
+    """Check items with W worse pairs, B better pairs, n_same identical pairs, the rest both wrong (different texts);
+    the shown arm follows a coin with P(challenger) = pi; truth known iff the shown top-1 is right."""
+    kinds = ["W"] * W + ["B"] * B + ["S"] * n_same
+    kinds += ["T"] * (n_items - len(kinds))
+    out = []
+    for j, k in enumerate(kinds):
+        truth = f"t{j}"
+        ch = {"W": "x", "B": truth, "S": truth, "T": "x"}[k]
+        cp = {"W": truth, "B": "y", "S": truth, "T": "y"}[k]
+        shown = "ch" if rng.uniform() < pi else "cp"
+        right = (ch if shown == "ch" else cp) == truth
+        out.append({"shown": shown, "ch": ch, "cp": cp, "truth": truth if right else None})
+    return out
+
+
+def test_ipw_estimates_are_unbiased_over_the_coin():
+    rng = np.random.default_rng(1)
+    ws, bs = [], []
+    for _ in range(3000):
+        t = e2.ipw_challenger_test(_ipw_items(4, 9, 45, 0.5, rng), 0.5)
+        ws.append(t["W_hat"])
+        bs.append(t["B_hat"])
+    assert np.mean(ws) == pytest.approx(4, abs=0.15) and np.mean(bs) == pytest.approx(9, abs=0.2)
+
+
+def test_ipw_test_identical_strong_and_worse():
+    rng = np.random.default_rng(2)
+    same = e2.ipw_challenger_test(_ipw_items(0, 0, 45, 0.5, rng, n_same=45), 0.5)
+    assert same["passed"] and same["passed_by"] == "identical top-1" and same["n_diff"] == 0
+    strong = [e2.ipw_challenger_test(_ipw_items(0, 45, 45, 0.5, rng), 0.5)["passed"] for _ in range(200)]
+    assert np.mean(strong) > 0.9
+    worse = [e2.ipw_challenger_test(_ipw_items(15, 2, 45, 0.5, rng), 0.5)["passed"] for _ in range(200)]
+    assert not any(worse)
+    # the absolute branch cannot pass with 45 items: log(12 / 0.025) = 6.17 > 0.1 x 45
+    one = e2.ipw_challenger_test(_ipw_items(0, 0, 45, 0.5, rng, n_same=44), 0.5)
+    assert not one["pass_abs"] and one["upper_worse"] > one["abs_limit"]
+    with pytest.raises(ValueError):
+        e2.ipw_challenger_test([], 0.2)
+
+
+def test_ipw_test_level_under_the_null():
+    rng = np.random.default_rng(3)
+    # boundary of the non-inferiority null: W / (W + B) = 0.6 with W + B = 40
+    acc = [e2.ipw_challenger_test(_ipw_items(24, 16, 45, 0.5, rng), 0.5)["passed"] for _ in range(2000)]
+    assert np.mean(acc) <= 0.05
+
+
+def test_card_rule():
+    assert e2.card_rule(10, 100, 12, 100)["passed"]
+    assert not e2.card_rule(12, 100, 12, 100)["passed"]  # strict improvement only
+    assert not e2.card_rule(0, 0, 0, 0)["passed"]
+
+
+def test_unknown_truth_items_have_a_wrong_champion_without_exposure():
+    """With the champion's offer shown and p_sloppy 0, a right champion top-1 is always accepted, so every check
+    item with unknown truth has a wrong champion (amendment 2, item 2)."""
+    from fidetype.trust.adaptive import FeedbackUser
+
+    user = FeedbackUser(p_notice=0.9, p_retype=0.3, p_sloppy=0.0)
+    rng = np.random.default_rng(4)
+    rows = []
+    for j in range(400):
+        truth = f"t{j}"
+        cp = truth if rng.uniform() < 0.6 else f"c{j}"
+        ch = truth if rng.uniform() < 0.6 else f"h{j}"
+        offered = [cp] + ([truth] if rng.uniform() < 0.2 and cp != truth else [])
+        fb = user.respond_offer(offered, truth, np.random.default_rng([j]))
+        rows.append({"known": fb.truth_known, "cp_right": cp == truth, "ch_right": ch == truth, "shown": "cp"})
+    u = e2.unknown_split(rows)
+    assert u["n_unknown"] > 50 and u["champion_right"] == 0 and u["champion_wrong"] == u["n_unknown"]
+    assert u["lost_better"] > 0 and u["hidden_worse"] == 0 and u["unknown_challenger_shown"] == 0
+
+
+def test_plan_test_shadow_scores_unknown_with_wrong_champion_as_tie():
+    """The plan test (library code) on a block where the champion is wrong and the truth is unknown on 20 items, and
+    the challenger is right there: the pairs are ties, not 'better' and not 'worse'."""
+    ch_out, cp_out, truths, rej = [], [], [], []
+    for j in range(45):
+        t = f"t {j}"
+        if j < 20:  # champion wrong (rejected offer), truth unknown, challenger right
+            cp_out.append({"top1": f"c {j}", "score": 0.9, "risk": 0.0})
+            ch_out.append({"top1": t, "score": 0.9, "risk": 0.0})
+            truths.append(None)
+            rej.append([f"c {j}"])
+        else:  # both right
+            cp_out.append({"top1": t, "score": 0.9, "risk": 0.0})
+            ch_out.append({"top1": t, "score": 0.9, "risk": 0.0})
+            truths.append(t)
+            rej.append(None)
+    r = e2.plan_test_shadow(CFG, ch_out, cp_out, truths, rej)
+    assert r["better"] == 0 and r["worse"] == 0 and r["n_unknown"] == 0
+
+
+def _res2(arm, user, seed, wer_by_session, q_rate=0.04, **kw):
+    r = _res(arm, user, seed, wer_by_session, **kw)
+    n = r["p2b"]["items"]
+    r["p2b_q"] = {"wrong": int(q_rate * n), "items": n, "rate": int(q_rate * n) / n}
+    r["binding"] = {"commit_mode_items": n, "aci_binds_items": 0}
+    return r
+
+
+def test_verdict_amendment2_reports_both_readings():
+    res = _all(wrong=6, only=("FB",))  # plan reading: FB true rate 0.06 > 0.05 (the predicted P2b fail)
+    for n, r in list(res.items()):
+        r["p2b_q"] = {"wrong": 4 * 36, "items": r["p2b"]["items"], "rate": 4 * 36 / r["p2b"]["items"]}
+    v = e2.verdict(CFG, res, None)
+    assert v["rules"]["P2b"] is False and v["outcome"]["label"] == "C"  # plan reading (P1 passes, P2b fails)
+    a2 = v["amendment_2"]
+    assert a2["rules_amendment_2"]["P2b"] is True and a2["outcome_amendment_2"]["label"] == "A"
+    assert all(s["status"] == "not_run" for s in a2["secondary"].values()) and not a2["secondary_code_fault"]
+    rng = np.random.default_rng(0)
+    base = {s: 0.4 + 0.05 * rng.standard_normal() for s in range(9, 45)}
+    res["CR-U1-s0"] = _res2("CR", "U1", 0, {k: v - (0.01 if k >= 33 else 0.0) for k, v in base.items()})
+    res["CR-U1-s0"]["external_rule"] = {"rule": "card", "n_tested": 36, "n_passed": 20}
+    v = e2.verdict(CFG, res, None)
+    sec = v["amendment_2"]["secondary"]["CR-U1-s0"]
+    assert sec["status"] == "done" and sec["minus_F"]["status"] == "done" and sec["p2a"] is True
+    assert v["outcome"]["label"] == "C" and len(v["P2a"]) == 20  # secondary runs never enter the plan rules
+
+
+def test_verdict_without_p2b_q_is_not_determined():
+    v = e2.verdict(CFG, _all(), None)
+    assert v["outcome"]["label"] == "A" and v["amendment_2"]["outcome_amendment_2"]["label"] == "not_determined"
