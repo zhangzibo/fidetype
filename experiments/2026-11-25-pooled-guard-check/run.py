@@ -611,6 +611,11 @@ def stage_summary() -> dict:
         if arm == "L-FL":
             g["reproduction"]["shipped_config_id"] = load_json(DER / "p11-14" / "guard-L-FL.status.json").get("config_id")  # type: ignore[union-attr]
         g["outcome"] = "pass" if (nr["null_pass"] and r3r["passed"]) else "FAIL"
+        # emg2qwerty: no single-user value in the repo (research-only data): drop maxima and ranges
+        for k in ("max_rate", "max_cp_upper", "group_n_range"):
+            g["per_user"].pop(k, None)
+        for k in ("cal_base_rate_range", "test_base_rate_range"):
+            g["descriptive"].pop(k, None)
         res["guards"][g["id"]] = g
     meg = load_json(OWN / "meg.json")
     for meth in ("crc", "ltt"):
