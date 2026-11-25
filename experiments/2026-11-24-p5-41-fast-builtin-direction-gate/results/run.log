@@ -1,0 +1,46 @@
+[2026-11-24 22:33:34] keep_awake: on (SetThreadExecutionState)
+[2026-11-24 22:33:34] keep_awake: on (SetThreadExecutionState)
+[2026-11-24 22:33:34] keep_awake: on (SetThreadExecutionState)
+[2026-11-24 22:33:34] start ['recheck:builtin:before']
+[2026-11-24 22:33:35] start ['recheck:builtin:after']
+[2026-11-24 22:33:35] start ['sets:builtin', 'sets:lm', 'recheck:lm:before', 'recheck:lm:after']
+[2026-11-24 22:33:35] sets builtin: 1 / 332 (0 s)
+[2026-11-24 22:34:35] keep_awake: on (SetThreadExecutionState)
+[2026-11-24 22:34:36] start ['bench']
+[2026-11-24 22:35:08] sets builtin: 51 / 332 (93 s)
+[2026-11-24 22:36:00] sets builtin: 101 / 332 (146 s)
+[2026-11-24 22:37:08] sets builtin: 151 / 332 (214 s)
+[2026-11-24 22:37:39] bench builtin: {"n": 20, "n_coherence_offers": 20, "decision_coh_median_s": 0.4065, "extra_per_offer_median_s": {"before": 0.3542, "after": 0.2159}, "extra_per_offer_cpu_median_s": {"before": 0.3438, "after": 0.2109}, "gate_alone_median_s": {"before": 0.3691, "after": 0.2389}, "gate_alone_cpu_median_s": {"before": 0.3594, "after": 0.2344}, "searches_per_offer_decision": {"coh": ["{\"run\": 0, \"cached\": 0}"], "before": ["{\"run\": 2, \"cached\": 0}"], "after": ["{\"run\": 2, \"cached\": 0}"]}, "actions_equal_before_after": true, "extra_ratio_after_before": 0.61, "gate_alone_ratio_after_before": 0.647}
+[2026-11-24 22:38:29] sets builtin: 201 / 332 (294 s)
+[2026-11-24 22:39:29] bench lm: {"n": 20, "n_coherence_offers": 20, "decision_coh_median_s": 0.3092, "extra_per_offer_median_s": {"before": 0.0999, "after": 0.0543}, "extra_per_offer_cpu_median_s": {"before": 0.0938, "after": 0.0469}, "gate_alone_median_s": {"before": 0.1313, "after": 0.0483}, "gate_alone_cpu_median_s": {"before": 0.1328, "after": 0.0469}, "searches_per_offer_decision": {"coh": ["{\"run\": 1, \"cached\": 0}"], "before": ["{\"run\": 2, \"cached\": 1}"], "after": ["{\"run\": 2, \"cached\": 1}"]}, "actions_equal_before_after": true, "extra_ratio_after_before": 0.544, "gate_alone_ratio_after_before": 0.368}
+[2026-11-24 22:39:29] keep_awake: cleared
+[2026-11-24 22:39:29] end of ['bench'] (293 s)
+[2026-11-24 22:39:42] sets builtin: 251 / 332 (367 s)
+[2026-11-24 22:40:40] sets builtin: 301 / 332 (425 s)
+[2026-11-24 22:41:20] sets builtin: all_equal True (332 / 332); {'val_S:real': {'n': 66, 'equal': 66, 'offers_before': 65, 'offers_after': 65}, 'val_S:rev_out': {'n': 66, 'equal': 66, 'offers_before': 1, 'offers_after': 1}, 'val_ltt:real': {'n': 40, 'equal': 40, 'offers_before': 40, 'offers_after': 40}, 'test:real': {'n': 80, 'equal': 80, 'offers_before': 76, 'offers_after': 76}, 'test:rev_out': {'n': 80, 'equal': 80, 'offers_before': 1, 'offers_after': 1}}
+[2026-11-24 22:41:20] sets lm: 1 / 332 (0 s)
+[2026-11-24 22:42:01] sets lm: 51 / 332 (41 s)
+[2026-11-24 22:42:31] sets lm: 101 / 332 (71 s)
+[2026-11-24 22:43:10] sets lm: 151 / 332 (110 s)
+[2026-11-24 22:43:54] sets lm: 201 / 332 (154 s)
+[2026-11-24 22:44:35] sets lm: 251 / 332 (195 s)
+[2026-11-24 22:45:07] sets lm: 301 / 332 (227 s)
+[2026-11-24 22:45:28] sets lm: all_equal True (332 / 332); {'val_S:real': {'n': 66, 'equal': 66, 'offers_before': 64, 'offers_after': 64}, 'val_S:rev_out': {'n': 66, 'equal': 66, 'offers_before': 1, 'offers_after': 1}, 'val_ltt:real': {'n': 40, 'equal': 40, 'offers_before': 40, 'offers_after': 40}, 'test:real': {'n': 80, 'equal': 80, 'offers_before': 75, 'offers_after': 75}, 'test:rev_out': {'n': 80, 'equal': 80, 'offers_before': 2, 'offers_after': 2}}
+[2026-11-24 22:48:50] recheck lm before: passed True: [('uniform', 0, 300), ('shuffled', 0, 300), ('user', 0, 106)], real {'n': 40, 'n_offer': 40, 'offer_rate': 1.0} (201.3 s)
+[2026-11-24 22:51:27] recheck lm after: passed True: [('uniform', 0, 300), ('shuffled', 0, 300), ('user', 0, 106)], real {'n': 40, 'n_offer': 40, 'offer_rate': 1.0} (157.1 s)
+[2026-11-24 22:51:27] keep_awake: cleared
+[2026-11-24 22:51:27] end of ['sets:builtin', 'sets:lm', 'recheck:lm:before', 'recheck:lm:after'] (1073 s)
+[2026-11-25 00:35:32] recheck builtin before: passed True: [('uniform', 0, 300), ('shuffled', 0, 300), ('user', 0, 106)], real {'n': 40, 'n_offer': 40, 'offer_rate': 1.0} (7316.9 s)
+[2026-11-25 00:35:32] keep_awake: cleared
+[2026-11-25 00:35:32] end of ['recheck:builtin:before'] (7318 s)
+[2026-11-25 00:36:10] recheck builtin after: passed True: [('uniform', 0, 300), ('shuffled', 0, 300), ('user', 0, 106)], real {'n': 40, 'n_offer': 40, 'offer_rate': 1.0} (7355.0 s)
+[2026-11-25 00:36:10] keep_awake: cleared
+[2026-11-25 00:36:10] end of ['recheck:builtin:after'] (7356 s)
+[2026-11-25 00:36:18] keep_awake: on (SetThreadExecutionState)
+[2026-11-25 00:36:18] start ['bench', 'compare']
+[2026-11-25 00:39:14] bench builtin: {"n": 20, "n_coherence_offers": 20, "decision_coh_median_s": 0.382, "extra_per_offer_median_s": {"before": 0.3372, "after": 0.2188}, "extra_per_offer_cpu_median_s": {"before": 0.3281, "after": 0.2188}, "gate_alone_median_s": {"before": 0.3539, "after": 0.2271}, "gate_alone_cpu_median_s": {"before": 0.3516, "after": 0.2266}, "searches_per_offer_decision": {"coh": ["{\"run\": 0, \"cached\": 0}"], "before": ["{\"run\": 2, \"cached\": 0}"], "after": ["{\"run\": 2, \"cached\": 0}"]}, "actions_equal_before_after": true, "extra_ratio_after_before": 0.649, "gate_alone_ratio_after_before": 0.642}
+[2026-11-25 00:40:57] bench lm: {"n": 20, "n_coherence_offers": 20, "decision_coh_median_s": 0.3076, "extra_per_offer_median_s": {"before": 0.0904, "after": 0.0447}, "extra_per_offer_cpu_median_s": {"before": 0.0781, "after": 0.0469}, "gate_alone_median_s": {"before": 0.0678, "after": 0.0448}, "gate_alone_cpu_median_s": {"before": 0.0625, "after": 0.0469}, "searches_per_offer_decision": {"coh": ["{\"run\": 1, \"cached\": 0}"], "before": ["{\"run\": 2, \"cached\": 1}"], "after": ["{\"run\": 2, \"cached\": 1}"]}, "actions_equal_before_after": true, "extra_ratio_after_before": 0.494, "gate_alone_ratio_after_before": 0.661}
+[2026-11-25 00:40:57] compare builtin: {'n_decisions': [746, 746], 'n_equal_in_order': 746, 'decisions_equal': True, 'summary_equal': True, 'n_offer_before': 40, 'n_offer_after': 40, 'controls': [('uniform', 0, 300), ('shuffled', 0, 300), ('user', 0, 106)], 'real': {'n': 40, 'n_offer': 40, 'offer_rate': 1.0}, 'passed': True, 'config_id': 'tcfg-39aac48688b8bd12', 'offer_gate_id': 'ogate-3f39cc94f648400e', 'seconds': {'before': 7316.9, 'after': 7355.0}}
+[2026-11-25 00:40:57] compare lm: {'n_decisions': [746, 746], 'n_equal_in_order': 746, 'decisions_equal': True, 'summary_equal': True, 'n_offer_before': 40, 'n_offer_after': 40, 'controls': [('uniform', 0, 300), ('shuffled', 0, 300), ('user', 0, 106)], 'real': {'n': 40, 'n_offer': 40, 'offer_rate': 1.0}, 'passed': True, 'config_id': 'tcfg-f498c0637536daec', 'offer_gate_id': 'ogate-40628e48ebb65425', 'seconds': {'before': 201.3, 'after': 157.1}}
+[2026-11-25 00:40:57] keep_awake: cleared
+[2026-11-25 00:40:57] end of ['bench', 'compare'] (279 s)

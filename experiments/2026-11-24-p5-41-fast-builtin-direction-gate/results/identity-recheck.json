@@ -1,0 +1,83 @@
+{
+ "compared": "every _decide_quiet call of recheck_offer_control (real LTT, uniform, frame-shuffled, time-shuffled), in order: action, shown candidates, reason, offer-gate reason (digests); and the re-check result dict; old vs new LMBeam.push loop",
+ "builtin": {
+  "n_decisions": [
+   746,
+   746
+  ],
+  "n_equal_in_order": 746,
+  "decisions_equal": true,
+  "summary_equal": true,
+  "n_offer_before": 40,
+  "n_offer_after": 40,
+  "controls": [
+   [
+    "uniform",
+    0,
+    300
+   ],
+   [
+    "shuffled",
+    0,
+    300
+   ],
+   [
+    "user",
+    0,
+    106
+   ]
+  ],
+  "real": {
+   "n": 40,
+   "n_offer": 40,
+   "offer_rate": 1.0
+  },
+  "passed": true,
+  "config_id": "tcfg-39aac48688b8bd12",
+  "offer_gate_id": "ogate-3f39cc94f648400e",
+  "seconds": {
+   "before": 7316.9,
+   "after": 7355.0
+  }
+ },
+ "lm": {
+  "n_decisions": [
+   746,
+   746
+  ],
+  "n_equal_in_order": 746,
+  "decisions_equal": true,
+  "summary_equal": true,
+  "n_offer_before": 40,
+  "n_offer_after": 40,
+  "controls": [
+   [
+    "uniform",
+    0,
+    300
+   ],
+   [
+    "shuffled",
+    0,
+    300
+   ],
+   [
+    "user",
+    0,
+    106
+   ]
+  ],
+  "real": {
+   "n": 40,
+   "n_offer": 40,
+   "offer_rate": 1.0
+  },
+  "passed": true,
+  "config_id": "tcfg-f498c0637536daec",
+  "offer_gate_id": "ogate-40628e48ebb65425",
+  "seconds": {
+   "before": 201.3,
+   "after": 157.1
+  }
+ }
+}

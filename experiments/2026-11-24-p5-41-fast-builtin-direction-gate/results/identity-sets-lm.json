@@ -1,0 +1,42 @@
+{
+ "guard": "lm",
+ "config_id": "tcfg-f498c0637536daec",
+ "offer_gate_id": "ogate-40628e48ebb65425",
+ "n": 332,
+ "n_equal": 332,
+ "all_equal": true,
+ "by_set": {
+  "val_S:real": {
+   "n": 66,
+   "equal": 66,
+   "offers_before": 64,
+   "offers_after": 64
+  },
+  "val_S:rev_out": {
+   "n": 66,
+   "equal": 66,
+   "offers_before": 1,
+   "offers_after": 1
+  },
+  "val_ltt:real": {
+   "n": 40,
+   "equal": 40,
+   "offers_before": 40,
+   "offers_after": 40
+  },
+  "test:real": {
+   "n": 80,
+   "equal": 80,
+   "offers_before": 75,
+   "offers_after": 75
+  },
+  "test:rev_out": {
+   "n": 80,
+   "equal": 80,
+   "offers_before": 2,
+   "offers_after": 2
+  }
+ },
+ "compared": "action, shown candidates (digest), reason (digest), offer-gate reason (digest), every offer-gate feature incl. lm_beam_direction (float bit pattern); old vs new LMBeam.push loop",
+ "seconds": 248.1
+}

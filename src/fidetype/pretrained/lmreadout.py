@@ -197,6 +197,150 @@ class LMBeam:
     # --- search ----------------------------------------------------------------------------------------
 
     def push(self, log_probs: np.ndarray) -> None:
+        """Advance the search by the frames of ``log_probs`` (n x V, natural log).
+
+        P5-41: this is a faster form of :meth:`_push_reference` (the P11-07 loop). It does the same float
+        operations on the same values in the same order (one ``logaddexp``, add or multiply per value as
+        before), so every score is bit-equal. Only the bookkeeping changed: the candidate keys of all frames
+        are found in one call, the merge of an extension into a beam prefix and the rank of the candidates
+        use small Python lookups and a Python sort (same keys and the same order as the ``argsort`` /
+        ``searchsorted`` / ``lexsort`` form), and the node and parent ids stay Python lists.
+        """
+        lp = np.asarray(log_probs, np.float64)
+        if lp.ndim != 2 or lp.shape[1] != self.V:
+            raise ValueError(f"chunk must be (n, {self.V}), got {lp.shape}")
+        T = lp.shape[0]
+        allow = (lp >= self.prune) & self._allowed[None, :]
+        active = allow.any(axis=1).tolist()
+        r_nz, c_nz = np.nonzero(allow)  # row-major: per frame, the allowed columns in ascending order
+        starts = np.searchsorted(r_nz, np.arange(T + 1)).tolist()
+        v_nz = lp[r_nz, c_nz]
+        c_list = c_nz.tolist()
+        rb = lp[:, self.blank]
+        blank_rows = rb.tolist()
+        w, bonus, B = self.w, self.bonus, self.B
+        logaddexp, where, flatnonzero = np.logaddexp, np.where, np.flatnonzero
+        nodes, par = self.nodes.tolist(), self.par.tolist()
+        last, pb, pnb, lms, ln, L = self.last, self.pb, self.pnb, self.lms, self.ln, self.L
+        last_l, lms_l, ln_l = last.tolist(), lms.tolist(), ln.tolist()
+        hasl = last >= 0
+        lastc = np.maximum(last, 0)
+        k_par, k_tok, k_fr, k_in, i_cum = self.k_par, self.k_tok, self.k_fr, self.k_in, self.i_cum
+        for t in range(T):
+            row = lp[t]
+            ptot = logaddexp(pb, pnb)
+            s_pb = ptot + blank_rows[t]
+            s_pnb = where(hasl, pnb + row[lastc], NEG_INF)
+            if not active[t]:
+                pb, pnb = s_pb, s_pnb
+                continue
+            a, e = starts[t], starts[t + 1]
+            C = c_nz[a:e]
+            Cl = c_list[a:e]
+            K = e - a
+            # acoustic score of each extension (b, c)
+            ext = where(last[:, None] == C, pb[:, None], ptot[:, None]) + v_nz[a:e]
+            # merge: an extension that gives a prefix already in the beam joins that prefix. Beam j is the
+            # extension (b, c) when par[j] = nodes[b] (the first such b) and last[j] = C[c].
+            nb = len(nodes)
+            if nb > 1:
+                first: dict[int, int] = {}
+                for i, n_ in enumerate(nodes):
+                    if n_ not in first:
+                        first[n_] = i
+                mj, mb, mc = [], [], []
+                cpos = None
+                for j in range(nb):
+                    p = par[j]
+                    if p < 0:
+                        continue
+                    b = first.get(p)
+                    if b is None:
+                        continue
+                    if cpos is None:
+                        cpos = {c: i for i, c in enumerate(Cl)}
+                    c = cpos.get(last_l[j])
+                    if c is not None:
+                        mj.append(j)
+                        mb.append(b)
+                        mc.append(c)
+                if mj:
+                    s_pnb[mj] = logaddexp(s_pnb[mj], ext[mb, mc])
+                    ext[mb, mc] = NEG_INF
+            stay = logaddexp(s_pb, s_pnb) + w * lms + bonus * ln
+            flat = (ext + w * (lms[:, None] + L[:, C]) + bonus * (ln[:, None] + 1.0)).ravel()
+            # candidates with a score > -inf (a NaN is not > -inf, as in the numpy form)
+            if flat.size <= 64:
+                fl = flat.tolist()
+                ok_l = [i for i, s in enumerate(fl) if s > NEG_INF]
+                ok = None
+            else:  # many keys in this frame: numpy is faster
+                ok = flatnonzero(flat > NEG_INF)
+                ok_l = ok.tolist()
+            if len(ok_l) > B:
+                # the same argpartition call on the same values as the numpy form, so ties at the cut keep
+                # the same extensions
+                if ok is None:
+                    ok = np.array(ok_l, np.int64)
+                ok = ok[np.argpartition(-flat[ok], B - 1)[:B]]
+                ext_c = [(-s, 1, i) for s, i in zip(flat[ok].tolist(), ok.tolist())]
+            elif ok is None:
+                ext_c = [(-fl[i], 1, i) for i in ok_l]
+            else:
+                ext_c = [(-s, 1, i) for s, i in zip(flat[ok].tolist(), ok_l)]
+            # rank: score (high first), then kind (stay before extension), then index (the lexsort keys)
+            cand = [(-s, 0, i) for i, s in enumerate(stay.tolist()) if s > NEG_INF]
+            cand += ext_c
+            cand.sort()
+            del cand[B:]
+            # the new beams (copies of values; the length term adds 1.0 for an extension and 0.0 for a stay,
+            # as the numpy form adds the bool array)
+            spb_l, spnb_l, ext_l = s_pb.tolist(), s_pnb.tolist(), ext.ravel().tolist()
+            pb_l, n_pb, n_pnb, n_nodes, n_par, n_last, n_lms, n_ln = [], [], [], [], [], [], [], []
+            new_q = []
+            for q, (_, kd, src) in enumerate(cand):
+                if kd:
+                    b = src // K
+                    new_q.append((q, b, Cl[src % K]))
+                    n_pb.append(NEG_INF)
+                    n_pnb.append(ext_l[src])  # ext[b, c] with src = b * K + c
+                    n_ln.append(ln_l[b] + 1.0)
+                else:
+                    b = src
+                    n_pb.append(spb_l[b])
+                    n_pnb.append(spnb_l[b])
+                    n_ln.append(ln_l[b] + 0.0)
+                pb_l.append(b)
+                n_nodes.append(nodes[b])
+                n_par.append(par[b])
+                n_last.append(last_l[b])
+                n_lms.append(lms_l[b])
+            n_L = L[pb_l] if pb_l else L[:0]
+            for q, b, tk in new_q:
+                parent = nodes[b]
+                inode = self._push_intended(k_in[parent], tk)
+                k_par.append(parent)
+                k_tok.append(tk)
+                k_fr.append(self.t + t)
+                k_in.append(inode)
+                n_nodes[q] = len(k_par) - 1
+                n_par[q] = parent
+                n_last[q] = tk
+                n_lms[q] = i_cum[inode]
+                n_L[q] = self._row(inode)
+            nodes, par, last_l, lms_l, ln_l = n_nodes, n_par, n_last, n_lms, n_ln
+            last = np.array(last_l, np.int64)
+            hasl = last >= 0
+            lastc = np.maximum(last, 0)
+            pb, pnb = np.array(n_pb, np.float64), np.array(n_pnb, np.float64)
+            lms, ln, L = np.array(lms_l, np.float64), np.array(ln_l, np.float64), n_L
+        self.nodes, self.par, self.last = np.array(nodes, np.int64), np.array(par, np.int64), last
+        self.pb, self.pnb, self.lms, self.ln, self.L = pb, pnb, lms, ln, L
+        self.t += T
+
+    def _push_reference(self, log_probs: np.ndarray) -> None:
+        """The P11-07 form of :meth:`push` (numpy bookkeeping per frame). Kept as the reference for the
+        bit-identity tests of :meth:`push` (P5-41); not used by the readout."""
         lp = np.asarray(log_probs, np.float64)
         if lp.ndim != 2 or lp.shape[1] != self.V:
             raise ValueError(f"chunk must be (n, {self.V}), got {lp.shape}")
