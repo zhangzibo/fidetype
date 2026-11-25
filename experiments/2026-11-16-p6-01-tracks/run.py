@@ -93,6 +93,21 @@ def dump(obj, path: Path) -> None:
     path.write_text(json.dumps(clean(obj), indent=1), encoding="utf-8")
 
 
+def trial_rows(ids, committed, correct, n_words, n_chars, cpm: float) -> list[dict]:
+    """The rows of a Toronto per-trial file (no text): one dict per test trial.
+
+    ``n_words`` is the word count of the target sentence. Before 2026-11-25 the writer unpacked its
+    ``zip`` in the wrong order, so the field ``n_words`` held the correct flag (0 or 1). No stored
+    number used that field: the v0.1 block was computed from the arrays, and
+    ``tools/benchmark/add_safe_wpm_v02_tracks01.py`` takes the counts from the truth file.
+    """
+    rows = []
+    for a, b, ok, w, c in zip(ids, committed, correct, n_words, n_chars, strict=True):
+        rows.append({"id": a, "committed": bool(b), "correct": bool(b and ok),
+                     "n_words": int(w), "n_chars": int(c), "neural_s": float(c * 60.0 / cpm)})
+    return rows
+
+
 def threshold_of(stem: str) -> tuple[float, dict]:
     d = json.loads((RESULTS_V01 / f"{stem}.json").read_text(encoding="utf-8"))
     g = d["guarantee"]
@@ -195,9 +210,8 @@ def stage_toronto() -> dict:
         blk["basis"] = ("exact per-trial CRC decisions (P6-01 rerun of the M6-07 pipeline; commit and wrong-commit rates "
                         "equal the committed aggregates)" if same else "per-trial rerun; DIFFERS from committed aggregates")
         with open(DER / f"toronto-{cond}-crc-trials.jsonl", "w", encoding="utf-8") as f:
-            for i, (a, b, w, c, s) in enumerate(zip(ids, committed, correct, nw, nc)):
-                f.write(json.dumps({"id": a, "committed": bool(b), "correct": bool(b and correct[i]),
-                                    "n_words": int(w), "n_chars": int(s), "neural_s": float(s * 60.0 / cpm)}) + "\n")
+            for r in trial_rows(ids, committed, correct, nw, nc, cpm):
+                f.write(json.dumps(r) + "\n")
         out["conditions"][cond] = {"same_as_committed": same, "lm_weight": w_best, "rate_commit": m["rate_commit"],
                                    "wrong_commit_rate": m["wrong_commit_rate"], "ewpm": m["ewpm"], "safe_wpm": blk,
                                    "seconds": round(time.time() - tc, 1)}
@@ -365,7 +379,15 @@ def stage_meg_null() -> dict:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--stages", default="toronto,b2t-null,meg-null")
+    ap.add_argument("--out", default=None, help="folder for the aggregates and the log (default: results/ here)")
+    ap.add_argument("--der", default=None, help="folder for the per-trial files (default: the local derived folder)")
     a = ap.parse_args()
+    global OUT, DER, LOG
+    if a.out:
+        OUT = Path(a.out)
+        LOG = OUT / "run.log"
+    if a.der:
+        DER = Path(a.der)
     OUT.mkdir(exist_ok=True)
     DER.mkdir(parents=True, exist_ok=True)
     for st in a.stages.split(","):

@@ -58,6 +58,9 @@ Before, these entries showed "controls: no" with `null_commit: missing`. The aud
 - Audits use 300 B2T test trials (the earlier audit set); the CP95 upper bound on 0/300 is 0.012.
 - The new tracks have split files and loaders; the scorer and baselines for `b2t24-t12`, `willett-hw`, `kt-semg` and `emg2qwerty` come with P6-02.
 
+## Correction 2026-11-25: word count field of the per-trial files
+The writer of the Toronto per-trial files unpacked its `zip` in the wrong order, so the field `n_words` held the correct flag (0 or 1), not the word count of the sentence. The writer is fixed (`trial_rows` in [run.py](run.py)), and a test checks it ([tests/test_toronto_trial_rows.py](../../tests/test_toronto_trial_rows.py)). The three local files were rebuilt on 2026-11-25 with `run.py --stages toronto` (the old files are kept in `old-before-2026-11-25/`). Checks: every other field is the same as before; `n_words` and `n_chars` equal the counts of the truth file; the aggregates (`results/toronto-safe-wpm.json`) are the same as the committed ones except the run times; `tools/benchmark/add_safe_wpm_v02_tracks01.py` (now with a word-count check) reproduces every stored safe WPM block. **No stored number changed:** the v0.1 block was computed from the arrays, not from the file, and the v0.2 tool takes the counts from the truth file.
+
 ## Rerun (repo root)
 ```bash
 .venv\Scripts\python.exe -m fidetype.utils.isolation run --class background --threads 4 -- .venv\Scripts\python.exe -I experiments/2026-11-16-p6-01-tracks/run.py --stages toronto,b2t-null,meg-null

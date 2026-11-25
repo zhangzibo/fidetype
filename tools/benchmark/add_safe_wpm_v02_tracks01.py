@@ -79,6 +79,16 @@ def b2t_durations(pkl: Path) -> dict[str, float]:
     return {f"t15-copytask-{t.index:04d}": float(t.speech_duration_s) for t in load_copytask(pkl, verify=True)}
 
 
+def check_counts(name: str, rows: list[dict], n_chars, n_words) -> None:
+    """Stop if the character or word counts of a Toronto per-trial file differ from the truth file."""
+    if not np.allclose(n_chars, [r["n_chars"] for r in rows]):
+        raise SystemExit(f"{name}: character counts differ from the truth file")
+    if not np.allclose(n_words, [r["n_words"] for r in rows]):
+        raise SystemExit(f"{name}: word counts differ from the truth file (a per-trial file written before "
+                         "2026-11-25 holds the correct flag in n_words; rebuild it with "
+                         "experiments/2026-11-16-p6-01-tracks/run.py --stages toronto)")
+
+
 def per_trial_inputs(a, results: Path) -> dict[str, dict]:
     """card file name -> the safe_wpm arguments that produced its stored v0.1 block."""
     ib = load_module("import_baselines", REPO / "tools/benchmark/import_baselines.py")
@@ -117,7 +127,9 @@ def per_trial_inputs(a, results: Path) -> dict[str, dict]:
                              guarantee=g, timing=timing, clusters=clusters, ci_unit=t.ci_unit,
                              controls=card.get("controls"), gaze_chars_per_min=t.user_model.gaze_chars_per_min)
     # Toronto sEMG CRC: the P6-01 per-trial decisions (committed / correct by trial id). Word and character counts
-    # come from the truth file (the per-trial file's n_words field holds the correct flag, not a word count).
+    # come from the truth file; check_counts checks the per-trial file against them. (Files written before
+    # 2026-11-25 held the correct flag in n_words: rebuild them with experiments/2026-11-16-p6-01-tracks/run.py
+    # --stages toronto.)
     track = "toronto-semg-composed"
     t = get_track(track)
     split = load_split(track)
@@ -135,8 +147,7 @@ def per_trial_inputs(a, results: Path) -> dict[str, dict]:
         by_id = {r["id"]: r for r in test_rows}
         nc = np.array([len(tr[i]["text"]) for i in ids], float)
         nw = np.array([len(tr[i]["text"].split()) for i in ids], float)
-        if not np.allclose(nc, [r["n_chars"] for r in rows]):
-            raise SystemExit(f"{name}: character counts differ from the truth file")
+        check_counts(name, rows, nc, nw)
         out[name] = dict(committed=np.array([r["committed"] for r in rows], bool),
                          correct=np.array([r["correct"] for r in rows], bool), n_words=nw, n_chars=nc,
                          # the P6-01 rate-model times (the median inter-key interval of the recordings)
