@@ -224,6 +224,9 @@ class GuaranteeSheet:
     #: The offer null control of P5-31 (:func:`offer_control`), or None (not run). It never changes
     #: ``feasible`` or the commit controls; with ``calibrate(offer_control="warn")`` a failure is a warning.
     offers: dict[str, Any] | None = None
+    #: The multi-user check and per-user bound of P5-42 (``calibrate(users=...)``), or None (no ``users=``).
+    #: See :mod:`fidetype.trust.user_check`.
+    users: dict[str, Any] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         d = {k: getattr(self, k) for k in self.__dataclass_fields__}
@@ -240,6 +243,8 @@ class GuaranteeSheet:
             d.pop("confidence", None)  # pre-P5-23 sheets keep their bytes
         if d.get("offers") is None:
             d.pop("offers", None)  # pre-P5-31 sheets keep their bytes
+        if d.get("users") is None:
+            d.pop("users", None)  # sheets without users= keep their bytes
         return d
 
     @classmethod
@@ -285,6 +290,8 @@ class GuaranteeSheet:
                          f"{'PASS' if c.passed else 'FAIL'}")
         if self.offers:
             lines += _offer_lines(self.offers)
+        if self.users:
+            lines += _user_lines(self.users)
         if self.confidence:
             cf = self.confidence
             if prefix:
@@ -1591,6 +1598,9 @@ def calibrate(
     offer_control: str = "warn",
     prefix_score: Any = None,
     groups: Sequence[Hashable] | None = None,
+    users: Sequence[Hashable] | None = None,
+    user_check: str = "warn",
+    user_bound: str = "pooled",
 ) -> TrustGuard:
     """Calibrate the trust layer on your labelled data. Return a :class:`TrustGuard`.
 
@@ -1692,6 +1702,30 @@ def calibrate(
         least 3 groups. Default ``None``: the plain random split, with the
         same result as before this option existed. Repeats inside the LTT
         part stay correlated; the LTT bound treats them as independent.
+    users, user_check, user_bound
+        Optional multi-user safety (P5-42, :mod:`fidetype.trust.user_check`):
+        one user (or session) id per input, when the calibration data pool
+        several users. Not the same as ``groups``; ``users`` does not
+        change the split. Default ``None``: nothing changes. With
+        ``users``, ``user_check`` runs a label null on the LTT items:
+        labels permuted inside each user (keeps each user's rate of right
+        top-1 texts) and over the pool, 200 runs each. Verdict ``"fail"``:
+        the certificate is not larger than what each user's base rate
+        alone gives (it can come from who the user is, not from the
+        utterance); ``"partial"``: within-user permutation certifies more
+        commits than pooled permutation. ``"warn"`` (default): the result
+        is in ``sheet.users`` and a fail or partial adds a sheet warning;
+        ``"refuse"``: a fail raises :class:`NullControlError`; ``"off"``:
+        not run. The check changes no decision and not ``config_id``.
+        ``user_bound``: ``"pooled"`` (default, the bound on the pool);
+        ``"each"``: raise the commit threshold so that the bound also holds
+        for each calibration user (each with probability ``1 - delta``);
+        ``"all"``: for all calibration users together (level ``delta / K``
+        per user). Each user needs enough LTT items (45 for ``"each"`` at
+        0.05 / 0.1), else ``ValueError``. The new threshold enters the
+        configuration and ``config_id``. New users get no per-user
+        guarantee. Sentence commits only (not with ``commit_unit="prefix"``,
+        ``grounding``, ``llm`` or ``target_precision`` in this version).
     audit_text
         Keep the shown text in the audit log (default True). False keeps
         only actions, scores and hashes.
@@ -1830,6 +1864,21 @@ def calibrate(
         raise ValueError("null_trials must be >= 1")
     if offer_control not in ("off", "warn", "refuse"):
         raise ValueError("offer_control must be 'off', 'warn' or 'refuse'")
+    from fidetype.trust.user_check import USER_BOUNDS, USER_CHECKS
+
+    if user_check not in USER_CHECKS:
+        raise ValueError(f"user_check must be one of {USER_CHECKS}, not {user_check!r}")
+    if user_bound not in USER_BOUNDS:
+        raise ValueError(f"user_bound must be one of {USER_BOUNDS}, not {user_bound!r}")
+    if users is None and (user_check != "warn" or user_bound != "pooled"):
+        raise ValueError("user_check and user_bound need users= (one user or session id per input)")
+    if users is not None:
+        users = list(users)
+        if len(users) != len(inputs):
+            raise ValueError(f"users needs one entry per input ({len(users)} != {len(inputs)})")
+        if commit_unit != "sentence" or prefix_score is not None or grounding is not None or llm is not None                 or target_precision is not None:
+            raise ValueError("users= is for sentence commits only in this version (not with commit_unit='prefix', "
+                             "prefix_score=, grounding=, llm= or target_precision=)")
     if kind == "nbest" and not null_inputs:
         raise ValueError(
             "n-best input needs null_inputs=: your decoder's n-best output on null input, for example on "
@@ -2080,6 +2129,10 @@ def calibrate(
         raise NullControlError("calibration refused (offer_control='refuse'): " + _offer_warning(offers)
                                + " No configuration was produced.", controls)
     guard.sheet = sheet
+    if users is not None:
+        guard = _user_step(guard, sheet, inputs, texts, order, n_fit, n_pol, kind, decode_fn, audit_text, users,
+                           user_check, user_bound, float(alpha), float(delta), int(seed), rng_controls, null_trials,
+                           rate, null_inputs)
     if halluc_on:
         guard = _halluc_bound(guard, sheet, inputs, texts, order, n_fit, n_pol, kind, decode_fn, audit_text,
                               _as_commit_grounding(grounding), llm, float(halluc_alpha), h_delta,
@@ -2535,6 +2588,157 @@ def _final_offers(sheet: GuaranteeSheet, controls: list[ControlResult], n_real: 
         raise NullControlError("calibration refused (offer_control='refuse'): " + _offer_warning(offers)
                                + " No configuration was produced.", controls)
     return controls, offers
+
+
+def _user_view(guard: TrustGuard, inputs: Sequence[Any], texts: Sequence[str], idx: Sequence[int],
+               decode_fn: UserDecodeFn | None) -> tuple[np.ndarray, np.ndarray, np.ndarray | None]:
+    """P5-42: the LTT view of a sentence guard on the items ``idx``: commit score ``s`` (``-inf``: no commit at
+    any threshold), "top-1 wrong" ``w`` and (``p_top1`` score only) the OFFER_WORDS flag ``o`` at ``commit_p =
+    inf``. The guard commits item i iff ``s_i >= threshold``; the scores do not depend on the threshold."""
+    frozen = guard.config
+    codec = guard._codec
+    cs = guard.commit_score
+    s, w, o = [], [], []
+    if cs is not None:  # P5-23 learned score: the layer never commits (commit_p = inf); the score decides
+        gate = frozen.gate
+        for i in idx:
+            events, _ = codec.events(inputs[int(i)])
+            sd = guard._run_layer(guard._layer, events)
+            top = _norm_text(sd.inputs.texts[0]) if sd.inputs.texts else ""
+            ok = bool(sd.inputs.texts) and (gate is None or gate.violation(
+                sd.inputs.texts[0], float(sd.inputs.guard_risk) if frozen.use_guard else None) is None)
+            s.append(cs.score(guard._features(sd, events)) if ok else -math.inf)
+            w.append(top.split() != texts[int(i)].split())
+        return np.array(s, np.float64), np.array(w, bool), None
+    lo = TrustGuard(frozen.with_policy(commit_p=0.0), codec, None, decode_fn, False)
+    hi = TrustGuard(frozen.with_policy(commit_p=math.inf), codec, None, decode_fn, False)
+    for i in idx:
+        events, _ = codec.events(inputs[int(i)])
+        sd, _ = lo._final_gated(events)
+        top = _norm_text(sd.inputs.texts[0]) if sd.inputs.texts else ""
+        s.append(float(sd.inputs.p_top1) if sd.decision.action == Action.COMMIT else -math.inf)
+        w.append(top.split() != texts[int(i)].split())
+        sd_hi, _ = hi._final_gated(events)
+        o.append(sd_hi.decision.action == Action.OFFER_WORDS)
+    return np.array(s, np.float64), np.array(w, bool), np.array(o, bool)
+
+
+_USER_NOT_GUARANTEED = (
+    "A bound per user for users who are not in the calibration data, or per session or sentence type (the per-user "
+    "bound covers the calibration users only).",)
+
+
+def _user_step(guard: TrustGuard, sheet: GuaranteeSheet, inputs: Sequence[Any], texts: Sequence[str],
+               order: np.ndarray, n_fit: int, n_pol: int, kind: str, decode_fn: UserDecodeFn | None,
+               audit_text: bool, users: Sequence[Hashable], check: str, bound: str, alpha: float, delta: float,
+               seed: int, rng_controls: np.random.Generator, null_trials: int, rate: float,
+               null_inputs: Sequence[Any] | None) -> TrustGuard:
+    """The P5-42 step of :func:`calibrate`: the user-identity label null and the optional per-user bound."""
+    from fidetype.trust import user_check as U
+
+    user_fn = decode_fn if kind == "logits" else None
+    ltt_idx = [int(i) for i in order[n_fit + n_pol:]]
+    s, w, o = _user_view(guard, inputs, texts, ltt_idx, user_fn)
+    u_ltt = [users[i] for i in ltt_idx]
+    block: dict[str, Any] = {"n_users": len(set(users)), "n_users_ltt": len(set(u_ltt)), "check_mode": check,
+                             "bound": bound}
+    warnings = list(sheet.warnings)
+    if check != "off":
+        res = U.user_label_null(s, w, o, u_ltt, alpha, delta, seed=seed)
+        block["check"] = res
+        if res["verdict"] == "fail":
+            msg = (f"user check FAILED: the certificate ({res['real_commits']} LTT commits) is not above the "
+                   f"within-user label null (p_user {res['p_user']:.3g} > {U.P_USER_MAX:g}; median "
+                   f"{res['nw_commits_median']:g} commits with labels permuted inside each user). The commits can "
+                   "come from who the user is (each user's rate of right texts), not from the utterance.")
+            if check == "refuse":
+                raise NullControlError("calibration refused (user_check='refuse'): " + msg
+                                       + " No configuration was produced.", list(sheet.controls))
+            warnings.append(msg)
+        elif res["verdict"] == "partial":
+            warnings.append(
+                f"user check: labels permuted inside each user certify more commits than labels permuted over all "
+                f"users (median {res['nw_commits_median']:g} vs {res['np_commits_median']:g}; p_leak "
+                f"{res['p_leak']:.3g}): part of the certificate is which user. The bound is on the pool; "
+                "user_bound='each' or 'all' gives a per-user bound.")
+    if bound == "pooled":
+        guard.sheet = replace(sheet, users=block, warnings=tuple(warnings))
+        return guard
+    pu = U.per_user_thresholds(s, w, o, u_ltt, alpha, delta, bound)
+    lam_u = [float(x) for x in pu.pop("_thresholds")]
+    frozen = guard.config
+    cs = guard.commit_score
+    base_thr = float(cs.threshold) if cs is not None else float(frozen.policy.get("commit_p", math.inf))
+    new_thr = max(base_thr, max(lam_u))
+    pu.update({"base_threshold": _json_float(base_thr), "threshold": _json_float(new_thr),
+               "users_binding": int(sum(x == new_thr for x in lam_u)),
+               "method": (f"LTT on the LTT items of each user (exact binomial p-values, grid 1.00 -> 0.00 step 0.01) "
+                          f"at level {pu['level_per_user']:.4g}; final threshold = max(pooled threshold, user "
+                          "thresholds)")})
+    recipe = dict(frozen.recipe)
+    recipe["user_bound"] = {k: pu[k] for k in ("mode", "n_users", "level_per_user", "method", "threshold")}
+    if cs is not None:
+        cert = dict(cs.certification)
+        cert["user_bound"] = recipe["user_bound"]
+        recipe["commit_score"] = cs.with_threshold(new_thr, cert).to_dict()
+        final = replace(frozen, recipe=recipe)
+    else:
+        final = replace(frozen.with_policy(commit_p=new_thr), recipe=recipe)
+    new = TrustGuard(final, guard._codec, None, user_fn, audit_text)
+    n_com = n_wrong = n_blocked = n_off = 0
+    risks = []
+    for i in ltt_idx:
+        r = new._decide_quiet(inputs[i])
+        risks.append(r.guard_risk)
+        n_blocked += r.reason.startswith(_GATE_RISK_REASON)
+        n_off += r.action == "offer"
+        if r.action == "commit":
+            n_com += 1
+            n_wrong += int(not new.is_right(r, texts[i]))
+    controls = _run_controls(new, inputs, kind, rng_controls, null_trials, rate, null_inputs)
+    controls, offers = _final_offers(sheet, controls, len(ltt_idx), n_off, rate)
+    failed = [c for c in controls if not c.passed]
+    if failed:  # a higher threshold only removes commits, so this should not happen; checked all the same
+        raise NullControlError("calibration refused: the per-user guard commits on null input. No configuration "
+                               "was produced.", controls)
+    pu["ltt_commits"], pu["ltt_wrong_commits"] = n_com, n_wrong
+    block["per_user"] = pu
+    warnings = _with_offers(offers, warnings)
+    if not math.isfinite(new_thr):
+        warnings.append(f"user bound: no threshold is certified for {pu['users_never']} of {pu['n_users']} users, "
+                        "so the guard never commits.")
+    confidence = sheet.confidence
+    if confidence is not None:
+        confidence = dict(confidence, threshold=_json_float(new_thr))
+    scope = ("each calibration user, each with probability >= 1 - delta" if bound == "each" else
+             "all calibration users together, with probability >= 1 - delta")
+    new.sheet = replace(sheet, config_id=final.config_id, commit_threshold=new_thr, ltt_commits=n_com,
+                        ltt_wrong_commits=n_wrong, ltt_gate_blocked=int(n_blocked),
+                        ltt_median_guard_risk=float(np.median(risks)) if risks else math.nan,
+                        controls=tuple(controls), offers=offers, warnings=tuple(warnings), users=block,
+                        confidence=confidence,
+                        assumptions=sheet.assumptions + (
+                            f"Per-user bound ({scope}): the LTT items of each user are exchangeable with that "
+                            "user's new utterances.",),
+                        not_guaranteed=tuple(a for a in sheet.not_guaranteed if not a.startswith(
+                            "A bound per session, per user")) + _USER_NOT_GUARANTEED)
+    return new
+
+
+def _user_lines(u: Mapping[str, Any]) -> list[str]:
+    lines = [f"users                {u['n_users']} users ({u['n_users_ltt']} in the LTT part); user check "
+             f"{u['check_mode']}, bound {u['bound']}"]
+    c = u.get("check")
+    if c:
+        lines.append(f"  user check         {c['verdict'].upper()}: real {c['real_commits']} LTT commits; labels "
+                     f"permuted inside users median {c['nw_commits_median']:g} (p_user {c['p_user']:.3g}), over "
+                     f"all users median {c['np_commits_median']:g} (p_leak {c['p_leak']:.3g}); {c['n_runs']} runs")
+    p = u.get("per_user")
+    if p:
+        lines.append(f"  per-user bound     {p['mode']}: level {p['level_per_user']:.4g} per user, threshold "
+                     f"{p['threshold']} (pooled {p['base_threshold']}); {p['ltt_commits']} LTT commits, "
+                     f"{p['ltt_wrong_commits']} wrong")
+    return lines
 
 
 def _run_controls(guard: TrustGuard, inputs: Sequence[Any], kind: str, rng: np.random.Generator, n_trials: int,
