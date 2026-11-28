@@ -127,6 +127,9 @@ def st_s0(c: Ctx) -> dict:
 def _device(name: str):
     import torch
 
+    # MIOpen's BatchNorm kernel does not compile on this ROCm build (miopenStatusUnknownError, run 2026-11-27);
+    # the native PyTorch kernels compute the same model (project precedent: T12 train_decoder.py).
+    torch.backends.cudnn.enabled = False
     return torch.device(name)
 
 
@@ -428,5 +431,24 @@ def main(argv=None) -> int:
     return 0
 
 
+def _run_and_exit() -> None:
+    """Log the exit code to a1.log, then end with TerminateProcess (ROCm/Windows exit hang, train.hard_exit)."""
+    from fidetype.decoders.train import hard_exit
+
+    try:
+        code = main()
+    except SystemExit as e:
+        code = e.code if isinstance(e.code, int) else 1
+    except BaseException:
+        import traceback
+
+        traceback.print_exc()
+        code = 1
+    if "--dry-run" not in sys.argv:
+        OUT.mkdir(parents=True, exist_ok=True)
+        log(OUT, f"exit code {code}")
+    hard_exit(code)
+
+
 if __name__ == "__main__":
-    raise SystemExit(main())
+    _run_and_exit()
