@@ -1,0 +1,486 @@
+{
+ "schema": "fidetype.halluc.signal-card/0.1",
+ "protocol": "fidetype.halluc-signal/0.1",
+ "dataset": "b2t24-t12-test",
+ "system": "p15-06-B1_rescore_G",
+ "fluency": {
+  "mode": "conservative"
+ },
+ "meta": {
+  "guard_config_id": "tcfg-77bf40445ed5b0d9",
+  "description": "P15-06 guard: LLM rescoring + CTC grounding + fluent-wrong bound (joint LTT)",
+  "decoder": "T12 v2",
+  "fidetype_version": "0.1.0",
+  "seed": 0,
+  "near_miss_language_side": "language side = the system's own base n-best list with the top candidate's text replaced by the near-miss text (all score fields kept; char_confidences mapped by relative position)",
+  "signal_digest": "32f52bbff885c5757f4e33a58b77d60fc3f676c21ece66b4cd73ad3114d1ecc4",
+  "limit": 0
+ },
+ "real": {
+  "n": 400,
+  "commits": 0,
+  "wrong_commits": 0
+ },
+ "tracks": {
+  "truncated_25": {
+   "family": "truncated",
+   "n": 400,
+   "commit_rate": {
+    "k": 0,
+    "n": 400,
+    "value": 0.0,
+    "cp95": [
+     0.0,
+     0.0092
+    ]
+   },
+   "unsupported_commit_rate": {
+    "k": 0,
+    "n": 400,
+    "value": 0.0,
+    "cp95": [
+     0.0,
+     0.0092
+    ]
+   },
+   "fluent_unsupported_rate": {
+    "k": 0,
+    "n": 400,
+    "value": 0.0,
+    "cp95": [
+     0.0,
+     0.0092
+    ]
+   },
+   "unsupported_among_commits": {
+    "k": 0,
+    "n": 0,
+    "value": null,
+    "cp95": [
+     null,
+     null
+    ]
+   },
+   "prefix_commits": 0,
+   "full_commits": 0,
+   "paired": {
+    "test": "paired: Y = n01 + n11 ~ Binomial(m, theta); pass iff cp_upper(Y, m, alpha) < r / (1 + r)",
+    "n": 400,
+    "n10": 0,
+    "n01": 0,
+    "n11": 0,
+    "m": 0,
+    "Y": 0,
+    "real_commits": 0,
+    "swapped_unsupported_commits": 0,
+    "ratio_estimate": null,
+    "theta_hat": null,
+    "theta_upper": 1.0,
+    "theta_r": 0.3333333333333333,
+    "n01_share_lower": 0.0,
+    "ratio_max": 0.5,
+    "alpha": 0.05,
+    "m_min": 25,
+    "verdict": "insufficient evidence"
+   },
+   "verdict": "insufficient evidence"
+  },
+  "truncated_50": {
+   "family": "truncated",
+   "n": 400,
+   "commit_rate": {
+    "k": 0,
+    "n": 400,
+    "value": 0.0,
+    "cp95": [
+     0.0,
+     0.0092
+    ]
+   },
+   "unsupported_commit_rate": {
+    "k": 0,
+    "n": 400,
+    "value": 0.0,
+    "cp95": [
+     0.0,
+     0.0092
+    ]
+   },
+   "fluent_unsupported_rate": {
+    "k": 0,
+    "n": 400,
+    "value": 0.0,
+    "cp95": [
+     0.0,
+     0.0092
+    ]
+   },
+   "unsupported_among_commits": {
+    "k": 0,
+    "n": 0,
+    "value": null,
+    "cp95": [
+     null,
+     null
+    ]
+   },
+   "prefix_commits": 0,
+   "full_commits": 0,
+   "paired": {
+    "test": "paired: Y = n01 + n11 ~ Binomial(m, theta); pass iff cp_upper(Y, m, alpha) < r / (1 + r)",
+    "n": 400,
+    "n10": 0,
+    "n01": 0,
+    "n11": 0,
+    "m": 0,
+    "Y": 0,
+    "real_commits": 0,
+    "swapped_unsupported_commits": 0,
+    "ratio_estimate": null,
+    "theta_hat": null,
+    "theta_upper": 1.0,
+    "theta_r": 0.3333333333333333,
+    "n01_share_lower": 0.0,
+    "ratio_max": 0.5,
+    "alpha": 0.05,
+    "m_min": 25,
+    "verdict": "insufficient evidence"
+   },
+   "verdict": "insufficient evidence"
+  },
+  "truncated_75": {
+   "family": "truncated",
+   "n": 400,
+   "commit_rate": {
+    "k": 0,
+    "n": 400,
+    "value": 0.0,
+    "cp95": [
+     0.0,
+     0.0092
+    ]
+   },
+   "unsupported_commit_rate": {
+    "k": 0,
+    "n": 400,
+    "value": 0.0,
+    "cp95": [
+     0.0,
+     0.0092
+    ]
+   },
+   "fluent_unsupported_rate": {
+    "k": 0,
+    "n": 400,
+    "value": 0.0,
+    "cp95": [
+     0.0,
+     0.0092
+    ]
+   },
+   "unsupported_among_commits": {
+    "k": 0,
+    "n": 0,
+    "value": null,
+    "cp95": [
+     null,
+     null
+    ]
+   },
+   "prefix_commits": 0,
+   "full_commits": 0,
+   "paired": {
+    "test": "paired: Y = n01 + n11 ~ Binomial(m, theta); pass iff cp_upper(Y, m, alpha) < r / (1 + r)",
+    "n": 400,
+    "n10": 0,
+    "n01": 0,
+    "n11": 0,
+    "m": 0,
+    "Y": 0,
+    "real_commits": 0,
+    "swapped_unsupported_commits": 0,
+    "ratio_estimate": null,
+    "theta_hat": null,
+    "theta_upper": 1.0,
+    "theta_r": 0.3333333333333333,
+    "n01_share_lower": 0.0,
+    "ratio_max": 0.5,
+    "alpha": 0.05,
+    "m_min": 25,
+    "verdict": "insufficient evidence"
+   },
+   "verdict": "no rule"
+  },
+  "noise_mix_25": {
+   "family": "noise_mix",
+   "n": 400,
+   "commit_rate": {
+    "k": 0,
+    "n": 400,
+    "value": 0.0,
+    "cp95": [
+     0.0,
+     0.0092
+    ]
+   },
+   "unsupported_commit_rate": {
+    "k": 0,
+    "n": 400,
+    "value": 0.0,
+    "cp95": [
+     0.0,
+     0.0092
+    ]
+   },
+   "fluent_unsupported_rate": {
+    "k": 0,
+    "n": 400,
+    "value": 0.0,
+    "cp95": [
+     0.0,
+     0.0092
+    ]
+   },
+   "unsupported_among_commits": {
+    "k": 0,
+    "n": 0,
+    "value": null,
+    "cp95": [
+     null,
+     null
+    ]
+   },
+   "paired": {
+    "test": "paired: Y = n01 + n11 ~ Binomial(m, theta); pass iff cp_upper(Y, m, alpha) < r / (1 + r)",
+    "n": 400,
+    "n10": 0,
+    "n01": 0,
+    "n11": 0,
+    "m": 0,
+    "Y": 0,
+    "real_commits": 0,
+    "swapped_unsupported_commits": 0,
+    "ratio_estimate": null,
+    "theta_hat": null,
+    "theta_upper": 1.0,
+    "theta_r": 0.3333333333333333,
+    "n01_share_lower": 0.0,
+    "ratio_max": 0.5,
+    "alpha": 0.05,
+    "m_min": 25,
+    "verdict": "insufficient evidence"
+   },
+   "verdict": "insufficient evidence"
+  },
+  "noise_mix_50": {
+   "family": "noise_mix",
+   "n": 400,
+   "commit_rate": {
+    "k": 0,
+    "n": 400,
+    "value": 0.0,
+    "cp95": [
+     0.0,
+     0.0092
+    ]
+   },
+   "unsupported_commit_rate": {
+    "k": 0,
+    "n": 400,
+    "value": 0.0,
+    "cp95": [
+     0.0,
+     0.0092
+    ]
+   },
+   "fluent_unsupported_rate": {
+    "k": 0,
+    "n": 400,
+    "value": 0.0,
+    "cp95": [
+     0.0,
+     0.0092
+    ]
+   },
+   "unsupported_among_commits": {
+    "k": 0,
+    "n": 0,
+    "value": null,
+    "cp95": [
+     null,
+     null
+    ]
+   },
+   "paired": {
+    "test": "paired: Y = n01 + n11 ~ Binomial(m, theta); pass iff cp_upper(Y, m, alpha) < r / (1 + r)",
+    "n": 400,
+    "n10": 0,
+    "n01": 0,
+    "n11": 0,
+    "m": 0,
+    "Y": 0,
+    "real_commits": 0,
+    "swapped_unsupported_commits": 0,
+    "ratio_estimate": null,
+    "theta_hat": null,
+    "theta_upper": 1.0,
+    "theta_r": 0.3333333333333333,
+    "n01_share_lower": 0.0,
+    "ratio_max": 0.5,
+    "alpha": 0.05,
+    "m_min": 25,
+    "verdict": "insufficient evidence"
+   },
+   "verdict": "insufficient evidence"
+  },
+  "noise_mix_75": {
+   "family": "noise_mix",
+   "n": 400,
+   "commit_rate": {
+    "k": 0,
+    "n": 400,
+    "value": 0.0,
+    "cp95": [
+     0.0,
+     0.0092
+    ]
+   },
+   "unsupported_commit_rate": {
+    "k": 0,
+    "n": 400,
+    "value": 0.0,
+    "cp95": [
+     0.0,
+     0.0092
+    ]
+   },
+   "fluent_unsupported_rate": {
+    "k": 0,
+    "n": 400,
+    "value": 0.0,
+    "cp95": [
+     0.0,
+     0.0092
+    ]
+   },
+   "unsupported_among_commits": {
+    "k": 0,
+    "n": 0,
+    "value": null,
+    "cp95": [
+     null,
+     null
+    ]
+   },
+   "paired": {
+    "test": "paired: Y = n01 + n11 ~ Binomial(m, theta); pass iff cp_upper(Y, m, alpha) < r / (1 + r)",
+    "n": 400,
+    "n10": 0,
+    "n01": 0,
+    "n11": 0,
+    "m": 0,
+    "Y": 0,
+    "real_commits": 0,
+    "swapped_unsupported_commits": 0,
+    "ratio_estimate": null,
+    "theta_hat": null,
+    "theta_upper": 1.0,
+    "theta_r": 0.3333333333333333,
+    "n01_share_lower": 0.0,
+    "ratio_max": 0.5,
+    "alpha": 0.05,
+    "m_min": 25,
+    "verdict": "insufficient evidence"
+   },
+   "verdict": "insufficient evidence"
+  },
+  "near_miss": {
+   "family": "near_miss",
+   "n": 400,
+   "commit_rate": {
+    "k": 0,
+    "n": 400,
+    "value": 0.0,
+    "cp95": [
+     0.0,
+     0.0092
+    ]
+   },
+   "unsupported_commit_rate": {
+    "k": 0,
+    "n": 400,
+    "value": 0.0,
+    "cp95": [
+     0.0,
+     0.0092
+    ]
+   },
+   "fluent_unsupported_rate": {
+    "k": 0,
+    "n": 400,
+    "value": 0.0,
+    "cp95": [
+     0.0,
+     0.0092
+    ]
+   },
+   "unsupported_among_commits": {
+    "k": 0,
+    "n": 0,
+    "value": null,
+    "cp95": [
+     null,
+     null
+    ]
+   },
+   "near_miss_commit_commits": 0,
+   "paired": {
+    "test": "paired: Y = n01 + n11 ~ Binomial(m, theta); pass iff cp_upper(Y, m, alpha) < r / (1 + r)",
+    "n": 400,
+    "n10": 0,
+    "n01": 0,
+    "n11": 0,
+    "m": 0,
+    "Y": 0,
+    "real_commits": 0,
+    "swapped_unsupported_commits": 0,
+    "ratio_estimate": null,
+    "theta_hat": null,
+    "theta_upper": 1.0,
+    "theta_r": 0.3333333333333333,
+    "n01_share_lower": 0.0,
+    "ratio_max": 0.5,
+    "alpha": 0.05,
+    "m_min": 25,
+    "verdict": "insufficient evidence"
+   },
+   "verdict": "insufficient evidence"
+  }
+ },
+ "families": {
+  "truncated": {
+   "verdict": "insufficient evidence",
+   "levels_scored": 2
+  },
+  "noise_mix": {
+   "verdict": "insufficient evidence",
+   "levels_scored": 3
+  },
+  "near_miss": {
+   "verdict": "insufficient evidence",
+   "levels_scored": 1
+  }
+ },
+ "signal_checks_verdict": "insufficient evidence",
+ "signal_checks_complete": true,
+ "rules": {
+  "ratio_max": 0.5,
+  "alpha": 0.05,
+  "m_min": 25,
+  "truncated_scored_levels": [
+   "truncated_25",
+   "truncated_50"
+  ],
+  "rule": "paired: pass iff cp_upper(n01 + n11, m, alpha) < r / (1 + r), per scored level"
+ }
+}

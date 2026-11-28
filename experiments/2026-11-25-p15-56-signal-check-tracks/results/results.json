@@ -1,0 +1,516 @@
+{
+ "fidetype_version": "0.1.0",
+ "seed": 0,
+ "protocol": "fidetype.halluc-signal/0.1",
+ "plan": "experiments/2026-11-25-p15-56-signal-check-tracks/plan.md",
+ "m413": {
+  "dataset": "b2t25-t15-val-eval",
+  "decoder": "M4-13 long0",
+  "n": 701,
+  "fluent_threshold": -7.88165954200173,
+  "signal_digest": "b887771720d8d2f1472d24622770dcf659ad86e5705ca72ae71741ae3d388160",
+  "systems": {
+   "m4-13-p15-05-A0_ngram": {
+    "status": "ok",
+    "guard_config_id": "tcfg-108e97100553a10e",
+    "description": "M4-13 rerun of P15-05 arm A0 (n-gram word decoder, no LLM; P14-03-type guard)",
+    "cards": {
+     "llm": {
+      "file": "b2t25-t15-val-eval--m4-13-p15-05-A0_ngram--llm.signal-card.json",
+      "verdict": "fail",
+      "families": {
+       "truncated": {
+        "verdict": "pass",
+        "levels_scored": 2
+       },
+       "noise_mix": {
+        "verdict": "pass",
+        "levels_scored": 3
+       },
+       "near_miss": {
+        "verdict": "fail",
+        "levels_scored": 1
+       }
+      },
+      "summary": "b2t25-t15-val-eval/m4-13-p15-05-A0_ngram  real commit 104/701  truncated_25 11/152 m114 pass  truncated_50 19/192 m119 pass  truncated_75 28/125 m117 no rule  noise_mix_25 0/0 m104 pass  noise_mix_50 0/0 m104 pass  noise_mix_75 0/0 m104 pass  near_miss 104/104 m104 fail  => fail"
+     },
+     "conservative": {
+      "file": "b2t25-t15-val-eval--m4-13-p15-05-A0_ngram--conservative.signal-card.json",
+      "verdict": "fail",
+      "families": {
+       "truncated": {
+        "verdict": "pass",
+        "levels_scored": 2
+       },
+       "noise_mix": {
+        "verdict": "pass",
+        "levels_scored": 3
+       },
+       "near_miss": {
+        "verdict": "fail",
+        "levels_scored": 1
+       }
+      },
+      "summary": "b2t25-t15-val-eval/m4-13-p15-05-A0_ngram  real commit 104/701  truncated_25 11/152 m114 pass  truncated_50 19/192 m119 pass  truncated_75 28/125 m117 no rule  noise_mix_25 0/0 m104 pass  noise_mix_50 0/0 m104 pass  noise_mix_75 0/0 m104 pass  near_miss 104/104 m104 fail  => fail"
+     }
+    },
+    "seconds": 507.6,
+    "new_decodes_total": 4206,
+    "new_llm_scores_total": 141
+   },
+   "m4-13-p15-05-B0_rescore": {
+    "status": "ok",
+    "guard_config_id": "tcfg-a21133bd3156c3e2",
+    "description": "M4-13 rerun of P15-05 LLM rescoring, no grounding",
+    "cards": {
+     "llm": {
+      "file": "b2t25-t15-val-eval--m4-13-p15-05-B0_rescore--llm.signal-card.json",
+      "verdict": "fail",
+      "families": {
+       "truncated": {
+        "verdict": "pass",
+        "levels_scored": 2
+       },
+       "noise_mix": {
+        "verdict": "pass",
+        "levels_scored": 3
+       },
+       "near_miss": {
+        "verdict": "fail",
+        "levels_scored": 1
+       }
+      },
+      "summary": "b2t25-t15-val-eval/m4-13-p15-05-B0_rescore  real commit 141/701  truncated_25 2/30 m142 pass  truncated_50 18/106 m155 pass  truncated_75 24/90 m147 no rule  noise_mix_25 0/0 m141 pass  noise_mix_50 0/0 m141 pass  noise_mix_75 0/0 m141 pass  near_miss 60/81 m192 fail  => fail"
+     },
+     "conservative": {
+      "file": "b2t25-t15-val-eval--m4-13-p15-05-B0_rescore--conservative.signal-card.json",
+      "verdict": "fail",
+      "families": {
+       "truncated": {
+        "verdict": "pass",
+        "levels_scored": 2
+       },
+       "noise_mix": {
+        "verdict": "pass",
+        "levels_scored": 3
+       },
+       "near_miss": {
+        "verdict": "fail",
+        "levels_scored": 1
+       }
+      },
+      "summary": "b2t25-t15-val-eval/m4-13-p15-05-B0_rescore  real commit 141/701  truncated_25 2/30 m142 pass  truncated_50 18/106 m155 pass  truncated_75 24/90 m147 no rule  noise_mix_25 0/0 m141 pass  noise_mix_50 0/0 m141 pass  noise_mix_75 0/0 m141 pass  near_miss 60/81 m192 fail  => fail"
+     }
+    },
+    "seconds": 3281.6,
+    "new_decodes_total": 4206,
+    "new_llm_scores_total": 34658
+   },
+   "m4-13-p15-06-B1_rescore_G": {
+    "status": "ok",
+    "guard_config_id": "tcfg-b7c9002efc0623b5",
+    "description": "M4-13 rerun of the P15-06 guard (rescoring + grounding + fluent-wrong bound)",
+    "cards": {
+     "llm": {
+      "file": "b2t25-t15-val-eval--m4-13-p15-06-B1_rescore_G--llm.signal-card.json",
+      "verdict": "pass",
+      "families": {
+       "truncated": {
+        "verdict": "pass",
+        "levels_scored": 2
+       },
+       "noise_mix": {
+        "verdict": "pass",
+        "levels_scored": 3
+       },
+       "near_miss": {
+        "verdict": "pass",
+        "levels_scored": 1
+       }
+      },
+      "summary": "b2t25-t15-val-eval/m4-13-p15-06-B1_rescore_G  real commit 36/701  truncated_25 0/2 m36 pass  truncated_50 2/15 m36 pass  truncated_75 7/18 m37 no rule  noise_mix_25 0/0 m36 pass  noise_mix_50 0/0 m36 pass  noise_mix_75 0/0 m36 pass  near_miss 0/3 m36 pass  => pass"
+     },
+     "conservative": {
+      "file": "b2t25-t15-val-eval--m4-13-p15-06-B1_rescore_G--conservative.signal-card.json",
+      "verdict": "pass",
+      "families": {
+       "truncated": {
+        "verdict": "pass",
+        "levels_scored": 2
+       },
+       "noise_mix": {
+        "verdict": "pass",
+        "levels_scored": 3
+       },
+       "near_miss": {
+        "verdict": "pass",
+        "levels_scored": 1
+       }
+      },
+      "summary": "b2t25-t15-val-eval/m4-13-p15-06-B1_rescore_G  real commit 36/701  truncated_25 0/2 m36 pass  truncated_50 2/15 m36 pass  truncated_75 7/18 m37 no rule  noise_mix_25 0/0 m36 pass  noise_mix_50 0/0 m36 pass  noise_mix_75 0/0 m36 pass  near_miss 0/3 m36 pass  => pass"
+     }
+    },
+    "seconds": 117.9,
+    "new_decodes_total": 4206,
+    "new_llm_scores_total": 34658
+   },
+   "m4-13-p15-06-B1_rescore_G@single": {
+    "status": "ok",
+    "guard_config_id": "tcfg-30f8e6399d0e1d52",
+    "description": "M4-13 P15-06 variant V-single (pre-registered; one LTT test set)",
+    "cards": {
+     "llm": {
+      "file": "b2t25-t15-val-eval--m4-13-p15-06-B1_rescore_G-at-single--llm.signal-card.json",
+      "verdict": "pass",
+      "families": {
+       "truncated": {
+        "verdict": "pass",
+        "levels_scored": 2
+       },
+       "noise_mix": {
+        "verdict": "pass",
+        "levels_scored": 3
+       },
+       "near_miss": {
+        "verdict": "pass",
+        "levels_scored": 1
+       }
+      },
+      "summary": "b2t25-t15-val-eval/m4-13-p15-06-B1_rescore_G@single  real commit 36/701  truncated_25 0/2 m36 pass  truncated_50 2/15 m36 pass  truncated_75 7/18 m37 no rule  noise_mix_25 0/0 m36 pass  noise_mix_50 0/0 m36 pass  noise_mix_75 0/0 m36 pass  near_miss 0/3 m36 pass  => pass"
+     },
+     "conservative": {
+      "file": "b2t25-t15-val-eval--m4-13-p15-06-B1_rescore_G-at-single--conservative.signal-card.json",
+      "verdict": "pass",
+      "families": {
+       "truncated": {
+        "verdict": "pass",
+        "levels_scored": 2
+       },
+       "noise_mix": {
+        "verdict": "pass",
+        "levels_scored": 3
+       },
+       "near_miss": {
+        "verdict": "pass",
+        "levels_scored": 1
+       }
+      },
+      "summary": "b2t25-t15-val-eval/m4-13-p15-06-B1_rescore_G@single  real commit 36/701  truncated_25 0/2 m36 pass  truncated_50 2/15 m36 pass  truncated_75 7/18 m37 no rule  noise_mix_25 0/0 m36 pass  noise_mix_50 0/0 m36 pass  noise_mix_75 0/0 m36 pass  near_miss 0/3 m36 pass  => pass"
+     }
+    },
+    "seconds": 39.1,
+    "new_decodes_total": 4206,
+    "new_llm_scores_total": 34658
+   }
+  },
+  "seconds_last_run": 3956.7
+ },
+ "t15": {
+  "dataset": "b2t25-t15-val-eval",
+  "decoder": "M4-12 fixed0",
+  "n": 701,
+  "fluent_threshold": -7.88165954200173,
+  "signal_digest": "2ce490f52020db4bdeed9f2478f500e8db7bb2c0fe5a3e6577222182c9987b26",
+  "systems": {
+   "p14-03-guard": {
+    "status": "ok",
+    "guard_config_id": "tcfg-09baa8a632ade86e",
+    "description": "P14-03 drop-in guard (alpha 0.05, delta 0.1), n-gram word decoder, no LLM",
+    "cards": {
+     "llm": {
+      "file": "b2t25-t15-val-eval--p14-03-guard--llm.signal-card.json",
+      "verdict": "insufficient evidence",
+      "families": {
+       "truncated": {
+        "verdict": "insufficient evidence",
+        "levels_scored": 2
+       },
+       "noise_mix": {
+        "verdict": "insufficient evidence",
+        "levels_scored": 3
+       },
+       "near_miss": {
+        "verdict": "insufficient evidence",
+        "levels_scored": 1
+       }
+      },
+      "summary": "b2t25-t15-val-eval/p14-03-guard  real commit 2/701  truncated_25 2/17 m4 insufficient evidence  truncated_50 2/10 m4 insufficient evidence  truncated_75 2/6 m4 no rule  noise_mix_25 3/6 m5 insufficient evidence  noise_mix_50 0/0 m2 insufficient evidence  noise_mix_75 0/0 m2 insufficient evidence  near_miss 2/2 m2 insufficient evidence  => insufficient evidence"
+     },
+     "conservative": {
+      "file": "b2t25-t15-val-eval--p14-03-guard--conservative.signal-card.json",
+      "verdict": "insufficient evidence",
+      "families": {
+       "truncated": {
+        "verdict": "insufficient evidence",
+        "levels_scored": 2
+       },
+       "noise_mix": {
+        "verdict": "insufficient evidence",
+        "levels_scored": 3
+       },
+       "near_miss": {
+        "verdict": "insufficient evidence",
+        "levels_scored": 1
+       }
+      },
+      "summary": "b2t25-t15-val-eval/p14-03-guard  real commit 2/701  truncated_25 2/17 m4 insufficient evidence  truncated_50 2/10 m4 insufficient evidence  truncated_75 2/6 m4 no rule  noise_mix_25 3/6 m5 insufficient evidence  noise_mix_50 0/0 m2 insufficient evidence  noise_mix_75 0/0 m2 insufficient evidence  near_miss 2/2 m2 insufficient evidence  => insufficient evidence"
+     }
+    },
+    "seconds": 323.1,
+    "new_decodes_total": 4206,
+    "new_llm_scores_total": 7
+   },
+   "p15-05-B0_rescore": {
+    "status": "ok",
+    "guard_config_id": "tcfg-57d5efac1afbb69c",
+    "description": "P15-05 LLM rescoring (Qwen2.5-1.5B), no grounding, P14-03-type guard",
+    "cards": {
+     "llm": {
+      "file": "b2t25-t15-val-eval--p15-05-B0_rescore--llm.signal-card.json",
+      "verdict": "insufficient evidence",
+      "families": {
+       "truncated": {
+        "verdict": "insufficient evidence",
+        "levels_scored": 2
+       },
+       "noise_mix": {
+        "verdict": "pass",
+        "levels_scored": 3
+       },
+       "near_miss": {
+        "verdict": "insufficient evidence",
+        "levels_scored": 1
+       }
+      },
+      "summary": "b2t25-t15-val-eval/p15-05-B0_rescore  real commit 9/701  truncated_25 0/4 m9 pass  truncated_50 2/2 m11 insufficient evidence  truncated_75 5/6 m13 no rule  noise_mix_25 0/0 m9 pass  noise_mix_50 0/0 m9 pass  noise_mix_75 0/0 m9 pass  near_miss 5/7 m13 insufficient evidence  => insufficient evidence"
+     },
+     "conservative": {
+      "file": "b2t25-t15-val-eval--p15-05-B0_rescore--conservative.signal-card.json",
+      "verdict": "insufficient evidence",
+      "families": {
+       "truncated": {
+        "verdict": "insufficient evidence",
+        "levels_scored": 2
+       },
+       "noise_mix": {
+        "verdict": "pass",
+        "levels_scored": 3
+       },
+       "near_miss": {
+        "verdict": "insufficient evidence",
+        "levels_scored": 1
+       }
+      },
+      "summary": "b2t25-t15-val-eval/p15-05-B0_rescore  real commit 9/701  truncated_25 0/4 m9 pass  truncated_50 2/2 m11 insufficient evidence  truncated_75 5/6 m13 no rule  noise_mix_25 0/0 m9 pass  noise_mix_50 0/0 m9 pass  noise_mix_75 0/0 m9 pass  near_miss 5/7 m13 insufficient evidence  => insufficient evidence"
+     }
+    },
+    "seconds": 2731.8,
+    "new_decodes_total": 4206,
+    "new_llm_scores_total": 31135
+   },
+   "p15-06-B1_rescore_G": {
+    "status": "ok",
+    "guard_config_id": "tcfg-fc560b2579dac3ac",
+    "description": "P15-06 guard: LLM rescoring + CTC grounding + fluent-wrong bound (joint LTT)",
+    "cards": {
+     "llm": {
+      "file": "b2t25-t15-val-eval--p15-06-B1_rescore_G--llm.signal-card.json",
+      "verdict": "insufficient evidence",
+      "families": {
+       "truncated": {
+        "verdict": "insufficient evidence",
+        "levels_scored": 2
+       },
+       "noise_mix": {
+        "verdict": "insufficient evidence",
+        "levels_scored": 3
+       },
+       "near_miss": {
+        "verdict": "insufficient evidence",
+        "levels_scored": 1
+       }
+      },
+      "summary": "b2t25-t15-val-eval/p15-06-B1_rescore_G  real commit 0/701  truncated_25 0/0 m0 insufficient evidence  truncated_50 0/0 m0 insufficient evidence  truncated_75 0/0 m0 no rule  noise_mix_25 0/0 m0 insufficient evidence  noise_mix_50 0/0 m0 insufficient evidence  noise_mix_75 0/0 m0 insufficient evidence  near_miss 0/0 m0 insufficient evidence  => insufficient evidence"
+     },
+     "conservative": {
+      "file": "b2t25-t15-val-eval--p15-06-B1_rescore_G--conservative.signal-card.json",
+      "verdict": "insufficient evidence",
+      "families": {
+       "truncated": {
+        "verdict": "insufficient evidence",
+        "levels_scored": 2
+       },
+       "noise_mix": {
+        "verdict": "insufficient evidence",
+        "levels_scored": 3
+       },
+       "near_miss": {
+        "verdict": "insufficient evidence",
+        "levels_scored": 1
+       }
+      },
+      "summary": "b2t25-t15-val-eval/p15-06-B1_rescore_G  real commit 0/701  truncated_25 0/0 m0 insufficient evidence  truncated_50 0/0 m0 insufficient evidence  truncated_75 0/0 m0 no rule  noise_mix_25 0/0 m0 insufficient evidence  noise_mix_50 0/0 m0 insufficient evidence  noise_mix_75 0/0 m0 insufficient evidence  near_miss 0/0 m0 insufficient evidence  => insufficient evidence"
+     }
+    },
+    "seconds": 124.0,
+    "new_decodes_total": 4206,
+    "new_llm_scores_total": 31135
+   }
+  },
+  "seconds_last_run": 3190.8
+ },
+ "t12": {
+  "dataset": "b2t24-t12-test",
+  "decoder": "T12 v2",
+  "n": 400,
+  "fluent_threshold": -8.916451934532247,
+  "signal_digest": "32f52bbff885c5757f4e33a58b77d60fc3f676c21ece66b4cd73ad3114d1ecc4",
+  "systems": {
+   "p14-03-guard": {
+    "status": "ok",
+    "guard_config_id": "tcfg-ca5af419ca3738f1",
+    "description": "P14-03 drop-in guard (alpha 0.05, delta 0.1), n-gram word decoder, no LLM",
+    "cards": {
+     "llm": {
+      "file": "b2t24-t12-test--p14-03-guard--llm.signal-card.json",
+      "verdict": "fail",
+      "families": {
+       "truncated": {
+        "verdict": "fail",
+        "levels_scored": 2
+       },
+       "noise_mix": {
+        "verdict": "pass",
+        "levels_scored": 3
+       },
+       "near_miss": {
+        "verdict": "fail",
+        "levels_scored": 1
+       }
+      },
+      "summary": "b2t24-t12-test/p14-03-guard  real commit 25/400  truncated_25 1/9 m26 pass  truncated_50 12/31 m35 fail  truncated_75 10/19 m31 no rule  noise_mix_25 0/0 m25 pass  noise_mix_50 0/0 m25 pass  noise_mix_75 0/0 m25 pass  near_miss 25/25 m25 fail  => fail"
+     },
+     "conservative": {
+      "file": "b2t24-t12-test--p14-03-guard--conservative.signal-card.json",
+      "verdict": "fail",
+      "families": {
+       "truncated": {
+        "verdict": "fail",
+        "levels_scored": 2
+       },
+       "noise_mix": {
+        "verdict": "pass",
+        "levels_scored": 3
+       },
+       "near_miss": {
+        "verdict": "fail",
+        "levels_scored": 1
+       }
+      },
+      "summary": "b2t24-t12-test/p14-03-guard  real commit 25/400  truncated_25 1/9 m26 pass  truncated_50 12/31 m35 fail  truncated_75 10/19 m31 no rule  noise_mix_25 0/0 m25 pass  noise_mix_50 0/0 m25 pass  noise_mix_75 0/0 m25 pass  near_miss 25/25 m25 fail  => fail"
+     }
+    },
+    "seconds": 165.7,
+    "new_decodes_total": 2400,
+    "new_llm_scores_total": 45
+   },
+   "p15-05-B0_rescore": {
+    "status": "ok",
+    "guard_config_id": "tcfg-23e36bda05f5c7eb",
+    "description": "P15-05 LLM rescoring (Qwen2.5-1.5B), no grounding, P14-03-type guard",
+    "cards": {
+     "llm": {
+      "file": "b2t24-t12-test--p15-05-B0_rescore--llm.signal-card.json",
+      "verdict": "insufficient evidence",
+      "families": {
+       "truncated": {
+        "verdict": "insufficient evidence",
+        "levels_scored": 2
+       },
+       "noise_mix": {
+        "verdict": "pass",
+        "levels_scored": 3
+       },
+       "near_miss": {
+        "verdict": "insufficient evidence",
+        "levels_scored": 1
+       }
+      },
+      "summary": "b2t24-t12-test/p15-05-B0_rescore  real commit 15/400  truncated_25 1/6 m15 pass  truncated_50 7/23 m22 insufficient evidence  truncated_75 9/16 m20 no rule  noise_mix_25 0/0 m15 pass  noise_mix_50 0/0 m15 pass  noise_mix_75 0/0 m15 pass  near_miss 5/5 m16 insufficient evidence  => insufficient evidence"
+     },
+     "conservative": {
+      "file": "b2t24-t12-test--p15-05-B0_rescore--conservative.signal-card.json",
+      "verdict": "insufficient evidence",
+      "families": {
+       "truncated": {
+        "verdict": "insufficient evidence",
+        "levels_scored": 2
+       },
+       "noise_mix": {
+        "verdict": "pass",
+        "levels_scored": 3
+       },
+       "near_miss": {
+        "verdict": "insufficient evidence",
+        "levels_scored": 1
+       }
+      },
+      "summary": "b2t24-t12-test/p15-05-B0_rescore  real commit 15/400  truncated_25 1/6 m15 pass  truncated_50 7/23 m22 insufficient evidence  truncated_75 9/16 m20 no rule  noise_mix_25 0/0 m15 pass  noise_mix_50 0/0 m15 pass  noise_mix_75 0/0 m15 pass  near_miss 5/5 m16 insufficient evidence  => insufficient evidence"
+     }
+    },
+    "seconds": 1417.6,
+    "new_decodes_total": 2400,
+    "new_llm_scores_total": 17855
+   },
+   "p15-06-B1_rescore_G": {
+    "status": "ok",
+    "guard_config_id": "tcfg-77bf40445ed5b0d9",
+    "description": "P15-06 guard: LLM rescoring + CTC grounding + fluent-wrong bound (joint LTT)",
+    "cards": {
+     "llm": {
+      "file": "b2t24-t12-test--p15-06-B1_rescore_G--llm.signal-card.json",
+      "verdict": "insufficient evidence",
+      "families": {
+       "truncated": {
+        "verdict": "insufficient evidence",
+        "levels_scored": 2
+       },
+       "noise_mix": {
+        "verdict": "insufficient evidence",
+        "levels_scored": 3
+       },
+       "near_miss": {
+        "verdict": "insufficient evidence",
+        "levels_scored": 1
+       }
+      },
+      "summary": "b2t24-t12-test/p15-06-B1_rescore_G  real commit 0/400  truncated_25 0/0 m0 insufficient evidence  truncated_50 0/0 m0 insufficient evidence  truncated_75 0/0 m0 no rule  noise_mix_25 0/0 m0 insufficient evidence  noise_mix_50 0/0 m0 insufficient evidence  noise_mix_75 0/0 m0 insufficient evidence  near_miss 0/0 m0 insufficient evidence  => insufficient evidence"
+     },
+     "conservative": {
+      "file": "b2t24-t12-test--p15-06-B1_rescore_G--conservative.signal-card.json",
+      "verdict": "insufficient evidence",
+      "families": {
+       "truncated": {
+        "verdict": "insufficient evidence",
+        "levels_scored": 2
+       },
+       "noise_mix": {
+        "verdict": "insufficient evidence",
+        "levels_scored": 3
+       },
+       "near_miss": {
+        "verdict": "insufficient evidence",
+        "levels_scored": 1
+       }
+      },
+      "summary": "b2t24-t12-test/p15-06-B1_rescore_G  real commit 0/400  truncated_25 0/0 m0 insufficient evidence  truncated_50 0/0 m0 insufficient evidence  truncated_75 0/0 m0 no rule  noise_mix_25 0/0 m0 insufficient evidence  noise_mix_50 0/0 m0 insufficient evidence  noise_mix_75 0/0 m0 insufficient evidence  near_miss 0/0 m0 insufficient evidence  => insufficient evidence"
+     }
+    },
+    "seconds": 18.8,
+    "new_decodes_total": 2400,
+    "new_llm_scores_total": 17855
+   }
+  },
+  "seconds_last_run": 1617.7
+ }
+}

@@ -1,0 +1,178 @@
+2026-11-25 09:37:43 stage m413 start (limit 0)
+2026-11-25 09:37:43 set m413 (M4-13 long0): 701 items, signal digest b887771720d8d2f1, near-miss edits 1: 366, 2: 335
+2026-11-25 09:37:53 m4-13-p15-05-A0_ngram: guard tcfg-108e97100553a10e (frame T 2.3702) from guard-t15-A0_ngram.json
+2026-11-25 09:37:55   m4-13-p15-05-A0_ngram real 250; new decodes 0, new LLM scores 0, 2 s
+2026-11-25 09:37:58   m4-13-p15-05-A0_ngram real 500; new decodes 0, new LLM scores 0, 5 s
+2026-11-25 09:38:10   m4-13-p15-05-A0_ngram truncated_25 250; new decodes 250, new LLM scores 0, 17 s
+2026-11-25 09:38:19   m4-13-p15-05-A0_ngram truncated_25 500; new decodes 500, new LLM scores 0, 26 s
+2026-11-25 09:38:41   m4-13-p15-05-A0_ngram truncated_50 250; new decodes 951, new LLM scores 0, 48 s
+2026-11-25 09:38:58   m4-13-p15-05-A0_ngram truncated_50 500; new decodes 1201, new LLM scores 0, 65 s
+2026-11-25 09:39:38   m4-13-p15-05-A0_ngram truncated_75 250; new decodes 1652, new LLM scores 0, 105 s
+2026-11-25 09:40:04   m4-13-p15-05-A0_ngram truncated_75 500; new decodes 1902, new LLM scores 0, 131 s
+2026-11-25 09:40:55   m4-13-p15-05-A0_ngram noise_mix_25 250; new decodes 2353, new LLM scores 0, 182 s
+2026-11-25 09:41:29   m4-13-p15-05-A0_ngram noise_mix_25 500; new decodes 2603, new LLM scores 0, 216 s
+2026-11-25 09:42:43   m4-13-p15-05-A0_ngram noise_mix_50 250; new decodes 3054, new LLM scores 0, 290 s
+2026-11-25 09:43:30   m4-13-p15-05-A0_ngram noise_mix_50 500; new decodes 3304, new LLM scores 0, 337 s
+2026-11-25 09:44:41   m4-13-p15-05-A0_ngram noise_mix_75 250; new decodes 3755, new LLM scores 0, 408 s
+2026-11-25 09:45:23   m4-13-p15-05-A0_ngram noise_mix_75 500; new decodes 4005, new LLM scores 0, 450 s
+2026-11-25 09:45:59   m4-13-p15-05-A0_ngram near_miss 250; new decodes 4206, new LLM scores 0, 486 s
+2026-11-25 09:46:02   m4-13-p15-05-A0_ngram near_miss 500; new decodes 4206, new LLM scores 0, 489 s
+2026-11-25 09:46:06 LLM loaded (CPU, 3 threads)
+2026-11-25 09:46:20 m413 m4-13-p15-05-A0_ngram [llm]: b2t25-t15-val-eval/m4-13-p15-05-A0_ngram  real commit 104/701  truncated_25 11/152 m114 pass  truncated_50 19/192 m119 pass  truncated_75 28/125 m117 no rule  noise_mix_25 0/0 m104 pass  noise_mix_50 0/0 m104 pass  noise_mix_75 0/0 m104 pass  near_miss 104/104 m104 fail  => fail
+2026-11-25 09:46:21 m413 m4-13-p15-05-A0_ngram [conservative]: b2t25-t15-val-eval/m4-13-p15-05-A0_ngram  real commit 104/701  truncated_25 11/152 m114 pass  truncated_50 19/192 m119 pass  truncated_75 28/125 m117 no rule  noise_mix_25 0/0 m104 pass  noise_mix_50 0/0 m104 pass  noise_mix_75 0/0 m104 pass  near_miss 104/104 m104 fail  => fail
+2026-11-25 09:46:21 m4-13-p15-05-B0_rescore: guard tcfg-a21133bd3156c3e2 (frame T 2.3702) from guard-t15-B0_rescore.json
+2026-11-25 09:46:23   m4-13-p15-05-B0_rescore real 250; new decodes 4206, new LLM scores 141, 2 s
+2026-11-25 09:46:25   m4-13-p15-05-B0_rescore real 500; new decodes 4206, new LLM scores 141, 4 s
+2026-11-25 09:47:04   m4-13-p15-05-B0_rescore truncated_25 250; new decodes 4206, new LLM scores 870, 44 s
+2026-11-25 09:47:52   m4-13-p15-05-B0_rescore truncated_25 500; new decodes 4206, new LLM scores 1760, 92 s
+2026-11-25 09:51:01   m4-13-p15-05-B0_rescore truncated_50 250; new decodes 4206, new LLM scores 4815, 280 s
+2026-11-25 09:53:33   m4-13-p15-05-B0_rescore truncated_50 500; new decodes 4206, new LLM scores 7011, 432 s
+2026-11-25 09:59:16   m4-13-p15-05-B0_rescore truncated_75 250; new decodes 4206, new LLM scores 11153, 775 s
+2026-11-25 10:02:29   m4-13-p15-05-B0_rescore truncated_75 500; new decodes 4206, new LLM scores 13142, 968 s
+2026-11-25 10:08:59   m4-13-p15-05-B0_rescore noise_mix_25 250; new decodes 4206, new LLM scores 16745, 1358 s
+2026-11-25 10:13:39   m4-13-p15-05-B0_rescore noise_mix_25 500; new decodes 4206, new LLM scores 19159, 1638 s
+2026-11-25 10:21:23   m4-13-p15-05-B0_rescore noise_mix_50 250; new decodes 4206, new LLM scores 23464, 2102 s
+2026-11-25 10:25:35   m4-13-p15-05-B0_rescore noise_mix_50 500; new decodes 4206, new LLM scores 25805, 2355 s
+2026-11-25 10:32:46   m4-13-p15-05-B0_rescore noise_mix_75 250; new decodes 4206, new LLM scores 29999, 2785 s
+2026-11-25 10:36:48   m4-13-p15-05-B0_rescore noise_mix_75 500; new decodes 4206, new LLM scores 32296, 3027 s
+2026-11-25 10:40:16   m4-13-p15-05-B0_rescore near_miss 250; new decodes 4206, new LLM scores 34270, 3236 s
+2026-11-25 10:40:41   m4-13-p15-05-B0_rescore near_miss 500; new decodes 4206, new LLM scores 34477, 3260 s
+2026-11-25 10:41:02 m413 m4-13-p15-05-B0_rescore [llm]: b2t25-t15-val-eval/m4-13-p15-05-B0_rescore  real commit 141/701  truncated_25 2/30 m142 pass  truncated_50 18/106 m155 pass  truncated_75 24/90 m147 no rule  noise_mix_25 0/0 m141 pass  noise_mix_50 0/0 m141 pass  noise_mix_75 0/0 m141 pass  near_miss 60/81 m192 fail  => fail
+2026-11-25 10:41:02 m413 m4-13-p15-05-B0_rescore [conservative]: b2t25-t15-val-eval/m4-13-p15-05-B0_rescore  real commit 141/701  truncated_25 2/30 m142 pass  truncated_50 18/106 m155 pass  truncated_75 24/90 m147 no rule  noise_mix_25 0/0 m141 pass  noise_mix_50 0/0 m141 pass  noise_mix_75 0/0 m141 pass  near_miss 60/81 m192 fail  => fail
+2026-11-25 10:41:02 m4-13-p15-06-B1_rescore_G: guard tcfg-b7c9002efc0623b5 (frame T 2.3702) from guard-B1_rescore_G.json
+2026-11-25 10:41:10   m4-13-p15-06-B1_rescore_G real 250; new decodes 4206, new LLM scores 34658, 8 s
+2026-11-25 10:41:19   m4-13-p15-06-B1_rescore_G real 500; new decodes 4206, new LLM scores 34658, 17 s
+2026-11-25 10:41:27   m4-13-p15-06-B1_rescore_G truncated_25 250; new decodes 4206, new LLM scores 34658, 25 s
+2026-11-25 10:41:28   m4-13-p15-06-B1_rescore_G truncated_25 500; new decodes 4206, new LLM scores 34658, 26 s
+2026-11-25 10:41:31   m4-13-p15-06-B1_rescore_G truncated_50 250; new decodes 4206, new LLM scores 34658, 28 s
+2026-11-25 10:41:33   m4-13-p15-06-B1_rescore_G truncated_50 500; new decodes 4206, new LLM scores 34658, 30 s
+2026-11-25 10:41:39   m4-13-p15-06-B1_rescore_G truncated_75 250; new decodes 4206, new LLM scores 34658, 36 s
+2026-11-25 10:41:44   m4-13-p15-06-B1_rescore_G truncated_75 500; new decodes 4206, new LLM scores 34658, 42 s
+2026-11-25 10:41:56   m4-13-p15-06-B1_rescore_G noise_mix_25 250; new decodes 4206, new LLM scores 34658, 54 s
+2026-11-25 10:42:05   m4-13-p15-06-B1_rescore_G noise_mix_25 500; new decodes 4206, new LLM scores 34658, 63 s
+2026-11-25 10:42:18   m4-13-p15-06-B1_rescore_G noise_mix_50 250; new decodes 4206, new LLM scores 34658, 76 s
+2026-11-25 10:42:27   m4-13-p15-06-B1_rescore_G noise_mix_50 500; new decodes 4206, new LLM scores 34658, 85 s
+2026-11-25 10:42:39   m4-13-p15-06-B1_rescore_G noise_mix_75 250; new decodes 4206, new LLM scores 34658, 97 s
+2026-11-25 10:42:47   m4-13-p15-06-B1_rescore_G noise_mix_75 500; new decodes 4206, new LLM scores 34658, 105 s
+2026-11-25 10:42:55   m4-13-p15-06-B1_rescore_G near_miss 250; new decodes 4206, new LLM scores 34658, 112 s
+2026-11-25 10:42:58   m4-13-p15-06-B1_rescore_G near_miss 500; new decodes 4206, new LLM scores 34658, 115 s
+2026-11-25 10:43:00 m413 m4-13-p15-06-B1_rescore_G [llm]: b2t25-t15-val-eval/m4-13-p15-06-B1_rescore_G  real commit 36/701  truncated_25 0/2 m36 pass  truncated_50 2/15 m36 pass  truncated_75 7/18 m37 no rule  noise_mix_25 0/0 m36 pass  noise_mix_50 0/0 m36 pass  noise_mix_75 0/0 m36 pass  near_miss 0/3 m36 pass  => pass
+2026-11-25 10:43:00 m413 m4-13-p15-06-B1_rescore_G [conservative]: b2t25-t15-val-eval/m4-13-p15-06-B1_rescore_G  real commit 36/701  truncated_25 0/2 m36 pass  truncated_50 2/15 m36 pass  truncated_75 7/18 m37 no rule  noise_mix_25 0/0 m36 pass  noise_mix_50 0/0 m36 pass  noise_mix_75 0/0 m36 pass  near_miss 0/3 m36 pass  => pass
+2026-11-25 10:43:00 m4-13-p15-06-B1_rescore_G@single: guard tcfg-30f8e6399d0e1d52 (frame T 2.3702) from guard-B1_rescore_G-single.json
+2026-11-25 10:43:02   m4-13-p15-06-B1_rescore_G@single real 250; new decodes 4206, new LLM scores 34658, 2 s
+2026-11-25 10:43:05   m4-13-p15-06-B1_rescore_G@single real 500; new decodes 4206, new LLM scores 34658, 4 s
+2026-11-25 10:43:07   m4-13-p15-06-B1_rescore_G@single truncated_25 250; new decodes 4206, new LLM scores 34658, 7 s
+2026-11-25 10:43:08   m4-13-p15-06-B1_rescore_G@single truncated_25 500; new decodes 4206, new LLM scores 34658, 7 s
+2026-11-25 10:43:09   m4-13-p15-06-B1_rescore_G@single truncated_50 250; new decodes 4206, new LLM scores 34658, 9 s
+2026-11-25 10:43:10   m4-13-p15-06-B1_rescore_G@single truncated_50 500; new decodes 4206, new LLM scores 34658, 10 s
+2026-11-25 10:43:13   m4-13-p15-06-B1_rescore_G@single truncated_75 250; new decodes 4206, new LLM scores 34658, 13 s
+2026-11-25 10:43:15   m4-13-p15-06-B1_rescore_G@single truncated_75 500; new decodes 4206, new LLM scores 34658, 14 s
+2026-11-25 10:43:18   m4-13-p15-06-B1_rescore_G@single noise_mix_25 250; new decodes 4206, new LLM scores 34658, 18 s
+2026-11-25 10:43:20   m4-13-p15-06-B1_rescore_G@single noise_mix_25 500; new decodes 4206, new LLM scores 34658, 20 s
+2026-11-25 10:43:23   m4-13-p15-06-B1_rescore_G@single noise_mix_50 250; new decodes 4206, new LLM scores 34658, 23 s
+2026-11-25 10:43:26   m4-13-p15-06-B1_rescore_G@single noise_mix_50 500; new decodes 4206, new LLM scores 34658, 25 s
+2026-11-25 10:43:29   m4-13-p15-06-B1_rescore_G@single noise_mix_75 250; new decodes 4206, new LLM scores 34658, 29 s
+2026-11-25 10:43:31   m4-13-p15-06-B1_rescore_G@single noise_mix_75 500; new decodes 4206, new LLM scores 34658, 31 s
+2026-11-25 10:43:35   m4-13-p15-06-B1_rescore_G@single near_miss 250; new decodes 4206, new LLM scores 34658, 35 s
+2026-11-25 10:43:37   m4-13-p15-06-B1_rescore_G@single near_miss 500; new decodes 4206, new LLM scores 34658, 37 s
+2026-11-25 10:43:39 m413 m4-13-p15-06-B1_rescore_G@single [llm]: b2t25-t15-val-eval/m4-13-p15-06-B1_rescore_G@single  real commit 36/701  truncated_25 0/2 m36 pass  truncated_50 2/15 m36 pass  truncated_75 7/18 m37 no rule  noise_mix_25 0/0 m36 pass  noise_mix_50 0/0 m36 pass  noise_mix_75 0/0 m36 pass  near_miss 0/3 m36 pass  => pass
+2026-11-25 10:43:39 m413 m4-13-p15-06-B1_rescore_G@single [conservative]: b2t25-t15-val-eval/m4-13-p15-06-B1_rescore_G@single  real commit 36/701  truncated_25 0/2 m36 pass  truncated_50 2/15 m36 pass  truncated_75 7/18 m37 no rule  noise_mix_25 0/0 m36 pass  noise_mix_50 0/0 m36 pass  noise_mix_75 0/0 m36 pass  near_miss 0/3 m36 pass  => pass
+2026-11-25 10:43:39 stage m413 done
+2026-11-25 10:43:39 stage t15 start (limit 0)
+2026-11-25 10:43:40 set t15 (M4-12 fixed0): 701 items, signal digest 2ce490f52020db4b, near-miss edits 1: 366, 2: 335
+2026-11-25 10:43:51 p14-03-guard: guard tcfg-09baa8a632ade86e (frame T 1.2889) from guard-t15-a0.05.json
+2026-11-25 10:43:53   p14-03-guard real 250; new decodes 0, new LLM scores 0, 2 s
+2026-11-25 10:43:55   p14-03-guard real 500; new decodes 0, new LLM scores 0, 4 s
+2026-11-25 10:44:05   p14-03-guard truncated_25 250; new decodes 250, new LLM scores 0, 13 s
+2026-11-25 10:44:12   p14-03-guard truncated_25 500; new decodes 500, new LLM scores 0, 21 s
+2026-11-25 10:44:30   p14-03-guard truncated_50 250; new decodes 951, new LLM scores 0, 39 s
+2026-11-25 10:44:43   p14-03-guard truncated_50 500; new decodes 1201, new LLM scores 0, 52 s
+2026-11-25 10:45:08   p14-03-guard truncated_75 250; new decodes 1652, new LLM scores 0, 77 s
+2026-11-25 10:45:25   p14-03-guard truncated_75 500; new decodes 1902, new LLM scores 0, 94 s
+2026-11-25 10:46:02   p14-03-guard noise_mix_25 250; new decodes 2353, new LLM scores 0, 130 s
+2026-11-25 10:46:25   p14-03-guard noise_mix_25 500; new decodes 2603, new LLM scores 0, 154 s
+2026-11-25 10:47:07   p14-03-guard noise_mix_50 250; new decodes 3054, new LLM scores 0, 196 s
+2026-11-25 10:47:32   p14-03-guard noise_mix_50 500; new decodes 3304, new LLM scores 0, 221 s
+2026-11-25 10:48:14   p14-03-guard noise_mix_75 250; new decodes 3755, new LLM scores 0, 263 s
+2026-11-25 10:48:42   p14-03-guard noise_mix_75 500; new decodes 4005, new LLM scores 0, 291 s
+2026-11-25 10:49:08   p14-03-guard near_miss 250; new decodes 4206, new LLM scores 0, 317 s
+2026-11-25 10:49:10   p14-03-guard near_miss 500; new decodes 4206, new LLM scores 0, 319 s
+2026-11-25 10:49:13 LLM loaded (CPU, 3 threads)
+2026-11-25 10:49:14 t15 p14-03-guard [llm]: b2t25-t15-val-eval/p14-03-guard  real commit 2/701  truncated_25 2/17 m4 insufficient evidence  truncated_50 2/10 m4 insufficient evidence  truncated_75 2/6 m4 no rule  noise_mix_25 3/6 m5 insufficient evidence  noise_mix_50 0/0 m2 insufficient evidence  noise_mix_75 0/0 m2 insufficient evidence  near_miss 2/2 m2 insufficient evidence  => insufficient evidence
+2026-11-25 10:49:14 t15 p14-03-guard [conservative]: b2t25-t15-val-eval/p14-03-guard  real commit 2/701  truncated_25 2/17 m4 insufficient evidence  truncated_50 2/10 m4 insufficient evidence  truncated_75 2/6 m4 no rule  noise_mix_25 3/6 m5 insufficient evidence  noise_mix_50 0/0 m2 insufficient evidence  noise_mix_75 0/0 m2 insufficient evidence  near_miss 2/2 m2 insufficient evidence  => insufficient evidence
+2026-11-25 10:49:14 p15-05-B0_rescore: guard tcfg-57d5efac1afbb69c (frame T 1.2889) from guard-t15-B0_rescore.json
+2026-11-25 10:49:16   p15-05-B0_rescore real 250; new decodes 4206, new LLM scores 7, 2 s
+2026-11-25 10:49:19   p15-05-B0_rescore real 500; new decodes 4206, new LLM scores 7, 4 s
+2026-11-25 10:49:58   p15-05-B0_rescore truncated_25 250; new decodes 4206, new LLM scores 806, 44 s
+2026-11-25 10:50:44   p15-05-B0_rescore truncated_25 500; new decodes 4206, new LLM scores 1752, 90 s
+2026-11-25 10:53:34   p15-05-B0_rescore truncated_50 250; new decodes 4206, new LLM scores 4739, 260 s
+2026-11-25 10:55:54   p15-05-B0_rescore truncated_50 500; new decodes 4206, new LLM scores 6937, 400 s
+2026-11-25 11:01:05   p15-05-B0_rescore truncated_75 250; new decodes 4206, new LLM scores 11022, 711 s
+2026-11-25 11:03:47   p15-05-B0_rescore truncated_75 500; new decodes 4206, new LLM scores 12950, 872 s
+2026-11-25 11:07:47   p15-05-B0_rescore noise_mix_25 250; new decodes 4206, new LLM scores 15498, 1112 s
+2026-11-25 11:10:30   p15-05-B0_rescore noise_mix_25 500; new decodes 4206, new LLM scores 17057, 1276 s
+2026-11-25 11:15:42   p15-05-B0_rescore noise_mix_50 250; new decodes 4206, new LLM scores 20107, 1587 s
+2026-11-25 11:19:14   p15-05-B0_rescore noise_mix_50 500; new decodes 4206, new LLM scores 22147, 1800 s
+2026-11-25 11:26:01   p15-05-B0_rescore noise_mix_75 250; new decodes 4206, new LLM scores 26118, 2206 s
+2026-11-25 11:30:13   p15-05-B0_rescore noise_mix_75 500; new decodes 4206, new LLM scores 28523, 2458 s
+2026-11-25 11:33:57   p15-05-B0_rescore near_miss 250; new decodes 4206, new LLM scores 30685, 2683 s
+2026-11-25 11:34:24   p15-05-B0_rescore near_miss 500; new decodes 4206, new LLM scores 30935, 2710 s
+2026-11-25 11:34:46 t15 p15-05-B0_rescore [llm]: b2t25-t15-val-eval/p15-05-B0_rescore  real commit 9/701  truncated_25 0/4 m9 pass  truncated_50 2/2 m11 insufficient evidence  truncated_75 5/6 m13 no rule  noise_mix_25 0/0 m9 pass  noise_mix_50 0/0 m9 pass  noise_mix_75 0/0 m9 pass  near_miss 5/7 m13 insufficient evidence  => insufficient evidence
+2026-11-25 11:34:46 t15 p15-05-B0_rescore [conservative]: b2t25-t15-val-eval/p15-05-B0_rescore  real commit 9/701  truncated_25 0/4 m9 pass  truncated_50 2/2 m11 insufficient evidence  truncated_75 5/6 m13 no rule  noise_mix_25 0/0 m9 pass  noise_mix_50 0/0 m9 pass  noise_mix_75 0/0 m9 pass  near_miss 5/7 m13 insufficient evidence  => insufficient evidence
+2026-11-25 11:34:46 p15-06-B1_rescore_G: guard tcfg-fc560b2579dac3ac (frame T 1.2889) from guard-B1_rescore_G.json
+2026-11-25 11:34:54   p15-06-B1_rescore_G real 250; new decodes 4206, new LLM scores 31135, 8 s
+2026-11-25 11:35:03   p15-06-B1_rescore_G real 500; new decodes 4206, new LLM scores 31135, 17 s
+2026-11-25 11:35:11   p15-06-B1_rescore_G truncated_25 250; new decodes 4206, new LLM scores 31135, 25 s
+2026-11-25 11:35:11   p15-06-B1_rescore_G truncated_25 500; new decodes 4206, new LLM scores 31135, 25 s
+2026-11-25 11:35:14   p15-06-B1_rescore_G truncated_50 250; new decodes 4206, new LLM scores 31135, 28 s
+2026-11-25 11:35:16   p15-06-B1_rescore_G truncated_50 500; new decodes 4206, new LLM scores 31135, 30 s
+2026-11-25 11:35:22   p15-06-B1_rescore_G truncated_75 250; new decodes 4206, new LLM scores 31135, 36 s
+2026-11-25 11:35:27   p15-06-B1_rescore_G truncated_75 500; new decodes 4206, new LLM scores 31135, 41 s
+2026-11-25 11:35:39   p15-06-B1_rescore_G noise_mix_25 250; new decodes 4206, new LLM scores 31135, 53 s
+2026-11-25 11:35:48   p15-06-B1_rescore_G noise_mix_25 500; new decodes 4206, new LLM scores 31135, 62 s
+2026-11-25 11:36:03   p15-06-B1_rescore_G noise_mix_50 250; new decodes 4206, new LLM scores 31135, 77 s
+2026-11-25 11:36:12   p15-06-B1_rescore_G noise_mix_50 500; new decodes 4206, new LLM scores 31135, 86 s
+2026-11-25 11:36:26   p15-06-B1_rescore_G noise_mix_75 250; new decodes 4206, new LLM scores 31135, 100 s
+2026-11-25 11:36:35   p15-06-B1_rescore_G noise_mix_75 500; new decodes 4206, new LLM scores 31135, 109 s
+2026-11-25 11:36:45   p15-06-B1_rescore_G near_miss 250; new decodes 4206, new LLM scores 31135, 118 s
+2026-11-25 11:36:48   p15-06-B1_rescore_G near_miss 500; new decodes 4206, new LLM scores 31135, 122 s
+2026-11-25 11:36:50 t15 p15-06-B1_rescore_G [llm]: b2t25-t15-val-eval/p15-06-B1_rescore_G  real commit 0/701  truncated_25 0/0 m0 insufficient evidence  truncated_50 0/0 m0 insufficient evidence  truncated_75 0/0 m0 no rule  noise_mix_25 0/0 m0 insufficient evidence  noise_mix_50 0/0 m0 insufficient evidence  noise_mix_75 0/0 m0 insufficient evidence  near_miss 0/0 m0 insufficient evidence  => insufficient evidence
+2026-11-25 11:36:50 t15 p15-06-B1_rescore_G [conservative]: b2t25-t15-val-eval/p15-06-B1_rescore_G  real commit 0/701  truncated_25 0/0 m0 insufficient evidence  truncated_50 0/0 m0 insufficient evidence  truncated_75 0/0 m0 no rule  noise_mix_25 0/0 m0 insufficient evidence  noise_mix_50 0/0 m0 insufficient evidence  noise_mix_75 0/0 m0 insufficient evidence  near_miss 0/0 m0 insufficient evidence  => insufficient evidence
+2026-11-25 11:36:50 stage t15 done
+2026-11-25 11:36:50 stage t12 start (limit 0)
+2026-11-25 11:36:50 set t12 (T12 v2): 400 items, signal digest 32f52bbff885c575, near-miss edits 1: 217, 2: 183
+2026-11-25 11:37:06 p14-03-guard: guard tcfg-ca5af419ca3738f1 (frame T 2.5281) from guard-t12-a0.05.json
+2026-11-25 11:37:06   p14-03-guard real 250; new decodes 0, new LLM scores 0, 1 s
+2026-11-25 11:37:17   p14-03-guard truncated_25 250; new decodes 250, new LLM scores 0, 11 s
+2026-11-25 11:37:36   p14-03-guard truncated_50 250; new decodes 650, new LLM scores 0, 30 s
+2026-11-25 11:38:00   p14-03-guard truncated_75 250; new decodes 1050, new LLM scores 0, 55 s
+2026-11-25 11:38:30   p14-03-guard noise_mix_25 250; new decodes 1450, new LLM scores 0, 84 s
+2026-11-25 11:39:01   p14-03-guard noise_mix_50 250; new decodes 1850, new LLM scores 0, 116 s
+2026-11-25 11:39:33   p14-03-guard noise_mix_75 250; new decodes 2250, new LLM scores 0, 147 s
+2026-11-25 11:39:46   p14-03-guard near_miss 250; new decodes 2400, new LLM scores 0, 160 s
+2026-11-25 11:39:48 LLM loaded (CPU, 3 threads)
+2026-11-25 11:39:51 t12 p14-03-guard [llm]: b2t24-t12-test/p14-03-guard  real commit 25/400  truncated_25 1/9 m26 pass  truncated_50 12/31 m35 fail  truncated_75 10/19 m31 no rule  noise_mix_25 0/0 m25 pass  noise_mix_50 0/0 m25 pass  noise_mix_75 0/0 m25 pass  near_miss 25/25 m25 fail  => fail
+2026-11-25 11:39:51 t12 p14-03-guard [conservative]: b2t24-t12-test/p14-03-guard  real commit 25/400  truncated_25 1/9 m26 pass  truncated_50 12/31 m35 fail  truncated_75 10/19 m31 no rule  noise_mix_25 0/0 m25 pass  noise_mix_50 0/0 m25 pass  noise_mix_75 0/0 m25 pass  near_miss 25/25 m25 fail  => fail
+2026-11-25 11:39:51 p15-05-B0_rescore: guard tcfg-23e36bda05f5c7eb (frame T 2.5281) from guard-t12-B0_rescore.json
+2026-11-25 11:39:52   p15-05-B0_rescore real 250; new decodes 2400, new LLM scores 45, 1 s
+2026-11-25 11:40:53   p15-05-B0_rescore truncated_25 250; new decodes 2400, new LLM scores 1335, 61 s
+2026-11-25 11:43:27   p15-05-B0_rescore truncated_50 250; new decodes 2400, new LLM scores 4126, 216 s
+2026-11-25 11:47:44   p15-05-B0_rescore truncated_75 250; new decodes 2400, new LLM scores 7825, 472 s
+2026-11-25 11:52:22   p15-05-B0_rescore noise_mix_25 250; new decodes 2400, new LLM scores 11003, 750 s
+2026-11-25 11:56:31   p15-05-B0_rescore noise_mix_50 250; new decodes 2400, new LLM scores 13598, 1000 s
+2026-11-25 12:00:56   p15-05-B0_rescore noise_mix_75 250; new decodes 2400, new LLM scores 16324, 1265 s
+2026-11-25 12:03:16   p15-05-B0_rescore near_miss 250; new decodes 2400, new LLM scores 17717, 1404 s
+2026-11-25 12:03:29 t12 p15-05-B0_rescore [llm]: b2t24-t12-test/p15-05-B0_rescore  real commit 15/400  truncated_25 1/6 m15 pass  truncated_50 7/23 m22 insufficient evidence  truncated_75 9/16 m20 no rule  noise_mix_25 0/0 m15 pass  noise_mix_50 0/0 m15 pass  noise_mix_75 0/0 m15 pass  near_miss 5/5 m16 insufficient evidence  => insufficient evidence
+2026-11-25 12:03:29 t12 p15-05-B0_rescore [conservative]: b2t24-t12-test/p15-05-B0_rescore  real commit 15/400  truncated_25 1/6 m15 pass  truncated_50 7/23 m22 insufficient evidence  truncated_75 9/16 m20 no rule  noise_mix_25 0/0 m15 pass  noise_mix_50 0/0 m15 pass  noise_mix_75 0/0 m15 pass  near_miss 5/5 m16 insufficient evidence  => insufficient evidence
+2026-11-25 12:03:29 p15-06-B1_rescore_G: guard tcfg-77bf40445ed5b0d9 (frame T 2.5281) from guard-B1_rescore_G.json
+2026-11-25 12:03:31   p15-06-B1_rescore_G real 250; new decodes 2400, new LLM scores 17855, 2 s
+2026-11-25 12:03:33   p15-06-B1_rescore_G truncated_25 250; new decodes 2400, new LLM scores 17855, 4 s
+2026-11-25 12:03:34   p15-06-B1_rescore_G truncated_50 250; new decodes 2400, new LLM scores 17855, 5 s
+2026-11-25 12:03:35   p15-06-B1_rescore_G truncated_75 250; new decodes 2400, new LLM scores 17855, 6 s
+2026-11-25 12:03:38   p15-06-B1_rescore_G noise_mix_25 250; new decodes 2400, new LLM scores 17855, 9 s
+2026-11-25 12:03:42   p15-06-B1_rescore_G noise_mix_50 250; new decodes 2400, new LLM scores 17855, 13 s
+2026-11-25 12:03:45   p15-06-B1_rescore_G noise_mix_75 250; new decodes 2400, new LLM scores 17855, 16 s
+2026-11-25 12:03:47   p15-06-B1_rescore_G near_miss 250; new decodes 2400, new LLM scores 17855, 18 s
+2026-11-25 12:03:48 t12 p15-06-B1_rescore_G [llm]: b2t24-t12-test/p15-06-B1_rescore_G  real commit 0/400  truncated_25 0/0 m0 insufficient evidence  truncated_50 0/0 m0 insufficient evidence  truncated_75 0/0 m0 no rule  noise_mix_25 0/0 m0 insufficient evidence  noise_mix_50 0/0 m0 insufficient evidence  noise_mix_75 0/0 m0 insufficient evidence  near_miss 0/0 m0 insufficient evidence  => insufficient evidence
+2026-11-25 12:03:48 t12 p15-06-B1_rescore_G [conservative]: b2t24-t12-test/p15-06-B1_rescore_G  real commit 0/400  truncated_25 0/0 m0 insufficient evidence  truncated_50 0/0 m0 insufficient evidence  truncated_75 0/0 m0 no rule  noise_mix_25 0/0 m0 insufficient evidence  noise_mix_50 0/0 m0 insufficient evidence  noise_mix_75 0/0 m0 insufficient evidence  near_miss 0/0 m0 insufficient evidence  => insufficient evidence
+2026-11-25 12:03:48 stage t12 done

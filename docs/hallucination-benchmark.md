@@ -80,6 +80,8 @@ print(hb.signal_summary_line(card))
 
 Command line: `signal-inputs` writes the truncated and noise-mix inputs (NPZ, keys `<track>/<item>`) and the near-miss texts (JSONL) from your held-out NPZ and truth file. Keep both files local. `signal-score` scores a decisions file with the header `{"schema": "fidetype.halluc.signal-decisions/0.1", "seed": 0}` and one line per decision of the `real` track and the signal-check tracks (`item` = held-out position). `signal-rescore outcomes.json --check card.json` re-scores a signal outcomes file. Schemas: outcomes `fidetype.halluc.signal-outcomes/0.1`, card `fidetype.halluc.signal-card/0.1`.
 
+**Baseline results.** On our baselines, the decoders without signal grounding commit the near-miss sentence in most cases where they commit on real data, and fail `near_miss`. The decoder with grounding (newer T15 decoder input, 36 real commits) commits the near-miss sentence 0 times and passes all three tracks. At noise level 0.25 and above, almost no baseline commits, so the noise-mix levels do not yet separate systems. Baselines with fewer than 10 real commits get `insufficient evidence`. Details: [experiment record](../experiments/2026-11-25-p15-56-signal-check-tracks/results.md).
+
 ### Where the controls act
 
 The controls act on the **decoder input that the trust layer sees**. In our baselines this is the `(T, V)` phoneme log-probability matrix, and the "decoder" is the word decoder plus the language models after it. If your system starts from raw neural features, you can apply the same recipe to the features. State which level you used.
