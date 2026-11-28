@@ -45,7 +45,7 @@ r = guard(my_decoder("i need help"))
 print(r.action, r.text)                                 # commit i need help
 ```
 
-`calibrate` sets the guard so that at most `alpha` (here 5 %) of its commits are wrong, and it refuses guards that commit on no-signal input. Each result is `commit` (use the text), `offer` (show the choices) or `withhold` (show nothing). Next: [add trust to your decoder in 10 minutes](docs/trust-quickstart.md), then [what the guarantee says](docs/trust-guarantee.md).
+`calibrate` sets the guard so that, with probability at least 1 − `delta` (default 90 %) over the calibration draw, at most `alpha` (here 5 %) of all utterances become wrong commits. The rate is over all utterances, not over commits only: a guard that commits rarely can still have many wrong commits among the few it makes. `calibrate` also refuses guards that commit on no-signal input. Each result is `commit` (use the text), `offer` (show the choices) or `withhold` (show nothing). Next: [add trust to your decoder in 10 minutes](docs/trust-quickstart.md), then [what the guarantee says](docs/trust-guarantee.md).
 
 ## Status
 
