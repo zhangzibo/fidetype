@@ -1,0 +1,1635 @@
+{
+ "note": "aggregate only; pooled test CER over the 80 test sentences (last block per Willett session), greedy CTC, no LM, final step; plan.md 29c1dc9; K arm not run (dependency). Every pretrained arm comes from other people: E (emg2qwerty, 100 users) and T differ from T5 in person and modality, I (T15) in person only.",
+ "status": "done",
+ "gpu_hours": 41.486,
+ "selection": {
+  "R": {
+   "lr": 0.0005,
+   "steps": 6000,
+   "mean_val_cer": 0.1711562370493162
+  },
+  "E": {
+   "lr": 0.001,
+   "steps": 6000,
+   "mean_val_cer": 0.11987152921674264
+  }
+ },
+ "pretrain_I": {
+  "steps": 30000,
+  "skipped": 0,
+  "n_trials": 8065,
+  "time": "2026-11-24T11:10:21"
+ },
+ "table": {
+  "R": {
+   "seeds": {
+    "0": 0.17981438515081208,
+    "1": 0.9016821345707656,
+    "2": 0.9419953596287703,
+    "3": 0.2009860788863109,
+    "4": 0.8868909512761021
+   },
+   "mean": 0.6222737819025521,
+   "n": 5
+  },
+  "E": {
+   "seeds": {
+    "0": 0.183584686774942,
+    "1": 0.162122969837587,
+    "2": 0.16473317865429235,
+    "3": 0.15690255220417634,
+    "4": 0.15052204176334108
+   },
+   "mean": 0.16357308584686775,
+   "n": 5
+  },
+  "T": {
+   "seeds": {
+    "0": 0.7439095127610209,
+    "1": 0.7381090487238979,
+    "2": 0.763631090487239,
+    "3": 0.7720417633410673,
+    "4": 0.7958236658932715
+   },
+   "mean": 0.7627030162412993,
+   "n": 5
+  },
+  "I": {
+   "seeds": {
+    "0": 0.8520881670533643,
+    "1": 0.9454756380510441,
+    "2": 0.927784222737819,
+    "3": 0.14965197215777262,
+    "4": 0.818445475638051
+   },
+   "mean": 0.7386890951276103,
+   "n": 5
+  }
+ },
+ "V1": {
+  "best_mean": 0.16357308584686775,
+  "pass": true
+ },
+ "C1": {
+  "runs": {
+   "R": [
+    {
+     "run": "R-ball-s0",
+     "cer": 0.17981438515081208,
+     "shuffled": 0.904292343387471,
+     "pass": true
+    },
+    {
+     "run": "R-ball-s3",
+     "cer": 0.2009860788863109,
+     "shuffled": 0.906322505800464,
+     "pass": true
+    }
+   ],
+   "E": [
+    {
+     "run": "E-ball-s0",
+     "cer": 0.183584686774942,
+     "shuffled": 0.910092807424594,
+     "pass": true
+    },
+    {
+     "run": "E-ball-s1",
+     "cer": 0.162122969837587,
+     "shuffled": 0.9028422273781903,
+     "pass": true
+    },
+    {
+     "run": "E-ball-s2",
+     "cer": 0.16473317865429235,
+     "shuffled": 0.9266241299303944,
+     "pass": true
+    },
+    {
+     "run": "E-ball-s3",
+     "cer": 0.15690255220417634,
+     "shuffled": 0.9274941995359629,
+     "pass": true
+    },
+    {
+     "run": "E-ball-s4",
+     "cer": 0.15052204176334108,
+     "shuffled": 0.8993619489559165,
+     "pass": true
+    }
+   ],
+   "T": [],
+   "I": [
+    {
+     "run": "I-ball-s3",
+     "cer": 0.14965197215777262,
+     "shuffled": 0.9266241299303944,
+     "pass": true
+    }
+   ]
+  },
+  "pass": {
+   "R": true,
+   "E": true,
+   "T": true,
+   "I": true
+  }
+ },
+ "C2": {
+  "E": {
+   "0": {
+    "status": "done",
+    "normal": 0.183584686774942,
+    "deranged": [
+     0.7645011600928074,
+     0.7775522041763341,
+     0.7700116009280742
+    ],
+    "deranged_mean": 0.7706883217324053,
+    "needed": 0.75,
+    "individual_pass": [
+     true,
+     true,
+     true
+    ],
+    "margin_mean": 0.020688321732405313,
+    "pass": true
+   },
+   "1": {
+    "status": "done",
+    "normal": 0.162122969837587,
+    "deranged": [
+     0.7662412993039444,
+     0.7642111368909513,
+     0.7705916473317865
+    ],
+    "deranged_mean": 0.767014694508894,
+    "needed": 0.75,
+    "individual_pass": [
+     true,
+     true,
+     true
+    ],
+    "margin_mean": 0.017014694508894035,
+    "pass": true
+   },
+   "2": {
+    "status": "done",
+    "normal": 0.16473317865429235,
+    "deranged": [
+     0.7688515081206496,
+     0.7842227378190255,
+     0.7935034802784223
+    ],
+    "deranged_mean": 0.7821925754060325,
+    "needed": 0.75,
+    "individual_pass": [
+     true,
+     true,
+     true
+    ],
+    "margin_mean": 0.032192575406032486,
+    "pass": true
+   },
+   "3": {
+    "status": "done",
+    "normal": 0.15690255220417634,
+    "deranged": [
+     0.7668213457076566,
+     0.7517401392111369,
+     0.822215777262181
+    ],
+    "deranged_mean": 0.7802590873936582,
+    "needed": 0.75,
+    "individual_pass": [
+     true,
+     true,
+     true
+    ],
+    "margin_mean": 0.030259087393658235,
+    "pass": true
+   },
+   "4": {
+    "status": "done",
+    "normal": 0.15052204176334108,
+    "deranged": [
+     0.7758120649651972,
+     0.7842227378190255,
+     0.7920533642691415
+    ],
+    "deranged_mean": 0.7840293890177881,
+    "needed": 0.75,
+    "individual_pass": [
+     true,
+     true,
+     true
+    ],
+    "margin_mean": 0.03402938901778807,
+    "pass": true
+   },
+   "all_seeds": true
+  },
+  "R": {
+   "0": {
+    "status": "done",
+    "normal": 0.17981438515081208,
+    "deranged": [
+     0.9153132250580046
+    ],
+    "deranged_mean": 0.9153132250580046,
+    "needed": 0.75,
+    "individual_pass": [
+     true
+    ],
+    "margin_mean": 0.1653132250580046,
+    "pass": true
+   },
+   "1": {
+    "status": "done",
+    "normal": 0.9016821345707656,
+    "deranged": [
+     0.9266241299303944
+    ],
+    "deranged_mean": 0.9266241299303944,
+    "needed": 1.0016821345707656,
+    "individual_pass": [
+     false
+    ],
+    "margin_mean": -0.07505800464037116,
+    "pass": false
+   },
+   "2": {
+    "status": "done",
+    "normal": 0.9419953596287703,
+    "deranged": [
+     0.8628190255220418
+    ],
+    "deranged_mean": 0.8628190255220418,
+    "needed": 1.0419953596287703,
+    "individual_pass": [
+     false
+    ],
+    "margin_mean": -0.1791763341067285,
+    "pass": false
+   },
+   "3": {
+    "status": "done",
+    "normal": 0.2009860788863109,
+    "deranged": [
+     0.9495359628770301
+    ],
+    "deranged_mean": 0.9495359628770301,
+    "needed": 0.75,
+    "individual_pass": [
+     true
+    ],
+    "margin_mean": 0.19953596287703013,
+    "pass": true
+   },
+   "4": {
+    "status": "done",
+    "normal": 0.8868909512761021,
+    "deranged": [
+     0.9454756380510441
+    ],
+    "deranged_mean": 0.9454756380510441,
+    "needed": 0.986890951276102,
+    "individual_pass": [
+     false
+    ],
+    "margin_mean": -0.04141531322505798,
+    "pass": false
+   },
+   "all_seeds": false
+  },
+  "I": {
+   "0": {
+    "status": "done",
+    "normal": 0.8520881670533643,
+    "deranged": [
+     0.7389791183294664
+    ],
+    "deranged_mean": 0.7389791183294664,
+    "needed": 0.9520881670533643,
+    "individual_pass": [
+     false
+    ],
+    "margin_mean": -0.2131090487238979,
+    "pass": false
+   },
+   "1": {
+    "status": "done",
+    "normal": 0.9454756380510441,
+    "deranged": [
+     0.9341647331786543
+    ],
+    "deranged_mean": 0.9341647331786543,
+    "needed": 1.0454756380510442,
+    "individual_pass": [
+     false
+    ],
+    "margin_mean": -0.11131090487238982,
+    "pass": false
+   },
+   "2": {
+    "status": "done",
+    "normal": 0.927784222737819,
+    "deranged": [
+     0.7807424593967517
+    ],
+    "deranged_mean": 0.7807424593967517,
+    "needed": 1.027784222737819,
+    "individual_pass": [
+     false
+    ],
+    "margin_mean": -0.24704176334106742,
+    "pass": false
+   },
+   "3": {
+    "status": "done",
+    "normal": 0.14965197215777262,
+    "deranged": [
+     0.759860788863109
+    ],
+    "deranged_mean": 0.759860788863109,
+    "needed": 0.75,
+    "individual_pass": [
+     true
+    ],
+    "margin_mean": 0.009860788863109038,
+    "pass": true
+   },
+   "4": {
+    "status": "done",
+    "normal": 0.818445475638051,
+    "deranged": [
+     0.761600928074246
+    ],
+    "deranged_mean": 0.761600928074246,
+    "needed": 0.918445475638051,
+    "individual_pass": [
+     false
+    ],
+    "margin_mean": -0.15684454756380506,
+    "pass": false
+   },
+   "all_seeds": false
+  }
+ },
+ "valid": {
+  "R": false,
+  "E": true,
+  "T": null,
+  "I": false,
+  "K": null
+ },
+ "H": {
+  "H1": {
+   "a": "E",
+   "b": "R",
+   "per_seed": [
+    {
+     "seed": 0,
+     "cer_a": 0.183584686774942,
+     "cer_b": 0.17981438515081208,
+     "d": -0.003770301624129918,
+     "ci95": [
+      -0.021769221145874287,
+      0.01310310559524862
+     ],
+     "ci_above_0": false
+    },
+    {
+     "seed": 1,
+     "cer_a": 0.162122969837587,
+     "cer_b": 0.9016821345707656,
+     "d": 0.7395591647331786,
+     "ci95": [
+      0.7167174955851844,
+      0.7618325469948868
+     ],
+     "ci_above_0": true
+    },
+    {
+     "seed": 2,
+     "cer_a": 0.16473317865429235,
+     "cer_b": 0.9419953596287703,
+     "d": 0.777262180974478,
+     "ci95": [
+      0.7569200567779923,
+      0.7975069615623406
+     ],
+     "ci_above_0": true
+    },
+    {
+     "seed": 3,
+     "cer_a": 0.15690255220417634,
+     "cer_b": 0.2009860788863109,
+     "d": 0.044083526682134555,
+     "ci95": [
+      0.030002823682560652,
+      0.058550256551837855
+     ],
+     "ci_above_0": true
+    },
+    {
+     "seed": 4,
+     "cer_a": 0.15052204176334108,
+     "cer_b": 0.8868909512761021,
+     "d": 0.736368909512761,
+     "ci95": [
+      0.7144518419966497,
+      0.7580367515215799
+     ],
+     "ci_above_0": true
+    }
+   ],
+   "n_seeds": 5,
+   "n_ci_above_0": 4,
+   "mean_d": 0.45870069605568436,
+   "t_ci95": [
+    -0.039224122332818856,
+    0.9566255144441875
+   ],
+   "part_a": true,
+   "part_b": false,
+   "pass": false,
+   "status": "done",
+   "winner_valid": true,
+   "counts": false
+  },
+  "H2": {
+   "a": "E",
+   "b": "T",
+   "per_seed": [
+    {
+     "seed": 0,
+     "cer_a": 0.183584686774942,
+     "cer_b": 0.7439095127610209,
+     "d": 0.5603248259860789,
+     "ci95": [
+      0.5360479612232144,
+      0.5854247273476374
+     ],
+     "ci_above_0": true
+    },
+    {
+     "seed": 1,
+     "cer_a": 0.162122969837587,
+     "cer_b": 0.7381090487238979,
+     "d": 0.5759860788863109,
+     "ci95": [
+      0.5497912978902644,
+      0.6015531746620967
+     ],
+     "ci_above_0": true
+    },
+    {
+     "seed": 2,
+     "cer_a": 0.16473317865429235,
+     "cer_b": 0.763631090487239,
+     "d": 0.5988979118329466,
+     "ci95": [
+      0.5740473554513879,
+      0.6232238752285283
+     ],
+     "ci_above_0": true
+    },
+    {
+     "seed": 3,
+     "cer_a": 0.15690255220417634,
+     "cer_b": 0.7720417633410673,
+     "d": 0.615139211136891,
+     "ci95": [
+      0.5935134619352177,
+      0.6372380415536988
+     ],
+     "ci_above_0": true
+    },
+    {
+     "seed": 4,
+     "cer_a": 0.15052204176334108,
+     "cer_b": 0.7958236658932715,
+     "d": 0.6453016241299304,
+     "ci95": [
+      0.6277642488500806,
+      0.6628735060926443
+     ],
+     "ci_above_0": true
+    }
+   ],
+   "n_seeds": 5,
+   "n_ci_above_0": 5,
+   "mean_d": 0.5991299303944315,
+   "t_ci95": [
+    0.5578100734476283,
+    0.6404497873412347
+   ],
+   "part_a": true,
+   "part_b": true,
+   "pass": true,
+   "status": "done",
+   "winner_valid": true,
+   "counts": true
+  },
+  "H1swap": {
+   "a": "R",
+   "b": "E",
+   "per_seed": [
+    {
+     "seed": 0,
+     "cer_a": 0.17981438515081208,
+     "cer_b": 0.183584686774942,
+     "d": 0.003770301624129918,
+     "ci95": [
+      -0.01310310559524862,
+      0.021769221145874287
+     ],
+     "ci_above_0": false
+    },
+    {
+     "seed": 1,
+     "cer_a": 0.9016821345707656,
+     "cer_b": 0.162122969837587,
+     "d": -0.7395591647331786,
+     "ci95": [
+      -0.7618325469948868,
+      -0.7167174955851844
+     ],
+     "ci_above_0": false
+    },
+    {
+     "seed": 2,
+     "cer_a": 0.9419953596287703,
+     "cer_b": 0.16473317865429235,
+     "d": -0.777262180974478,
+     "ci95": [
+      -0.7975069615623406,
+      -0.7569200567779923
+     ],
+     "ci_above_0": false
+    },
+    {
+     "seed": 3,
+     "cer_a": 0.2009860788863109,
+     "cer_b": 0.15690255220417634,
+     "d": -0.044083526682134555,
+     "ci95": [
+      -0.05855025655183786,
+      -0.030002823682560655
+     ],
+     "ci_above_0": false
+    },
+    {
+     "seed": 4,
+     "cer_a": 0.8868909512761021,
+     "cer_b": 0.15052204176334108,
+     "d": -0.736368909512761,
+     "ci95": [
+      -0.7580367515215799,
+      -0.7144518419966497
+     ],
+     "ci_above_0": false
+    }
+   ],
+   "n_seeds": 5,
+   "n_ci_above_0": 0,
+   "mean_d": -0.45870069605568436,
+   "t_ci95": [
+    -0.9566255144441875,
+    0.039224122332818856
+   ],
+   "part_a": false,
+   "part_b": false,
+   "pass": false,
+   "status": "done",
+   "winner_valid": false,
+   "counts": false
+  },
+  "H2swap": {
+   "a": "T",
+   "b": "E",
+   "per_seed": [
+    {
+     "seed": 0,
+     "cer_a": 0.7439095127610209,
+     "cer_b": 0.183584686774942,
+     "d": -0.5603248259860789,
+     "ci95": [
+      -0.5854247273476374,
+      -0.5360479612232144
+     ],
+     "ci_above_0": false
+    },
+    {
+     "seed": 1,
+     "cer_a": 0.7381090487238979,
+     "cer_b": 0.162122969837587,
+     "d": -0.5759860788863109,
+     "ci95": [
+      -0.6015531746620967,
+      -0.5497912978902644
+     ],
+     "ci_above_0": false
+    },
+    {
+     "seed": 2,
+     "cer_a": 0.763631090487239,
+     "cer_b": 0.16473317865429235,
+     "d": -0.5988979118329466,
+     "ci95": [
+      -0.6232238752285283,
+      -0.5740473554513879
+     ],
+     "ci_above_0": false
+    },
+    {
+     "seed": 3,
+     "cer_a": 0.7720417633410673,
+     "cer_b": 0.15690255220417634,
+     "d": -0.615139211136891,
+     "ci95": [
+      -0.6372380415536988,
+      -0.5935134619352177
+     ],
+     "ci_above_0": false
+    },
+    {
+     "seed": 4,
+     "cer_a": 0.7958236658932715,
+     "cer_b": 0.15052204176334108,
+     "d": -0.6453016241299304,
+     "ci95": [
+      -0.6628735060926443,
+      -0.6277642488500808
+     ],
+     "ci_above_0": false
+    }
+   ],
+   "n_seeds": 5,
+   "n_ci_above_0": 0,
+   "mean_d": -0.5991299303944315,
+   "t_ci95": [
+    -0.6404497873412347,
+    -0.5578100734476283
+   ],
+   "part_a": false,
+   "part_b": false,
+   "pass": false,
+   "status": "done"
+  },
+  "H4": {
+   "a": "I",
+   "b": "R",
+   "per_seed": [
+    {
+     "seed": 0,
+     "cer_a": 0.8520881670533643,
+     "cer_b": 0.17981438515081208,
+     "d": -0.6722737819025523,
+     "ci95": [
+      -0.6928781640014045,
+      -0.6523337228809036
+     ],
+     "ci_above_0": false
+    },
+    {
+     "seed": 1,
+     "cer_a": 0.9454756380510441,
+     "cer_b": 0.9016821345707656,
+     "d": -0.04379350348027844,
+     "ci95": [
+      -0.05238136823481378,
+      -0.0353111363239658
+     ],
+     "ci_above_0": false
+    },
+    {
+     "seed": 2,
+     "cer_a": 0.927784222737819,
+     "cer_b": 0.9419953596287703,
+     "d": 0.014211136890951326,
+     "ci95": [
+      0.007395132961033592,
+      0.021315541543596987
+     ],
+     "ci_above_0": true
+    },
+    {
+     "seed": 3,
+     "cer_a": 0.14965197215777262,
+     "cer_b": 0.2009860788863109,
+     "d": 0.051334106728538276,
+     "ci95": [
+      0.03630513736353173,
+      0.06586695070498029
+     ],
+     "ci_above_0": true
+    },
+    {
+     "seed": 4,
+     "cer_a": 0.818445475638051,
+     "cer_b": 0.8868909512761021,
+     "d": 0.06844547563805103,
+     "ci95": [
+      0.05508121143212494,
+      0.08095245028704551
+     ],
+     "ci_above_0": true
+    }
+   ],
+   "n_seeds": 5,
+   "n_ci_above_0": 3,
+   "mean_d": -0.116415313225058,
+   "t_ci95": [
+    -0.5059245440953319,
+    0.27309391764521596
+   ],
+   "part_a": false,
+   "part_b": false,
+   "pass": false,
+   "status": "done",
+   "winner_valid": false,
+   "counts": false
+  },
+  "H4_I_vs_E_descriptive": {
+   "a": "I",
+   "b": "E",
+   "per_seed": [
+    {
+     "seed": 0,
+     "cer_a": 0.8520881670533643,
+     "cer_b": 0.183584686774942,
+     "d": -0.6685034802784223,
+     "ci95": [
+      -0.6939819422512364,
+      -0.643576000008136
+     ],
+     "ci_above_0": false
+    },
+    {
+     "seed": 1,
+     "cer_a": 0.9454756380510441,
+     "cer_b": 0.162122969837587,
+     "d": -0.7833526682134571,
+     "ci95": [
+      -0.8047792969766352,
+      -0.7616796109896777
+     ],
+     "ci_above_0": false
+    },
+    {
+     "seed": 2,
+     "cer_a": 0.927784222737819,
+     "cer_b": 0.16473317865429235,
+     "d": -0.7630510440835266,
+     "ci95": [
+      -0.7838248707813925,
+      -0.7420938566090591
+     ],
+     "ci_above_0": false
+    },
+    {
+     "seed": 3,
+     "cer_a": 0.14965197215777262,
+     "cer_b": 0.15690255220417634,
+     "d": 0.007250580046403721,
+     "ci95": [
+      -0.006404493551379545,
+      0.020658542691239797
+     ],
+     "ci_above_0": false
+    },
+    {
+     "seed": 4,
+     "cer_a": 0.818445475638051,
+     "cer_b": 0.15052204176334108,
+     "d": -0.66792343387471,
+     "ci95": [
+      -0.6865899157520755,
+      -0.6494368883299942
+     ],
+     "ci_above_0": false
+    }
+   ],
+   "n_seeds": 5,
+   "n_ci_above_0": 0,
+   "mean_d": -0.5751160092807425,
+   "t_ci95": [
+    -0.9846615983790272,
+    -0.16557042018245777
+   ],
+   "part_a": false,
+   "part_b": false,
+   "pass": false,
+   "status": "done"
+  },
+  "H4_E_vs_I_descriptive": {
+   "a": "E",
+   "b": "I",
+   "per_seed": [
+    {
+     "seed": 0,
+     "cer_a": 0.183584686774942,
+     "cer_b": 0.8520881670533643,
+     "d": 0.6685034802784223,
+     "ci95": [
+      0.643576000008136,
+      0.6939819422512364
+     ],
+     "ci_above_0": true
+    },
+    {
+     "seed": 1,
+     "cer_a": 0.162122969837587,
+     "cer_b": 0.9454756380510441,
+     "d": 0.7833526682134571,
+     "ci95": [
+      0.7616796109896777,
+      0.8047792969766352
+     ],
+     "ci_above_0": true
+    },
+    {
+     "seed": 2,
+     "cer_a": 0.16473317865429235,
+     "cer_b": 0.927784222737819,
+     "d": 0.7630510440835266,
+     "ci95": [
+      0.7420938566090591,
+      0.7838248707813925
+     ],
+     "ci_above_0": true
+    },
+    {
+     "seed": 3,
+     "cer_a": 0.15690255220417634,
+     "cer_b": 0.14965197215777262,
+     "d": -0.007250580046403721,
+     "ci95": [
+      -0.020658542691239803,
+      0.006404493551379544
+     ],
+     "ci_above_0": false
+    },
+    {
+     "seed": 4,
+     "cer_a": 0.15052204176334108,
+     "cer_b": 0.818445475638051,
+     "d": 0.66792343387471,
+     "ci95": [
+      0.6494368883299941,
+      0.6865899157520755
+     ],
+     "ci_above_0": true
+    }
+   ],
+   "n_seeds": 5,
+   "n_ci_above_0": 4,
+   "mean_d": 0.5751160092807425,
+   "t_ci95": [
+    0.16557042018245777,
+    0.9846615983790272
+   ],
+   "part_a": true,
+   "part_b": true,
+   "pass": true,
+   "status": "done"
+  },
+  "H3": {
+   "a": "K",
+   "b": "R",
+   "status": "not run (dependency: P11-06, gap 86)",
+   "pass": null
+  }
+ },
+ "outcome": {
+  "label": "B",
+  "labels": [
+   "B"
+  ]
+ },
+ "runs": [
+  {
+   "group": "E+R+ normal",
+   "arm": "E",
+   "seed": 0,
+   "deranged": false,
+   "j": null,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.183584686774942,
+   "test_cer_bestval": 0.18445475638051045,
+   "best_val_cer": 0.13717364276833816,
+   "best_val_step": 5800,
+   "val_cer_final": 0.13862411935350186,
+   "c1_shuffled_cer": 0.910092807424594
+  },
+  {
+   "group": "E+R+ normal",
+   "arm": "R",
+   "seed": 0,
+   "deranged": false,
+   "j": null,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.17981438515081208,
+   "test_cer_bestval": 0.17981438515081208,
+   "best_val_cer": 0.13634479900538748,
+   "best_val_step": 6000,
+   "val_cer_final": 0.13634479900538748,
+   "c1_shuffled_cer": 0.904292343387471
+  },
+  {
+   "group": "E+R+ normal",
+   "arm": "E",
+   "seed": 1,
+   "deranged": false,
+   "j": null,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.162122969837587,
+   "test_cer_bestval": 0.16531322505800464,
+   "best_val_cer": 0.1261914629092416,
+   "best_val_step": 5200,
+   "val_cer_final": 0.12660588479071694,
+   "c1_shuffled_cer": 0.9028422273781903
+  },
+  {
+   "group": "E+R+ normal",
+   "arm": "R",
+   "seed": 1,
+   "deranged": false,
+   "j": null,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.9016821345707656,
+   "test_cer_bestval": 0.872969837587007,
+   "best_val_cer": 0.8675922088686283,
+   "best_val_step": 1100,
+   "val_cer_final": 0.9138002486531289,
+   "c1_shuffled_cer": 0.91792343387471
+  },
+  {
+   "group": "E+R+ normal",
+   "arm": "E",
+   "seed": 2,
+   "deranged": false,
+   "j": null,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.16473317865429235,
+   "test_cer_bestval": 0.17604408352668213,
+   "best_val_cer": 0.11458765022793203,
+   "best_val_step": 5200,
+   "val_cer_final": 0.11707418151678409,
+   "c1_shuffled_cer": 0.9266241299303944
+  },
+  {
+   "group": "E+R+ normal",
+   "arm": "R",
+   "seed": 2,
+   "deranged": false,
+   "j": null,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.9419953596287703,
+   "test_cer_bestval": 0.7868329466357309,
+   "best_val_cer": 0.8205553253211769,
+   "best_val_step": 200,
+   "val_cer_final": 0.9442602569415666,
+   "c1_shuffled_cer": 0.9457656612529002
+  },
+  {
+   "group": "E+R+ normal",
+   "arm": "E",
+   "seed": 3,
+   "deranged": false,
+   "j": null,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.15690255220417634,
+   "test_cer_bestval": 0.15922273781902552,
+   "best_val_cer": 0.12038955656858683,
+   "best_val_step": 5300,
+   "val_cer_final": 0.1261914629092416,
+   "c1_shuffled_cer": 0.9274941995359629
+  },
+  {
+   "group": "E+R+ normal",
+   "arm": "R",
+   "seed": 3,
+   "deranged": false,
+   "j": null,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.2009860788863109,
+   "test_cer_bestval": 0.1998259860788863,
+   "best_val_cer": 0.17737256527144632,
+   "best_val_step": 5700,
+   "val_cer_final": 0.17882304185661002,
+   "c1_shuffled_cer": 0.906322505800464
+  },
+  {
+   "group": "E+R+ normal",
+   "arm": "E",
+   "seed": 4,
+   "deranged": false,
+   "j": null,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.15052204176334108,
+   "test_cer_bestval": 0.15458236658932714,
+   "best_val_cer": 0.12784915043514297,
+   "best_val_step": 5300,
+   "val_cer_final": 0.129714048901782,
+   "c1_shuffled_cer": 0.8993619489559165
+  },
+  {
+   "group": "E+R+ normal",
+   "arm": "R",
+   "seed": 4,
+   "deranged": false,
+   "j": null,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.8868909512761021,
+   "test_cer_bestval": 0.855568445475638,
+   "best_val_cer": 0.8711147948611687,
+   "best_val_step": 3500,
+   "val_cer_final": 0.8968089515126398,
+   "c1_shuffled_cer": 0.8915313225058005
+  },
+  {
+   "group": "E+ deranged",
+   "arm": "E",
+   "seed": 0,
+   "deranged": true,
+   "j": 0,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.7645011600928074,
+   "test_cer_bestval": 0.7671113689095128,
+   "best_val_cer": 0.8062577704102777,
+   "best_val_step": 4300,
+   "val_cer_final": 0.8110236220472441,
+   "c1_shuffled_cer": null
+  },
+  {
+   "group": "E+ deranged",
+   "arm": "E",
+   "seed": 0,
+   "deranged": true,
+   "j": 1,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.7775522041763341,
+   "test_cer_bestval": 0.7769721577726219,
+   "best_val_cer": 0.807293825113966,
+   "best_val_step": 5400,
+   "val_cer_final": 0.8077082469954414,
+   "c1_shuffled_cer": null
+  },
+  {
+   "group": "E+ deranged",
+   "arm": "E",
+   "seed": 0,
+   "deranged": true,
+   "j": 2,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.7700116009280742,
+   "test_cer_bestval": 0.7700116009280742,
+   "best_val_cer": 0.7987981765437215,
+   "best_val_step": 4000,
+   "val_cer_final": 0.8108164111065064,
+   "c1_shuffled_cer": null
+  },
+  {
+   "group": "E+ deranged",
+   "arm": "E",
+   "seed": 1,
+   "deranged": true,
+   "j": 0,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.7662412993039444,
+   "test_cer_bestval": 0.7700116009280742,
+   "best_val_cer": 0.810401989225031,
+   "best_val_step": 4900,
+   "val_cer_final": 0.8153750518027352,
+   "c1_shuffled_cer": null
+  },
+  {
+   "group": "E+ deranged",
+   "arm": "E",
+   "seed": 1,
+   "deranged": true,
+   "j": 1,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.7642111368909513,
+   "test_cer_bestval": 0.7682714617169374,
+   "best_val_cer": 0.791545793617903,
+   "best_val_step": 4400,
+   "val_cer_final": 0.8000414421881475,
+   "c1_shuffled_cer": null
+  },
+  {
+   "group": "E+ deranged",
+   "arm": "E",
+   "seed": 1,
+   "deranged": true,
+   "j": 2,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.7705916473317865,
+   "test_cer_bestval": 0.7720417633410673,
+   "best_val_cer": 0.7977621218400331,
+   "best_val_step": 5100,
+   "val_cer_final": 0.8004558640696229,
+   "c1_shuffled_cer": null
+  },
+  {
+   "group": "E+ deranged",
+   "arm": "E",
+   "seed": 2,
+   "deranged": true,
+   "j": 0,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.7688515081206496,
+   "test_cer_bestval": 0.7705916473317865,
+   "best_val_cer": 0.7985909656029838,
+   "best_val_step": 4600,
+   "val_cer_final": 0.8031496062992126,
+   "c1_shuffled_cer": null
+  },
+  {
+   "group": "E+ deranged",
+   "arm": "E",
+   "seed": 2,
+   "deranged": true,
+   "j": 1,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.7842227378190255,
+   "test_cer_bestval": 0.7868329466357309,
+   "best_val_cer": 0.8083298798176544,
+   "best_val_step": 5100,
+   "val_cer_final": 0.8099875673435557,
+   "c1_shuffled_cer": null
+  },
+  {
+   "group": "E+ deranged",
+   "arm": "E",
+   "seed": 2,
+   "deranged": true,
+   "j": 2,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.7935034802784223,
+   "test_cer_bestval": 0.7935034802784223,
+   "best_val_cer": 0.8253211769581434,
+   "best_val_step": 5400,
+   "val_cer_final": 0.8263572316618317,
+   "c1_shuffled_cer": null
+  },
+  {
+   "group": "E+ deranged",
+   "arm": "E",
+   "seed": 3,
+   "deranged": true,
+   "j": 0,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.7668213457076566,
+   "test_cer_bestval": 0.7589907192575406,
+   "best_val_cer": 0.8027351844177373,
+   "best_val_step": 3700,
+   "val_cer_final": 0.8116452548694572,
+   "c1_shuffled_cer": null
+  },
+  {
+   "group": "E+ deranged",
+   "arm": "E",
+   "seed": 3,
+   "deranged": true,
+   "j": 1,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.7517401392111369,
+   "test_cer_bestval": 0.7595707656612529,
+   "best_val_cer": 0.8056361375880646,
+   "best_val_step": 3600,
+   "val_cer_final": 0.8195192706174886,
+   "c1_shuffled_cer": null
+  },
+  {
+   "group": "E+ deranged",
+   "arm": "E",
+   "seed": 3,
+   "deranged": true,
+   "j": 2,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.822215777262181,
+   "test_cer_bestval": 0.8233758700696056,
+   "best_val_cer": 0.8251139660174057,
+   "best_val_step": 5400,
+   "val_cer_final": 0.8288437629506838,
+   "c1_shuffled_cer": null
+  },
+  {
+   "group": "E+ deranged",
+   "arm": "E",
+   "seed": 4,
+   "deranged": true,
+   "j": 0,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.7758120649651972,
+   "test_cer_bestval": 0.7729118329466357,
+   "best_val_cer": 0.8095731454620804,
+   "best_val_step": 5300,
+   "val_cer_final": 0.8112308329879818,
+   "c1_shuffled_cer": null
+  },
+  {
+   "group": "E+ deranged",
+   "arm": "E",
+   "seed": 4,
+   "deranged": true,
+   "j": 1,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.7842227378190255,
+   "test_cer_bestval": 0.7830626450116009,
+   "best_val_cer": 0.8081226688769167,
+   "best_val_step": 5000,
+   "val_cer_final": 0.8157894736842105,
+   "c1_shuffled_cer": null
+  },
+  {
+   "group": "E+ deranged",
+   "arm": "E",
+   "seed": 4,
+   "deranged": true,
+   "j": 2,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.7920533642691415,
+   "test_cer_bestval": 0.7903132250580046,
+   "best_val_cer": 0.8174471612101119,
+   "best_val_step": 4800,
+   "val_cer_final": 0.8207625362619146,
+   "c1_shuffled_cer": null
+  },
+  {
+   "group": "R+ deranged",
+   "arm": "R",
+   "seed": 0,
+   "deranged": true,
+   "j": 0,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.9153132250580046,
+   "test_cer_bestval": 0.910092807424594,
+   "best_val_cer": 0.9208454206382097,
+   "best_val_step": 4900,
+   "val_cer_final": 0.9245752175714878,
+   "c1_shuffled_cer": null
+  },
+  {
+   "group": "R+ deranged",
+   "arm": "R",
+   "seed": 1,
+   "deranged": true,
+   "j": 0,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.9266241299303944,
+   "test_cer_bestval": 0.9222737819025522,
+   "best_val_cer": 0.9249896394529631,
+   "best_val_step": 5500,
+   "val_cer_final": 0.9320348114380439,
+   "c1_shuffled_cer": null
+  },
+  {
+   "group": "R+ deranged",
+   "arm": "R",
+   "seed": 2,
+   "deranged": true,
+   "j": 0,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.8628190255220418,
+   "test_cer_bestval": 0.8506380510440835,
+   "best_val_cer": 0.8593037712391214,
+   "best_val_step": 5500,
+   "val_cer_final": 0.8731869042685454,
+   "c1_shuffled_cer": null
+  },
+  {
+   "group": "R+ deranged",
+   "arm": "R",
+   "seed": 3,
+   "deranged": true,
+   "j": 0,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.9495359628770301,
+   "test_cer_bestval": 0.9129930394431555,
+   "best_val_cer": 0.8924575217571488,
+   "best_val_step": 800,
+   "val_cer_final": 0.9573145462080398,
+   "c1_shuffled_cer": null
+  },
+  {
+   "group": "R+ deranged",
+   "arm": "R",
+   "seed": 4,
+   "deranged": true,
+   "j": 0,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.9454756380510441,
+   "test_cer_bestval": 0.8575986078886311,
+   "best_val_cer": 0.8636552009946126,
+   "best_val_step": 600,
+   "val_cer_final": 0.9620803978450062,
+   "c1_shuffled_cer": null
+  },
+  {
+   "group": "T normal",
+   "arm": "T",
+   "seed": 0,
+   "deranged": false,
+   "j": null,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.7439095127610209,
+   "test_cer_bestval": 0.7328886310904872,
+   "best_val_cer": 0.7237878159966846,
+   "best_val_step": 2900,
+   "val_cer_final": 0.7343555739743058,
+   "c1_shuffled_cer": 0.8088747099767981
+  },
+  {
+   "group": "T normal",
+   "arm": "T",
+   "seed": 1,
+   "deranged": false,
+   "j": null,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.7381090487238979,
+   "test_cer_bestval": 0.740139211136891,
+   "best_val_cer": 0.7295897223373394,
+   "best_val_step": 4600,
+   "val_cer_final": 0.7345627849150436,
+   "c1_shuffled_cer": 0.7903132250580046
+  },
+  {
+   "group": "T normal",
+   "arm": "T",
+   "seed": 2,
+   "deranged": false,
+   "j": null,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.763631090487239,
+   "test_cer_bestval": 0.7508700696055685,
+   "best_val_cer": 0.7544550352258599,
+   "best_val_step": 5000,
+   "val_cer_final": 0.7681309573145462,
+   "c1_shuffled_cer": 0.7952436194895591
+  },
+  {
+   "group": "T normal",
+   "arm": "T",
+   "seed": 3,
+   "deranged": false,
+   "j": null,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.7720417633410673,
+   "test_cer_bestval": 0.7630510440835266,
+   "best_val_cer": 0.7472026523000415,
+   "best_val_step": 5100,
+   "val_cer_final": 0.7608785743887277,
+   "c1_shuffled_cer": 0.8059744779582366
+  },
+  {
+   "group": "T normal",
+   "arm": "T",
+   "seed": 4,
+   "deranged": false,
+   "j": null,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.7958236658932715,
+   "test_cer_bestval": 0.7708816705336426,
+   "best_val_cer": 0.7525901367592209,
+   "best_val_step": 4100,
+   "val_cer_final": 0.7811852465810195,
+   "c1_shuffled_cer": 0.8323665893271461
+  },
+  {
+   "group": "I normal",
+   "arm": "I",
+   "seed": 0,
+   "deranged": false,
+   "j": null,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.8520881670533643,
+   "test_cer_bestval": 0.8483178654292344,
+   "best_val_cer": 0.8632407791131371,
+   "best_val_step": 4900,
+   "val_cer_final": 0.8646912556983009,
+   "c1_shuffled_cer": 0.8610788863109049
+  },
+  {
+   "group": "I normal",
+   "arm": "I",
+   "seed": 1,
+   "deranged": false,
+   "j": null,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.9454756380510441,
+   "test_cer_bestval": 0.9347447795823666,
+   "best_val_cer": 0.9465395772896809,
+   "best_val_step": 3300,
+   "val_cer_final": 0.9579361790302527,
+   "c1_shuffled_cer": 0.9573665893271461
+  },
+  {
+   "group": "I normal",
+   "arm": "I",
+   "seed": 2,
+   "deranged": false,
+   "j": null,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.927784222737819,
+   "test_cer_bestval": 0.9280742459396751,
+   "best_val_cer": 0.901782014090344,
+   "best_val_step": 2000,
+   "val_cer_final": 0.9399088271860754,
+   "c1_shuffled_cer": 0.9425754060324826
+  },
+  {
+   "group": "I normal",
+   "arm": "I",
+   "seed": 3,
+   "deranged": false,
+   "j": null,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.14965197215777262,
+   "test_cer_bestval": 0.16531322505800464,
+   "best_val_cer": 0.11603812681309573,
+   "best_val_step": 4700,
+   "val_cer_final": 0.11686697057604642,
+   "c1_shuffled_cer": 0.9266241299303944
+  },
+  {
+   "group": "I normal",
+   "arm": "I",
+   "seed": 4,
+   "deranged": false,
+   "j": null,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.818445475638051,
+   "test_cer_bestval": 0.8138051044083526,
+   "best_val_cer": 0.8319519270617488,
+   "best_val_step": 5500,
+   "val_cer_final": 0.8348528802320763,
+   "c1_shuffled_cer": 0.8230858468677494
+  },
+  {
+   "group": "I deranged",
+   "arm": "I",
+   "seed": 0,
+   "deranged": true,
+   "j": 0,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.7389791183294664,
+   "test_cer_bestval": 0.7505800464037123,
+   "best_val_cer": 0.7938251139660174,
+   "best_val_step": 3400,
+   "val_cer_final": 0.8012847078325736,
+   "c1_shuffled_cer": null
+  },
+  {
+   "group": "I deranged",
+   "arm": "I",
+   "seed": 1,
+   "deranged": true,
+   "j": 0,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.9341647331786543,
+   "test_cer_bestval": 0.9095127610208816,
+   "best_val_cer": 0.9183588893493576,
+   "best_val_step": 2800,
+   "val_cer_final": 0.9471612101118939,
+   "c1_shuffled_cer": null
+  },
+  {
+   "group": "I deranged",
+   "arm": "I",
+   "seed": 2,
+   "deranged": true,
+   "j": 0,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.7807424593967517,
+   "test_cer_bestval": 0.775522041763341,
+   "best_val_cer": 0.8081226688769167,
+   "best_val_step": 4900,
+   "val_cer_final": 0.8139245752175714,
+   "c1_shuffled_cer": null
+  },
+  {
+   "group": "I deranged",
+   "arm": "I",
+   "seed": 3,
+   "deranged": true,
+   "j": 0,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.759860788863109,
+   "test_cer_bestval": 0.761600928074246,
+   "best_val_cer": 0.7975549108992955,
+   "best_val_step": 3600,
+   "val_cer_final": 0.8039784500621633,
+   "c1_shuffled_cer": null
+  },
+  {
+   "group": "I deranged",
+   "arm": "I",
+   "seed": 4,
+   "deranged": true,
+   "j": 0,
+   "status": "done",
+   "steps": 6000,
+   "skipped": 0,
+   "test_cer_final": 0.761600928074246,
+   "test_cer_bestval": 0.7740719257540604,
+   "best_val_cer": 0.8037712391214256,
+   "best_val_step": 4300,
+   "val_cer_final": 0.8083298798176544,
+   "c1_shuffled_cer": null
+  }
+ ],
+ "time": "2026-11-25T15:47:43"
+}
