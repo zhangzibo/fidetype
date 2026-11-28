@@ -1,0 +1,141 @@
+<section class="phero" aria-labelledby="h1">
+  <div class="wrap">
+    <div class="eyebrow" style="color:var(--hero-sig)">Visual guide</div>
+    <h1 id="h1">How Fidetype works</h1>
+    <p>Fidetype sits between your decoder and the user. It adds one open format, one service and one trust layer. This page shows each part as a picture.</p>
+    <nav class="toc" aria-label="On this page">
+      <a href="#picture">1 · The big picture</a><a href="#answers">2 · Three answers</a><a href="#guard">3 · How the guard is set</a><a href="#nts">4 · Inside an NTS stream</a><a href="#collector">5 · The Collector</a><a href="#otel">6 · A familiar shape</a>
+    </nav>
+  </div>
+</section>
+
+<section id="picture" aria-labelledby="h-pic">
+  <div class="wrap">
+    <div class="num">1 / 6</div>
+    <h2 id="h-pic" class="reveal">The big picture</h2>
+    <p class="lede reveal">Data moves from left to right. The highlighted box is where Fidetype decides.</p>
+    <div class="flow reveal" role="list" aria-label="Pipeline from device to app">
+      <div class="fnode" role="listitem"><svg viewBox="0 0 36 36" aria-hidden="true"><path d="M4 18h5l3-8 5 16 4-12 3 4h8"/></svg><h3>Device or file</h3><p>EEG, MEG, EMG, implant, or a replay file.</p></div>
+      <div class="conn" aria-hidden="true"></div>
+      <div class="fnode" role="listitem"><svg viewBox="0 0 36 36" aria-hidden="true"><rect x="9" y="8" width="18" height="20" rx="3"/><path d="M13 14h10M13 19h7M13 24h9"/></svg><h3>Your decoder</h3><p>Ranked guesses with scores.</p></div>
+      <div class="conn" aria-hidden="true"></div>
+      <div class="fnode" role="listitem"><svg viewBox="0 0 36 36" aria-hidden="true"><path d="M12 10l-7 8 7 8M24 10l7 8-7 8M21 7l-6 22"/></svg><h3>SDK → NTS</h3><p>One open format. Python, TypeScript, Rust.</p></div>
+      <div class="conn" aria-hidden="true"></div>
+      <div class="fnode key" role="listitem"><svg viewBox="0 0 36 36" aria-hidden="true"><path d="M18 4l11 4v9c0 7-5 12-11 15-6-3-11-8-11-15V8z"/><path d="M13 18l4 4 7-8"/></svg><h3>Collector + trust layer</h3><p>Checks the stream, then decides per sentence.</p>
+        <div class="sub"><span>validate</span><span class="tr">trust</span><span>thin</span><span>redact</span></div></div>
+      <div class="conn" aria-hidden="true"></div>
+      <div class="fnode" role="listitem"><svg viewBox="0 0 36 36" aria-hidden="true"><rect x="5" y="7" width="26" height="17" rx="2"/><path d="M13 30h10M18 24v6"/></svg><h3>Apps, benchmark, log</h3><p>Act only on final decisions. Score safe WPM.</p></div>
+    </div>
+    <p class="aside reveal">You can also skip the Collector. In Python, <code>fidetype.trust.calibrate</code> wraps any decoder that gives a ranked list of texts with scores.</p>
+  </div>
+</section>
+
+<section class="alt" id="answers" aria-labelledby="h-ans">
+  <div class="wrap">
+    <div class="num">2 / 6</div>
+    <h2 id="h-ans" class="reveal">One sentence, three answers</h2>
+    <p class="lede reveal">For each sentence, the guard asks two questions. Only a commit types text by itself.</p>
+    <div class="tree reveal">
+      <svg viewBox="0 0 860 330" role="img" aria-label="Decision flow. Question 1: is the top score at or above the commit threshold, and does the commit gate pass? Yes: COMMIT. No: question 2: does the short list probably hold the right text? Yes: OFFER. No: WITHHOLD.">
+        <g class="q"><rect x="250" y="10" width="360" height="66" rx="14"/><text x="430" y="38" text-anchor="middle">Top score ≥ commit threshold,</text><text x="430" y="60" text-anchor="middle">and the commit gate passes?</text></g>
+        <path class="e t" d="M250 43 H120 V120"/><text class="el" x="180" y="34">YES</text>
+        <path class="e t" d="M610 43 H700 V120"/><text class="el" x="640" y="34">NO</text>
+        <g class="a"><rect x="30" y="122" width="180" height="70" rx="14" fill="#1f8a5b"/><text x="120" y="152" text-anchor="middle">COMMIT</text><text class="s" x="120" y="175" text-anchor="middle">type the text</text></g>
+        <g class="q"><rect x="520" y="122" width="320" height="66" rx="14"/><text x="680" y="150" text-anchor="middle">Does the short list probably</text><text x="680" y="172" text-anchor="middle">hold the right text?</text></g>
+        <path class="e t" d="M600 188 V250 H520"/><text class="el" x="560" y="215">YES</text>
+        <path class="e t" d="M760 188 V250"/><text class="el" x="772" y="220">NO</text>
+        <g class="a"><rect x="330" y="222" width="190" height="70" rx="14" fill="#5b5bd6"/><text x="425" y="252" text-anchor="middle">OFFER</text><text class="s" x="425" y="275" text-anchor="middle">user picks one or none</text></g>
+        <g class="a"><rect x="670" y="250" width="180" height="70" rx="14" fill="#4c5466"/><text x="760" y="280" text-anchor="middle">WITHHOLD</text><text class="s" x="760" y="303" text-anchor="middle">type nothing</text></g>
+      </svg>
+      <div class="tree-m">
+        <div class="card"><b>Question 1.</b> Is the top score at or above the commit threshold, and does the commit gate pass?<p><span class="chip commit">YES → COMMIT</span> Type the text.</p></div>
+        <div class="card"><b>Question 2.</b> If not: does the short list probably hold the right text?<p><span class="chip offer">YES → OFFER</span> The user picks one or none.</p><p><span class="chip withhold">NO → WITHHOLD</span> Type nothing.</p></div>
+      </div>
+    </div>
+    <p class="aside reveal">The commit gate is always on. It blocks an empty commit. In the NTS format, withhold is the action <code>ABSTAIN</code> or <code>ASK</code> (ask the user to try again). Apps act only on a final decision.</p>
+  </div>
+</section>
+
+<section id="guard" aria-labelledby="h-guard">
+  <div class="wrap">
+    <div class="num">3 / 6</div>
+    <h2 id="h-guard" class="reveal">How the guard is set</h2>
+    <p class="lede reveal">You give labelled examples of your decoder's output: what it guessed, and what the person meant. Fidetype splits them at random into three parts.</p>
+    <div class="reveal">
+      <div class="split" role="img" aria-label="Random split of the labelled data: fit part {{claim:split_fit}}, policy part {{claim:split_pol}}, test part {{claim:split_ltt}}.">
+        <div class="a1">Fit<small>{{claim:split_fit}}</small></div><div class="a2">Policy<small>{{claim:split_pol}}</small></div><div class="a3">Test (Learn then Test)<small>{{claim:split_ltt}}</small></div>
+      </div>
+      <div class="splitkey">
+        <div><b>Fit ({{claim:split_fit}})</b>Makes the decoder's scores match its real accuracy. Sets the conformal threshold.</div>
+        <div><b>Policy ({{claim:split_pol}})</b>Picks the guard limits and the offer size for typing speed.</div>
+        <div><b>Test ({{claim:split_ltt}})</b>Sets the commit threshold with an exact statistical test. It is used for nothing else.</div>
+      </div>
+    </div>
+    <div class="quote reveal">With probability at least 1 − δ over the draw of the calibration data, the wrong-commit rate of the guard on new sentences from the same distribution is at most α.
+      <small>Wrong-commit rate = wrong commits / <b>all</b> sentences. Defaults: α = {{claim:alpha}}, δ = {{claim:delta}}.</small></div>
+    <div class="grid g3">
+      <div class="card reveal nullbox wide2">
+        <div class="big">{{claim:null_hit}} / {{claim:null_n}}</div>
+        <div><h3>Last step: the no-signal test</h3><p style="margin:0;color:var(--muted)">In an early test, a re-tuned setup committed on {{claim:null_hit}} of {{claim:null_n}} no-signal streams. So now every calibration runs two no-signal controls, for example near-uniform input and time-shuffled input. If the guard commits on them more than alpha allows, Fidetype refuses the guard.</p></div>
+      </div>
+      <div class="card reveal">
+        <h3>Not guaranteed</h3>
+        <ul class="not">
+          <li>Any single sentence.</li>
+          <li>Each user, day or session alone.</li>
+          <li>Data that differ from the calibration data.</li>
+          <li>A typing speed. The guard can commit rarely.</li>
+        </ul>
+      </div>
+    </div>
+    <p class="aside reveal">The bound holds only if new data come from the same distribution: same user, device, sensor position, decoder and task. Re-calibrate when the use changes. <a href="docs/trust-guarantee.html">The full guarantee sheet</a>.</p>
+  </div>
+</section>
+
+<section class="alt" id="nts" aria-labelledby="h-nts">
+  <div class="wrap">
+    <div class="num">4 / 6</div>
+    <h2 id="h-nts" class="reveal">Inside an NTS stream</h2>
+    <p class="lede reveal">A stream is one header and a sequence of typed events. Select an event to see what it holds.</p>
+    <div class="tl reveal" id="tl" role="group" aria-label="Events of one NTS stream, in order"></div>
+    <div class="evd reveal" id="evd" aria-live="polite"></div>
+    <p class="noraw reveal"><b>No raw signal.</b> A stream carries decoder output only, never the raw recording. Decoded text is personal data. Files: JSON Lines or NPZ. Live: Lab Streaming Layer (LSL) or WebSocket.</p>
+  </div>
+</section>
+
+<section id="collector" aria-labelledby="h-col">
+  <div class="wrap">
+    <div class="num">5 / 6</div>
+    <h2 id="h-col" class="reveal">The Collector</h2>
+    <p class="lede reveal">One service. One TOML or JSON file wires inputs, processing and outputs into pipelines.</p>
+    <div class="col3 reveal">
+      <div class="card"><h3>Receivers</h3><ul><li>file</li><li>WebSocket</li><li>LSL</li></ul></div>
+      <div class="card"><h3>Processors</h3><ul><li>validate</li><li class="tr">trust</li><li>thin</li><li>redact</li></ul></div>
+      <div class="card"><h3>Exporters</h3><ul><li>JSON Lines</li><li>stdout</li><li>WebSocket</li><li>LSL</li></ul></div>
+    </div>
+    <p class="aside reveal">Run it with <code>fidetype collector --config F</code>. <a href="docs/collector.html">Collector guide</a>.</p>
+  </div>
+</section>
+
+<section class="alt" id="otel" aria-labelledby="h-otel">
+  <div class="wrap">
+    <div class="num">6 / 6</div>
+    <h2 id="h-otel" class="reveal">A familiar shape</h2>
+    <p class="lede reveal">The design follows OpenTelemetry, which does the same job for software telemetry. No OpenTelemetry code or text is used.</p>
+    <div class="tbl-wrap reveal"><table>
+      <thead><tr><th>OpenTelemetry has</th><th>Fidetype has</th></tr></thead>
+      <tbody>
+        <tr><td>A data model and semantic conventions</td><td>The NTS data model and <code>meta</code> conventions</td></tr>
+        <tr><td>A wire protocol (OTLP)</td><td>Bindings: JSON Lines, NPZ, LSL, WebSocket</td></tr>
+        <tr><td>SDKs in many languages</td><td>Python (reference), TypeScript, Rust</td></tr>
+        <tr><td>The Collector</td><td>The Fidetype Collector</td></tr>
+        <tr><td>A spec compliance matrix</td><td>A conformance suite. All three SDKs must give the same verdict</td></tr>
+        <tr><td>Enhancement proposals (OTEPs)</td><td>Fidetype Enhancement Proposals (FEPs)</td></tr>
+      </tbody></table></div>
+    <div class="grid g3 next" style="margin-top:34px">
+      <a class="card reveal" href="docs/concepts.html"><b>Concepts</b><br><span>The data model, profiles, bindings and conformance in text.</span></a>
+      <a class="card reveal" href="docs/trust-quickstart.html"><b>Trust quickstart</b><br><span>Add the trust layer to your decoder in about {{claim:tq_min}}.</span></a>
+      <a class="card reveal" href="spec/index.html"><b>NTS specification</b><br><span>The {{spec_name}} draft, open for comment.</span></a>
+    </div>
+  </div>
+</section>

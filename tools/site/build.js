@@ -7,17 +7,26 @@
 //   node tools/site/build.js --check-only    check the links of an existing build (default _site/)
 //
 // Pages (source -> site):
-//   README.md (intro, north star, quick start)            -> index.html
+//   tools/site/templates/home.html + numbers.json + README.md (install) -> index.html (home page)
+//   tools/site/templates/how-it-works.html + numbers.json  -> how-it-works.html (visual guide)
 //   benchmark/site/* + tracks-v0.2 split files             -> benchmark/index.html, benchmark/leaderboard.html
 //   benchmark/site/tracks/*.html (one page per track)      -> benchmark/tracks/*.html (P13-09)
 //   src/fidetype/benchmark/hub/datasets-0.1.json           -> hub/index.html
 //   spec/conformance/certified.json (+ evidence reports)   -> conformance/index.html
 //   docs/*.md, benchmark/README.md, spec/README.md, spec/nts-1.0-rc4.md -> docs/*.html, spec/*.html
 //   demo/, wiki/diagrams/, wiki/progress/ (generated HTML) -> demo/, diagrams/, progress/
+//   tools/site/templates/*.css, *.js, tools/site/assets/fonts/ -> assets/ (own CSS, own JS, fonts)
 //
-// The site is static: no JavaScript of ours, no external requests, no trackers. It works offline
-// from file:// (every link names a file, never a bare folder), at phone width and in dark mode.
-// Exit 0: built and no broken local links. Exit 1: a source is missing or a link is broken.
+// The site is static. It runs only our own JavaScript (assets/*.js: theme button, copy buttons, the
+// home-page animation, simulation and chart; every page also works without it). It makes no external
+// requests: no CDN, no web fonts from other servers (the fonts are self-hosted, SIL OFL 1.1), no
+// trackers. The build fails if a generated page or stylesheet loads a script, style or font from
+// another server. It works offline from file:// (every link names a file, never a bare folder), at
+// phone width, in dark mode and with reduced motion.
+// Numbers check: each number on the home page and on how-it-works.html comes from
+// tools/site/numbers.json, and the build fails if it is not found word for word in its source file.
+// Exit 0: built and no broken local links. Exit 1: a source is missing, a number check fails or a
+// link is broken.
 // Nothing is uploaded. Publishing is a maintainer step: docs/publishing-checklist.md (section G).
 // No dependencies.
 'use strict';
@@ -55,21 +64,23 @@ const isDir = f => exists(f) && fs.statSync(path.join(ROOT, f)).isDirectory();
 // (task times, agent token counts) off the site.
 const INCLUDE_PROGRESS = true;
 
+// The logo links the home page (index.html).
 const NAV = [
-  ['index.html', 'Home'],
+  ['how-it-works.html', 'How it works'],
+  ['docs/index.html', 'Docs'],
   ['benchmark/index.html', 'Benchmark'],
   ['hub/index.html', 'Hub'],
-  ['docs/index.html', 'Docs'],
   ['spec/index.html', 'Spec'],
   ['conformance/index.html', 'Conformance'],
-  ['diagrams/index.html', 'Diagrams'],
   ['demo/index.html', 'Demo'],
   ['research.html', 'Research'],
 ];
 
 // Project internals: public, but not user documentation. Linked from the footer of each page,
 // not from the top bar.
+// The draw.io page holds internal research diagrams; how-it-works.html is the visual guide for users.
 const INTERNALS = [
+  ['diagrams/index.html', 'Research diagrams (draw.io)'],
   ['progress/index.html', 'Progress dashboard'],
 ].filter(([h]) => INCLUDE_PROGRESS || h !== 'progress/index.html');
 
@@ -125,6 +136,11 @@ function assetList() {
     ['tools/drawio/viewer-static.min.js', 'diagrams/viewer-static.min.js'],
     ['tools/drawio/LICENSE', 'diagrams/drawio-LICENSE.txt'],
     ['src/fidetype/benchmark/hub/datasets-0.1.json', 'hub/datasets-0.1.json'],
+    ['tools/site/templates/common.js', 'assets/common.js'],
+    ['tools/site/templates/home.js', 'assets/home.js'],
+    ['tools/site/templates/how.js', 'assets/how.js'],
+    ...FONTS.map(([, file]) => [`tools/site/assets/fonts/${file}`, `assets/fonts/${file}`]),
+    ['LICENSES/OFL-1.1-fonts.txt', 'assets/fonts/OFL.txt'],
     ['spec/conformance/certified.json', 'conformance/certified.json'],
   ];
   for (const f of fs.readdirSync(path.join(ROOT, 'spec/conformance/certified')).sort())
@@ -136,7 +152,7 @@ function assetList() {
 
 // repo path -> site path, for every file that is on the site.
 function siteMap() {
-  const m = new Map([['README.md', 'index.html']]);
+  const m = new Map([['README.md', 'index.html'], ['tools/site/templates/how-it-works.html', 'how-it-works.html']]);
   for (const p of mdPages()) m.set(p.src, p.out);
   for (const c of COPIED) m.set(c.src, c.out);
   for (const [from, to] of assetList()) m.set(from, to);
@@ -157,6 +173,9 @@ function makeLinker(map, fromRepo, fromSite) {
     let repoPath = P.normalize(P.join(P.dirname(fromRepo), decodeURI(p)));
     if (repoPath.startsWith('..')) { warnings.push(`${fromRepo}: ${href} (outside the repository)`); return href; }
     repoPath = repoPath.replace(/\/$/, '');
+    // The home page is a designed page, not a render of README.md: a link to a README section goes to
+    // that section on GitHub.
+    if (repoPath === 'README.md' && hash) return `${BLOB}README.md${hash}`;
     let target = map.get(repoPath);
     if (!target && isDir(repoPath)) target = map.get(`${repoPath}/README.md`);
     if (target) return siteRel(fromSite, target) + hash;
@@ -183,25 +202,15 @@ function rewriteWikiLinks(html, wikiDir) {
 // Layout
 
 const CSS = `
-:root{--bg:#fbfaf8;--fg:#1d1d1f;--muted:#5c5c66;--line:#dedbd5;--card:#ffffff;--head:#f1efea;--accent:#2f5d8a;--ok:#2d7a3e;--warn:#8a5a00;--warnbg:#fff4dc;--bad:#a8322d;--badbg:#fbe9e7;--code:#f3f1ec}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#16171a;--fg:#e8e6e1;--muted:#a3a3ad;--line:#33353b;--card:#1d1f23;--head:#24262b;--accent:#8bb6e0;--ok:#7fc58d;--warn:#f0c674;--warnbg:#2e2614;--bad:#ef8a84;--badbg:#341c1b;--code:#24262b}}
-:root[data-theme="dark"]{--bg:#16171a;--fg:#e8e6e1;--muted:#a3a3ad;--line:#33353b;--card:#1d1f23;--head:#24262b;--accent:#8bb6e0;--ok:#7fc58d;--warn:#f0c674;--warnbg:#2e2614;--bad:#ef8a84;--badbg:#341c1b;--code:#24262b}
-*{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-a{color:var(--accent)}
-.topbar{border-bottom:1px solid var(--line);background:var(--card);position:sticky;top:0;z-index:10}
-.topbar-in{max-width:1100px;margin:0 auto;padding:0 16px;display:flex;align-items:center;gap:18px}
-.brand{font-weight:700;color:var(--fg);text-decoration:none;padding:12px 0;white-space:nowrap}
-.topbar nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:thin;flex:1;min-width:0}
-.topbar nav a{color:var(--muted);text-decoration:none;padding:12px 9px;white-space:nowrap;font-size:14.5px;border-bottom:2px solid transparent}
-.topbar nav a:hover{color:var(--fg)}
-.topbar nav a.on{color:var(--fg);border-bottom-color:var(--accent);font-weight:600}
+/* Doc layout. Fonts, tokens, top bar and footer come from templates/tokens.css (the build puts them first). */
+:root{--card:var(--surface);--head:var(--surface-2);--accent:var(--brand-ink);--ok:var(--commit);--bad:var(--wrong);--badbg:var(--wrong-soft);--code:var(--surface-2);--warn:#8a5a00;--warnbg:#fff4dc}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--warn:#f0c674;--warnbg:#2e2614}}
+:root[data-theme="dark"]{--warn:#f0c674;--warnbg:#2e2614}
 main{max-width:1100px;margin:0 auto;padding:28px 16px 56px}
 main.doc{max-width:900px}
-h1{font-size:1.85rem;line-height:1.25;margin:0 0 10px}
-h2{font-size:1.35rem;line-height:1.3;margin:36px 0 10px;padding-bottom:4px;border-bottom:1px solid var(--line)}
-h3{font-size:1.1rem;margin:26px 0 8px}
+h1{font-size:1.85rem;line-height:1.25;margin:0 0 10px;font-family:var(--f-head)}
+h2{font-size:1.35rem;line-height:1.3;margin:36px 0 10px;font-family:var(--f-head);padding-bottom:4px;border-bottom:1px solid var(--line)}
+h3{font-size:1.1rem;margin:26px 0 8px;font-family:var(--f-head)}
 h4,h5,h6{font-size:1rem;margin:20px 0 6px}
 h1,h2,h3,h4,h5,h6{position:relative;scroll-margin-top:64px;overflow-wrap:anywhere}
 .anchor{position:absolute;left:-0.9em;width:0.9em;color:var(--muted);text-decoration:none;opacity:0;font-weight:400}
@@ -209,7 +218,7 @@ h1:hover .anchor,h2:hover .anchor,h3:hover .anchor,h4:hover .anchor,.anchor:focu
 p,li{overflow-wrap:anywhere}
 .lead{font-size:1.1rem;color:var(--fg)}
 .muted{color:var(--muted)}
-code{font:0.88em/1.4 ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;background:var(--code);border-radius:4px;padding:0.1em 0.3em}
+code{font:0.86em/1.4 var(--f-mono);background:var(--code);border-radius:4px;padding:0.1em 0.3em}
 pre{background:var(--code);border:1px solid var(--line);border-radius:8px;padding:12px 14px;overflow-x:auto;line-height:1.45}
 pre code{background:none;padding:0;font-size:13.5px;white-space:pre}
 blockquote{margin:14px 0;padding:8px 14px;border-left:4px solid var(--line);background:var(--card);border-radius:0 8px 8px 0;color:var(--fg)}
@@ -249,16 +258,10 @@ a.card:hover{border-color:var(--accent)}
 dl.kv{display:grid;grid-template-columns:minmax(110px,max-content) 1fr;gap:4px 14px;margin:8px 0;font-size:14.5px}
 dl.kv dt{color:var(--muted)}
 dl.kv dd{margin:0;overflow-wrap:anywhere}
-footer{max-width:1100px;margin:0 auto;padding:18px 16px 40px;border-top:1px solid var(--line);font-size:13.5px;color:var(--muted)}
 @media (max-width:640px){
   body{font-size:15.5px}
   h1{font-size:1.5rem}
   h2{font-size:1.2rem}
-  .topbar{position:static}
-  .topbar-in{flex-wrap:wrap;gap:0 10px}
-  .brand{padding:10px 0 2px}
-  .topbar nav{flex-basis:100%;flex-wrap:wrap;overflow:visible}
-  .topbar nav a{padding:6px 8px 8px 0;margin-right:6px}
   .anchor{display:none}
   dl.kv{grid-template-columns:1fr}
   dl.kv dt{margin-top:6px}
@@ -266,14 +269,50 @@ footer{max-width:1100px;margin:0 auto;padding:18px 16px 40px;border-top:1px soli
 }
 `;
 
+// Fonts: self-hosted Latin subsets (SIL OFL 1.1, LICENSES/OFL-1.1-fonts.txt). The paths are relative to assets/.
+const FONTS = [
+  ['Inter', 'inter-latin-wght.woff2', '100 900'],
+  ['Space Grotesk', 'space-grotesk-latin-wght.woff2', '300 700'],
+  ['JetBrains Mono', 'jetbrains-mono-latin-wght.woff2', '100 800'],
+];
+const LATIN = 'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD';
+function fontFaces(prefix) {
+  return FONTS.map(([fam, file, w]) => `@font-face{font-family:"${fam}";font-style:normal;font-display:swap;font-weight:${w};src:url("${prefix}${file}") format("woff2");unicode-range:${LATIN}}`).join('\n');
+}
+
+const TPL = path.join(__dirname, 'templates');
+const tpl = f => fs.readFileSync(path.join(TPL, f), 'utf8').replace(/\r\n?/g, '\n');
+// One stylesheet per page type: fonts + tokens, top bar, footer (shared) + the page parts.
+const cssFor = kind => [fontFaces('fonts/'), tpl('tokens.css'),
+  ...(kind === 'doc' ? [CSS.trimStart()] : [tpl('theme.css'), tpl(`${kind}.css`)])].join('\n');
+
+const LOGO = '<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="1" y="1" width="30" height="30" rx="8" fill="#46c7e0"/><path d="M5 17h3l2-6 3 11 3-8 2 3h3" fill="none" stroke="#06222a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><rect x="24" y="9" width="2.6" height="14" rx="1.3" fill="#06222a"/></svg>';
+const THEME_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>';
+
 function topbar(sitePath, active) {
-  const links = NAV.map(([href, label]) => `<a href="${siteRel(sitePath, href)}"${href === active ? ' class="on" aria-current="page"' : ''}>${label}</a>`).join('');
-  return `<header class="topbar"><div class="topbar-in"><a class="brand" href="${siteRel(sitePath, 'index.html')}">Fidetype</a><nav aria-label="Site">${links}<a href="${REPO}">GitHub</a></nav></div></header>`;
+  const links = NAV.map(([href, label]) => `<a href="${siteRel(sitePath, href)}"${href === active ? ' aria-current="page"' : ''}>${label}</a>`).join('');
+  return `<a class="skip" href="#main">Skip to content</a>
+<header class="bar"><div class="wrap">
+<a class="logo" href="${siteRel(sitePath, 'index.html')}" aria-label="Fidetype home">${LOGO}Fidetype</a>
+<nav aria-label="Site">${links}<a href="${REPO}">GitHub</a></nav>
+<button class="theme-btn" id="theme-btn" type="button" aria-label="Colour theme: auto. Select to change.">${THEME_ICON}</button>
+</div></header>`;
 }
 
 function footer(sources, sitePath) {
+  const L = h => siteRel(sitePath, h);
+  const col = (title, items) => `<div><b class="h">${title}</b><ul>${items.map(([h, t]) => `<li><a href="${/^https?:/.test(h) ? h : L(h)}">${esc(t)}</a></li>`).join('')}</ul></div>`;
   const src = sources.map(s => `<a href="${BLOB}${s}"><code>${esc(s)}</code></a>`).join(', ');
-  return `<footer>Generated by <code>node tools/site/build.js</code> from ${src}. Do not edit the HTML by hand. Code: Apache-2.0. Fidetype is research software, not a medical device.${internalsLine(sitePath)}</footer>`;
+  return `<footer><div class="wrap">
+<div class="cols">
+<div style="max-width:340px"><a class="logo" href="${L('index.html')}" aria-label="Fidetype home">${LOGO}Fidetype</a>
+<p style="margin-top:10px">Open-source toolkit for brain and body-signal typing. The name: <i>fides</i> (Latin: trust) + type.</p></div>
+${col('Learn', [['how-it-works.html', 'How it works'], ['docs/getting-started.html', 'Getting started'], ['docs/trust-guarantee.html', 'The trust guarantee'], ['docs/glossary.html', 'Glossary']])}
+${col('Project', [['benchmark/index.html', 'Benchmark'], ['spec/index.html', 'NTS specification'], ['research.html', 'Research status'], [REPO, 'GitHub']])}
+</div>
+<p class="note"><b class="h">Fidetype is research software. It is not a medical device</b>, and it is not approved for clinical use. All results so far come from offline tests on public datasets, not from studies with users. Code: Apache-2.0. Fidetype is independent. It is not affiliated with or endorsed by Meta.</p>
+<p class="gen">Generated by <code>node tools/site/build.js</code> from ${src}. Do not edit the HTML by hand.${internalsLine(sitePath)}</p>
+</div></footer>`;
 }
 
 function internalsLine(sitePath) {
@@ -282,40 +321,50 @@ function internalsLine(sitePath) {
   return `<br>Project internals (not needed to use Fidetype): ${links}.`;
 }
 
-function page({ sitePath, title, description, active, body, sources, wide }) {
+// The document shell of every generated page. Our own script (assets/common.js) runs in <head>, so a
+// stored colour theme applies before the first paint. No request leaves the site.
+function shell({ sitePath, title, description, css, scripts = [], body, sources, active, head = '' }) {
+  const A = f => siteRel(sitePath, `assets/${f}`);
   return `<!doctype html>
-<html lang="en"><head><meta charset="utf-8">
+<html lang="en" class="no-js"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description || 'Fidetype: open-source toolkit for brain and body-signal typing.')}">
-<link rel="stylesheet" href="${siteRel(sitePath, 'assets/site.css')}">
+<link rel="stylesheet" href="${A(css)}">
+<script src="${A('common.js')}"></script>
+${scripts.map(s => `<script src="${A(s)}" defer></script>`).join('\n')}${head}
 </head>
 <body>
 ${topbar(sitePath, active)}
-<main${wide ? '' : ' class="doc"'}>
 ${body}
-</main>
 ${footer(sources, sitePath)}
 </body></html>
 `;
 }
 
-// Top bar for copied pages that have their own stylesheet: scoped, self-contained styles.
+function page({ sitePath, title, description, active, body, sources, wide }) {
+  return shell({ sitePath, title, description, active, sources, css: 'site.css',
+    body: `<main id="main"${wide ? '' : ' class="doc"'}>\n${body}\n</main>` });
+}
+
+// Top bar for copied pages that have their own stylesheet: scoped, self-contained styles, same look
+// as the generated top bar (dark band in both colour modes). The fonts come from the site assets.
 function injectedBar(sitePath, active) {
-  const links = NAV.map(([href, label]) => `<a href="${siteRel(sitePath, href)}"${href === active ? ' class="on"' : ''}>${label}</a>`).join('');
+  const links = NAV.map(([href, label]) => `<a href="${siteRel(sitePath, href)}"${href === active ? ' class="on" aria-current="page"' : ''}>${label}</a>`).join('');
   return `<style>
-.ftbar{--ftb:#ffffff;--ftf:#1d1d1f;--ftm:#5c5c66;--ftl:#dedbd5;--fta:#2f5d8a;background:var(--ftb);border-bottom:1px solid var(--ftl);font:14.5px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .ftbar{--ftb:#1d1f23;--ftf:#e8e6e1;--ftm:#a3a3ad;--ftl:#33353b;--fta:#8bb6e0}}
-:root[data-theme="dark"] .ftbar{--ftb:#1d1f23;--ftf:#e8e6e1;--ftm:#a3a3ad;--ftl:#33353b;--fta:#8bb6e0}
-.ftbar .ftin{max-width:1100px;margin:0 auto;padding:0 16px;display:flex;gap:14px;align-items:center}
-.ftbar .ftbrand{font-weight:700;color:var(--ftf);text-decoration:none;padding:10px 0}
-.ftbar nav{display:flex;gap:2px;overflow-x:auto;flex:1;min-width:0}
-.ftbar nav a{color:var(--ftm);text-decoration:none;padding:10px 8px;white-space:nowrap;border-bottom:2px solid transparent}
-.ftbar nav a.on{color:var(--ftf);font-weight:600;border-bottom-color:var(--fta)}
-@media (max-width:640px){.ftbar .ftin{flex-wrap:wrap;gap:0 10px}.ftbar nav{flex-basis:100%;flex-wrap:wrap}.ftbar nav a{padding:6px 8px 8px 0;margin-right:6px}}
+${fontFaces(siteRel(sitePath, 'assets/fonts') + '/')}
+.ftbar{--ftb:#0d1224;--ftb2:#151c36;--ftf:#eef1f8;--ftm:#a7aec4;--ftl:#2a3354;--fta:#46c7e0;background:var(--ftb);border-bottom:1px solid var(--ftl);font:14.5px/1.4 "Inter",system-ui,-apple-system,"Segoe UI",sans-serif}
+.ftbar .ftin{max-width:1140px;margin:0 auto;padding:0 16px;display:flex;gap:14px;align-items:center;min-height:54px}
+.ftbar .ftbrand{display:flex;align-items:center;gap:9px;font:700 1.05rem "Space Grotesk",system-ui,sans-serif;color:var(--ftf);text-decoration:none;padding:8px 0;white-space:nowrap}
+.ftbar .ftbrand svg{width:26px;height:26px}
+.ftbar nav{display:flex;gap:2px;overflow-x:auto;margin-left:auto;min-width:0;scrollbar-width:none}
+.ftbar nav a{color:var(--ftm);text-decoration:none;padding:7px 9px;border-radius:8px;white-space:nowrap}
+.ftbar nav a:hover,.ftbar nav a.on{color:var(--ftf);background:var(--ftb2)}
+.ftbar a:focus-visible{outline:3px solid var(--fta);outline-offset:2px}
+@media (max-width:1000px){.ftbar .ftin{flex-wrap:wrap;gap:0 10px}.ftbar nav{flex-basis:100%;margin:0 -16px;padding:0 10px 6px}}
 </style>
-<div class="ftbar"><div class="ftin"><a class="ftbrand" href="${siteRel(sitePath, 'index.html')}">Fidetype</a><nav aria-label="Site">${links}<a href="${REPO}">GitHub</a></nav></div></div>`;
+<div class="ftbar"><div class="ftin"><a class="ftbrand" href="${siteRel(sitePath, 'index.html')}" aria-label="Fidetype home">${LOGO}Fidetype</a><nav aria-label="Site">${links}<a href="${REPO}">GitHub</a></nav></div></div>`;
 }
 
 function toc(headings) {
@@ -358,50 +407,144 @@ function renderMdPage(p, map) {
 // README.md sections by "## " heading.
 function readmeParts() {
   const text = read('README.md').replace(/\r\n?/g, '\n');
-  const lines = text.split('\n');
   const parts = { intro: [] };
   let cur = 'intro';
-  for (const l of lines) {
+  for (const l of text.split('\n')) {
     const h = /^## (.+)$/.exec(l);
     if (h) { cur = h[1].trim(); parts[cur] = []; continue; }
-    if (cur === 'intro' && (/^# /.test(l) || /^!\[[^\]]*\]\(https?:/.test(l))) continue; // title, external badges
     parts[cur].push(l);
   }
   return parts;
 }
 
-function landing(map, version) {
-  const parts = readmeParts();
-  const need = ['Install', 'Quick start', 'Status', 'Research status'];
-  for (const n of need) if (!parts[n]) throw new Error(`missing source: README.md section "## ${n}"`);
-  const link = makeLinker(map, 'README.md', 'index.html');
-  const sec = (name, id) => {
-    const r = md.render(parts[name].join('\n'), { link });
-    return `<h2 id="${id}">${esc(name)}</h2>\n${r.html}`;
+// ---------------------------------------------------------------------------------------------
+// Numbers on the home page and on how-it-works.html (tools/site/numbers.json).
+//
+// Rule 1: each claim's quote is found word for word in its source file, and its value is part of the
+//         quote. Rule 2: a template shows a number only through a {{claim:KEY}} slot. The build scans
+//         the template text (text, aria-label, title and alt values; not scripts or styles) and fails
+//         on any other number, except the few non-claim numbers in NON_CLAIM_NUMBERS.
+// Not scanned: the made-up values of the hero animation and the toy simulation in home.js. The page
+// labels both ("Animation · made-up values", "Simulation · not real data").
+
+const NUMBERS_FILE = 'tools/site/numbers.json';
+const NON_CLAIM_NUMBERS = [
+  [/Apache-2\.0/g, 'licence name'],
+  [/\b[1-6] \/ 6\b/g, 'section counter of how-it-works.html'],
+  [/\b[1-6] · /g, 'step number (hero lanes, page sections)'],
+  [/1 − δ/g, 'the formula of the guarantee'],
+  [/\b[Qq]uestion [12]\b/g, 'question number of the decision flow'],
+  [/\b100 (guesses|simulated sentences|sentences)\b/g, 'size of the toy simulation'],
+  [/\b400 fake labelled guesses\b/g, 'size of the toy simulation'],
+  [/\bScale 0 to 100 %/g, 'axis of the simulation bars'],
+];
+
+function loadClaims() {
+  const j = readJson(NUMBERS_FILE);
+  const errors = [];
+  const srcCache = new Map();
+  const src = f => {
+    if (!srcCache.has(f)) srcCache.set(f, exists(f) ? read(f).replace(/\r\n?/g, '\n') : null);
+    return srcCache.get(f);
   };
-  const intro = md.render(parts.intro.join('\n'), { link }).html.replace('<p>', '<p class="lead">');
-  const cards = [
-    ['benchmark/index.html', 'Benchmark and leaderboard', 'Open tracks on public datasets, the static leaderboard, safe WPM, controls.'],
-    ['hub/index.html', 'Benchmark hub registry', 'Versioned dataset registry: licence, checksums, download and verify commands, adapters.'],
-    ['docs/index.html', 'Documentation', 'Get started by role, concepts and glossary, how-to guides, tutorials and reference.'],
-    ['spec/index.html', 'NTS specification', `NeuralTextStream spec versions and FEPs. Current draft: ${P.basename(currentSpec(), '.md').toUpperCase().replace('NTS-1.0-', 'NTS 1.0 ')}.`],
-    ['conformance/index.html', 'Certified implementations', 'Self-certification list with the evidence report of each entry.'],
-    ['demo/index.html', 'Trust demo (synthetic)', 'Synthetic decoder output with each trust decision on screen. No participant data.'],
-    ['diagrams/index.html', 'Diagrams', 'Architecture and research diagrams (draw.io, offline viewer).'],
-    ['research.html', 'Research status', 'What works, what failed, and the public roadmap.'],
-  ].map(([h, t, d]) => `<a class="card" href="${h}"><h3>${esc(t)}</h3><p>${esc(d)}</p></a>`).join('\n');
-  const body = `<h1>Fidetype</h1>
-${intro}
-<p class="muted">Python package version ${esc(version)}. Releases are on <a href="https://pypi.org/project/fidetype/">PyPI</a> (<code>fidetype</code>), <a href="https://www.npmjs.com/package/@fidetype/sdk">npm</a> (<code>@fidetype/sdk</code>) and <a href="https://crates.io/crates/fidetype">crates.io</a> (<code>fidetype</code>). The APIs can still change.</p>
-<h2 id="on-this-site">On this site</h2>
-<div class="grid">
-${cards}
-</div>
-${sec('Install', 'install')}
-${sec('Quick start', 'quick-start')}
-${sec('Status', 'status')}
-${sec('Research status', 'research-status')}`;
-  return page({ sitePath: 'index.html', title: 'Fidetype', active: 'index.html', body, sources: ['README.md'], wide: true });
+  for (const [k, c] of Object.entries(j.claims)) {
+    const text = src(c.source);
+    if (text == null) errors.push(`${k}: source file ${c.source} does not exist`);
+    else if (!text.includes(c.quote)) errors.push(`${k}: quote not found in ${c.source}: "${c.quote}"`);
+    if (!c.quote.includes(c.value)) errors.push(`${k}: value "${c.value}" is not part of its quote "${c.quote}"`);
+  }
+  return { claims: j.claims, chart: j.chart, errors };
+}
+
+function strayNumbers(html, where) {
+  let t = html.replace(/<script[\s\S]*?<\/script>/gi, ' ').replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<!--[\s\S]*?-->/g, ' ').replace(/\{\{[^}]*\}\}/g, ' ');
+  const attrs = [...t.matchAll(/\b(?:aria-label|title|alt)="([^"]*)"/g)].map(m => m[1]);
+  t = [t.replace(/<[^>]*>/g, ' '), ...attrs].join(' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&');
+  for (const [re] of NON_CLAIM_NUMBERS) t = t.replace(re, ' ');
+  return [...t.matchAll(/(?<![\p{L}\p{N}_])\d+(?:[.,]\d+)*/gu)].map(m => `${where}: number "${m[0]}" near "${t.slice(Math.max(0, m.index - 30), m.index + 30).replace(/\s+/g, ' ').trim()}" has no {{claim:...}} slot`);
+}
+
+// Fills {{claim:K}}, {{src:K}} and the named slots. An unknown slot or claim fails the build.
+function fillSlots(html, claims, slots, where) {
+  return html.replace(/\{\{([a-z_]+)(?::([a-z0-9_]+))?\}\}/g, (m, name, key) => {
+    if (name === 'claim' || name === 'src') {
+      const c = claims[key];
+      if (!c) throw new Error(`${where}: unknown claim {{${name}:${key}}} (add it to ${NUMBERS_FILE})`);
+      return esc(name === 'claim' ? c.value : c.source);
+    }
+    if (!(name in slots)) throw new Error(`${where}: unknown slot ${m}`);
+    return slots[name];
+  });
+}
+
+// Install tabs from the README "## Install" code block ("command   # comment" per line).
+function installTabs() {
+  const parts = readmeParts();
+  if (!parts.Install) throw new Error('missing source: README.md section "## Install"');
+  const block = /```[a-z]*\n([\s\S]*?)```/.exec(parts.Install.join('\n'));
+  if (!block) throw new Error('README.md "## Install": no code block');
+  const LANG = { pip: ['py', 'Python'], npm: ['ts', 'TypeScript'], cargo: ['rs', 'Rust'] };
+  const rows = block[1].split('\n').map(l => /^(\S.*?)\s+#\s*(.+)$/.exec(l.trim())).filter(Boolean).map(m => {
+    const tool = m[1].split(/\s+/)[0];
+    const [id, label] = LANG[tool] || [tool.replace(/[^a-z0-9]/gi, ''), tool];
+    return { id, label, cmd: m[1], note: m[2] };
+  });
+  if (!rows.length) throw new Error('README.md "## Install": no "command  # comment" lines');
+  const tabs = rows.map((r, i) => `<button role="tab" id="t-${r.id}" aria-controls="p-${r.id}" aria-selected="${i === 0}"${i ? ' tabindex="-1"' : ''}>${esc(r.label)}</button>`).join('\n');
+  const panels = rows.map((r, i) => `<div role="tabpanel" id="p-${r.id}" aria-labelledby="t-${r.id}"${i ? ' hidden' : ''}>
+<pre class="code" id="c-${r.id}" data-copy="${esc(r.cmd)}"><code><span class="c"># ${esc(r.note)}</span>
+${esc(r.cmd)}</code><button class="copy" type="button" data-for="c-${r.id}">Copy</button></pre>
+</div>`).join('\n');
+  return `<div class="tabs" role="tablist" aria-label="Choose a language">\n${tabs}\n</div>\n${panels}\n`;
+}
+
+function versionLine(version) {
+  return `<p class="hint" style="font-size:.85rem;color:var(--muted);margin-top:10px">Python package version ${esc(version)}. Releases are on <a href="https://pypi.org/project/fidetype/">PyPI</a>, <a href="https://www.npmjs.com/package/@fidetype/sdk">npm</a> and <a href="https://crates.io/crates/fidetype">crates.io</a>. The APIs can still change.</p>`;
+}
+
+function specName() {
+  return P.basename(currentSpec(), '.md').toUpperCase().replace('NTS-1.0-', 'NTS 1.0 ');
+}
+
+// Returns { home, how } HTML. Throws with every claim error at once.
+function homeAndHow(version) {
+  const { claims, chart, errors } = loadClaims();
+  const homeT = tpl('home.html');
+  const howT = tpl('how-it-works.html');
+  errors.push(...strayNumbers(homeT, 'templates/home.html'), ...strayNumbers(howT, 'templates/how-it-works.html'));
+  const rows = chart.map((r, i) => {
+    for (const f of ['label', 'sub', 'verdict']) errors.push(...strayNumbers(r[f], `${NUMBERS_FILE} chart[${i}].${f}`));
+    const num = f => {
+      const c = claims[r[f]];
+      if (!c) { errors.push(`${NUMBERS_FILE} chart[${i}].${f}: unknown claim ${r[f]}`); return 0; }
+      if (Number(c.value).toFixed(2) !== c.value) errors.push(`${NUMBERS_FILE} chart[${i}].${f}: value "${c.value}" does not show as written (2 decimals)`);
+      return Number(c.value);
+    };
+    const text = s => s.replace(/\{\{claim:([a-z0-9_]+)\}\}/g, (m, k) => {
+      if (!claims[k]) { errors.push(`${NUMBERS_FILE} chart[${i}]: unknown claim ${k}`); return m; }
+      return claims[k].value;
+    });
+    return { l: text(r.label), s: text(r.sub), v: num('v'), lo: num('lo'), hi: num('hi'), b: num('b'), verdict: text(r.verdict), ci: claims.ci && claims.ci.value };
+  });
+  if (errors.length) throw new Error(`site numbers check failed (${errors.length}):\n  ${errors.join('\n  ')}`);
+  const slots = { repo: REPO, install_tabs: installTabs() + versionLine(version), spec_name: esc(specName()) };
+  const data = JSON.stringify(rows).replace(/</g, '\\u003c');
+  const numSources = [...new Set(Object.values(claims).map(c => c.source))];
+  const home = shell({
+    sitePath: 'index.html', title: 'Fidetype: trusted typing from brain and body signals', active: 'index.html', css: 'home.css', scripts: ['home.js'],
+    description: 'Fidetype is an open-source toolkit that turns brain and muscle signals into text, and types only when it is confident.',
+    head: `\n<script type="application/json" id="numbers-data">${data}</script>`,
+    body: `<main id="main">\n${fillSlots(homeT, claims, slots, 'templates/home.html')}</main>\n<div id="tip" role="tooltip"></div>`,
+    sources: ['tools/site/templates/home.html', NUMBERS_FILE, 'README.md', ...numSources.filter(s => s !== 'README.md')],
+  });
+  const how = shell({
+    sitePath: 'how-it-works.html', title: 'How Fidetype works', active: 'how-it-works.html', css: 'how.css', scripts: ['how.js'],
+    description: 'A visual guide to Fidetype: the open NTS format, the Collector and the trust layer that commits, offers or withholds each sentence.',
+    body: `<main id="main">\n${fillSlots(howT, claims, slots, 'templates/how-it-works.html')}</main>`,
+    sources: ['tools/site/templates/how-it-works.html', NUMBERS_FILE, 'docs/trust-guarantee.md', 'docs/concepts.md'],
+  });
+  return { home, how };
 }
 
 function trackSplits() {
@@ -573,7 +716,7 @@ ${rows}
 
 function leaderboardNote(map, from = 'benchmark/leaderboard.html') {
   const href = siteRel(from, map.get('docs/safe-wpm.md'));
-  return `<div class="ftbar" style="border-bottom:none"><div class="ftin" style="padding:8px 16px;color:var(--ftm)">The headline column "Safe WPM v0.2 @ alpha" uses <code>safe-wpm/0.2</code>, <b style="color:var(--ftf)">ADOPTED 2026-11-22</b> (with the reading cost). The "Safe WPM v0.1 @ alpha" column keeps the earlier values and labels: <a style="color:var(--fta)" href="${href}">definition</a>.</div></div>`;
+  return `<div class="ftbar" style="border-bottom:none"><div class="ftin" style="display:block;padding:8px 16px;color:var(--ftm)">The headline column "Safe WPM v0.2 @ alpha" uses <code>safe-wpm/0.2</code>, <b style="color:var(--ftf)">ADOPTED 2026-11-22</b> (with the reading cost). The "Safe WPM v0.1 @ alpha" column keeps the earlier values and labels: <a style="color:var(--fta)" href="${href}">definition</a>.</div></div>`;
 }
 
 function pythonVersion() {
@@ -593,7 +736,10 @@ function build(out) {
   fs.rmSync(out, { recursive: true, force: true });
   fs.mkdirSync(out, { recursive: true });
   const map = siteMap();
-  write(out, 'assets/site.css', CSS.trimStart());
+  const { home, how } = homeAndHow(pythonVersion()); // number check first: fail before writing pages
+  write(out, 'assets/site.css', cssFor('doc'));
+  write(out, 'assets/home.css', cssFor('home'));
+  write(out, 'assets/how.css', cssFor('how'));
   for (const [from, to] of assetList()) {
     if (!exists(from)) throw new Error(`missing source: ${from}`);
     fs.mkdirSync(path.dirname(path.join(out, to)), { recursive: true });
@@ -613,7 +759,8 @@ function build(out) {
     if (!exists(p.src)) throw new Error(`missing source: ${p.src}`);
     write(out, p.out, renderMdPage(p, map));
   }
-  write(out, 'index.html', landing(map, pythonVersion()));
+  write(out, 'index.html', home);
+  write(out, 'how-it-works.html', how);
   write(out, 'benchmark/index.html', benchmarkPage(map));
   write(out, 'hub/index.html', hubPage(map));
   write(out, 'conformance/index.html', conformancePage(map));
@@ -661,15 +808,42 @@ function checkLinks(out) {
   return { broken, external, files: files.length };
 }
 
+// Files that make the browser load a resource from another server (script, stylesheet, font, image,
+// frame, preconnect). Links that the reader follows (a href) are fine.
+function externalLoads(out) {
+  const found = [];
+  const res = [
+    /<(?:script|img|iframe|audio|video|source|embed)\b[^>]*\bsrc="(?:https?:)?\/\/[^"]*"/gi,
+    /<link\b[^>]*\bhref="(?:https?:)?\/\/[^"]*"[^>]*>/gi,
+    /@import\s+(?:url\()?['"]?(?:https?:)?\/\//gi,
+    /url\(\s*['"]?(?:https?:)?\/\/[^)]*\)/gi,
+  ];
+  for (const file of walk(out).filter(f => /\.(html|css)$/.test(f))) {
+    const text = fs.readFileSync(file, 'utf8');
+    const rel = path.relative(out, file).split(path.sep).join('/');
+    for (const re of res) for (const m of text.matchAll(re)) found.push(`${rel}: ${m[0].slice(0, 120)}`);
+  }
+  return found;
+}
+
 function main() {
   const args = parseArgs(process.argv.slice(2));
-  if (!args.checkOnly) build(args.out);
+  if (!args.checkOnly) {
+    try { build(args.out); } catch (e) { console.error(`build failed: ${e.message}`); process.exit(1); }
+  }
   const { broken, external, files } = checkLinks(args.out);
   console.log(`site: ${path.relative(process.cwd(), args.out) || args.out} (${files} files, ${external.size} external links not fetched)`);
   if (warnings.length) {
     console.log(`source links that point at no repository file (sent to GitHub, not broken on the site): ${warnings.length}`);
     for (const w of [...new Set(warnings)]) console.log(`  ${w}`);
   }
+  const ext = externalLoads(args.out);
+  if (ext.length) {
+    console.error(`resources loaded from other servers (not allowed): ${ext.length}`);
+    for (const e of ext) console.error(`  ${e}`);
+    process.exit(1);
+  }
+  console.log('external loads: none');
   if (broken.length) {
     console.error(`broken local links: ${broken.length}`);
     for (const b of broken) console.error(`  ${b}`);

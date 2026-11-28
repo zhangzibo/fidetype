@@ -31,6 +31,7 @@ Attribution: "Sentences from Tatoeba (https://tatoeba.org), by the Tatoeba contr
 | `Neuroprosthetics-Lab/nejm-brain-to-text` | no licence | Not copied. Values read for timing only |
 | `ANSLab-UHN/sEMG-TypingDatabase` | CC BY-SA 4.0 | Not copied |
 | draw.io viewer (`tools/drawio/viewer-static.min.js`) | Apache-2.0 | Vendored with its licence (`tools/drawio/LICENSE`) |
+| Site fonts Inter, Space Grotesk, JetBrains Mono (`tools/site/assets/fonts/`, Latin WOFF2 subsets from Fontsource 5.1.0) | SIL OFL 1.1 | Vendored with their licence ([`OFL-1.1-fonts.txt`](OFL-1.1-fonts.txt)). The site build copies the licence next to the fonts. The site loads no fonts from other servers |
 
 ## Weights
 

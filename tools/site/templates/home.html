@@ -1,0 +1,267 @@
+<!-- ================= HERO ================= -->
+<section class="hero" aria-labelledby="hero-h">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow" style="color:var(--hero-sig)">Open-source · Apache-2.0</div>
+      <h1 id="hero-h"><span style="white-space:nowrap">Signals in.</span> <span style="white-space:nowrap">Text out.</span><br><span class="hl">Only when it is safe.</span></h1>
+      <p class="sub">Fidetype turns brain and muscle signals into text. Its trust layer types a sentence only when it is confident. It also tells you how often it is wrong.</p>
+      <div class="ctas">
+        <a class="btn btn-primary" href="#try">Try the simulation</a>
+        <a class="btn btn-ghost" href="#install">Install</a>
+        <a class="btn btn-ghost" href="how-it-works.html">How it works</a>
+      </div>
+      <p class="fine"><b>Research software. Not a medical device.</b> All results come from offline tests on public datasets.</p>
+    </div>
+
+    <div class="stage" role="group" aria-labelledby="stage-h">
+      <div class="stage-top">
+        <span class="sim-label" id="stage-h">Animation · made-up values</span>
+        <div class="scenes" role="group" aria-label="Choose an example">
+          <button type="button" data-scene="0" aria-pressed="true">Strong signal</button>
+          <button type="button" data-scene="1" aria-pressed="false">Weak signal</button>
+          <button type="button" data-scene="2" aria-pressed="false">No signal</button>
+          <button type="button" class="pp" id="pp" aria-label="Pause animation">❚❚</button>
+        </div>
+      </div>
+      <div class="lane" id="l1">
+        <div class="lane-h"><span>1 · Body signal</span><span class="sigq" id="sigq">strong</span></div>
+        <canvas id="wave" aria-hidden="true"></canvas>
+      </div>
+      <div class="lane" id="l2">
+        <div class="lane-h"><span>2 · Decoder guesses</span><span>score</span></div>
+        <div id="cands"></div>
+      </div>
+      <div class="lane" id="l3">
+        <div class="lane-h"><span>3 · Trust layer decides</span></div>
+        <div class="gate">
+          <div class="slot commit" id="s-commit">COMMIT<small>type it</small></div>
+          <div class="slot offer" id="s-offer">OFFER<small>show choices</small></div>
+          <div class="slot withhold" id="s-withhold">WITHHOLD<small>show nothing</small></div>
+        </div>
+      </div>
+      <div class="lane" id="l4">
+        <div class="lane-h"><span>4 · What the user sees</span></div>
+        <div class="screen" id="screen"><span class="caret"></span></div>
+        <div class="without" id="without" hidden></div>
+      </div>
+      <p class="stage-cap" id="stage-cap" aria-live="polite"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PROBLEM + 3 DECISIONS ================= -->
+<section aria-labelledby="dec-h">
+  <div class="wrap">
+    <div class="problem">
+      <div class="reveal">
+        <div class="eyebrow">The problem</div>
+        <h2 id="dec-h">Fluent text is not always true text</h2>
+        <p class="lede">A decoder and its language model can write fluent text that the person did not mean. On a flat, no-signal input, the language model still writes a sentence. An app that always types the top guess types that sentence.</p>
+      </div>
+      <div class="halluc reveal" role="img" aria-label="Example: on no-signal input, always-commit types a fluent sentence. Fidetype types nothing.">
+        <div class="row"><span class="lbl">Input</span><span>flat line, no signal</span></div>
+        <div class="row"><span class="lbl">Language model</span><span>"thank you so much"</span></div>
+        <div class="row"><span class="lbl">Always commit</span><span class="chip wrong">✗ types it</span></div>
+        <div class="row"><span class="lbl">Fidetype</span><span class="chip withhold">— withholds</span></div>
+      </div>
+    </div>
+    <div class="eyebrow reveal">The answer</div>
+    <h2 class="reveal">Three answers for every sentence</h2>
+    <div class="grid g3 dec" style="margin-top:22px">
+      <div class="card commit reveal">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg></div>
+        <h3>Commit <span class="chip commit">COMMIT</span></h3>
+        <p>The guard is confident. It types the text.</p>
+      </div>
+      <div class="card offer reveal">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="5" width="16" height="4" rx="1.5"/><rect x="4" y="11" width="16" height="4" rx="1.5"/><rect x="4" y="17" width="10" height="3" rx="1.5"/></svg></div>
+        <h3>Offer <span class="chip offer">OFFER</span></h3>
+        <p>The guard is not sure. It shows a short list. The user picks one.</p>
+      </div>
+      <div class="card withhold reveal">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M8 12h8"/></svg></div>
+        <h3>Withhold <span class="chip withhold">WITHHOLD</span></h3>
+        <p>The signal does not support any text. It shows nothing.</p>
+      </div>
+    </div>
+    <p class="reveal" style="margin-top:22px;color:var(--muted);max-width:760px">You choose <b>alpha</b>, the largest wrong-commit rate that you accept (default {{claim:alpha}}). The rate counts wrong commits out of <b>all</b> sentences, not out of the commits only. Fidetype sets the guard on your labelled data. It refuses a guard that commits on no-signal input. <a href="docs/trust-guarantee.html">Read what the guarantee says</a>.</p>
+  </div>
+</section>
+
+<!-- ================= SIMULATION ================= -->
+<section class="alt" id="try" aria-labelledby="try-h">
+  <div class="wrap">
+    <div class="eyebrow reveal">Try it</div>
+    <h2 id="try-h" class="reveal">Move alpha. Watch the guard.</h2>
+    <p class="lede reveal">This is a toy simulation in your browser. A fake decoder makes 100 guesses. A simple guard is set on 400 fake labelled guesses. <span class="sim-label">Simulation · not real data</span></p>
+
+    <div class="sim">
+      <div class="card ctl">
+        <div>
+          <label for="alpha">Target wrong-commit rate (alpha)</label>
+          <div class="alpha-val" id="alpha-out">{{claim:alpha}}</div>
+          <input type="range" id="alpha" min="0.01" max="0.20" step="0.01" value="0.05" aria-describedby="alpha-hint">
+          <p class="hint" id="alpha-hint">Lower alpha: fewer wrong commits, but fewer commits.</p>
+        </div>
+        <div>
+          <span class="lab" id="q-lab">Signal quality</span>
+          <div class="seg" role="group" aria-labelledby="q-lab">
+            <button type="button" data-q="strong" aria-pressed="true">Strong</button>
+            <button type="button" data-q="weak" aria-pressed="false">Weak</button>
+          </div>
+        </div>
+        <div>
+          <span class="lab" id="in-lab">Live input</span>
+          <div class="seg" role="group" aria-labelledby="in-lab">
+            <button type="button" data-in="signal" aria-pressed="true">Signal</button>
+            <button type="button" data-in="none" aria-pressed="false">No signal</button>
+          </div>
+          <p class="hint">"No signal" sends flat input. The language model still writes text.</p>
+        </div>
+        <label class="check"><input type="checkbox" id="overconf"><span>Overconfident language model<br><span class="hint" style="margin:0">It gives high scores even on no-signal input.</span></span></label>
+        <button type="button" class="redo" id="redo">↻ New random draw</button>
+      </div>
+
+      <div class="card out">
+        <div class="refused" id="refused" role="alert"></div>
+        <div>
+          <div class="cells" id="cells" role="img" aria-label="Decisions for 100 simulated sentences"></div>
+        </div>
+        <div class="legend" aria-hidden="true">
+          <span><i style="background:var(--commit)">✓</i>Right commit</span>
+          <span><i style="background:var(--wrong)">✗</i>Wrong commit</span>
+          <span><i style="background:var(--offer)">…</i>Offer</span>
+          <span><i style="background:var(--withhold-soft);color:var(--withhold);box-shadow:inset 0 0 0 1px var(--line)">–</i>Withhold</span>
+        </div>
+        <div class="stats" aria-live="polite" id="stats"></div>
+        <div>
+          <div class="mrow"><span>Fidetype guard</span><div class="meter" aria-hidden="true"><div class="fill" id="m-guard"></div><div class="mark" id="m-a1" data-l="alpha"></div></div><span class="num" id="n-guard"></span></div>
+          <div class="mrow" style="margin-top:14px"><span>Always commit</span><div class="meter" aria-hidden="true"><div class="fill base" id="m-base"></div><div class="mark" id="m-a2" data-l=""></div></div><span class="num" id="n-base"></span></div>
+          <p class="hint" style="font-size:.82rem;color:var(--muted);margin:8px 0 0">Bars: wrong commits / all 100 sentences. Scale 0 to 100 %.</p>
+        </div>
+        <p class="verdict" id="verdict"></p>
+        <p style="font-size:.82rem;color:var(--muted);margin:0">Simplified on purpose. The real guard also fits calibration and a conformal set, and adds a statistical margin (Learn then Test). So its bound holds with a stated probability, not only on one draw.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= HOW IT WORKS ================= -->
+<section id="how" aria-labelledby="how-h">
+  <div class="wrap">
+    <div class="eyebrow reveal">How it works</div>
+    <h2 id="how-h" class="reveal">From a signal to a safe sentence</h2>
+    <p class="lede reveal">You keep your device and your decoder. Fidetype adds one open format and one trust layer. Scroll through the six steps.</p>
+    <div class="pipe">
+      <div class="pipe-fig" aria-hidden="true">
+        <svg viewBox="0 0 420 700" id="pipe-svg">
+          <g id="plinks"></g>
+          <g id="pnodes"></g>
+          <circle class="pdot" id="pdot" r="7" cx="210" cy="50"/>
+        </svg>
+      </div>
+      <ol class="steps" id="steps" style="list-style:none;margin:0;padding:0"></ol>
+    </div>
+    <p class="reveal"><a class="btn" style="border-color:var(--line);color:var(--fg)" href="how-it-works.html">See each part in detail →</a></p>
+  </div>
+</section>
+
+<!-- ================= ANY SIGNAL ================= -->
+<section class="alt" aria-labelledby="sig-h">
+  <div class="wrap">
+    <div class="eyebrow reveal">Any signal, any decoder</div>
+    <h2 id="sig-h" class="reveal">One format for every body signal</h2>
+    <p class="lede reveal">EEG, MEG, EMG and implants use the same format and the same trust layer. So one app works with every decoder.</p>
+    <div class="grid g4 sig" style="margin-top:26px">
+      <div class="card reveal">
+        <svg viewBox="0 0 64 64" role="img" aria-label="EEG cap icon"><path class="ln" d="M12 40c0-14 9-24 20-24s20 10 20 24"/><path class="ln" d="M10 40h44"/><circle class="dt" cx="20" cy="30" r="3"/><circle class="dt" cx="32" cy="22" r="3"/><circle class="dt" cx="44" cy="30" r="3"/><circle class="dt" cx="26" cy="36" r="2.5"/><circle class="dt" cx="38" cy="36" r="2.5"/><path class="ac" d="M8 52h8l3-5 4 9 4-7 3 3h26"/></svg>
+        <div class="tag">EEG</div><h3>Scalp electrodes</h3><p>Electrical activity of the brain, from a cap.</p>
+      </div>
+      <div class="card reveal">
+        <svg viewBox="0 0 64 64" role="img" aria-label="MEG helmet icon"><path class="ln" d="M10 42c0-16 10-28 22-28s22 12 22 28v6H10z"/><path class="ln" d="M18 42c0-10 6-18 14-18s14 8 14 18"/><path class="ac" d="M26 8c2 2 2 4 0 6M32 6c2 3 2 6 0 9M38 8c2 2 2 4 0 6"/></svg>
+        <div class="tag">MEG</div><h3>Magnetic fields</h3><p>Magnetic fields of the brain, from a scanner.</p>
+      </div>
+      <div class="card reveal">
+        <svg viewBox="0 0 64 64" role="img" aria-label="EMG wrist band icon"><path class="ln" d="M22 58V36l-6-10c-2-3 2-6 4-3l6 8V12c0-3 5-3 5 0v16-4c0-3 5-3 5 0v6-3c0-3 5-3 5 0v5-2c0-3 5-3 5 0v12c0 8-4 12-6 14v6"/><rect class="ac" x="20" y="44" width="26" height="7" rx="3"/></svg>
+        <div class="tag">EMG</div><h3>Muscle signals</h3><p>Muscle activity, from a wrist or forearm band.</p>
+      </div>
+      <div class="card reveal">
+        <svg viewBox="0 0 64 64" role="img" aria-label="Implant icon"><path class="ln" d="M8 40c6-10 14-14 24-14s18 4 24 14"/><rect class="ac" x="24" y="14" width="16" height="10" rx="2"/><path class="ac" d="M27 24v8M32 24v10M37 24v8"/><path class="ln" d="M8 50h48"/></svg>
+        <div class="tag">IMPLANT</div><h3>Implanted arrays</h3><p>Signals from electrodes in the brain, from public datasets.</p>
+      </div>
+    </div>
+    <div class="same reveal" aria-label="Every signal goes to one NTS format, then one trust layer, then any app">
+      <span class="pill">EEG · MEG · EMG · implant · replay file</span><span class="arrow" aria-hidden="true">→</span>
+      <span class="pill">one NTS format</span><span class="arrow" aria-hidden="true">→</span>
+      <span class="pill">one trust layer</span><span class="arrow" aria-hidden="true">→</span>
+      <span class="pill">any app</span>
+    </div>
+    <p class="reveal" style="text-align:center;margin-top:16px;font-size:.92rem;color:var(--muted)">Which devices, files and datasets work today: <a href="docs/device-support.html">device support matrix</a>.</p>
+  </div>
+</section>
+
+<!-- ================= NUMBERS ================= -->
+<section id="numbers" aria-labelledby="num-h">
+  <div class="wrap">
+    <div class="eyebrow reveal">Honest numbers</div>
+    <h2 id="num-h" class="reveal">What works, and what does not yet</h2>
+    <p class="lede reveal">We fix each test plan before we see the numbers. We keep the negative results.</p>
+    <div class="reveal"><span class="badge-off">● Offline replay</span><span class="badge-off">● Public datasets</span><span class="badge-off">● Not a study with users</span></div>
+
+    <div class="card chart reveal">
+      <h3 style="margin-bottom:4px">Safe typing speed with the trust layer</h3>
+      <p style="color:var(--muted);font-size:.92rem;margin-bottom:6px">Safe WPM: words per minute that the guard commits correctly. Wrong commits earn nothing. Compared with a typing speed without a BCI. Bars are {{claim:ci}} confidence intervals across calibration draws.</p>
+      <div id="chart"></div>
+      <div class="chart-legend" aria-hidden="true">
+        <span><svg width="34" height="12"><line x1="2" y1="6" x2="32" y2="6" stroke="var(--brand)" stroke-width="2"/><circle cx="17" cy="6" r="5" fill="var(--brand)"/></svg>Safe WPM with Fidetype, {{claim:ci}} interval</span>
+        <span><svg width="14" height="14"><rect x="2" y="2" width="9" height="9" transform="rotate(45 7 7)" fill="var(--surface)" stroke="var(--fg)" stroke-width="2"/></svg>No-BCI baseline</span>
+      </div>
+      <details class="tbl"><summary>Show as a table</summary><div class="tbl-wrap"><table id="num-table"></table></div></details>
+    </div>
+
+    <div class="grid g4 tiles">
+      <div class="card tile reveal"><b>{{claim:fw_right}} of {{claim:fw_n}}</b><p>commits right, when a certified bound on fluent but wrong text was in use (implant speech, T15).</p><span class="src">{{src:fw_n}}</span></div>
+      <div class="card tile reveal"><b>{{claim:null_hit}} of {{claim:null_n}}</b><p>no-signal streams got a commit from an early re-tuned setup. Since then, every calibration runs no-signal controls.</p><span class="src">{{src:null_n}}</span></div>
+      <div class="card tile reveal"><b style="text-transform:capitalize">{{claim:datasets}}</b><p>public datasets in the open benchmark, with fixed splits. The repository holds no recordings.</p><span class="src">{{src:datasets}}</span></div>
+      <div class="card tile reveal"><b>{{claim:first_word}}</b><p>median time to the first right word with a word-by-word guard, against {{claim:full_sent}} for a full-sentence guard. The total speed gain is not robust.</p><span class="src">{{src:first_word}}</span></div>
+    </div>
+    <p class="reveal" style="margin-top:22px"><a href="research.html">Full research status: what works, what failed, the roadmap →</a></p>
+  </div>
+</section>
+
+<!-- ================= INSTALL ================= -->
+<section class="alt" id="install" aria-labelledby="inst-h">
+  <div class="wrap">
+    <div class="eyebrow reveal">Get started</div>
+    <h2 id="inst-h" class="reveal">Install in one line</h2>
+    <p class="lede reveal">Three SDKs, one format. All three must give the same verdict on every conformance test.</p>
+    <div class="inst">
+      <div class="reveal">
+{{install_tabs}}
+        <p style="margin:18px 0 8px;font-weight:600">Wrap your decoder (Python)</p>
+        <pre class="code" id="c-qs"><code><span class="k">import</span> fidetype.trust <span class="k">as</span> ft
+
+<span class="c"># labelled outputs of your decoder + its outputs on no-signal input</span>
+guard = ft.calibrate(outputs, true_texts, alpha=<span class="s">{{claim:alpha}}</span>,
+                     null_inputs=no_signal_outputs)
+r = guard(my_decoder(signal))
+print(r.action, r.text)        <span class="c"># commit i need help</span></code><button class="copy" type="button" data-for="c-qs">Copy</button></pre>
+        <p style="font-size:.85rem;color:var(--muted);margin-top:8px">Shortened. The <a href="{{repo}}#quick-start">full quick start</a> runs with a fake decoder in a few seconds. No data needed.</p>
+      </div>
+      <div class="reveal">
+        <div class="grid links">
+          <a class="card" href="docs/trust-quickstart.html"><b>Add trust to your decoder</b><span>Add the trust layer in about {{claim:tq_min}}.</span></a>
+          <a class="card" href="docs/getting-started.html"><b>Getting started</b><span>Install, run the offline demo, write your first NTS file. About {{claim:gs_min}}.</span></a>
+          <a class="card" href="docs/sdks.html"><b>SDK guides</b><span>Python, TypeScript and Rust.</span></a>
+          <a class="card" href="benchmark/index.html"><b>Benchmark and leaderboard</b><span>Score your decoder on public data, with safe WPM.</span></a>
+        </div>
+      </div>
+    </div>
+    <div class="grid g3 who" style="margin-top:34px">
+      <div class="card reveal"><h3>Researchers with a decoder</h3><p>Add the trust layer to your model output. Score it on public data.</p></div>
+      <div class="card reveal"><h3>App builders</h3><p>Read NTS streams and act on trust decisions, for communication aids and text-entry UIs.</p></div>
+      <div class="card reveal"><h3>Contributors</h3><p>Improve the code, the docs or the open spec.</p></div>
+    </div>
+    <div class="notmed reveal"><b>Not a medical device.</b> Fidetype is research software. It is not approved for clinical use. It ships no recordings, no participant data and no trained weights. You bring your own decoder.</div>
+  </div>
+</section>

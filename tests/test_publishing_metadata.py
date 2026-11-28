@@ -131,6 +131,15 @@ def test_site_build_output_is_git_ignored():
     assert "/_site/" in (ROOT / ".gitignore").read_text(encoding="utf-8").splitlines()
 
 
+def test_site_numbers_are_quoted_from_their_sources():
+    # Each number on the home page comes from tools/site/numbers.json; its quote must be in the source file.
+    data = json.loads((ROOT / "tools/site/numbers.json").read_text(encoding="utf-8"))
+    for key, c in data["claims"].items():
+        src = (ROOT / c["source"]).read_text(encoding="utf-8").replace("\r\n", "\n")
+        assert c["quote"] in src, key
+        assert c["value"] in c["quote"], key
+
+
 @pytest.mark.skipif(shutil.which("node") is None, reason="node not installed")
 def test_site_builds_with_no_broken_local_links(tmp_path):
     out = tmp_path / "site"
@@ -143,12 +152,17 @@ def test_site_builds_with_no_broken_local_links(tmp_path):
                 "conformance/certified.json", "docs/index.html", "docs/trust-guarantee.html", "docs/collector.html",
                 "docs/live-decode.html", "docs/conformance.html", "spec/index.html", "demo/index.html",
                 "diagrams/index.html", "diagrams/viewer-static.min.js", "diagrams/drawio-LICENSE.txt",
-                "progress/index.html"]:
+                "progress/index.html", "how-it-works.html", "assets/home.css", "assets/how.css",
+                "assets/common.js", "assets/home.js", "assets/fonts/OFL.txt"]:
         assert (out / rel).is_file(), rel
-    # Landing page: generated from README.md (intro, install, quick start, status, research status).
+    # Home page: tools/site/templates/home.html, install lines from README.md, numbers from numbers.json.
     landing = (out / "index.html").read_text(encoding="utf-8")
-    assert "types text only when it is confident" in landing and 'id="quick-start"' in landing
-    assert 'id="status"' in landing and 'id="research-status"' in landing
+    assert "Only when it is safe." in landing and "pip install fidetype" in landing
+    for anchor in ("try", "numbers", "install", "main"):
+        assert f'id="{anchor}"' in landing, anchor
+    assert "not a medical device" in landing and "not affiliated with or endorsed by Meta" in landing
+    assert 'id="numbers-data"' in landing and "external loads: none" in r.stdout
+    assert 'href="how-it-works.html"' in landing
     assert (out / "research.html").is_file()
     # Markdown pages keep GitHub heading ids, so deep links work on the site.
     assert 'id="42-rules"' in (out / "docs/hub-design.html").read_text(encoding="utf-8")
@@ -172,7 +186,7 @@ def test_site_builds_with_no_broken_local_links(tmp_path):
     assert not re.search(r'href="\.\./[^"]+\.md"', diagrams)  # wiki links now point at GitHub
     assert f'href="{REPO}/blob/main/wiki/' in diagrams
     # Only the expected kinds of files; no data, recordings or PDFs.
-    allowed = {".html", ".json", ".md", ".js", ".txt", ".css", ".png", ""}
+    allowed = {".html", ".json", ".md", ".js", ".txt", ".css", ".png", ".woff2", ""}  # .woff2: self-hosted fonts
     for f in out.rglob("*"):
         if f.is_file():
             assert f.suffix in allowed, f
