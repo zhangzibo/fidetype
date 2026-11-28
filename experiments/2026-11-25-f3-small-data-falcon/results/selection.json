@@ -1,0 +1,84 @@
+{
+ "note": "P15-54 stage 1 (plan 7.2): per arm the LR with the lower final-step val CER (30 val sentences, 3 val sessions, 12 train sentences each, tuning seed 10); > 0.95 excluded; tie (< 0.005) -> smaller LR; both excluded -> 3e-4. Val only; no test session is read in stage 1. Amendment 2: each cell uses its accepted attempt (rule S3: first attempt whose last-100-step train loss <= its label-prior loss + 1; re-seed init seed 10 + 1000 a); blank bias S1 on every new head.",
+ "arms": {
+  "R": {
+   "val_cer": {
+    "0.0003": 0.7604166666666666,
+    "0.001": 0.7372685185185185
+   },
+   "accept": {
+    "0.0003": {
+     "attempt": 0,
+     "trained": true,
+     "n_untrained_before": 0,
+     "final_train_loss": 0.9625926405191422,
+     "prior_loss": 3.0801666577657065
+    },
+    "0.001": {
+     "attempt": 0,
+     "trained": true,
+     "n_untrained_before": 0,
+     "final_train_loss": 0.4323261615633964,
+     "prior_loss": 3.0801666577657065
+    }
+   },
+   "chosen": {
+    "lr": 0.001,
+    "why": "lowest val CER"
+   }
+  },
+  "E": {
+   "val_cer": {
+    "0.0003": 0.7847222222222222,
+    "0.001": 0.6967592592592593
+   },
+   "accept": {
+    "0.0003": {
+     "attempt": 0,
+     "trained": true,
+     "n_untrained_before": 0,
+     "final_train_loss": 2.1038043773174286,
+     "prior_loss": 3.0801666577657065
+    },
+    "0.001": {
+     "attempt": 0,
+     "trained": true,
+     "n_untrained_before": 0,
+     "final_train_loss": 0.40318288169801236,
+     "prior_loss": 3.0801666577657065
+    }
+   },
+   "chosen": {
+    "lr": 0.001,
+    "why": "lowest val CER"
+   }
+  },
+  "I": {
+   "val_cer": {
+    "0.0003": 0.9988425925925926,
+    "0.001": 0.7962962962962963
+   },
+   "accept": {
+    "0.0003": {
+     "attempt": 0,
+     "trained": true,
+     "n_untrained_before": 0,
+     "final_train_loss": 2.2726756417751313,
+     "prior_loss": 3.0801666577657065
+    },
+    "0.001": {
+     "attempt": 0,
+     "trained": true,
+     "n_untrained_before": 0,
+     "final_train_loss": 1.0641001495718956,
+     "prior_loss": 3.0801666577657065
+    }
+   },
+   "chosen": {
+    "lr": 0.001,
+    "why": "lowest val CER"
+   }
+  }
+ },
+ "time": "2026-11-28T00:42:45"
+}
