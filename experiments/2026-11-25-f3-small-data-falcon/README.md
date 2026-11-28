@@ -1,6 +1,6 @@
 # P15-54 F3 at small data (FALCON H2): how to run it
 
-The pre-registration is [plan.md](plan.md) (commit `19ec6c5`, frozen). [amendment-1.md](amendment-1.md) (commit `4d31f8e`, before the wrapper and before any training) records the session-role fallback (no H2 session has 50 trials, so the core budgets are {3, 12, 24}), the output folder and the open details. No result exists yet.
+The pre-registration is [plan.md](plan.md) (commit `19ec6c5`, frozen). [amendment-1.md](amendment-1.md) (commit `4d31f8e`, before the wrapper and before any training) records the session-role fallback (no H2 session has 50 trials, so the core budgets are {3, 12, 24}), the output folder and the open details. [amendment-2.md](amendment-2.md) (before any GPU run) adds training stability for new output layers: a blank-bias start for every new CTC head (all arms), a "did it train" rule from the training loss, a re-seed policy for runs that did not train, and an opt-in val-only pilot. No result exists yet.
 
 | file | what it does |
 |---|---|
@@ -35,6 +35,12 @@ All outputs go to `C:\Users\zhang\bci-data\derived\p15-54`. The runner refuses a
 ## Commands (PowerShell, from the repo root)
 Start only when no other GPU job runs (queue order: P15-50 -> A1 -> E2 -> this run).
 
+Stability pilot first (amendment 2, section 6; opt-in, val sessions only, about 0.8 GPU h, own GPU clock `pilot\gpu_clock.json`, cap 1.5 h). It writes `derived\p15-54\pilot\pilot.json` with `decision` go / stop. After "stop", `f3s.py all` refuses to start (exit code 2) until a new amendment exists:
+```powershell
+C:\venvs\fidetype-rocm\Scripts\python.exe experiments\2026-11-25-f3-small-data-falcon\launch.py pilot
+```
+Check, stop and resume work as for the main run below (same `run.log`, `stop` file and launcher; re-launch `launch.py pilot` to resume).
+
 Launch (hidden window, detached; it resumes if a checkpoint exists):
 ```powershell
 C:\venvs\fidetype-rocm\Scripts\python.exe experiments\2026-11-25-f3-small-data-falcon\launch.py
@@ -65,4 +71,4 @@ Every training part writes `latest.pt` every 4 min and at a pause; a re-launch r
 ```powershell
 $env:HIP_VISIBLE_DEVICES="-1"; C:\venvs\fidetype-rocm\Scripts\python.exe -I experiments\2026-11-25-f3-small-data-falcon\f3s.py smoke --out <scratch folder> --device cpu
 ```
-It runs stage 0 on the real data, then every stage with 3 steps, cropped trials, seed 0 and no gates. Smoke numbers are not results.
+It runs stage 0 on the real data, then the pilot (one seed) and every stage with 3 steps, cropped trials, seed 0 and no gates. Smoke numbers are not results. Three steps cannot train a run, so by default the smoke test counts every run as trained (no re-seed). `--smoke-margin 1.0` applies the real rule: every run is then re-seeded twice (about 3 times the smoke time). The CPU unit tests cover the re-seed path too.

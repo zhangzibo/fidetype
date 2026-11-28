@@ -308,6 +308,9 @@ def test_target_run_pause_resume_exact(tmp_path):
     b = torch.load(env.out / "s2/a/final.pt", weights_only=True)["model"]
     assert all(torch.equal(a[k], b[k]) for k in a)
     assert "c1_shuffled_cer" in res and not (env.out / "s2/a/latest.pt").exists()
+    assert res["final_train_loss"] == full["final_train_loss"] and res["loss_curve"] == full["loss_curve"]
+    assert res["attempt"] == 0 and res["init_seed"] == 0 and res["blank_bias"] == CFG["stability"]["blank_bias"]
+    assert isinstance(res["trained"], bool)
     lic = json.loads((env.out / "s2/a/licence.json").read_text(encoding="utf-8"))
     assert lic["research_only"] is False
 
@@ -318,8 +321,12 @@ def test_deranged_and_stage1_results(tmp_path):
     d = f3s.target_run(env, {"stage": "s2", "arm": "R", "budget": 3, "seed": 0, "j": 1, "lr": 1e-3,
                              "sessions": ["20220101", "20220102"], "dir": "s2/d"})
     assert d["label_deranged"] and "c1_shuffled_cer" not in d
-    s1 = f3s.target_run(env, {"stage": "s1", "arm": "X-R", "budget": 3, "seed": 10, "j": None, "lr": 1e-3,
-                              "sessions": ["20220101", "20220102"], "dir": "s1/x"})
+    spec1 = {"stage": "s1", "arm": "X-R", "budget": 3, "seed": 10, "j": None, "lr": 1e-3,
+             "sessions": ["20220101", "20220102"], "dir": "s1/x"}
+    with pytest.raises(RuntimeError):  # amendment 2: stage 1 / pilot refuse a test session
+        f3s.target_run(env, spec1)
+    env.roles["test"] = ["20220109"]
+    s1 = f3s.target_run(env, {**spec1, "dir": "s1/y"})
     assert "val_cer_final" in s1 and "test_cer_final" not in s1 and "test_edits_final" not in s1
 
 
@@ -341,3 +348,182 @@ def test_derangement_rng_rule():
 def test_committed_gate_fails_without_files(tmp_path):
     ok, why = f3s.committed(tmp_path / "a.json", tmp_path / "b.json")
     assert ok is False and why
+
+
+# --- amendment 2: stability measure S1, trained rule S2, re-seed S3, verdict S4, pilot ---------------------------------
+
+
+ST = CFG["stability"]
+
+
+def test_config_stability():
+    assert ST["blank_bias"] == round(np.log(97 * (159.2 - 1)), 1) == 9.6  # ln((V - 1)(F - 1)), stage-1 train pool
+    assert ST["blank_bias_pretrain_I"] == round(np.log(40 * (68.52 - 1)), 1) == 7.9  # T15 phoneme head
+    assert ST["trained_window"] == 100 and ST["max_reseeds"] == 2
+    assert ST["reseed_offset"] == 1000 and ST["trained_margin"] == 1.0
+    p = ST["pilot"]
+    assert p["arms"] == ["R"] and p["budget"] == 12 and p["seeds"] == [20, 21, 22, 23, 24] and p["stop_at"] == 400
+    assert not set(p["seeds"]) & set(CFG["stage2"]["seeds"] + [CFG["stage1"]["seed"]])
+    assert p["stop_at"] < CFG["target"]["steps"][str(p["budget"])]
+    assert CFG["target"]["warmup"] == 100 and CFG["target"]["clip"] == 1.0  # recipe unchanged by amendment 2
+
+
+def test_blank_bias_init_changes_only_the_blank_bias():
+    torch.manual_seed(7)
+    a = f3s.Net(TINY, {"h2": (8, 3)}, vocab=98)
+    torch.manual_seed(7)
+    b = f3s.Net(TINY, {"h2": (8, 3)}, vocab=98, blank_bias=6.0, blank=0)
+    sa, sb = a.state_dict(), b.state_dict()
+    assert all(torch.equal(sa[k], sb[k]) for k in sa if k != "head.bias")
+    assert float(b.head.bias.detach()[0]) == 6.0 and torch.equal(a.head.bias[1:], b.head.bias[1:])
+    src = f3s.Net(TINY, {"text": (64, 1)})
+    f3s.copy_parts(b, src.state_dict(), f3s.TRUNK_HEAD)  # a copied head (arm E, T, P) replaces the bias
+    assert torch.equal(b.head.bias, src.head.bias)
+    x = torch.randn(1, 40, 8)
+    torch.manual_seed(7)
+    c = f3s.Net(TINY, {"h2": (8, 3)}, vocab=98, blank_bias=6.0).eval()
+    p_blank = c(x, "h2", torch.tensor([0]))[..., 0].exp().mean().detach()
+    assert float(p_blank) > 0.7  # blank dominates at the start, as with a pretrained head
+    assert f3s.blank_bias(CFG) == ST["blank_bias"] and f3s.blank_bias(CFG, float("nan")) is None
+    assert f3s.blank_bias({}) is None
+
+
+def test_init_target_e0_head_equals_r_head(tmp_path):
+    env = _tiny_env(tmp_path, _fake_store())
+    r = f3s.init_target(env, "R", 3, 2)
+    assert abs(float(r.head.bias.detach()[0]) - ST["blank_bias"]) < 1e-6
+    torch.manual_seed(3)
+    ref = f3s.Net(TINY, {"h2": (8, 2)}, vocab=98)
+    assert torch.equal(r.head.weight, ref.head.weight)
+
+
+def test_trained_rule_and_accept():
+    assert f3s.trained_rule(1.0, 3.0, ST) and f3s.trained_rule(4.0, 3.0, ST)  # at the label prior + 1: trained
+    assert f3s.trained_rule(3.6, 3.0, ST)  # at the label prior (no signal read) still counts as trained
+    assert not f3s.trained_rule(4.01, 3.0, ST) and not f3s.trained_rule(20.0, 3.0, ST)
+    assert not f3s.trained_rule(None, 3.0, ST) and not f3s.trained_rule(float("nan"), 3.0, ST)
+    assert not f3s.trained_rule(float("inf"), 3.0, ST) and not f3s.trained_rule(1.0, None, ST)
+    good, bad = {"final_train_loss": 0.5, "prior_loss": 3.0}, {"final_train_loss": 20.0, "prior_loss": 3.0}
+    assert f3s.accept([], ST)["status"] == "missing" and f3s.accept([None, None, None], ST)["status"] == "missing"
+    a = f3s.accept([good, None, None], ST)
+    assert a["status"] == "done" and a["attempt"] == 0 and a["trained"]
+    assert f3s.accept([bad, None, None], ST) == {"status": "need", "next": 1, "result": None}
+    a = f3s.accept([bad, good, None], ST)
+    assert a["attempt"] == 1 and a["trained"] and a["result"] is good
+    a = f3s.accept([bad, bad, bad], ST)
+    assert a["attempt"] == 0 and a["trained"] is False and a["result"] is bad and a["n_untrained_before"] == 3
+    assert f3s.attempt_seed(2, 0, ST) == 2 and f3s.attempt_seed(2, 2, ST) == 2002
+    assert f3s.attempt_dir("s2/R-b3-s0", 0) == "s2/R-b3-s0" and f3s.attempt_dir("s2/R-b3-s0", 1) == "s2/R-b3-s0-a1"
+
+
+def test_select_lr_excludes_untrained():
+    c = CFG["stage1"]
+    assert f3s.select_lr({3e-4: 0.5, 1e-3: 0.4}, c, [1e-3])["lr"] == 3e-4
+    assert f3s.select_lr({3e-4: 0.5, 1e-3: 0.4}, c, [3e-4, 1e-3])["why"].startswith("all excluded")
+
+
+def test_verdict_untrained_baseline_does_not_count():
+    roles, seeds = _roles(), [0, 1, 2]
+    n, d = _world(gain_e=0.3, gain_e0=0.3)
+    for b in (3, 12, 24):
+        for s in seeds:
+            for a in ("R", "E", "E0", "I"):
+                n[(a, b, s)]["trained"] = True
+    v = f3s.verdict(n, d, roles, RULES, seeds)
+    assert v["H"]["H1"]["pass"] and v["untrained_confounded_wins"] == []
+    for b in (3, 12, 24):
+        n[("R", b, 1)]["trained"] = False  # R did not train on seed 1: E "wins" there for the wrong reason
+    v = f3s.verdict(n, d, roles, RULES, seeds)
+    assert v["H"]["H1"]["pass"] is False and not any(v["H"]["H1"]["valid_win"].values())
+    assert "E|R|3" in v["untrained_confounded_wins"] and v["win"]["E|R|3"]["untrained_seeds"] == [1]
+    v0 = f3s.verdict(n, d, roles, RULES, seeds, require_trained=False)  # as-is secondary: plan rules only
+    assert v0["H"]["H1"]["pass"] and v0["outcome"]["label"] == "A-trunk"
+
+
+def test_c2_untrained_deranged_run_fails_the_seed():
+    assert f3s.c2_seed(0.30, [0.90, None, None], RULES, [True, False, False])["status"] == "untrained"
+    assert f3s.c2_seed(0.30, [0.90, None, None], RULES, [True, False, False])["pass"] is False
+    assert f3s.c2_seed(0.30, [0.90, None, None], RULES, [False, True, True])["pass"] is True  # j = 1, 2 not needed
+    roles, seeds = _roles(), [0, 1, 2]
+    n, d = _world(gain_e=0.3, gain_e0=0.3)
+    v = f3s.verdict(n, d, roles, RULES, seeds, der_untrained={("E", 24, 0, 0)})
+    assert v["C2"]["E|24"]["pass"] is False and v["C2"]["E|12"]["pass"] is True
+
+
+def _env_rule(tmp_path, margin):
+    env = _tiny_env(tmp_path, _fake_store())
+    env.cfg["stability"]["trained_margin"] = margin
+    return env
+
+
+def test_prior_loss():
+    rng = np.random.default_rng(0)
+    tg = [rng.integers(1, 30, int(rng.integers(5, 12))) for _ in range(8)]
+    ln = [int(len(t) * rng.integers(20, 60)) for t in tg]
+    p = f3s.prior_loss(tg, ln)
+    assert 0 < p < np.log(97)
+    T, L = sum(ln), sum(len(t) for t in tg)  # the prior beats a constant output with a wrong blank rate
+    worse = []
+    for t, n in zip(tg, ln):
+        x = torch.full((n, 1, 98), float(np.log(0.5 * L / T / 29)))
+        x[..., 0] = float(np.log(1 - 0.5 * L / T))
+        x[..., 30:] = -1e4
+        worse.append(float(torch.nn.functional.ctc_loss(x, torch.from_numpy(t)[None], torch.tensor([n]),
+                                                        torch.tensor([len(t)]), blank=0, reduction="mean")))
+    assert p < float(np.mean(worse))
+    perm = f3s.e1.derangement(8, np.random.default_rng([0, 77]))
+    pd = f3s.prior_loss([tg[int(k)] for k in perm], ln)
+    assert np.isfinite(pd) and pd > 0
+
+
+def test_slot_run_reseeds_until_trained_or_limit(tmp_path):
+    spec = {"stage": "s2", "arm": "R", "budget": 3, "seed": 1, "j": 0, "lr": 1e-3,
+            "sessions": ["20220101", "20220102"], "dir": "s2/R-b3-s1-d0"}
+    env = _env_rule(tmp_path / "never", -1e9)  # no run can train
+    res = f3s.slot_run(env, spec)
+    assert res["accept"] == {"attempt": 0, "trained": False, "n_untrained_before": 3} and res["attempt"] == 0
+    atts = f3s.read_attempts(env, spec["dir"])
+    assert [a["init_seed"] for a in atts] == [1, 1001, 2001] and len({a["final_train_loss"] for a in atts}) == 3
+    assert f3s.accepted_result(env, spec["dir"])["trained"] is False
+    env2 = _env_rule(tmp_path / "always", 1e9)
+    res2 = f3s.slot_run(env2, spec)
+    assert res2["accept"]["attempt"] == 0 and res2["trained"] and not (env2.out / "s2/R-b3-s1-d0-a1").exists()
+    assert res2["test_cer_final"] == atts[0]["test_cer_final"]  # attempt 0 is the plan run, unchanged
+
+
+def test_accepted_result_incomplete_reseed_counts_as_untrained(tmp_path):
+    env = _env_rule(tmp_path, -1e9)
+    spec = {"stage": "s2", "arm": "R", "budget": 3, "seed": 0, "j": None, "lr": 1e-3,
+            "sessions": ["20220101", "20220102"], "dir": "s2/R-b3-s0"}
+    f3s.target_run(env, spec)  # attempt 0 only (e.g. the cap stopped the re-seeds)
+    assert f3s.accepted_result(env, spec["dir"], final=False) is None
+    r = f3s.accepted_result(env, spec["dir"])
+    assert r["trained"] is False and r["accept"]["reseeds_incomplete"]
+
+
+def test_pilot_plan_and_decision(tmp_path):
+    roles = _roles()
+    plan = f3s.pilot_plan(CFG, roles)
+    p = ST["pilot"]
+    assert len(plan) == len(p["seeds"]) * len(p["lrs"]) * 2 and len({x["dir"] for x in plan}) == len(plan)
+    assert all(x["sessions"] == roles["val"] and not set(x["sessions"]) & set(roles["test"]) for x in plan)
+    assert [x["bias_on"] for x in plan[:2]] == [True, False] and all(x["stop_at"] == 400 for x in plan)
+    rows = [{"bias_on": x["bias_on"], "trained": True} for x in plan]
+    assert f3s.pilot_decision(rows, p)["decision"] == "go"
+    on = [r for r in rows if r["bias_on"]]
+    for r in on[:p["stop_if_untrained"]]:
+        r["trained"] = False
+    d = f3s.pilot_decision(rows, p)
+    assert d["decision"] == "stop" and d["on_untrained"] == p["stop_if_untrained"]
+    assert f3s.pilot_decision(rows[:3], p)["decision"] is None
+
+
+def test_pilot_run_stops_early_and_reads_val_only(tmp_path):
+    env = _tiny_env(tmp_path, _fake_store())
+    env.cfg["target"]["steps"]["12"] = 6
+    env.roles = {"test_last": 10, "test": ["20220109"], "val": ["20220101", "20220102"]}
+    spec = {"stage": "pilot", "arm": "R", "budget": 3, "seed": 20, "j": None, "lr": 1e-3,
+            "sessions": ["20220101", "20220102"], "dir": "pilot/x", "stop_at": 2, "bias": float("nan")}
+    env.cfg["target"]["steps"]["3"] = 6
+    r = f3s.target_run(env, spec)
+    assert r["steps"] == 2 and r["blank_bias"] is None and "val_cer_final" in r and "test_cer_final" not in r

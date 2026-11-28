@@ -1,5 +1,5 @@
 {
-  "_comment": "P15-54 (gap 219) run configuration. It encodes plan.md (19ec6c5) and amendment-1.md (4d31f8e) and changes no arm, grid, seed, rule or stop rule. Output folder derived/p15-54 (amendment 1, point 2).",
+  "_comment": "P15-54 (gap 219) run configuration. It encodes plan.md (19ec6c5) and amendment-1.md (4d31f8e) and changes no arm, grid, seed, rule or stop rule. Section 'stability' encodes amendment-2.md (training stability, before any GPU run). Output folder derived/p15-54 (amendment 1, point 2).",
   "out": "C:/Users/zhang/bci-data/derived/p15-54",
   "raw": {
     "h2": "C:/Users/zhang/bci-data/raw/falcon-h2/sub-T5-held-in-calib",
@@ -61,5 +61,16 @@
     "c1_min_cer": 0.85, "c1_applies_if_cer_below": 0.70, "c1_seed": 12345,
     "h_min_budgets": 2
   },
-  "caps": {"core_hours": 9.0, "total_hours": 20.0}
+  "caps": {"core_hours": 9.0, "total_hours": 20.0},
+  "stability": {
+    "_comment": "Amendment 2 (amendment-2.md), before any GPU run. S1: every newly built CTC head starts with bias[blank] = ln((V-1)(F-1)), F = frames per target token: blank_bias for the H2 character heads (target runs of all arms, P pretraining; F 159.2 from the stage-1 train pool), blank_bias_pretrain_I for the T15 phoneme head (F 68.52); copied heads (E, T, X-E, P target) are unchanged. S2: a target run trained if the mean training CTC loss of its last trained_window steps <= its own label-prior loss + trained_margin (train pool only). S3: a run that did not train is re-seeded (init seed + reseed_offset * a, a = 1..max_reseeds; same labels); the first trained attempt is accepted, else attempt 0 counts, flagged. S4: wins need every paired run trained; a C2 seed with an untrained deranged run fails. Pilot: opt-in ('f3s.py pilot'), val only, own GPU clock.",
+    "blank_bias": 9.6,
+    "blank_bias_pretrain_I": 7.9,
+    "trained_margin": 1.0,
+    "trained_window": 100,
+    "max_reseeds": 2,
+    "reseed_offset": 1000,
+    "pilot": {"arms": ["R"], "budget": 12, "lrs": [0.0003, 0.001], "seeds": [20, 21, 22, 23, 24], "stop_at": 400,
+              "stop_if_untrained": 3, "cap_hours": 1.5}
+  }
 }

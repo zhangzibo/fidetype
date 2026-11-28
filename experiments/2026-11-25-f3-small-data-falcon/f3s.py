@@ -1,6 +1,8 @@
 r"""P15-54 runner: F3 at small data, FALCON H2-style protocol, per-session input layers (gap 219).
 
-Our own code, Apache-2.0. Plan: plan.md (pre-registered, 19ec6c5) and amendment-1.md (4d31f8e). Values: config.json.
+Our own code, Apache-2.0. Plan: plan.md (pre-registered, 19ec6c5), amendment-1.md (4d31f8e) and amendment-2.md
+(training stability: S1 blank-bias init of every new CTC head, S2 'trained' rule from the train loss, S3 re-seed of
+untrained runs, S4 wins and C2 need trained runs; opt-in val-only pilot). Values: config.json.
 We do not copy FALCON or NLB code; the NWB files are read with h5py (HDF5) as plain arrays.
 
 Reuses READ-ONLY and UNCHANGED: the E1a causal trunk, augmentation, batch packing, CTC decoding and bootstrap
@@ -19,6 +21,8 @@ Stages (``all`` runs them in order; finished parts are skipped; every training p
   core       stage 2 core: normal R, E, E0, I; C2 of E, I and R (core cap 9 h)
   ext        M pretraining + M selection (selection-ext.json), P pretraining, gate2, extended runs (total cap 20 h)
   summary    rules, hypotheses, outcome -> summary.json (aggregates only; also results/summary.json)
+  pilot      (opt-in, NOT part of 'all'; amendment 2) R x LR {3e-4, 1e-3} x seeds 20-24 x blank bias on / off, val
+             sessions only, step 400 of 800 -> pilot/pilot.json (go / stop). Own GPU clock. 'all' refuses after 'stop'.
 
 Run (repo root, GPU venv):  C:\venvs\fidetype-rocm\Scripts\python.exe -I experiments\2026-11-25-f3-small-data-falcon\f3s.py all
 A file ``pause`` or ``stop`` in --out saves latest.pt after the current step and exits with code 3.
@@ -115,14 +119,74 @@ def session_roles(counts: dict[str, int], r: dict) -> dict:
             "counts": {d: int(counts[d]) for d in sorted(counts)}}
 
 
-def select_lr(vals: dict[float, float], c: dict) -> dict:
-    """Plan 7.2: lower final-step val CER; > 0.95 excluded; tie (< 0.005) -> smaller LR; all excluded -> 3e-4."""
-    ok = {float(lr): float(v) for lr, v in vals.items() if not (v > float(c["exclude_if_val_cer_above"]))}
+def select_lr(vals: dict[float, float], c: dict, untrained: tuple | list | set = ()) -> dict:
+    """Plan 7.2: lower final-step val CER; > 0.95 excluded; tie (< 0.005) -> smaller LR; all excluded -> 3e-4.
+    Amendment 2 (S3): an LR whose accepted run did not train (after all re-seeds) is excluded too."""
+    bad = {float(x) for x in untrained}
+    ok = {float(lr): float(v) for lr, v in vals.items()
+          if not (v > float(c["exclude_if_val_cer_above"])) and float(lr) not in bad}
     if not ok:
         return {"lr": float(c["fallback_lr"]), "why": "all excluded: fallback LR"}
     best = min(ok.values())
     near = sorted(lr for lr, v in ok.items() if v - best < float(c["tie"]))
     return {"lr": near[0], "why": "lowest val CER" + (" (tie: smaller LR)" if len(near) > 1 else "")}
+
+
+def prior_loss(targets: list, lengths: list[int], vocab: int = 98, blank: int = 0) -> float:
+    """Amendment 2, S2 reference: CTC loss (per target token, mean over trials, as the training loss) of the
+    label-prior model of one train pool: a constant output with p(blank) = 1 - L/T and p(c) = u(c) L/T, where T =
+    total frames, L = total target tokens and u = the pool's token unigram. Uses the run's own (maybe deranged)
+    labels and trial lengths only; no neural value."""
+    T = float(sum(int(n) for n in lengths))
+    tg = [np.asarray(t, np.int64) for t in targets]
+    L = float(sum(len(t) for t in tg))
+    cnt = np.bincount(np.concatenate(tg), minlength=vocab).astype(np.float64)
+    lp = np.full(vocab, -1e4)
+    r = L / T
+    lp[blank] = math.log(1.0 - r)
+    nz = cnt > 0
+    lp[nz] = np.log(cnt[nz] / L * r)
+    base = torch.tensor(lp, dtype=torch.float32)
+    out = []
+    for t, n in zip(tg, lengths):
+        x = base.expand(int(n), 1, vocab)
+        out.append(float(F.ctc_loss(x, torch.from_numpy(t)[None], torch.tensor([int(n)]), torch.tensor([len(t)]),
+                                    blank=blank, reduction="mean", zero_infinity=True)))
+    return float(np.mean(out))
+
+
+def trained_rule(final_loss: float | None, prior: float | None, st: dict) -> bool:
+    """Amendment 2, rule S2: a target run 'trained' if the mean training CTC loss over its last ``trained_window``
+    steps is finite and <= its label-prior loss + ``trained_margin`` (1 nat per token). It reads the train pool only
+    (never a val or test sentence)."""
+    if final_loss is None or prior is None or not math.isfinite(float(final_loss)):
+        return False
+    return float(final_loss) <= float(prior) + float(st["trained_margin"])
+
+
+def attempt_seed(seed: int, attempt: int, st: dict) -> int:
+    """Amendment 2, rule S3: init seed of re-seed attempt a of slot seed s = s + reseed_offset * a (a = 0: s)."""
+    return int(seed) + int(st["reseed_offset"]) * int(attempt)
+
+
+def attempt_dir(base: str, attempt: int) -> str:
+    return base if int(attempt) == 0 else f"{base}-a{int(attempt)}"
+
+
+def accept(attempts: list[dict | None], st: dict) -> dict:
+    """Amendment 2, rule S3. attempts[a] = result dict of attempt a (None = not run yet).
+    accepted = the first attempt that trained; if none of the 1 + max_reseeds attempts trained: attempt 0, flagged.
+    status 'need' = a further attempt must run first; 'missing' = attempt 0 has not run."""
+    n = 1 + int(st["max_reseeds"])
+    if not attempts or attempts[0] is None:
+        return {"status": "missing", "result": None}
+    for a in range(n):
+        r = attempts[a] if a < len(attempts) else None
+        if r is None:
+            return {"status": "need", "next": a, "result": None}
+        if trained_rule(r.get("final_train_loss"), r.get("prior_loss"), st):
+            return {"status": "done", "attempt": a, "trained": True, "result": r, "n_untrained_before": a}
+    return {"status": "done", "attempt": 0, "trained": False, "result": attempts[0], "n_untrained_before": n}
 
 
 def win(a: str, b: str, budget: int, runs: dict, rules: dict, seeds: list[int]) -> dict:
@@ -140,12 +204,15 @@ def win(a: str, b: str, budget: int, runs: dict, rules: dict, seeds: list[int]) 
                                 ref, n=int(rules["bootstrap_n"]), seed=int(rules["bootstrap_seed"]))
         d = float(rb["test_cer_final"]) - float(ra["test_cer_final"])
         per.append({"seed": s, "cer_a": ra["test_cer_final"], "cer_b": rb["test_cer_final"], "d": d,
-                    "ci95": [bs["lo"], bs["hi"]], "ci_above_0": bool(bs["lo"] > 0)})
+                    "ci95": [bs["lo"], bs["hi"]], "ci_above_0": bool(bs["lo"] > 0),
+                    "trained_a": ra.get("trained"), "trained_b": rb.get("trained")})
     pa = all(p["d"] > 0 for p in per)
     n_ci = sum(p["ci_above_0"] for p in per)
     pb = n_ci >= int(rules["seed_ci_min"])
+    untrained = [p["seed"] for p in per if p["trained_a"] is False or p["trained_b"] is False]
     return {"a": a, "b": b, "budget": budget, "status": "done", "per_seed": per, "all_d_positive": bool(pa),
-            "n_ci_above_0": n_ci, "pass": bool(pa and pb)}
+            "n_ci_above_0": n_ci, "pass": bool(pa and pb), "untrained_seeds": untrained,
+            "all_trained": not untrained}
 
 
 def c2_need(normal: float, rules: dict) -> float:
@@ -157,15 +224,22 @@ def c2_triggers_extra(normal: float, deranged: float, rules: dict) -> bool:
     return abs(float(deranged) - c2_need(normal, rules)) <= float(rules["c2_band"]) + 1e-12  # inclusive, float-safe
 
 
-def c2_seed(normal: float | None, deranged: list[float | None], rules: dict) -> dict:
+def c2_seed(normal: float | None, deranged: list[float | None], rules: dict,
+            untrained: list[bool] | None = None) -> dict:
     """One seed: one deranged run -> it meets the need; three runs -> the mean meets it and >= 2 of 3 meet it.
-    A seed whose first run triggered the extra pair needs all 3 (else 'missing')."""
+    A seed whose first run triggered the extra pair needs all 3 (else 'missing').
+    ``untrained[j]`` (amendment 2, rule S4): deranged run j did not train after all re-seed attempts -> the seed
+    gives no valid C2 evidence and fails (status 'untrained')."""
     if normal is None or not deranged or deranged[0] is None:
         return {"status": "missing", "pass": None}
     need = c2_need(normal, rules)
     need_three = c2_triggers_extra(normal, deranged[0], rules)
     if need_three and (len(deranged) < 3 or any(d is None for d in deranged[:3])):
         return {"status": "missing", "pass": None, "normal": normal, "deranged": deranged, "needed": need}
+    k = 3 if need_three else 1
+    if untrained and any(untrained[:k]):
+        return {"status": "untrained", "pass": False, "normal": float(normal), "deranged": deranged[:k],
+                "needed": need}
     ds = [float(d) for d in (deranged[:3] if need_three else deranged[:1])]
     ind = [d >= need for d in ds]
     if len(ds) == 1:
@@ -176,13 +250,18 @@ def c2_seed(normal: float | None, deranged: list[float | None], rules: dict) -> 
             "margin": float(np.mean(ds)) - need, "n_runs": len(ds), "pass": bool(ok)}
 
 
-def c2_rule(arm: str, budget: int, normal: dict, der: dict, rules: dict, seeds: list[int]) -> dict:
-    """C2(A, b): passes on every seed. der[(arm, budget, seed, j)] = deranged test CER."""
+def c2_rule(arm: str, budget: int, normal: dict, der: dict, rules: dict, seeds: list[int],
+            der_untrained: set | None = None) -> dict:
+    """C2(A, b): passes on every seed. der[(arm, budget, seed, j)] = deranged test CER; der_untrained = keys of
+    deranged runs that did not train (amendment 2)."""
     rows = {}
+    du = der_untrained or set()
+    js = range(1 + int(rules["c2_extra"]))
     for s in seeds:
         n = normal.get((arm, budget, s))
         rows[str(s)] = c2_seed(None if n is None else float(n["test_cer_final"]),
-                               [der.get((arm, budget, s, j)) for j in range(1 + int(rules["c2_extra"]))], rules)
+                               [der.get((arm, budget, s, j)) for j in js], rules,
+                               [(arm, budget, s, j) in du for j in js])
     vals = [r["pass"] for r in rows.values()]
     p = False if any(v is False for v in vals) else (None if any(v is None for v in vals) else True)
     return {"arm": arm, "budget": budget, "seeds": rows, "pass": p}
@@ -206,8 +285,11 @@ def tri(x) -> bool | None:
     return None if x is None else bool(x)
 
 
-def verdict(normal: dict, der: dict, roles: dict, rules: dict, seeds: list[int]) -> dict:
-    """Plan 8 and 9 with amendment 1 (3.18). normal[(arm, b, s)] = result dict; der[(arm, b, s, j)] = test CER."""
+def verdict(normal: dict, der: dict, roles: dict, rules: dict, seeds: list[int], der_untrained: set | None = None,
+            require_trained: bool = True) -> dict:
+    """Plan 8 and 9 with amendment 1 (3.18) and amendment 2 (S4). normal[(arm, b, s)] = result dict;
+    der[(arm, b, s, j)] = test CER. require_trained (primary): a win counts in H1-H5, neg and the would-be-winner
+    test only if every paired run trained; False = the plan rules exactly as written (as-is secondary)."""
     core = list(roles["core_budgets"])
     top = int(roles["top_budget"])
     budgets = sorted(set(core) | set(roles["extended_budgets"]))
@@ -222,11 +304,13 @@ def verdict(normal: dict, der: dict, roles: dict, rules: dict, seeds: list[int])
     for a in ("E", "I", "M", "R"):
         for x in budgets:
             if any(k[:2] == (a, x) for k in der):
-                C2[(a, x)] = c2_rule(a, x, normal, der, rules, seeds)
+                C2[(a, x)] = c2_rule(a, x, normal, der, rules, seeds, der_untrained if require_trained else None)
     C1 = {(a, x): c1_rule(a, x, normal, rules, seeds) for a in ALL_ARMS for x in budgets}
 
     def ok(k):
-        return bool(k.get("pass")) if k else False
+        if not k or not k.get("pass"):
+            return False
+        return bool(k.get("all_trained", True)) if require_trained else True
 
     def valid_win(a, x):
         return ok(W[(a, "R", x)]) and ok(C2.get((a, x))) and ok(C1[(a, x)])
@@ -295,7 +379,9 @@ def verdict(normal: dict, der: dict, roles: dict, rules: dict, seeds: list[int])
             ratio[str(x)] = {a: (table["R"][str(x)]["mean_cer"] - table[a][str(x)]["mean_cer"]) / dp
                              for a in ALL_ARMS if a in table and str(x) in table[a] and a not in ("R", "P")}
     key = lambda k: "|".join(map(str, k))  # noqa: E731
-    return {"table": table, "win": {key(k): v for k, v in W.items()}, "C2": {key(k): v for k, v in C2.items()},
+    confounded = sorted(key(k) for k, w in W.items() if w.get("pass") and not w.get("all_trained", True))
+    return {"require_trained": require_trained, "untrained_confounded_wins": confounded,
+            "table": table, "win": {key(k): v for k, v in W.items()}, "C2": {key(k): v for k, v in C2.items()},
             "C1": {key(k): v for k, v in C1.items() if v["pass"] is not None}, "H": H, "neg": neg, "reads": reads,
             "transfer_ratio": ratio, "outcome": {"label": main, "labels": labels, "N_reasons": n_reason}}
 
@@ -373,7 +459,10 @@ class Net(nn.Module):
     Build order is fixed (adapters, p_in, blocks, out_norm, head, readouts) so that one seed gives one init."""
 
     def __init__(self, trunk: e1.TrunkCfg, inputs: dict, per_session: bool = True, vocab: int | None = 98,
-                 readouts: dict | None = None, p_drop: float = 0.1):
+                 readouts: dict | None = None, p_drop: float = 0.1, blank_bias: float | None = None, blank: int = 0):
+        """``blank_bias`` (amendment 2, measure S1): the new CTC head starts with bias[blank] = blank_bias. It is set
+        after all layers are built and uses no random number, so the init of every other tensor does not change.
+        A head copied from a checkpoint later (copy_parts) replaces it."""
         super().__init__()
         self.per_session = per_session
         if per_session:
@@ -384,6 +473,9 @@ class Net(nn.Module):
         self.out_norm = nn.LayerNorm(trunk.d)
         self.head = nn.Linear(trunk.d, vocab) if vocab else None
         self.readouts = nn.ModuleDict({k: nn.Linear(trunk.d, n) for k, n in (readouts or {}).items()})
+        if self.head is not None and blank_bias is not None:
+            with torch.no_grad():
+                self.head.bias[blank] = float(blank_bias)
 
     def features(self, x: torch.Tensor, ds: str, sess: torch.Tensor) -> torch.Tensor:
         if self.per_session:
@@ -745,21 +837,30 @@ def aug_cfg(cfg: dict) -> e1.FTCfg:
 
 
 def train_loop(env: Env, d: Path, tag: str, model: nn.Module, opt, total: int, lr: float, lr_min: float, warmup: int,
-               clip: float, ckpt_minutes: float, step_fn, max_steps: int | None = None) -> dict:
-    """Shared loop: resume from latest.pt, LR schedule, clip, checkpoint every ckpt_minutes, pause / stop file."""
+               clip: float, ckpt_minutes: float, step_fn, max_steps: int | None = None,
+               stop_at: int | None = None) -> dict:
+    """Shared loop: resume from latest.pt, LR schedule, clip, checkpoint every ckpt_minutes, pause / stop file.
+    Amendment 2: keeps the last ``window`` finite step losses and the mean loss of every 100-step block (both in
+    latest.pt, so a resume is exact); returns final_train_loss (mean of that window) and loss_curve."""
     step, skipped = 0, 0
+    window = int(env.cfg.get("stability", {}).get("trained_window", 100))
+    recent: list[float] = []; curve: list[list[float]] = []; losses: list[float] = []
     if (d / "latest.pt").exists():
         ck = torch.load(d / "latest.pt", map_location=env.device, weights_only=True)
         model.load_state_dict(ck["model"]); opt.load_state_dict(ck["opt"])
         step, skipped = int(ck["step"]), int(ck.get("skipped", 0))
+        recent = [float(v) for v in ck.get("recent", [])]
+        curve = [[float(a), float(b)] for a, b in ck.get("curve", [])]
+        losses = [float(v) for v in ck.get("block", [])]
         env.log(f"[{tag}] resume at step {step}")
 
     def save_latest():
-        R8.atomic_save({"model": model.state_dict(), "opt": opt.state_dict(), "step": step, "skipped": skipped},
-                       d / "latest.pt")
+        R8.atomic_save({"model": model.state_dict(), "opt": opt.state_dict(), "step": step, "skipped": skipped,
+                        "recent": recent, "curve": curve, "block": losses}, d / "latest.pt")
 
-    end = total if max_steps is None else min(total, step + max_steps)
-    t_ck = t_log = time.time(); s_log = step; losses: list[float] = []
+    goal = total if stop_at is None else min(total, int(stop_at))  # stop_at: pilot only (LR schedule of 'total')
+    end = goal if max_steps is None else min(goal, step + max_steps)
+    t_ck = t_log = time.time(); s_log = step
     while step < end:
         model.train()
         for g in opt.param_groups:
@@ -768,14 +869,20 @@ def train_loop(env: Env, d: Path, tag: str, model: nn.Module, opt, total: int, l
         opt.zero_grad(set_to_none=True)
         if loss is not None and torch.isfinite(loss):
             loss.backward(); torch.nn.utils.clip_grad_norm_(model.parameters(), clip); opt.step()
-            losses.append(float(loss.detach()))
+            lv = float(loss.detach())
+            losses.append(lv)
+            recent.append(lv)
+            if len(recent) > window:
+                del recent[0]
         else:
             skipped += 1
         step += 1
         if step % 100 == 0 or step == end:
             dt = (time.time() - t_log) / max(1, step - s_log); t_log = time.time(); s_log = step
-            env.log(f"[{tag}] step {step}/{total} loss {np.mean(losses) if losses else float('nan'):.4f} "
-                    f"{dt:.3f} s/step skipped {skipped}")
+            m = float(np.mean(losses)) if losses else float("nan")
+            env.log(f"[{tag}] step {step}/{total} loss {m:.4f} {dt:.3f} s/step skipped {skipped}")
+            if step % 100 == 0:
+                curve.append([float(step), m])
             losses = []
         if time.time() - t_ck > 60 * ckpt_minutes:
             save_latest(); t_ck = time.time()
@@ -785,10 +892,11 @@ def train_loop(env: Env, d: Path, tag: str, model: nn.Module, opt, total: int, l
             save_latest()
             env.log(f"[{tag}] pause/stop file: saved latest.pt at step {step}, exit")
             raise R8.Paused()
-    if step < total:
+    fin = float(np.mean(recent)) if recent else None
+    if step < goal:
         save_latest()
-        return {"partial": True, "step": step}
-    return {"steps": step, "skipped": skipped}
+        return {"partial": True, "step": step, "final_train_loss": fin, "loss_curve": curve, "skipped": skipped}
+    return {"steps": step, "skipped": skipped, "final_train_loss": fin, "loss_curve": curve}
 
 
 def licence(arm: str, cfg: dict, deranged: bool = False) -> dict:
@@ -799,12 +907,25 @@ def licence(arm: str, cfg: dict, deranged: bool = False) -> dict:
     return {"arm": arm, "data": data, "research_only": base in ("E", "E0", "T"), "label_deranged": deranged}
 
 
-def init_target(env: Env, arm: str, seed: int, n_sess: int) -> Net:
-    """Amendment 1, 3.8: seed -> build every layer in one order -> copy the pretrained parts."""
+def blank_bias(cfg: dict, override: float | None = None, key: str = "blank_bias") -> float | None:
+    """Amendment 2, measure S1: the blank bias of every newly built CTC head (None = off, the plan.md init).
+    b = ln((V - 1)(F - 1)), F = frames per target token: ``blank_bias`` for the H2 character heads (target runs and
+    P pretraining), ``blank_bias_pretrain_I`` for the T15 phoneme head. ``override`` = the pilot's 'off' cells
+    (pass float('nan') for off)."""
+    if override is not None:
+        return None if math.isnan(override) else float(override)
+    v = cfg.get("stability", {}).get(key)
+    return None if v is None else float(v)
+
+
+def init_target(env: Env, arm: str, seed: int, n_sess: int, bias: float | None = None) -> Net:
+    """Amendment 1, 3.8: seed -> build every layer in one order -> copy the pretrained parts.
+    Amendment 2 (S1): a new head starts with bias[blank] = stability.blank_bias; a copied head is unchanged."""
     torch.manual_seed(seed)
     base = arm[2:] if arm.startswith("X-") else arm
     model = Net(env.trunk, {"h2": (int(env.cfg["model"]["n_h2"]), n_sess)}, per_session=not arm.startswith("X-"),
-                vocab=98, p_drop=float(env.cfg["model"]["adapter_dropout"]))
+                vocab=98, p_drop=float(env.cfg["model"]["adapter_dropout"]),
+                blank_bias=blank_bias(env.cfg, bias), blank=e1.BLANK)
     src = env.cfg["sources"]
     if base == "R":
         pass
@@ -861,13 +982,18 @@ def evaluate(env: Env, model: Net, idx: list[int], sess_of: dict, mean, std, shu
 
 
 def target_run(env: Env, spec: dict, max_steps: int | None = None) -> dict:
-    """One target run. spec: stage ('s1' / 's2'), arm, budget, seed, j (None = normal), lr, dir, sessions."""
-    d = env.out / spec["dir"]
+    """One target run. spec: stage ('s1' / 's2' / 'pilot'), arm, budget, seed, j (None = normal), lr, dir, sessions;
+    amendment 2: attempt (re-seed index, default 0; the run folder is dir + '-a<attempt>' for attempt > 0),
+    bias (pilot only: blank-bias override, nan = off), stop_at (pilot only: train to this step of the full schedule,
+    then evaluate). The derangement depends on the slot seed only, so every attempt of a slot uses the same labels."""
+    attempt = int(spec.get("attempt", 0))
+    d = env.out / attempt_dir(spec["dir"], attempt)
     d.mkdir(parents=True, exist_ok=True)
     if (d / "DONE.json").exists():
         return json.loads((d / "result.json").read_text(encoding="utf-8"))
-    cfg, t = env.cfg, env.cfg["target"]
+    cfg, t, st = env.cfg, env.cfg["target"], env.cfg["stability"]
     arm, budget, seed, j, lr = spec["arm"], int(spec["budget"]), int(spec["seed"]), spec["j"], float(spec["lr"])
+    init_seed = attempt_seed(seed, attempt, st)
     dates = list(spec["sessions"])
     pool, ev = env.h2.split(dates, budget, int(env.roles["test_last"]))
     sidx = {dd: k for k, dd in enumerate(dates)}
@@ -879,16 +1005,20 @@ def target_run(env: Env, spec: dict, max_steps: int | None = None) -> dict:
     if j is not None:
         perm = e1.derangement(len(pool), np.random.default_rng([seed, int(cfg["rules"]["c2_rng"]) + int(j)]))
         tgt = {pool[k]: env.h2.tgt[pool[int(perm[k])]] for k in range(len(pool))}
-    model = init_target(env, arm, seed, len(dates))
+    model = init_target(env, arm, init_seed, len(dates), spec.get("bias"))
     opt = R8.make_optim(model, float(t["weight_decay"]), lr)
     total = int(t["steps"][str(budget)])
+    stop_at = spec.get("stop_at")
+    if stop_at is not None:
+        stop_at = min(int(stop_at), total)
     aug = aug_cfg(cfg)
     e1.save_json(licence(arm, cfg, j is not None), d / "licence.json")
     jcode = 0 if j is None else int(j) + 1
-    stage_code = 1 if spec["stage"] == "s1" else 2
+    stage_code = {"s1": 1, "s2": 2, "pilot": 3}[spec["stage"]]
+    rng_key = [seed, budget, jcode, stage_code] + ([attempt] if attempt else [])
 
     def step_fn(step):
-        rng = np.random.default_rng([seed, budget, jcode, stage_code, step])
+        rng = np.random.default_rng(rng_key + [step])
         gen = torch.Generator().manual_seed(int(rng.integers(2 ** 62)))
         torch.manual_seed(int(rng.integers(2 ** 62)))
         bi = e1.pack_batch(pool, env.h2.length, env.max_frames(), rng)
@@ -901,19 +1031,30 @@ def target_run(env: Env, spec: dict, max_steps: int | None = None) -> dict:
                           torch.from_numpy(b["lengths"]), torch.from_numpy(b["target_lengths"]),
                           blank=e1.BLANK, reduction="mean", zero_infinity=True)
 
-    name = spec["dir"]
-    env.log(f"[{name}] start, lr {lr:g}, steps {total}, {len(pool)} train trials, {len(dates)} sessions"
+    name = attempt_dir(spec["dir"], attempt)
+    env.log(f"[{name}] start, lr {lr:g}, steps {total}" + (f" (stop at {stop_at})" if stop_at else "")
+            + f", init seed {init_seed}, blank bias {blank_bias(cfg, spec.get('bias'))}, {len(pool)} train trials, "
+            f"{len(dates)} sessions"
             + (f", GPU clock {env.clock.hours():.2f} h" if env.clock is not None else ""))
     r = train_loop(env, d, name, model, opt, total, lr, float(t["lr_min"]), int(t["warmup"]), float(t["clip"]),
-                   float(t["ckpt_minutes"]), step_fn, max_steps)
+                   float(t["ckpt_minutes"]), step_fn, max_steps, stop_at)
     if r.get("partial"):
         return r
-    R8.atomic_save({"model": model.state_dict(), "step": total}, d / "final.pt")
-    res = {"run": name, "stage": spec["stage"], "arm": arm, "budget": budget, "seed": seed, "j": j,
-           "label_deranged": j is not None, "lr": lr, "steps": r["steps"], "skipped": r["skipped"],
-           "n_train": len(pool), "sessions": dates}
+    R8.atomic_save({"model": model.state_dict(), "step": r["steps"]}, d / "final.pt")
+    # Amendment 2 (S2): the 'trained' flag is fixed from the training loss BEFORE any evaluation.
+    prior = prior_loss([tgt[i] for i in pool], [env.h2.length[i] for i in pool])
+    trained = trained_rule(r["final_train_loss"], prior, st)
+    env.log(f"[{name}] final train loss {r['final_train_loss']}, label-prior loss {prior:.4f} -> trained {trained}")
+    res = {"run": name, "stage": spec["stage"], "arm": arm, "budget": budget, "seed": seed,
+           "j": j, "attempt": attempt, "init_seed": init_seed, "label_deranged": j is not None, "lr": lr,
+           "steps": r["steps"], "skipped": r["skipped"], "n_train": len(pool), "sessions": dates,
+           "final_train_loss": r["final_train_loss"], "loss_curve": r["loss_curve"], "prior_loss": prior,
+           "trained_max_loss": prior + float(st["trained_margin"]), "trained": trained,
+           "blank_bias": blank_bias(cfg, spec.get("bias"))}
     fin = evaluate(env, model, ev, sess_of, mean_t, std_t)
-    if spec["stage"] == "s1":  # val sessions only (plan 7.2): no test session is read in stage 1
+    if spec["stage"] in ("s1", "pilot"):  # val sessions only (plan 7.2): no test session is read in stage 1 / pilot
+        if set(dates) & set(env.roles.get("test", [])):
+            raise RuntimeError("stage 1 / pilot must not read a test session")
         res.update({"val_cer_final": fin["cer"], "val_falcon_cer_mean": fin["falcon_cer_mean"]})
         msg = f"val CER {fin['cer']:.4f}"
     else:
@@ -931,6 +1072,57 @@ def target_run(env: Env, spec: dict, max_steps: int | None = None) -> dict:
     if env.clock is not None:
         env.clock.save()
     return res
+
+
+def read_attempts(env: Env, base: str) -> list[dict | None]:
+    """Result dicts of attempts 0 .. max_reseeds of one slot folder (None = not finished)."""
+    out = []
+    for a in range(1 + int(env.cfg["stability"]["max_reseeds"])):
+        p = env.out / attempt_dir(base, a) / "result.json"
+        out.append(json.loads(p.read_text(encoding="utf-8")) if p.exists() else None)
+    return out
+
+
+def accepted_result(env: Env, base: str, final: bool = True) -> dict | None:
+    """The accepted result of a slot (rule S3) with its 'accept' record, or None if attempt 0 has not run.
+    final=True: a re-seed attempt that never ran (cap) counts as 'did not train', so attempt 0 is used, flagged."""
+    st = env.cfg["stability"]
+    att = read_attempts(env, base)
+    acc = accept(att, st)
+    if acc["status"] == "missing":
+        return None
+    if acc["status"] == "need":
+        if not final:
+            return None
+        res = dict(att[0])
+        res["accept"] = {"attempt": 0, "trained": False, "n_untrained_before": acc["next"], "reseeds_incomplete": True}
+        res["trained"] = False
+        return res
+    res = dict(acc["result"])
+    res["accept"] = {"attempt": acc["attempt"], "trained": acc["trained"], "n_untrained_before": acc["n_untrained_before"]}
+    return res
+
+
+def slot_run(env: Env, spec: dict, max_steps: int | None = None, part: str | None = None) -> dict:
+    """Amendment 2 (S3): run attempt 0 of a slot; while the latest attempt did not train and fewer than
+    1 + max_reseeds attempts ran, run the next attempt (new init and batch seed, same labels). Returns the accepted
+    result (with an 'accept' record) or a partial marker. ``part``: the cap is checked before each re-seed attempt."""
+    st = env.cfg["stability"]
+    while True:
+        acc = accept(read_attempts(env, spec["dir"]), st)
+        if acc["status"] == "done":
+            res = dict(acc["result"])
+            res["accept"] = {"attempt": acc["attempt"], "trained": acc["trained"],
+                             "n_untrained_before": acc["n_untrained_before"]}
+            return res
+        a = 0 if acc["status"] == "missing" else int(acc["next"])
+        if a > 0:
+            env.log(f"[{spec['dir']}] attempt {a - 1} did not train (rule S2): re-seed attempt {a}")
+            if part is not None:
+                cap_check(env, part)
+        r = target_run(env, {**spec, "attempt": a}, max_steps)
+        if r.get("partial"):
+            return r
 
 
 # --- pretraining ------------------------------------------------------------------------------------------------------
@@ -993,7 +1185,7 @@ def pretrain_i(env: Env, t15=None, max_steps: int | None = None) -> dict:
     aug = aug_cfg(env.cfg)
     torch.manual_seed(int(pc["seed"]))
     model = Net(env.trunk, {"t15": (int(ic["n_in"]), n_sess)}, vocab=int(ic["vocab"]),
-                p_drop=float(env.cfg["model"]["adapter_dropout"]))
+                p_drop=float(env.cfg["model"]["adapter_dropout"]), blank_bias=blank_bias(env.cfg, key="blank_bias_pretrain_I"), blank=0)
 
     def batch_at(k):
         rng = np.random.default_rng([int(pc["seed"]), 41, k])
@@ -1015,7 +1207,9 @@ def pretrain_i(env: Env, t15=None, max_steps: int | None = None) -> dict:
                           torch.from_numpy(b["lengths"]), torch.from_numpy(b["target_lengths"]),
                           blank=0, reduction="mean", zero_infinity=True)
 
-    return pretrain(env, "I", model, batch_at, loss_fn, {"n_trials": len(idx), "n_sessions": n_sess}, max_steps)
+    return pretrain(env, "I", model, batch_at, loss_fn, {"n_trials": len(idx), "n_sessions": n_sess,
+                                                        "blank_bias": blank_bias(env.cfg, key="blank_bias_pretrain_I")},
+                    max_steps)
 
 
 def pretrain_p(env: Env, max_steps: int | None = None) -> dict:
@@ -1032,7 +1226,8 @@ def pretrain_p(env: Env, max_steps: int | None = None) -> dict:
     mean_t, std_t = torch.from_numpy(mean).to(env.device), torch.from_numpy(std).to(env.device)
     aug = aug_cfg(env.cfg)
     torch.manual_seed(int(pc["seed"]))
-    model = Net(env.trunk, {"h2": (len(perm), len(sidx))}, vocab=98, p_drop=float(env.cfg["model"]["adapter_dropout"]))
+    model = Net(env.trunk, {"h2": (len(perm), len(sidx))}, vocab=98, p_drop=float(env.cfg["model"]["adapter_dropout"]),
+                blank_bias=blank_bias(env.cfg), blank=e1.BLANK)
 
     def batch_at(k):
         rng = np.random.default_rng([int(pc["seed"]), 61, k])
@@ -1051,7 +1246,8 @@ def pretrain_p(env: Env, max_steps: int | None = None) -> dict:
                           blank=e1.BLANK, reduction="mean", zero_infinity=True)
 
     return pretrain(env, "P", model, batch_at, loss_fn,
-                    {"n_trials": len(idx), "n_removed": removed, "n_sessions": len(sidx)}, max_steps)
+                    {"n_trials": len(idx), "n_removed": removed, "n_sessions": len(sidx),
+                     "blank_bias": blank_bias(env.cfg)}, max_steps)
 
 
 def pretrain_m(env: Env, mstore: MStore | None = None, max_steps: int | None = None) -> dict:
@@ -1155,23 +1351,30 @@ def stage1(env: Env, arms: list[str], fname: str, max_steps: int | None = None) 
     c = env.cfg["stage1"]
     for arm in arms:
         for lr in c["lrs"]:
-            cap_check(env, "core" if fname == "selection.json" else "ext")
-            r = target_run(env, {"stage": "s1", "arm": arm, "budget": c["budget"], "seed": c["seed"], "j": None,
-                                 "lr": lr, "sessions": env.roles["val"],
-                                 "dir": f"s1/{arm}-lr{lr:g}-b{c['budget']}-s{c['seed']}"}, max_steps)
+            part = "core" if fname == "selection.json" else "ext"
+            cap_check(env, part)
+            r = slot_run(env, {"stage": "s1", "arm": arm, "budget": c["budget"], "seed": c["seed"], "j": None,
+                               "lr": lr, "sessions": env.roles["val"],
+                               "dir": f"s1/{arm}-lr{lr:g}-b{c['budget']}-s{c['seed']}"}, max_steps, part)
             if r.get("partial"):
                 return None
     sel = {"note": "P15-54 stage 1 (plan 7.2): per arm the LR with the lower final-step val CER (30 val sentences, "
                    "3 val sessions, 12 train sentences each, tuning seed 10); > 0.95 excluded; tie (< 0.005) -> smaller "
-                   "LR; both excluded -> 3e-4. Val only; no test session is read in stage 1.",
+                   "LR; both excluded -> 3e-4. Val only; no test session is read in stage 1. Amendment 2: each cell "
+                   "uses its accepted attempt (rule S3: first attempt whose last-100-step train loss <= its "
+                   "label-prior loss + 1; "
+                   "re-seed init seed 10 + 1000 a); blank bias S1 on every new head.",
            "arms": {}, "time": time.strftime("%Y-%m-%dT%H:%M:%S")}
     for arm in arms:
-        vals = {}
+        vals, acc = {}, {}
         for lr in c["lrs"]:
-            rr = json.loads((env.out / f"s1/{arm}-lr{lr:g}-b{c['budget']}-s{c['seed']}" / "result.json")
-                            .read_text(encoding="utf-8"))
+            rr = accepted_result(env, f"s1/{arm}-lr{lr:g}-b{c['budget']}-s{c['seed']}")
             vals[float(lr)] = float(rr["val_cer_final"])
-        sel["arms"][arm] = {"val_cer": {f"{k:g}": v for k, v in vals.items()}, "chosen": select_lr(vals, c)}
+            acc[f"{lr:g}"] = {**rr["accept"], "final_train_loss": rr.get("final_train_loss"),
+                              "prior_loss": rr.get("prior_loss")}
+        bad = [float(lr) for lr in c["lrs"] if not acc[f"{lr:g}"]["trained"]]
+        sel["arms"][arm] = {"val_cer": {f"{k:g}": v for k, v in vals.items()}, "accept": acc,
+                            "chosen": select_lr(vals, c, bad)}
     if (env.out / fname).exists():  # never overwrite a written selection
         return json.loads((env.out / fname).read_text(encoding="utf-8"))
     e1.save_json(sel, env.out / fname)
@@ -1179,8 +1382,11 @@ def stage1(env: Env, arms: list[str], fname: str, max_steps: int | None = None) 
     return sel
 
 
-def load_runs(env: Env, plan: list[dict]) -> tuple[dict, dict, list[dict]]:
-    normal, der, rows = {}, {}, []
+def load_runs(env: Env, plan: list[dict], as_is: bool = False) -> tuple[dict, dict, list[dict], set]:
+    """Stage-2 results per slot. Primary (as_is False): the accepted attempt of each slot (amendment 2, S3).
+    as_is True: attempt 0 only (the plan.md seeds, no re-seed), for the as-is secondary.
+    Returns normal, der (test CER), rows, der_untrained (keys of deranged slots whose run did not train)."""
+    normal, der, rows, der_bad = {}, {}, [], set()
     seen = set()
     for r in plan:
         for j in ([None] if r["j"] is None else range(1 + int(env.cfg["rules"]["c2_extra"]))):
@@ -1188,23 +1394,47 @@ def load_runs(env: Env, plan: list[dict]) -> tuple[dict, dict, list[dict]]:
             if name in seen:
                 continue
             seen.add(name)
-            p = env.out / "s2" / name / "result.json"
             row = {"run": name, "part": r["part"], "arm": r["arm"], "budget": r["budget"], "seed": r["seed"], "j": j}
-            if not p.exists():
+            if as_is:
+                p = env.out / "s2" / name / "result.json"
+                res = json.loads(p.read_text(encoding="utf-8")) if p.exists() else None
+            else:
+                res = accepted_result(env, f"s2/{name}")
+            if res is None:
                 if j is None or j == 0:
                     rows.append({**row, "status": "not_run"})
                 continue
-            res = json.loads(p.read_text(encoding="utf-8"))
             if res["arm"] != r["arm"] or int(res["budget"]) != r["budget"] or res["j"] != j:
-                raise RuntimeError(f"{p.parent} does not match its plan row")
+                raise RuntimeError(f"s2/{name} does not match its plan row")
             if j is None:
                 normal[(r["arm"], r["budget"], r["seed"])] = res
             else:
                 der[(r["arm"], r["budget"], r["seed"], j)] = float(res["test_cer_final"])
+                if res.get("trained") is False:
+                    der_bad.add((r["arm"], r["budget"], r["seed"], j))
+            n_att = sum(x is not None for x in read_attempts(env, f"s2/{name}"))
             rows.append({**row, "status": "done", "lr": res["lr"], "steps": res["steps"], "skipped": res["skipped"],
+                         "attempt": res.get("attempt", 0), "attempts_run": n_att, "trained": res.get("trained"),
+                         "final_train_loss": res.get("final_train_loss"),
                          "test_cer_final": res["test_cer_final"], "falcon_cer_mean": res.get("falcon_cer_mean"),
                          "falcon_wer_mean": res.get("falcon_wer_mean"), "c1_shuffled_cer": res.get("c1_shuffled_cer")})
-    return normal, der, rows
+    return normal, der, rows, der_bad
+
+
+def stability_table(rows: list[dict]) -> dict:
+    """Amendment 2: per arm (normal / deranged), slots done, attempt-0 runs that did not train, re-seed attempts
+    used, and slots with no trained attempt. Descriptive (a stability result in its own right)."""
+    out: dict = {}
+    for r in rows:
+        if r.get("status") != "done":
+            continue
+        k = f"{r['arm']}|{'normal' if r['j'] is None else 'deranged'}"
+        t = out.setdefault(k, {"slots": 0, "attempt0_untrained": 0, "reseeds_used": 0, "never_trained": 0})
+        t["slots"] += 1
+        t["reseeds_used"] += max(0, int(r.get("attempts_run", 1)) - 1)
+        t["attempt0_untrained"] += int(int(r.get("attempts_run", 1)) > 1 or r.get("trained") is False)
+        t["never_trained"] += int(r.get("trained") is False)
+    return out
 
 
 def stage2(env: Env, plan: list[dict], part: str, sel: dict, max_steps: int | None = None) -> bool:
@@ -1217,13 +1447,13 @@ def stage2(env: Env, plan: list[dict], part: str, sel: dict, max_steps: int | No
             cap_check(env, part)
             spec = {**r, "stage": "s2", "j": j, "lr": lr_for(sel, env.cfg, r["arm"]), "sessions": env.roles["test"],
                     "dir": f"s2/{run_name(r['arm'], r['budget'], r['seed'], j)}"}
-            res = target_run(env, spec, max_steps)
+            res = slot_run(env, spec, max_steps, part)
             if res.get("partial"):
                 return False
-            if j == 0:
-                nd = env.out / "s2" / run_name(r["arm"], r["budget"], r["seed"]) / "result.json"
-                if nd.exists():
-                    normal = json.loads(nd.read_text(encoding="utf-8"))["test_cer_final"]
+            if j == 0:  # amendment 2: the trigger uses the accepted normal and deranged results of the slot
+                nres = accepted_result(env, "s2/" + run_name(r["arm"], r["budget"], r["seed"]))
+                if nres is not None:
+                    normal = nres["test_cer_final"]
                     if c2_triggers_extra(normal, res["test_cer_final"], rules):
                         env.log(f"[{spec['dir']}] C2 margin within +-{rules['c2_band']}: 2 more deranged runs")
                         js += list(range(1, 1 + int(rules["c2_extra"])))
@@ -1232,11 +1462,20 @@ def stage2(env: Env, plan: list[dict], part: str, sel: dict, max_steps: int | No
 
 def stage_summary(env: Env, status: str, sel: dict | None, sel_ext: dict | None) -> dict:
     plan = stage2_plan(env.roles, env.cfg)
-    normal, der, rows = load_runs(env, plan)
-    v = verdict(normal, der, env.roles, env.cfg["rules"], env.cfg["stage2"]["seeds"])
+    seeds = env.cfg["stage2"]["seeds"]
+    normal, der, rows, der_bad = load_runs(env, plan)
+    v = verdict(normal, der, env.roles, env.cfg["rules"], seeds, der_bad, require_trained=True)
+    n0, d0, _, _ = load_runs(env, plan, as_is=True)
+    v0 = verdict(n0, d0, env.roles, env.cfg["rules"], seeds, require_trained=False)
+    as_is = {"note": "SECONDARY (amendment 2): plan.md rules exactly as written on the attempt-0 runs (plan seeds, no "
+                     "re-seed, no trained requirement). Not the pre-registered primary.",
+             "outcome": v0["outcome"], "H": v0["H"], "neg": v0["neg"], "reads": v0["reads"],
+             "untrained_confounded_wins": v0["untrained_confounded_wins"],
+             "table": v0["table"], "agrees_with_primary": v0["outcome"]["labels"] == v["outcome"]["labels"]}
     pre = {a: json.loads((env.out / f"pretrain-{a}" / "DONE.json").read_text(encoding="utf-8"))
            for a in ("I", "M", "P") if (env.out / f"pretrain-{a}" / "DONE.json").exists()}
-    agg = {"note": "P15-54 aggregate only (plan 19ec6c5, amendment 1 4d31f8e): pooled test CER over the 50 test sentences "
+    agg = {"note": "P15-54 aggregate only (plan 19ec6c5, amendment 1 4d31f8e, amendment 2: primary = accepted attempt "
+                   "per slot and wins need trained runs; 'secondary_as_is' = plan rules on attempt 0): pooled test CER over the 50 test sentences "
                    "(last 10 trials of 5 H2 held-in sessions), greedy CTC, no LM, final step. Not comparable with the "
                    "FALCON leaderboard. Every pretrained arm except P differs from T5 in person (E: person and signal; "
                    "I: person and task; M: species and task); E, E0, T and X-E are research only.",
@@ -1244,7 +1483,8 @@ def stage_summary(env: Env, status: str, sel: dict | None, sel_ext: dict | None)
            "roles": {k: env.roles[k] for k in ("test", "val", "core_budgets", "extended_budgets", "fallback")},
            "selection": {a: x["chosen"] for a, x in (sel or {}).get("arms", {}).items()},
            "selection_ext": {a: x["chosen"] for a, x in (sel_ext or {}).get("arms", {}).items()},
-           "pretrain": pre, **v, "runs": rows, "time": time.strftime("%Y-%m-%dT%H:%M:%S")}
+           "stability": {"rules": env.cfg["stability"], "per_arm": stability_table(rows)},
+           "pretrain": pre, **v, "secondary_as_is": as_is, "runs": rows, "time": time.strftime("%Y-%m-%dT%H:%M:%S")}
     agg = json.loads(json.dumps(agg, default=float))
     e1.save_json(agg, env.out / "summary.json")
     if env.out.resolve() == OUT.resolve():
@@ -1252,6 +1492,62 @@ def stage_summary(env: Env, status: str, sel: dict | None, sel_ext: dict | None)
         e1.save_json(agg, RESULTS / "summary.json")
     env.log(f"[summary] outcome {agg['outcome']}")
     return agg
+
+
+def pilot_plan(cfg: dict, roles: dict) -> list[dict]:
+    """Amendment 2, section 4: the opt-in stability pilot. Val sessions only, budget 12, stop at step 400 of the
+    800-step schedule, arm R, LR {3e-4, 1e-3}, seeds 20-24, blank bias on and off. No re-seed in the pilot."""
+    p = cfg["stability"]["pilot"]
+    out = []
+    for s in p["seeds"]:
+        for lr in p["lrs"]:
+            for arm in p["arms"]:
+                for on in (True, False):
+                    out.append({"stage": "pilot", "arm": arm, "budget": int(p["budget"]), "seed": int(s), "j": None,
+                                "lr": float(lr), "sessions": list(roles["val"]), "stop_at": int(p["stop_at"]),
+                                "bias": None if on else float("nan"), "bias_on": on,
+                                "dir": f"pilot/{arm}-{'bias' if on else 'nobias'}-lr{float(lr):g}-b{p['budget']}-s{s}"})
+    return out
+
+
+def pilot_decision(rows: list[dict], p: dict) -> dict:
+    """Pre-registered pilot reading (amendment 2, 4.3), from train loss only: 'stop' if >= stop_if_untrained of the
+    blank-bias-on runs did not train (rule S2 at the stop step); else 'go'. Off-runs are descriptive."""
+    on = [r for r in rows if r["bias_on"]]
+    off = [r for r in rows if not r["bias_on"]]
+    n_on = sum(not r["trained"] for r in on)
+    n_off = sum(not r["trained"] for r in off)
+    done = len(on) == len(off) == len(p["seeds"]) * len(p["lrs"]) * len(p["arms"])
+    dec = None if not done else ("stop" if n_on >= int(p["stop_if_untrained"]) else "go")
+    return {"complete": done, "on_runs": len(on), "on_untrained": n_on, "off_runs": len(off), "off_untrained": n_off,
+            "decision": dec}
+
+
+def stage_pilot(env: Env, max_steps: int | None = None) -> dict | None:
+    """Run the pilot cells (resumable), then write pilot/pilot.json (val CER, train losses; no test session)."""
+    p = env.cfg["stability"]["pilot"]
+    rows = []
+    for spec in pilot_plan(env.cfg, env.roles):
+        if env.clock is not None and env.clock.hours() >= float(p["cap_hours"]):
+            env.log(f"[pilot] pilot cap {p['cap_hours']} h reached: remaining cells not run")
+            break
+        r = target_run(env, spec, max_steps)
+        if r.get("partial"):
+            return None
+        rows.append({"arm": spec["arm"], "lr": spec["lr"], "seed": spec["seed"], "bias_on": spec["bias_on"],
+                     "blank_bias": r["blank_bias"], "steps": r["steps"], "final_train_loss": r["final_train_loss"],
+                     "trained": r["trained"], "val_cer_at_stop": r["val_cer_final"], "loss_curve": r["loss_curve"]})
+    rec = {"note": "P15-54 amendment 2 stability pilot: val sessions only (train = first 12 trials of each val session, "
+                   "eval = last 10); stop at step stop_at of the budget-12 schedule; no test session is read. "
+                   "Not a result of the plan; it decides only go / stop for the main run.",
+           "pilot": p, "rows": rows, **pilot_decision(rows, p),
+           "gpu_hours": round(env.clock.hours(), 3) if env.clock is not None else None,
+           "time": time.strftime("%Y-%m-%dT%H:%M:%S")}
+    (env.out / "pilot").mkdir(parents=True, exist_ok=True)
+    e1.save_json(rec, env.out / "pilot" / "pilot.json")
+    env.log(f"[pilot] DONE decision {rec['decision']}: blank bias on {rec['on_untrained']} of {rec['on_runs']} "
+            f"not trained, off {rec['off_untrained']} of {rec['off_runs']}")
+    return rec
 
 
 def make_env(cfg: dict, out: Path, device: str, roles: dict, crop: int | None = None) -> Env:
@@ -1304,7 +1600,7 @@ def read_opt(p: Path) -> dict | None:
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="P15-54 F3 small-data runner")
-    ap.add_argument("stage", choices=("all", "prep", "gate", "summary", "smoke"))
+    ap.add_argument("stage", choices=("all", "prep", "gate", "summary", "smoke", "pilot"))
     ap.add_argument("--out", default=str(OUT))
     ap.add_argument("--config", default=str(HERE / "config.json"))
     ap.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
@@ -1312,6 +1608,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--smoke-crop", type=int, default=300)
     ap.add_argument("--smoke-max-frames", type=int, default=1500)
     ap.add_argument("--smoke-t15-sessions", type=int, default=2)
+    ap.add_argument("--smoke-margin", type=float, default=1e9,
+                    help="smoke only: S2 margin (default: every run counts as trained, so no re-seed; pass 1.0 to "
+                         "run the real rule and its re-seed path, about 3x the smoke time)")
     ap.add_argument("--threads", type=int, default=3)
     a = ap.parse_args(argv)
     out = Path(a.out).resolve()
@@ -1348,6 +1647,10 @@ def main(argv: list[str] | None = None) -> int:
     if a.stage == "summary":
         stage_summary(env, "summary", read_opt(out / "selection.json"), read_opt(out / "selection-ext.json"))
         return 0
+    pil = read_opt(out / "pilot" / "pilot.json")
+    if a.stage == "all" and pil is not None and pil.get("decision") == "stop":
+        logenv.log("pilot decision 'stop' (amendment 2, 4.3): the main run needs a new amendment first")
+        return 2
     if smoke:
         env.gates = False
         env.max_frames_override = a.smoke_max_frames
@@ -1357,12 +1660,25 @@ def main(argv: list[str] | None = None) -> int:
         env.extra["pretrain_steps"] = n
         env.extra["m_window"] = 300
         cfg["stage2"]["seeds"] = [0]
+        cfg["stability"]["pilot"]["seeds"] = cfg["stability"]["pilot"]["seeds"][:1]
+        cfg["stability"]["trained_margin"] = a.smoke_margin
     elif not gate(env, "session_roles.json"):
         return WAITING
-    env.clock = F3.Clock(out / "gpu_clock.json")
+    pilot = a.stage == "pilot"
+    if pilot and (out / "pilot" / "pilot.json").exists():
+        logenv.log("pilot.json exists: the pilot is finished")
+        return 0
+    # Amendment 2: the pilot has its own GPU clock; plan caps (9 h core, 20 h total) count the main run only.
+    (out / "pilot").mkdir(parents=True, exist_ok=True)
+    env.clock = F3.Clock(out / ("pilot/gpu_clock.json" if pilot else "gpu_clock.json"))
     R8.keep_awake(True)
     t15 = F3.T15Store(Path(cfg["sources"]["t15_derived"]), "train", max_sessions=a.smoke_t15_sessions) if smoke else None
     try:
+        if pilot:
+            stage_pilot(env)
+            return 0
+        if smoke:
+            stage_pilot(env)
         return run_all(env, t15=t15)
     except R8.Paused:
         return PAUSED
